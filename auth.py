@@ -85,21 +85,27 @@ def render_auth_page():
         box-shadow: none !important;
     }}
 
+    /* استریم‌لیت پدینگ چپ فیلد را برای جا شدن آیکون چشم ایجاد می‌کند، 
+       ما مقدار آن را بیشتر می‌کنیم تا آیکون بیومتریک هم بدون روی هم افتادن جا شود */
+    .stTextInput input[type="password"] {{
+        padding-left: 80px !important;
+    }}
+
     .bio-container {{
         position: relative;
         max-width: 400px;
         margin: 0 auto;
     }}
    
-    /* استایل دکمه شیک و لمسی برای اثر انگشت داخل فیلد */
+    /* تنظیم جایگاه دقیق آیکون بیومتریک در کنار آیکون چشم (سمت راست چشم) */
     .bio-html-btn {{
         position: absolute !important;
-        left: 10px !important;
-        top: 12px !important;
+        left: 45px !important; /* انتقال به سمت راست آیکون چشم استریم‌لیت */
+        top: 10px !important;
         z-index: 999 !important;
         display: inline-block !important;
-        width: 26px !important;
-        height: 26px !important;
+        width: 24px !important;
+        height: 24px !important;
         background: url(data:image/png;base64,{bio_icon_base64}) no-repeat center !important;
         background-size: contain !important;
         cursor: pointer !important;
@@ -168,7 +174,6 @@ def render_auth_page():
         box-sizing: border-box !important;
     }}
 
-    /* هدر پاپ‌آپ: اول لوگو سمت راست، سپس متن انگلیسی سمت چپ */
     .popup-header-brand {{
         display: flex !important;
         flex-direction: row !important;
@@ -229,7 +234,7 @@ def render_auth_page():
             logo_base64 = base64.b64encode(f.read()).decode()
         logo_html = f'<img src="data:image/png;base64,{logo_base64}" width="45" style="display:inline-block; vertical-align:middle;">'
 
-    # --- هدر اصلی فرم ورود صفحه اصلی ---
+    # --- هدر اصلی فرم ---
     st.markdown(f"""
     <div class="brand-flex-container">
         {logo_html}
@@ -239,16 +244,17 @@ def render_auth_page():
 
     st.markdown('<div style="height: 20px;"></div>', unsafe_allow_html=True)
 
-    # --- فیلدهای ورودی نام کاربری و پسورد ---
+    # --- فیلدهای ورودی ---
     username = st.text_input("نام کاربری", value="", placeholder="نام کاربری")
     
-    # ساخت فیلد پسورد و تزریق مستقیم دکمه شیک تصویر بیومتریک بدون کدهای متنی اضافی
+    # ساخت کادر پسورد و قرارگیری آیکون‌ها
     st.markdown('<div class="bio-container">', unsafe_allow_html=True)
     password = st.text_input("رمز ورود", type="password", placeholder="رمز ورود")
+    # لینک پاپ آپ با آیکون اختصاصی شما، دقیقا در کنار آیکون چشم بومی استریم‌لیت
     st.markdown('<a href="?show_bio=true&bio_tab=fingerprint" target="_self" class="bio-html-btn"></a>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # --- دکمه ورود اصلی ---
+    # --- دکمه ورود ---
     if st.button("ورود به TopSUNify", key="submit_yellow_btn", use_container_width=True):
         if username == "admin" and password == "1234":
             st.session_state.logged_in = True
@@ -263,7 +269,7 @@ def render_auth_page():
     st.markdown('<div class="forgot-link"><a href="#">فعال‌سازی / فراموشی رمز</a></div>', unsafe_allow_html=True)
 
     # ==========================================
-    # پاپ‌آ‌پ اصلاح‌شده با ساختار جدید هدر و تقارن لوگو/برند
+    # پاپ‌آ‌پ بومی و فیکس شده
     # ==========================================
     if show_bio:
         active_face = "active" if bio_tab == "face" else ""
@@ -282,7 +288,6 @@ def render_auth_page():
                 <div style="height: 20px;"></div>
             """
 
-        # رندر پاپ‌آپ با ترتیب جدید: اول لوگوی تاپ‌سان و سپس عبارت متنی برند
         popup_html_template = f"""
         <div class="popup-overlay"></div>
         <div class="popup-card-container">
