@@ -100,11 +100,11 @@ def render_auth_page():
         margin: 0 auto !important;
     }}
    
-    /* قرارگیری آیکون بیومتریک روی ورودی رمز عبور و در کنار چشم */
+    /* قرارگیری آیکون بیومتریک دقیقاً داخل ورودی رمز عبور و در کنار چشم (فیکس شده) */
     .bio-html-btn {{
         position: absolute !important;
         left: 45px !important; 
-        top: 40px !important;  
+        top: 10px !important;  /* برگشت به جایگاه دقیق و تراز قبلی در داخل فیلد */
         z-index: 999 !important;
         display: inline-block !important;
         width: 24px !important;
@@ -121,19 +121,19 @@ def render_auth_page():
         opacity: 1 !important;
     }}
 
-    /* اعمال استایل مستقیم روی دکمه ورود: محدود به ۴۰۰ پیکسل و بک‌گراند زرد */
+    /* تنظیم و هماهنگی ابعاد دکمه ورود با فیلدها */
     div[data-testid="stElementContainer"] {{
         max-width: 400px !important;
         margin: 0 auto !important;
     }}
 
-    /* استایل نهایی و تثبیت شده دکمه زرد رنگ */
+    /* استایل دکمه زرد رنگ */
     div.stButton > button {{
         width: 100% !important;
         max-width: 400px !important;
         display: block !important;
         margin: 40px auto 0 auto !important;
-        background-color: #ffd60a !important; /* رنگ زرد جذاب و استاندارد */
+        background-color: #ffd60a !important; /* رنگ زرد ثابت */
         color: #1e293b !important;
         border: none !important;
         border-radius: 12px !important;
@@ -144,7 +144,7 @@ def render_auth_page():
         transition: all 0.2s ease-in-out !important;
     }}
     div.stButton > button:hover {{
-        background-color: #ffc300 !important; /* زرد کمی تیره‌تر هنگام هوور */
+        background-color: #ffc300 !important; 
         color: #000000 !important;
         transform: translateY(-1px);
     }}
@@ -272,7 +272,7 @@ def render_auth_page():
     st.markdown('<a href="?show_bio=true&bio_tab=fingerprint" target="_self" class="bio-html-btn"></a>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # --- دکمه ورود (هم‌اندازه فیلدها با پس‌زمینه زرد رنگ ثابت شده) ---
+    # --- دکمه ورود (هم‌اندازه فیلدها با پس‌زمینه زرد رنگ) ---
     if st.button("ورود به TopSUNify", key="submit_yellow_btn", use_container_width=True):
         if username == "admin" and password == "1234":
             st.session_state.logged_in = True
