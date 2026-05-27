@@ -130,7 +130,7 @@ def render_auth_page():
     st.markdown('<div style="height: 50px;"></div>', unsafe_allow_html=True)
     
     # --- ۲. هدر: لوگو سمت راست و متن تیره TopSUNify سمت چپ (رفع مشکل ستون‌ها) ---
-    h_col1, h_col2 = st.columns(2)
+    h_col1, h_col2 = st.columns(1)
     with h_col1:
         st.markdown('<h2 style="color: #000000; font-weight: 900; margin: 12px 0 0 0; text-align: left; direction: ltr;">TopSUNify</h2>', unsafe_allow_html=True)
     with h_col2:
