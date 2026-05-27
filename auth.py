@@ -7,7 +7,7 @@ def render_auth_page():
     # مدیریت وضعیت تب انتخاب شده در بیومتریک
     if "bio_tab" not in st.session_state:
         st.session_state.bio_tab = "fingerprint"
-    
+        
     if "show_bio_popup" not in st.session_state:
         st.session_state.show_bio_popup = False
     if "logged_in" not in st.session_state:
@@ -134,46 +134,49 @@ def render_auth_page():
         font-weight: bold;
     }}
 
+    /* لایه تاریک پس‌زمینه پاپ‌آپ روی کل صفحه */
     .custom-overlay-bg {{
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
+        position: fixed !important;
+        top: 0 !important; left: 0 !important; 
+        width: 100vw !important; height: 100vh !important;
         background: rgba(0, 0, 0, 0.55) !important;
         z-index: 999990 !important;
     }}
    
+    /* کادر سفید پاپ‌آپ کاملاً در مرکز صفحه */
     .custom-popup-card {{
-        position: fixed;
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
+        position: fixed !important;
+        top: 50% !important; left: 50% !important;
+        transform: translate(-50%, -50%) !important;
         background: white !important;
-        width: 88%;
-        max-width: 350px;
-        border-radius: 24px;
-        padding: 24px;
-        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+        width: 88% !important;
+        max-width: 350px !important;
+        border-radius: 24px !important;
+        padding: 24px !important;
+        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3) !important;
         z-index: 999999 !important;
-        text-align: center;
+        text-align: center !important;
     }}
 
     .segment-tab-container {{
-        display: flex;
-        background: #f1f5f9;
-        padding: 4px;
-        border-radius: 30px;
-        margin: 10px 0 20px 0;
+        display: flex !important;
+        background: #f1f5f9 !important;
+        padding: 4px !important;
+        border-radius: 30px !important;
+        margin: 10px 0 20px 0 !important;
         direction: ltr !important;
     }}
    
     .segment-btn {{
-        flex: 1;
-        text-align: center;
-        padding: 8px 0;
-        font-size: 14px;
-        font-weight: bold;
-        color: #64748b;
+        flex: 1 !important;
+        text-align: center !important;
+        padding: 8px 0 !important;
+        font-size: 14px !important;
+        font-weight: bold !important;
+        color: #64748b !important;
         text-decoration: none !important;
-        border-radius: 25px;
-        transition: all 0.2s;
+        border-radius: 25px !important;
+        transition: all 0.2s !important;
     }}
    
     .segment-btn.active {{
@@ -182,14 +185,14 @@ def render_auth_page():
     }}
 
     .html-cancel-link {{
-        display: block;
-        margin-top: 20px;
+        display: block !important;
+        margin-top: 20px !important;
         color: #ef4444 !important;
-        font-size: 16px;
-        font-weight: bold;
+        font-size: 16px !important;
+        font-weight: bold !important;
         text-decoration: none !important;
-        text-align: center;
-        width: 100%;
+        text-align: center !important;
+        width: 100% !important;
     }}
     </style>
     """
@@ -278,46 +281,53 @@ def render_auth_page():
             graphic_content = """
                 <h4 style="color: #1e293b; text-align: center; margin:0; font-weight:bold; font-size:18px;">ورود با اثر انگشت</h4>
                 <p style="text-align: center; color: #64748b; font-size: 13px; margin: 8px 0 20px 0;">حسگر را لمس کنید</p>
-                <h1 style="text-align: center; font-size: 65px; margin: 20px 0; color: #ea580c;">☝️</h1>
+                <div style="height: 30px;"></div>
             """
         else:
             graphic_content = """
                 <h4 style="color: #1e293b; text-align: center; margin:0; font-weight:bold; font-size:18px;">ورود با تشخیص چهره</h4>
                 <p style="text-align: center; color: #64748b; font-size: 13px; margin: 8px 0 20px 0;">به دوربین جلو نگاه کنید</p>
-                <h1 style="text-align: center; font-size: 65px; margin: 20px 0; color: #facc15;">👤</h1>
+                <div style="height: 30px;"></div>
             """
 
-        popup_html_code = f"""
+        # تعریف متن قالب به صورت رشته خام (بدون f ابتدای رشته جهت جلوگیری از تداخل آکلواد جاوااسکریپت)
+        popup_html_template = """
         <div class="custom-overlay-bg" onclick="triggerPythonAction('close_bio')"></div>
         <div class="custom-popup-card">
             <div style="font-size:13px; color:#94a3b8; margin-bottom:12px; text-align:center; font-weight:bold;">☀️ TopSUNify</div>
             
             <div class="segment-tab-container">
-                <a href="#" class="segment-btn {active_face}" onclick="triggerPythonAction('set_face'); return false;">Face ID</a>
-                <a href="#" class="segment-btn {active_finger}" onclick="triggerPythonAction('set_finger'); return false;">Fingerprint</a>
+                <a href="#" class="segment-btn {ACTIVE_FACE}" onclick="triggerPythonAction('set_face'); return false;">Face ID</a>
+                <a href="#" class="segment-btn {ACTIVE_FINGER}" onclick="triggerPythonAction('set_finger'); return false;">Fingerprint</a>
             </div>
             
-            <div style="min-height: 140px; direction: rtl !important;">
-                {graphic_content}
+            <div style="min-height: 100px; direction: rtl !important;">
+                {GRAPHIC_CONTENT}
             </div>
             
             <a href="#" class="html-cancel-link" onclick="triggerPythonAction('close_bio'); return false;">انصراف</a>
         </div>
 
         <script>
-        function triggerPythonAction(actionText) {{
+        function triggerPythonAction(actionText) {
             var buttons = window.parent.document.getElementsByTagName('button');
-            for (var i = 0; i < buttons.length; i++) {{
-                if (buttons[i].innerText === actionText) {{
+            for (var i = 0; i < buttons.length; i++) {
+                if (buttons[i].innerText === actionText) {
                     buttons[i].click();
                     break;
-                }}
-            }}
-        }}
+                }
+            }
+        }
         </script>
         """
 
-        st.components.v1.html(popup_html_code, height=620, width=400, scrolling=False)
+        # جایگذاری امن متغیرها
+        popup_rendered = popup_html_template.replace("{ACTIVE_FACE}", active_face)\
+                                            .replace("{ACTIVE_FINGER}", active_finger)\
+                                            .replace("{GRAPHIC_CONTENT}", graphic_content)
+
+        # تزریق مستقیم به لایه اصلی برنامه بدون استفاده از iframe
+        st.markdown(popup_rendered, unsafe_allow_html=True)
 
     # اسکریپت زرد کردن دکمه
     st.markdown("""
