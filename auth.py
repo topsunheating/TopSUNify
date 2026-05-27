@@ -4,7 +4,7 @@ import os
 import base64
 
 def render_auth_page():
-    # خواندن وضعیت پاپ‌آپ و تب‌ها از query_params برای پایداری کامل در کلیک‌ها
+    # خواندن وضعیت پاپ‌آ‌پ و تب‌ها از query_params برای پایداری کامل در کلیک‌ها
     show_bio = st.query_params.get("show_bio", "false") == "true"
     bio_tab = st.query_params.get("bio_tab", "fingerprint")
 
@@ -18,7 +18,7 @@ def render_auth_page():
         with open(font_path, "rb") as f:
             font_base64 = base64.b64encode(f.read()).decode()
 
-    # تبدیل آیکون جدید biometric.png به base64 جهت استفاده پایدار در استریم‌لیت
+    # تبدیل آیکون جدید biometric.png به base64 جهت استفاده پایدار در استایل‌ها
     bio_icon_base64 = ""
     if os.path.exists("biometric.png"):
         with open("biometric.png", "rb") as f:
@@ -91,34 +91,24 @@ def render_auth_page():
         margin: 0 auto;
     }}
    
-    /* جایگذاری دکمه بیومتریک تصویری جدید در سمت چپ فیلد */
-    div.bio-inside-btn {{
-        position: absolute;
-        left: 10px;
-        top: 32px;
-        z-index: 99;
-    }}
-   
-    div.bio-inside-btn button {{
-        background: transparent !important;
-        border: none !important;
-        padding: 0 !important;
-        box-shadow: none !important;
-        width: 28px !important;
-        height: 28px !important;
-        min-width: 28px !important;
-        min-height: 28px !important;
+    /* استایل دکمه شیک و لمسی برای اثر انگشت داخل فیلد */
+    .bio-html-btn {{
+        position: absolute !important;
+        left: 10px !important;
+        top: 12px !important;
+        z-index: 999 !important;
+        display: inline-block !important;
+        width: 26px !important;
+        height: 26px !important;
+        background: url(data:image/png;base64,{bio_icon_base64}) no-repeat center !important;
+        background-size: contain !important;
         cursor: pointer !important;
+        opacity: 0.6 !important;
+        transition: opacity 0.2s !important;
+        border: none !important;
+        text-decoration: none !important;
     }}
-    
-    div.bio-inside-btn button img {{
-        width: 100% !important;
-        height: 100% !important;
-        object-fit: contain !important;
-        opacity: 0.7;
-        transition: opacity 0.2s;
-    }}
-    div.bio-inside-btn button:hover img {{
+    .bio-html-btn:hover {{
         opacity: 1 !important;
     }}
 
@@ -178,10 +168,10 @@ def render_auth_page():
         box-sizing: border-box !important;
     }}
 
-    /* هدر پاپ‌آپ هماهنگ با چیدمان درخواست شده: اول لوگو سپس متن */
+    /* هدر پاپ‌آپ: اول لوگو سمت راست، سپس متن انگلیسی سمت چپ */
     .popup-header-brand {{
         display: flex !important;
-        flex-direction: row !important; /* چیدمان افقی از چپ به راست برای ساختار انگلیسی نام برند */
+        flex-direction: row !important;
         align-items: center !important;
         justify-content: center !important;
         gap: 8px !important;
@@ -239,11 +229,6 @@ def render_auth_page():
             logo_base64 = base64.b64encode(f.read()).decode()
         logo_html = f'<img src="data:image/png;base64,{logo_base64}" width="45" style="display:inline-block; vertical-align:middle;">'
 
-    # ایجاد تگ تصویر برای دکمه اثر انگشت جدید
-    bio_btn_img = "🪪"
-    if bio_icon_base64:
-        bio_btn_img = f'<img src="data:image/png;base64,{bio_icon_base64}">'
-
     # --- هدر اصلی فرم ورود صفحه اصلی ---
     st.markdown(f"""
     <div class="brand-flex-container">
@@ -257,16 +242,11 @@ def render_auth_page():
     # --- فیلدهای ورودی نام کاربری و پسورد ---
     username = st.text_input("نام کاربری", value="", placeholder="نام کاربری")
     
+    # ساخت فیلد پسورد و تزریق مستقیم دکمه شیک تصویر بیومتریک بدون کدهای متنی اضافی
     st.markdown('<div class="bio-container">', unsafe_allow_html=True)
     password = st.text_input("رمز ورود", type="password", placeholder="رمز ورود")
-   
-    st.markdown('<div class="bio-inside-btn">', unsafe_allow_html=True)
-    # دکمه استریم‌لیت حاوی تصویر انیمیشنی اثر انگشت جدید شما
-    if st.button(bio_btn_img, key="trigger_bio_popup_btn"):
-        st.query_params["show_bio"] = "true"
-        st.query_params["bio_tab"] = "fingerprint"
-        st.rerun()
-    st.markdown('</div></div>', unsafe_allow_html=True)
+    st.markdown('<a href="?show_bio=true&bio_tab=fingerprint" target="_self" class="bio-html-btn"></a>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
     # --- دکمه ورود اصلی ---
     if st.button("ورود به TopSUNify", key="submit_yellow_btn", use_container_width=True):
