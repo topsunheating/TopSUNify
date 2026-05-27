@@ -1,4 +1,17 @@
 import streamlit as st
+
+# ====================== ۱. تنظیمات بومی صفحه و هویت بصری ======================
+# این بخش باید قطعاً و بدون هیچ استثنایی، اولین خط اجرایی در کل فایل پایتون باشد
+st.set_page_config(
+    page_title="TopSUNify | هوش مصنوعی گرمایش",
+    page_icon="./static/logo.png", # آیکون اختصاصی در تب مرورگر
+    layout="wide"
+)
+
+# اضافه کردن لوگو به بالای منوی سمت چپ (Sidebar)
+st.logo("./static/logo.png", link="https://topsunify-gshdpz3qnjc3itl8ukrxfq.streamlit.app")
+
+# ====================== ۲. ایمپورت سایر کتابخانه‌ها و ماژول‌ها ======================
 import Financial
 import main
 import os
@@ -9,18 +22,7 @@ import tempfile
 from PIL import Image
 from Financial import calculate_tosunify_proforma, generate_proforma_pdf
 
-# ====================== ۱. تنظیمات بومی صفحه و هویت بصری ======================
-# این بخش باید قطعاً اولین دستور اجرایی استریم‌لیت در کل فایل باشد
-st.set_page_config(
-    page_title="TopSUNify",
-    page_icon="./static/logo.png", # آیکون اختصاصی در تب مرورگر
-    layout="wide"
-)
-
-# اضافه کردن لوگو به بالای منوی سمت چپ (Sidebar) برای زیبایی بیشتر
-st.logo("./static/logo.png", link="https://topsunify-gshdpz3qnjc3itl8ukrxfq.streamlit.app")
-
-# ====================== ۲. فونت و استایل سفارشی ======================
+# ====================== ۳. فونت و استایل سفارشی ======================
 def inject_custom_css():
     font_path = "pinar-regular.ttf"
     font_base64 = ""
@@ -211,14 +213,13 @@ tab_file, tab_room_manual, tab_invoice_manual = st.tabs([
 with tab_file:
     st.markdown("<h4 style='color:#334155; margin-bottom:15px;'>فایل نقشه اتوکد کف (DXF / DWG) را انتخاب کنید:</h4>", unsafe_allow_html=True)
     
-    # لایه شیشه‌ای آپلودر استریم‌لیت
     uploaded_file = st.file_uploader(label="", type=['dxf', 'dwg'], key="uploader_main", label_visibility="collapsed")
   
     if uploaded_file is not None:
         file_size_mb = uploaded_file.size / (1024 * 1024)
         
         st.markdown("<br>", unsafe_allow_html=True)
-        col_file_info, col_file_del = st.columns([5, 1])
+        col_file_info, col_file_del = st.columns()
         with col_file_info:
             st.success(f"✅ فایل بارگذاری شد: {uploaded_file.name} ({file_size_mb:.1f} مگابایت)")
         with col_file_del:
@@ -237,21 +238,17 @@ with tab_file:
 
         file_id = f"{uploaded_file.name}_{uploaded_file.size}"
        
-        # بررسی اینکه آیا فایل واقعاً تغییر کرده یا برای اولین بار آپلود شده است
         if st.session_state.get('last_processed_file') != file_id:
             try:
                 with st.spinner("در حال ارسال فایل به موتور تحلیل مهندسی (FastAPI)..."):
-                    file_extension = os.path.splitext(uploaded_file.name)[1].lower()
+                    file_extension = os.path.splitext(uploaded_file.name).lower()
                     
-                    # ایجاد فایل و نوشتن باینری آن روی دیسک
                     with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as tmp:
                         tmp.write(uploaded_file.getvalue())
-                        st.session_state['tmp_file_path'] = tmp.name  # ذخیره پایداری مسیر در سشن
+                        st.session_state['tmp_file_path'] = tmp.name
 
-                    # فراخوانی متد محاسباتی اصلی از فایل main
                     m8, m4 = main.get_total_meters_from_file(st.session_state['tmp_file_path'])
                   
-                    # مقداردهی به متغیرهای وضعیت پیش‌فاکتور
                     st.session_state.m80 = float(m8)
                     st.session_state.m40 = float(m4)
                     st.session_state.xps = round((m8 + m4) * 1.1, 1)
@@ -286,11 +283,9 @@ with tab_room_manual:
                 st.session_state.show_table = True
                 st.rerun()
 
-    # نمایش لیست اتاق‌ها در گرید ۳ ستونه
     if st.session_state.manual_rooms:
         st.write("### 📋 لیست فضاهای ثبت شده:")
         
-        # نمایش در ۳ ستون (Responsive)
         cols = st.columns(3)
         for i, room in enumerate(st.session_state.manual_rooms):
             with cols[i % 3]:
@@ -300,15 +295,13 @@ with tab_room_manual:
                     st.write(f"طول: **{room['l']}** متر")
                     st.write(f"مساحت: **{room['w'] * room['l']:.1f}** مترمربع")
                     
-                    # دکمه حذف هر اتاق
                     if st.button("🗑️ حذف", key=f"delete_room_{i}", use_container_width=True):
                         st.session_state.manual_rooms.pop(i)
                         if not st.session_state.manual_rooms:
                             st.session_state.show_table = False
                         st.rerun()
         
-        # دکمه پاک کردن همه
-        col_clear = st.columns([1, 3, 1])[1]
+        col_clear = st.columns()
         with col_clear:
             if st.button("🗑️ پاک کردن همه اتاق‌ها", use_container_width=True):
                 st.session_state.manual_rooms = []
@@ -370,8 +363,8 @@ with col3:
         disc = st.number_input("درصد تخفیف همکاری", min_value=0, max_value=100, value=0, step=1, key="disc_val")
 
 
-# ====================== تنظیمات زمان‌بندی محاسباتی شمسی غیرقابل تغییر توسط کاربر ======================
-DUE_DAYS_DELTA = 3  # 👈 هر چند روز که می‌خواهید سررسید جلوتر باشد را می‌توانید مستقیماً همین‌جا تغییر دهید
+# ====================== تنظیمات زمان‌بندی محاسباتی شمسی ======================
+DUE_DAYS_DELTA = 3
 
 col_date1, col_date2 = st.columns(2)
 with col_date1:
@@ -534,7 +527,6 @@ if st.session_state.get("show_table", False) and "final_res" in st.session_state
     res['Final_Amount'] = final_val
     st.session_state.final_res = res
 
-    # نمایش جدول نهایی به کاربر
     if table_data:
         import pandas as pd
         
