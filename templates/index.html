@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TopSUN Designer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css">
+    <style>
+        body { font-family: 'Vazirmatn', sans-serif; transition: all 0.3s ease; }
+        input:invalid { border: 2px solid #ef4444 !important; }
+        .rtl { direction: rtl; }
+        .ltr { direction: ltr; }
+        .tab-active { background-color: #ea580c; color: white; }
+        .error-border { border-color: #ef4444 !important; }
+        .iti { width: 100%; display: block; }
+        .iti__country-list { text-align: left; direction: ltr; max-width: 300px; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen pb-10 rtl">
+    <div class="max-w-4xl mx-auto mt-10 bg-white shadow-2xl rounded-3xl overflow-hidden">
+        
+        <!-- Header -->
+        <div class="bg-white p-8 text-slate-800 flex justify-between items-center border-b border-slate-200">
+            <div class="flex items-center gap-4">
+                <img src="/static/logo.png" alt="TopSUN" class="h-16 w-16 object-contain p-1" onerror="this.src='https://via.placeholder.com/64/ea580c/ffffff?text=TopSUN'">
+                <div>
+                    <h1 id="txt_title" class="text-2xl font-bold">نرم‌افزار طراحی تاپ‌سان</h1>
+                    <p id="txt_subtitle" class="opacity-70 text-sm">TopSUN Electric Floor Heating Design</p>
+                </div>
+            </div>
+            <div class="flex gap-4 items-center">
+                <div class="flex items-center gap-2">
+                    <span id="lbl_unit_select" class="text-xs font-bold whitespace-nowrap text-slate-600">واحد اندازه‌گیری:</span>
+                    <select id="unit_select" name="unit_select" onchange="updateUnitPlaceholders()" class="bg-slate-100 rounded-lg p-2 outline-none cursor-pointer text-xs">
+                        <option value="m" id="opt_meter">متر (m)</option>
+                        <option value="ft" id="opt_feet">فوت (ft)</option>
+                    </select>
+                </div>
+                <select id="lang_select" name="lang_select" onchange="switchLang()" class="bg-slate-100 rounded-lg p-2 outline-none cursor-pointer text-xs">
+                    <option value="fa" selected>فارسی</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <form id="mainForm" onsubmit="handleForm(event)" class="p-8 space-y-8" enctype="multipart/form-data">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label id="lbl_name" class="block text-sm font-bold text-gray-700 mb-2">نام و نام خانوادگی</label>
+                    <input type="text" name="full_name" required class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-orange-500 outline-none">
+                </div>
+                <div>
+                    <label id="lbl_phone" class="block text-sm font-bold text-gray-700 mb-2">شماره موبایل</label>
+                    <div class="ltr">
+                        <input type="tel" id="phone_input" name="phone_dummy" required
+                               class="w-full border-2 border-gray-200 rounded-xl p-3 focus:border-orange-500 outline-none">
+                    </div>
+                    <p id="phone_error" class="text-red-500 text-[10px] mt-1 hidden font-bold"></p>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-6 rounded-2xl border border-gray-200 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
+                        <label id="lbl_address" class="block text-sm font-bold text-gray-700 mb-2">آدرس دقیق محل پروژه</label>
+                        <textarea name="project_address" required class="w-full border-2 border-gray-200 rounded-xl p-3 h-20 outline-none"></textarea>
+                    </div>
+                    <div>
+                        <label id="lbl_b_age" class="block text-sm font-bold text-gray-700 mb-2">وضعیت ساختمان</label>
+                        <select id="building_age" name="building_age" required class="w-full border-2 border-gray-200 rounded-xl p-3 outline-none"></select>
+                    </div>
+                    <div>
+                        <label id="lbl_b_type" class="block text-sm font-bold text-gray-700 mb-2">نوع ملک</label>
+                        <select id="building_type" name="building_type" required class="w-full border-2 border-gray-200 rounded-xl p-3 outline-none"></select>
+                    </div>
+                    <div>
+                        <label id="lbl_win" class="block text-sm font-bold text-gray-700 mb-2">نوع پنجره‌ها</label>
+                        <select id="window_type" name="window_type" class="w-full border-2 border-gray-200 rounded-xl p-3 outline-none"></select>
+                    </div>
+                    <div>
+                        <label id="lbl_ins" class="block text-sm font-bold text-gray-700 mb-2">عایق‌کاری دیوار</label>
+                        <select id="insulation_type" name="wall_insulation" class="w-full border-2 border-gray-200 rounded-xl p-3 outline-none"></select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Modes -->
+            <div class="space-y-4">
+                <div class="flex bg-gray-200 p-1 rounded-2xl">
+                    <button type="button" id="btn_mode_manual" onclick="setMode('manual')" class="flex-1 py-3 rounded-xl font-bold transition-all tab-active">ورود دستی ابعاد</button>
+                    <button type="button" id="btn_mode_file" onclick="setMode('file')" class="flex-1 py-3 rounded-xl font-bold transition-all text-gray-600">آپلود نقشه (DWG/DXF)</button>
+                </div>
+                <input type="hidden" name="input_mode" id="input_mode" value="manual">
+
+                <!-- Manual Section -->
+                <div id="section_manual" class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h2 id="lbl_rooms" class="font-bold text-gray-800">لیست فضاها / اتاق‌ها</h2>
+                        <button type="button" id="btn_add_room" onclick="addRoom()" class="bg-slate-800 text-white px-4 py-2 rounded-xl text-xs hover:bg-black transition-colors">+ افزودن اتاق</button>
+                    </div>
+                    <div id="rooms_container" class="space-y-3">
+                        <div class="room-row flex gap-2 items-center bg-orange-50 p-3 rounded-xl border border-orange-100">
+                            <input type="text" name="room_names" class="room-name-input flex-[2.5] border-2 border-gray-200 rounded-lg p-2 outline-none text-sm" placeholder="نام فضا">
+                            <input type="number" step="0.01" name="room_widths" class="room-w-input flex-1 border-2 border-gray-200 rounded-lg p-2 outline-none text-sm text-center" placeholder="عرض">
+                            <input type="number" step="0.01" name="room_lengths" class="room-l-input flex-1 border-2 border-gray-200 rounded-lg p-2 outline-none text-sm text-center" placeholder="طول">
+                            <button type="button" onclick="removeRoom(this)" class="remove-btn hidden text-red-500 font-bold px-2 hover:text-red-700 text-xl">&times;</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- File Section -->
+                <div id="section_file" class="hidden">
+                    <div id="drop_zone" class="border-4 border-dashed border-gray-200 rounded-3xl p-8 text-center bg-gray-50 hover:border-orange-300">
+                        <p id="lbl_file_select" class="block font-bold text-gray-700 mb-4">فایل DWG یا DXF را انتخاب کنید</p>
+                        <input type="file" id="file_input" name="project_file" accept=".dwg,.dxf" class="hidden" onchange="updateFileNameDisplay()">
+                        <button type="button" onclick="document.getElementById('file_input').click()" id="btn_browse" class="bg-orange-600 text-white px-6 py-2 rounded-full text-sm font-bold">انتخاب فایل</button>
+                        <p id="file_name_display" class="mt-2 text-orange-600 font-bold text-xs"></p>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" id="btn_submit" class="w-full bg-orange-600 text-white font-bold py-5 rounded-2xl shadow-lg hover:bg-orange-700 transition-all text-xl">
+                ایجاد پلان چیدمان گرمایش کف تاپ‌سان
+            </button>
+        </form>
+
+        <!-- Results -->
+        <div id="resultArea" class="hidden p-8 border-t-4 border-green-500 bg-green-50 text-center">
+            <p id="user_id_display" class="mb-4 font-bold text-orange-700 text-2xl"></p>
+            <a id="downloadLink" href="#" target="_blank" class="inline-block bg-green-600 text-white px-12 py-4 rounded-full font-bold shadow-xl hover:scale-105 transition-transform">
+                دانلود PDF نهایی
+            </a>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
+    <script>
+        const translations = {
+            fa: {
+                title: "نرم‌افزار طراحی تاپ‌سان", subtitle: "TopSUN Electric Floor Heating Design",
+                name: "نام و نام خانوادگی", phone: "شماره موبایل", address: "آدرس دقیق محل پروژه",
+                b_age: "وضعیت ساختمان", b_type: "نوع ملک", win: "نوع پنجره‌ها",
+                ins: "عایق‌کاری دیوار", rooms: "لیست فضاها / اتاق‌ها",
+                submit: "ایجاد پلان چیدمان گرمایش کف تاپ‌سان", loading: "در حال تولید پلان...", dl: "دانلود PDF نهایی", room_n: "نام فضا", w: "عرض", l: "طول",
+                b_age_opts: ["نوساز", "بازسازی/قدیمی"], b_type_opts: ["آپارتمانی", "ویلایی"],
+                windows: ["UPVC دوجداره", "آلومینیوم ترمال‌بریک", "تک جداره قدیمی"],
+                insulation: ["بدون عایق‌کاری", "پشم سنگ", "پلی‌استایرن"],
+                err_phone: "شماره موبایل معتبر نیست.", unit_label: "واحد اندازه‌گیری:", meter: "متر", feet: "فوت",
+                mode_manual: "ورود دستی ابعاد", mode_file: "آپلود نقشه (DWG/DXF)",
+                file_label: "فایل DWG یا DXF را انتخاب کنید", btn_browse: "انتخاب فایل", btn_add: "+ افزودن اتاق"
+            },
+            en: {
+                title: "TopSUN Designer", subtitle: "Electric Floor Heating Design",
+                name: "Full Name", phone: "Phone Number", address: "Project Address",
+                b_age: "Building Status", b_type: "Property Type", win: "Windows",
+                ins: "Insulation", rooms: "Rooms List",
+                submit: "Generate Layout Plan", loading: "Generating...", dl: "Download PDF", room_n: "Room Name", w: "Width", l: "Length",
+                b_age_opts: ["New", "Renovated"], b_type_opts: ["Apartment", "Villa"],
+                windows: ["Double Glazed", "Thermal Break", "Single Glazed"],
+                insulation: ["None", "Rockwool", "EPS"],
+                err_phone: "Invalid phone number.", unit_label: "Unit:", meter: "Meter", feet: "Feet",
+                mode_manual: "Manual Entry", mode_file: "Upload CAD",
+                file_label: "Select DXF/DWG File", btn_browse: "Browse", btn_add: "+ Add Room"
+            }
+        };
+
+        const phoneInput = document.querySelector("#phone_input");
+        const iti = window.intlTelInput(phoneInput, {
+            initialCountry: "ir",
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js",
+            preferredCountries: ["ir", "ae", "tr"],
+            separateDialCode: true
+        });
+
+        async function handleForm(event) {
+            event.preventDefault();
+            const lang = document.getElementById('lang_select').value;
+            const errorEl = document.getElementById('phone_error');
+
+            if (!iti.isValidNumber()) {
+                errorEl.innerText = translations[lang].err_phone;
+                errorEl.classList.remove('hidden');
+                phoneInput.classList.add('error-border');
+                return;
+            }
+            errorEl.classList.add('hidden');
+            phoneInput.classList.remove('error-border');
+
+            const formData = new FormData(event.target);
+            formData.set('full_name', formData.get('full_name'));
+            formData.set('phone', iti.getNumber());
+            formData.set('lang_select', lang);
+
+            const btn = document.getElementById('btn_submit');
+            const originalText = btn.innerText;
+            btn.disabled = true;
+            btn.innerText = translations[lang].loading;
+
+            try {
+                const response = await fetch("/generate", { method: "POST", body: formData });
+                const data = await response.json();
+                if (data.status === "success") {
+                    document.getElementById('resultArea').classList.remove('hidden');
+                    document.getElementById('user_id_display').innerText = data.customer_id || "Success";
+                    document.getElementById('downloadLink').href = `/outputs/${data.customer_id}/final_plan.pdf`; // مسیر اصلاح شده
+                    if(data.pdf_url) document.getElementById('downloadLink').href = data.pdf_url;
+                } else { alert("Error: " + data.message); }
+            } catch (e) { alert("Connection Error"); }
+            finally { btn.disabled = false; btn.innerText = originalText; }
+        }
+
+        function setMode(mode) {
+            document.getElementById('input_mode').value = mode;
+            document.getElementById('section_manual').classList.toggle('hidden', mode !== 'manual');
+            document.getElementById('section_file').classList.toggle('hidden', mode !== 'file');
+            document.getElementById('btn_mode_manual').className = mode === 'manual' ? 'flex-1 py-3 rounded-xl font-bold transition-all tab-active' : 'flex-1 py-3 rounded-xl font-bold transition-all text-gray-600';
+            document.getElementById('btn_mode_file').className = mode === 'file' ? 'flex-1 py-3 rounded-xl font-bold transition-all tab-active' : 'flex-1 py-3 rounded-xl font-bold transition-all text-gray-600';
+        }
+
+        function addRoom() {
+            const container = document.getElementById('rooms_container');
+            const newRow = container.children[0].cloneNode(true);
+            newRow.querySelectorAll('input').forEach(i => i.value = '');
+            newRow.querySelector('.remove-btn').classList.remove('hidden');
+            container.appendChild(newRow);
+            updateUnitPlaceholders();
+        }
+
+        function removeRoom(btn) { 
+            if(document.querySelectorAll('.room-row').length > 1) btn.parentElement.remove(); 
+        }
+
+        function updateFileNameDisplay() {
+            const input = document.getElementById('file_input');
+            document.getElementById('file_name_display').innerText = input.files[0] ? input.files[0].name : "";
+        }
+
+        function switchLang() {
+            const l = document.getElementById('lang_select').value;
+            const t = translations[l];
+            document.body.className = l === 'fa' ? 'bg-slate-100 min-h-screen pb-10 rtl' : 'bg-slate-100 min-h-screen pb-10 ltr';
+            document.body.dir = l === 'fa' ? 'rtl' : 'ltr';
+
+            // Update Labels
+            document.getElementById('txt_title').innerText = t.title;
+            document.getElementById('txt_subtitle').innerText = t.subtitle;
+            document.getElementById('lbl_name').innerText = t.name;
+            document.getElementById('lbl_phone').innerText = t.phone;
+            document.getElementById('lbl_address').innerText = t.address;
+            document.getElementById('lbl_b_age').innerText = t.b_age;
+            document.getElementById('lbl_b_type').innerText = t.b_type;
+            document.getElementById('lbl_win').innerText = t.win;
+            document.getElementById('lbl_ins').innerText = t.ins;
+            document.getElementById('lbl_rooms').innerText = t.rooms;
+            document.getElementById('lbl_unit_select').innerText = t.unit_label;
+            document.getElementById('btn_submit').innerText = t.submit;
+            document.getElementById('btn_add_room').innerText = t.btn_add;
+            document.getElementById('btn_mode_manual').innerText = t.mode_manual;
+            document.getElementById('btn_mode_file').innerText = t.mode_file;
+            document.getElementById('lbl_file_select').innerText = t.file_label;
+            document.getElementById('btn_browse').innerText = t.btn_browse;
+            document.getElementById('downloadLink').innerText = t.dl;
+
+            fillDropdown('building_age', t.b_age_opts);
+            fillDropdown('building_type', t.b_type_opts);
+            fillDropdown('window_type', t.windows);
+            fillDropdown('insulation_type', t.insulation);
+            updateUnitPlaceholders();
+        }
+
+        function fillDropdown(id, items) {
+            const el = document.getElementById(id); if(!el) return;
+            el.innerHTML = "";
+            items.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item; opt.innerText = item;
+                el.appendChild(opt);
+            });
+        }
+
+        function updateUnitPlaceholders() {
+            const l = document.getElementById('lang_select').value;
+            const unit = document.getElementById('unit_select').value;
+            const uText = unit === 'm' ? translations[l].meter : translations[l].feet;
+            document.querySelectorAll('.room-name-input').forEach(i => i.placeholder = translations[l].room_n);
+            document.querySelectorAll('.room-w-input').forEach(i => i.placeholder = `${translations[l].w} (${uText})`);
+            document.querySelectorAll('.room-l-input').forEach(i => i.placeholder = `${translations[l].l} (${uText})`);
+        }
+
+        switchLang();
+    </script>
+</body>
+</html>

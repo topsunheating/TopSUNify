@@ -1,0 +1,112 @@
+import streamlit as st
+import Financial
+import main
+import os
+import base64
+import tempfile
+from PIL import Image
+
+# ====================== فونت و CSS قوی ======================
+def inject_custom_css():
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    font_path = os.path.join(current_dir, "PINAR-REGULAR.ttf")
+   
+    if os.path.exists(font_path):
+        with open(font_path, "rb") as f:
+            font_base64 = base64.b64encode(f.read()).decode()
+       
+        css = f"""
+        <style>
+        @font-face {{
+            font-family: 'Pinar';
+            src: url(data:font/ttf;base64,{font_base64}) format('truetype');
+        }}
+        html, body, [class*="css"], * {{
+            font-family: 'Pinar', sans-serif !important;
+            direction: rtl !important;
+            text-align: right !important;
+        }}
+        h1, h5, strong, b, th {{
+            font-weight: bold !important;
+        }}
+        
+        /* حذف کامل keyboard_ar و تمام راهنماهای ورودی */
+        div[data-testid="InputInstructions"],
+        .stTextInput span[aria-hidden="true"],
+        .stNumberInput span[aria-hidden="true"],
+        .stExpander summary span:not(.stMarkdown),
+        .stFileUploader section div div div,
+        section[data-testid="stFileUploadDropzone"] small,
+        section[data-testid="stFileUploadDropzone"] span,
+        .stFileUploader label span {{
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            overflow: hidden !important;
+        }}
+        
+        /* اصلاح ظاهر expander */
+        .stExpander summary {{
+            font-weight: bold;
+        }}
+        </style>
+        """
+        st.markdown(css, unsafe_allow_html=True)
+
+inject_custom_css()
+
+# ====================== تنظیمات صفحه ======================
+try:
+    img = Image.open("logo.png")
+    st.set_page_config(page_title="TopSUNify", page_icon=img, layout="wide")
+except:
+    st.set_page_config(page_title="TopSUNify", layout="wide")
+
+# ====================== هدر ======================
+col_logo, col_title = st.columns([0.7, 5.3])
+with col_logo:
+    try: st.image("logo.png", width=75)
+    except: st.write("☀️")
+with col_title:
+    st.markdown("<h1 style='margin:0; padding-top:6px;'>TopSUNify</h1>", unsafe_allow_html=True)
+    st.markdown("<h5 style='margin:0; color:#555;'>تحلیل هوشمند پلان و صدور پیش‌فاکتور</h5>", unsafe_allow_html=True)
+
+st.divider()
+
+# Session State
+if "manual_rooms" not in st.session_state: st.session_state.manual_rooms = []
+if "show_table" not in st.session_state: st.session_state.show_table = False
+
+# ==================== روش ورودی ====================
+input_method = st.radio(
+    "روش ورود اطلاعات پروژه:",
+    ["آپلود فایل پلان (DXF/DWG)", "وارد کردن دستی ابعاد اتاق‌ها"],
+    horizontal=True,
+    key="input_method_radio"
+)
+
+# ==================== بخش آپلود ====================
+if input_method == "آپلود فایل پلان (DXF/DWG)":
+    uploaded_file = st.file_uploader("فایل DXF یا DWG را انتخاب کنید", type=['dxf', 'dwg'], key="uploader")
+
+# ==================== بخش دستی ====================
+if input_method == "وارد کردن دستی ابعاد اتاق‌ها":
+    with st.expander("➕ افزودن اتاق جدید", expanded=True):
+        c_name, c_w, c_l = st.columns([2, 1, 1])
+        r_name = c_name.text_input("نام فضا", value="پذیرایی", key="room_n")
+        r_w = c_w.number_input("عرض (متر)", min_value=0.0, step=0.1, value=4.0, key="room_w")
+        r_l = c_l.number_input("طول (متر)", min_value=0.0, step=0.1, value=5.0, key="room_l")
+     
+        if st.button("اضافه کردن به لیست", key="add_btn"):
+            if r_w > 0 and r_l > 0:
+                st.session_state.manual_rooms.append({"name": r_name, "w": r_w, "l": r_l})
+                st.rerun()
+
+    if st.session_state.manual_rooms:
+        st.write("### لیست فضاها")
+        cols = st.columns(3)
+        for i, r in enumerate(st.session_state.manual_rooms):
+            with cols[i % 3]:
+                st.info(f"{i+1}. {r['name']}: {r['w']} × {r['l']} متر")
+
+# ... (بقیه کد شما بدون تغییر باقی می‌ماند)
