@@ -4,7 +4,7 @@ import pandas as pd
 import hashlib
 import random
 
-SH_URL = "YOUR_GOOGLE_SHEET_URL"  # لینک گوگل شیت خودت را اینجا بگذار
+SH_URL = "https://docs.google.com/spreadsheets/d/1Vt-vKivm7I2Yi79gJarLVtSR2KowDGCQiW54UIgW6ls/edit?gid=0#gid=0"  # لینک گوگل شیت خودت را اینجا بگذار
 
 def get_sheet_conn():
     return st.connection("gsheets", type=GSheetsConnection)
