@@ -54,3 +54,4 @@ websockets==16.0
 reportlab
 arabic-reshaper
 python-bidi
+num2fawords
