@@ -39,14 +39,14 @@ def render_auth_page():
         flex-direction: row-reverse !important; /* لوگو سمت راست، متن سمت چپ */
         align-items: center !important;
         justify-content: center !important;
-        gap: 0.5px !important; /* فاصله‌ی فوق‌العاده کم و مماس */
+        gap: none !important; /* فاصله‌ی فوق‌العاده کم و مماس */
         width: 100% !important;
         max-width: 400px !important;
         margin: 0 auto 30px auto !important;
     }}
     
     .brand-title-text {{
-        font-size: 26px !important;
+        font-size: 30px !important;
         font-weight: 900 !important;
         color: #000000 !important;
         margin: 0 !important;
