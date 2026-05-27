@@ -100,11 +100,11 @@ def render_auth_page():
         margin: 0 auto !important;
     }}
    
-    /* قرارگیری آیکون بیومتریک دقیقاً روی ورودی رمز عبور و در کنار چشم */
+    /* قرارگیری آیکون بیومتریک روی ورودی رمز عبور و در کنار چشم */
     .bio-html-btn {{
         position: absolute !important;
-        left: 45px !important; /* قرارگیری دقیق در سمت راست آیکون چشم */
-        top: 40px !important;  /* هماهنگ شده با ارتفاع فیلد برای قرارگیری در مرکز عمودی */
+        left: 45px !important; 
+        top: 40px !important;  
         z-index: 999 !important;
         display: inline-block !important;
         width: 24px !important;
@@ -121,29 +121,35 @@ def render_auth_page():
         opacity: 1 !important;
     }}
 
-    /* دکمه ورود: محدود شده به عرض ۴۰۰ پیکسل (هم‌اندازه فیلدها) و رنگ زرد */
+    /* اعمال استایل مستقیم روی دکمه ورود: محدود به ۴۰۰ پیکسل و بک‌گراند زرد */
     div[data-testid="stElementContainer"] {{
         max-width: 400px !important;
         margin: 0 auto !important;
     }}
 
-    div.stButton > button.yellow-submit-btn {{
+    /* استایل نهایی و تثبیت شده دکمه زرد رنگ */
+    div.stButton > button {{
         width: 100% !important;
         max-width: 400px !important;
         display: block !important;
         margin: 40px auto 0 auto !important;
-        background-color: #facc15 !important; /* بک‌گراند زرد رنگ */
+        background-color: #ffd60a !important; /* رنگ زرد جذاب و استاندارد */
         color: #1e293b !important;
         border: none !important;
         border-radius: 12px !important;
         padding: 14px 0 !important;
         font-size: 16px !important;
         font-weight: bold !important;
-        box-shadow: none !important;
+        box-shadow: 0 4px 6px -1px rgba(253, 224, 71, 0.2) !important;
+        transition: all 0.2s ease-in-out !important;
     }}
-    div.stButton > button.yellow-submit-btn:hover {{
-        background-color: #eab308 !important;
-        color: #1e293b !important;
+    div.stButton > button:hover {{
+        background-color: #ffc300 !important; /* زرد کمی تیره‌تر هنگام هوور */
+        color: #000000 !important;
+        transform: translateY(-1px);
+    }}
+    div.stButton > button:active {{
+        transform: translateY(0px);
     }}
    
     .forgot-link {{
@@ -260,13 +266,13 @@ def render_auth_page():
     # --- فیلدهای ورودی نام کاربری و پسورد ---
     username = st.text_input("نام کاربری", value="", placeholder="نام کاربری")
     
-    # ساخت کادر پسورد: آیکون بیومتریک و چشم بومی دقیقاً در یک لایه و یک خط قرار دارند
+    # ساخت کادر پسورد
     st.markdown('<div class="bio-container">', unsafe_allow_html=True)
     password = st.text_input("رمز ورود", type="password", placeholder="رمز ورود")
     st.markdown('<a href="?show_bio=true&bio_tab=fingerprint" target="_self" class="bio-html-btn"></a>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # --- دکمه ورود (هم‌اندازه فیلدها با پس‌زمینه زرد رنگ) ---
+    # --- دکمه ورود (هم‌اندازه فیلدها با پس‌زمینه زرد رنگ ثابت شده) ---
     if st.button("ورود به TopSUNify", key="submit_yellow_btn", use_container_width=True):
         if username == "admin" and password == "1234":
             st.session_state.logged_in = True
@@ -321,15 +327,3 @@ def render_auth_page():
         </div>
         """
         st.html(popup_html_template)
-
-    # اسکریپت اعمال کلاس دکمه ورود اصلی
-    st.markdown("""
-        <script>
-        var buttons = window.parent.document.getElementsByTagName('button');
-        for (var i = 0; i < buttons.length; i++) {
-            if (buttons[i].innerText === "ورود به TopSUNify") {
-                buttons[i].classList.add("yellow-submit-btn");
-            }
-        }
-        </script>
-    """, unsafe_allow_html=True)
