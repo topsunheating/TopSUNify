@@ -226,7 +226,7 @@ with tab_file:
         file_size_mb = uploaded_file.size / (1024 * 1024)
         
         st.markdown("<br>", unsafe_allow_html=True)
-        col_file_info, col_file_del = st.columns()
+        col_file_info, col_file_del = st.columns(3)
         with col_file_info:
             st.success(f"✅ فایل بارگذاری شد: {uploaded_file.name} ({file_size_mb:.1f} مگابایت)")
         with col_file_del:
@@ -308,7 +308,7 @@ with tab_room_manual:
                             st.session_state.show_table = False
                         st.rerun()
         
-        col_clear = st.columns()
+        col_clear = st.columns([1, 3, 1])[1]
         with col_clear:
             if st.button("🗑️ پاک کردن همه اتاق‌ها", use_container_width=True):
                 st.session_state.manual_rooms = []
