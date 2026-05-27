@@ -30,6 +30,7 @@ def inject_custom_css():
         with open(font_path, "rb") as f:
             font_base64 = base64.b64encode(f.read()).decode()
 
+    # کدهای استایل و تنظیمات مربوط به موبایل
     css = f"""
     <style>
     @font-face {{
@@ -173,7 +174,14 @@ def inject_custom_css():
         gap: 14px !important;
     }}
     </style>
+    
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="TopSUNify">
+    <link rel="apple-touch-icon" href="./static/logo.png">
     """
+    
     st.markdown(css, unsafe_allow_html=True)
 
 # اجرای استایل‌ها
