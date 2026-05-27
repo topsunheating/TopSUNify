@@ -32,8 +32,10 @@ def fa(text):
 
 # ================= مسیرها و فونت =================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-FONT_PATH_REG = os.path.join(BASE_DIR, "Pinar-Regular.ttf")
-FONT_PATH_BLACK = os.path.join(BASE_DIR, "Pinar-DS3-Black.ttf") # فونت اعداد و تیترها
+
+# اصلاح دقیق نام و پسوند فایل‌ها مطابق با فایل‌های آپلود شده در گیت‌هاب (.TTF بزرگ)
+FONT_PATH_REG = os.path.join(BASE_DIR, "PINAR-REGULAR.TTF")
+FONT_PATH_BLACK = os.path.join(BASE_DIR, "PINAR-DS3-BLACK.TTF") 
 LOGO_PATH = os.path.join(BASE_DIR, "logo.png")
 
 PDF_FONT = "Pinar"
@@ -43,13 +45,26 @@ FONT_BOLD = "Pinar-DS3-Black"
 if os.path.exists(FONT_PATH_REG):
     pdfmetrics.registerFont(TTFont(PDF_FONT, FONT_PATH_REG))
 else:
-    PDF_FONT = "Helvetica"
+    # اگر به هر دلیلی پینار نبود، از وزیر یا تاهوما استفاده کند تا کلمات فارسی خراب نشوند
+    if os.path.exists(os.path.join(BASE_DIR, "Vazir.ttf")):
+        PDF_FONT = "Vazir"
+    else:
+        PDF_FONT = "Helvetica"
 
-# ثبت فونت Bold (Pinar-DS3-Black)
+# ثبت فونت Bold
 if os.path.exists(FONT_PATH_BLACK):
     pdfmetrics.registerFont(TTFont(FONT_BOLD, FONT_PATH_BLACK))
 else:
-    FONT_BOLD = PDF_FONT # اگر فایل نبود از فونت معمولی استفاده کند
+    FONT_BOLD = PDF_FONT
+
+# دستور حیاتی برای شناساندن فونت‌های فارسی به ساختار پیش‌فرض ReportLab
+from reportlab.lib.styles import getSampleStyleSheet
+try:
+    styles = getSampleStyleSheet()
+    if 'Normal' in styles.byName:
+        styles['Normal'].fontName = PDF_FONT
+except Exception:
+    pass
 
 # ================= محاسبات مالی هوشمند عایق (رولی و خرده) =================
 def calculate_tosunify_proforma(
