@@ -39,7 +39,7 @@ def render_auth_page():
     """, unsafe_allow_html=True)
 
     # نمایش لوگو و هدر در بالای فرم
-    col_space1, col_center, col_space2 = st.columns()
+    col_space1, col_center, col_space2 = st.columns(3)
     with col_center:
         try:
             st.image("./static/logo.png", width=120)
