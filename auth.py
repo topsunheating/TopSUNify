@@ -18,7 +18,7 @@ def render_auth_page():
         with open(font_path, "rb") as f:
             font_base64 = base64.b64encode(f.read()).decode()
 
-    # تبدیل آیکون جدید biometric.png به base64 جهت استفاده پایدار در استایل‌ها
+    # تبدیل آیکون biometric.png به base64 جهت استفاده پایدار
     bio_icon_base64 = ""
     if os.path.exists("biometric.png"):
         with open("biometric.png", "rb") as f:
@@ -63,8 +63,10 @@ def render_auth_page():
         line-height: 1 !important;
     }}
 
+    /* هماهنگی کامل ابعاد فیلدها */
     div[data-testid="stTextInput"] {{
-        max-width: 400px;
+        width: 100% !important;
+        max-width: 400px !important;
         margin: 0 auto !important;
     }}
    
@@ -85,23 +87,24 @@ def render_auth_page():
         box-shadow: none !important;
     }}
 
-    /* استریم‌لیت پدینگ چپ فیلد را برای جا شدن آیکون چشم ایجاد می‌کند، 
-       ما مقدار آن را بیشتر می‌کنیم تا آیکون بیومتریک هم بدون روی هم افتادن جا شود */
+    /* ایجاد فضای خالی در سمت چپ فیلد برای قرارگیری منظم آیکون چشم و بیومتریک */
     .stTextInput input[type="password"] {{
-        padding-left: 80px !important;
+        padding-left: 85px !important;
     }}
 
+    /* کانتینر نگهدارنده فیلد رمز ورود */
     .bio-container {{
-        position: relative;
-        max-width: 400px;
-        margin: 0 auto;
+        position: relative !important;
+        width: 100% !important;
+        max-width: 400px !important;
+        margin: 0 auto !important;
     }}
    
-    /* تنظیم جایگاه دقیق آیکون بیومتریک در کنار آیکون چشم (سمت راست چشم) */
+    /* قرارگیری آیکون بیومتریک دقیقاً روی ورودی رمز عبور و در کنار چشم */
     .bio-html-btn {{
         position: absolute !important;
-        left: 45px !important; /* انتقال به سمت راست آیکون چشم استریم‌لیت */
-        top: 10px !important;
+        left: 45px !important; /* قرارگیری دقیق در سمت راست آیکون چشم */
+        top: 40px !important;  /* هماهنگ شده با ارتفاع فیلد برای قرارگیری در مرکز عمودی */
         z-index: 999 !important;
         display: inline-block !important;
         width: 24px !important;
@@ -118,39 +121,49 @@ def render_auth_page():
         opacity: 1 !important;
     }}
 
+    /* دکمه ورود: محدود شده به عرض ۴۰۰ پیکسل (هم‌اندازه فیلدها) و رنگ زرد */
+    div[data-testid="stElementContainer"] {{
+        max-width: 400px !important;
+        margin: 0 auto !important;
+    }}
+
     div.stButton > button.yellow-submit-btn {{
         width: 100% !important;
-        max-width: 400px;
-        display: block;
+        max-width: 400px !important;
+        display: block !important;
         margin: 40px auto 0 auto !important;
-        background-color: #facc15 !important;
+        background-color: #facc15 !important; /* بک‌گراند زرد رنگ */
         color: #1e293b !important;
         border: none !important;
         border-radius: 12px !important;
         padding: 14px 0 !important;
         font-size: 16px !important;
         font-weight: bold !important;
+        box-shadow: none !important;
     }}
     div.stButton > button.yellow-submit-btn:hover {{
-        background-color: #ea580c !important;
-        color: white !important;
+        background-color: #eab308 !important;
+        color: #1e293b !important;
     }}
    
     .forgot-link {{
-        text-align: center;
-        margin-top: 25px;
+        text-align: center !important;
+        margin-top: 25px !important;
+        width: 100% !important;
+        max-width: 400px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
     }}
     .forgot-link a {{
         color: #2563eb !important;
-        text-decoration: none;
-        font-size: 14px;
-        font-weight: bold;
+        text-decoration: none !important;
+        font-size: 14px !important;
+        font-weight: bold !important;
     }}
 
     /* ==========================================
        استایل‌های پاپ‌آپ یکپارچه کاملاً فیکس شده
        ========================================== */
-
     .popup-overlay {{
         position: fixed !important;
         top: 0 !important; left: 0 !important;
@@ -244,17 +257,16 @@ def render_auth_page():
 
     st.markdown('<div style="height: 20px;"></div>', unsafe_allow_html=True)
 
-    # --- فیلدهای ورودی ---
+    # --- فیلدهای ورودی نام کاربری و پسورد ---
     username = st.text_input("نام کاربری", value="", placeholder="نام کاربری")
     
-    # ساخت کادر پسورد و قرارگیری آیکون‌ها
+    # ساخت کادر پسورد: آیکون بیومتریک و چشم بومی دقیقاً در یک لایه و یک خط قرار دارند
     st.markdown('<div class="bio-container">', unsafe_allow_html=True)
     password = st.text_input("رمز ورود", type="password", placeholder="رمز ورود")
-    # لینک پاپ آپ با آیکون اختصاصی شما، دقیقا در کنار آیکون چشم بومی استریم‌لیت
     st.markdown('<a href="?show_bio=true&bio_tab=fingerprint" target="_self" class="bio-html-btn"></a>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # --- دکمه ورود ---
+    # --- دکمه ورود (هم‌اندازه فیلدها با پس‌زمینه زرد رنگ) ---
     if st.button("ورود به TopSUNify", key="submit_yellow_btn", use_container_width=True):
         if username == "admin" and password == "1234":
             st.session_state.logged_in = True
