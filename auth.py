@@ -143,7 +143,7 @@ def render_auth_page():
         z-index: 999990 !important;
     }}
    
-    /* کادر سفید پاپ‌آپ کاملاً در مرکز صفحه */
+    /* کادر سفید پاپ‌آپ */
     .custom-popup-card {{
         position: fixed !important;
         top: 50% !important; left: 50% !important;
@@ -243,7 +243,7 @@ def render_auth_page():
     # --- لینک فراموشی ---
     st.markdown('<div class="forgot-link"><a href="#">فعال‌سازی / فراموشی رمز</a></div>', unsafe_allow_html=True)
 
-    # --- پاپ‌آپ بیومتریک ---
+    # --- پاپ‌آپ بیومتریک بومی ---
     if st.session_state.show_bio_popup:
         
         col_h1, col_h2, col_h3 = st.columns(3)
@@ -290,7 +290,6 @@ def render_auth_page():
                 <div style="height: 30px;"></div>
             """
 
-        # تعریف متن قالب به صورت رشته خام (بدون f ابتدای رشته جهت جلوگیری از تداخل آکلواد جاوااسکریپت)
         popup_html_template = """
         <div class="custom-overlay-bg" onclick="triggerPythonAction('close_bio')"></div>
         <div class="custom-popup-card">
@@ -321,15 +320,15 @@ def render_auth_page():
         </script>
         """
 
-        # جایگذاری امن متغیرها
+        # جایگذاری رشته‌ها به صورت خام بدون دخالت دادن f-string
         popup_rendered = popup_html_template.replace("{ACTIVE_FACE}", active_face)\
                                             .replace("{ACTIVE_FINGER}", active_finger)\
                                             .replace("{GRAPHIC_CONTENT}", graphic_content)
 
-        # تزریق مستقیم به لایه اصلی برنامه بدون استفاده از iframe
-        st.markdown(popup_rendered, unsafe_allow_html=True)
+        # 📌 استفاده از تابع ایمن و بومی st.html برای رندر کردن ۱۰۰٪ گرافیکی و بدون نقص متن
+        st.html(popup_rendered)
 
-    # اسکریپت زرد کردن دکمه
+    # اسکریپت اعمال کلاس زرد
     st.markdown("""
         <script>
         var buttons = window.parent.document.getElementsByTagName('button');
