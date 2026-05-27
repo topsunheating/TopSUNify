@@ -3,7 +3,7 @@ import streamlit as st
 # ====================== ۱. تنظیمات بومی صفحه و هویت بصری ======================
 # این بخش باید قطعاً و بدون هیچ استثنایی، اولین خط اجرایی در کل فایل پایتون باشد
 st.set_page_config(
-    page_title="TopSUNify | هوش مصنوعی گرمایش",
+    page_title="TopSUNify",
     page_icon="./static/logo.png", # آیکون اختصاصی در تب مرورگر
     layout="wide"
 )
