@@ -1,0 +1,17 @@
+{
+  "short_name": "TopSUNify",
+  "name": "ToSUNify | هوش مصنوعی گرمایش",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/topsunheating/TopSUNify/main/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "background_color": "#ffffff",
+  "theme_color": "#ff6600",
+  "display": "standalone",
+  "orientation": "portrait"
+}
