@@ -1,15 +1,14 @@
 import streamlit as st
 
-# ====================== ۱. تنظیمات بومی صفحه و هویت بصری ======================
-# این بخش باید قطعاً و بدون هیچ استثنایی، اولین خط اجرایی در کل فایل پایتون باشد
 st.set_page_config(
-    page_title="TopSUNify",
-    page_icon="./static/logo.png", # آیکون اختصاصی در تب مرورگر
+    page_title="TopSUNify | هوش مصنوعی گرمایش",
+    page_icon="./static/logo.png",
     layout="wide"
 )
 
-# اضافه کردن لوگو به بالای منوی سمت چپ (Sidebar)
-st.logo("./static/logo.png", link="https://topsunify-gshdpz3qnjc3itl8ukrxfq.streamlit.app")
+# این دو خط زیر را موقتاً کامنت کنید و برنامه را ریفرش کنید:
+# import main
+# import Financial
 
 # ====================== ۲. ایمپورت سایر کتابخانه‌ها و ماژول‌ها ======================
 import Financial
