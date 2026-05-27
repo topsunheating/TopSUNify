@@ -57,3 +57,4 @@ python-bidi
 num2fawords
 fastapi
 python-multipart
+shapely
