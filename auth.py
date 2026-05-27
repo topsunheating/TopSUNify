@@ -4,11 +4,11 @@ import os
 import base64
 
 def render_auth_page():
-    # مدیریت وضعیت تب انتخاب شده در بیومتریک از طریق Session State
-    if "bio_tab" not in st.session_state:
+    # مدیریت وضعیت تب انتخاب شده در بیومتریک
+    if "bio_tab" not in st.session_state: 
         st.session_state.bio_tab = "fingerprint"
 
-    # --- ۱. تزریق فونت ایران‌یکان و استایل‌های فیکس شده لایه‌های پاپ‌آپ نیتتیو ---
+    # --- ۱. تزریق فونت ایران‌یکان و استایل‌های فیکس شده لایه‌های پاپ‌آپ ---
     font_path = "iranyekan.ttf"
     font_base64 = ""
 
@@ -135,7 +135,7 @@ def render_auth_page():
         font-weight: bold;
     }}
 
-    /* پیاده‌سازی پس‌زمینه تاریک پاپ‌آپ */
+    /* پس‌زمینه تاریک پاپ‌آپ بیومتریک */
     .custom-overlay-bg {{
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
@@ -233,7 +233,7 @@ def render_auth_page():
         st.rerun()
     st.markdown('</div></div>', unsafe_allow_html=True)
 
-    # --- ۵. دکمه اصلی ورود (زرد رنگ) ---
+    # --- ۵. دکمه اصلی ورود (زرد رنگ تاپسان) ---
     if st.button("ورود به TopSUNify", key="submit_yellow_btn", use_container_width=True):
         if username == "admin" and password == "1234":
             st.session_state.logged_in = True
@@ -248,21 +248,19 @@ def render_auth_page():
     # --- ۶. لینک فعال‌سازی / فراموشی رمز ---
     st.markdown('<div class="forgot-link"><a href="#">فعال‌سازی / فراموشی رمز</a></div>', unsafe_allow_html=True)
 
-    # --- ۷. ردیف کنترل اکشن‌های پاپ‌آپ از طریق المان‌های بومی استریم‌لیت ---
+    # --- ۷. دکمه‌های کنترلی پنهان برای برقراری ارتباط بین جاوااسکریپت و پایتون ---
     if st.session_state.show_bio_popup:
-        # ایجاد دکمه‌های پنهان استریم‌لیت برای هندل کردن وضعیت دکمه‌های HTML
         col_h1, col_h2, col_h3 = st.columns(3)
-        
         with col_h1:
-            if st.button("set_finger", key="btn_h_finger", help="hidden"):
+            if st.button("set_finger", key="btn_h_finger"):
                 st.session_state.bio_tab = "fingerprint"
                 st.rerun()
         with col_h2:
-            if st.button("set_face", key="btn_h_face", help="hidden"):
+            if st.button("set_face", key="btn_h_face"):
                 st.session_state.bio_tab = "face"
                 st.rerun()
         with col_h3:
-            if st.button("close_bio", key="btn_h_close", help="hidden"):
+            if st.button("close_bio", key="btn_h_close"):
                 st.session_state.show_bio_popup = False
                 st.rerun()
 
@@ -278,36 +276,37 @@ def render_auth_page():
             </style>
         """, unsafe_allow_html=True)
 
-        # تفکیک وضعیت تب‌های فعال و غیرفعال پاپ آپ
+        # تفکیک دقیق وضعیت اکتیو بودن تب‌ها
         active_face = "active" if st.session_state.bio_tab == "face" else ""
         active_finger = "active" if st.session_state.bio_tab == "fingerprint" else ""
         
+        # مقداردهی محتوای میانی بدون استفاده از قالب‌بندی رشته تداخلی
         if st.session_state.bio_tab == "fingerprint":
-            inner_html_content = """
+            graphic_content = """
                 <h4 style="color: #1e293b; text-align: center; margin:0; font-weight:bold; font-size:18px;">ورود با اثر انگشت</h4>
                 <p style="text-align: center; color: #64748b; font-size: 13px; margin: 8px 0 20px 0;">حسگر را لمس کنید</p>
                 <h1 style="text-align: center; font-size: 65px; margin: 20px 0; color: #ea580c;">☝️</h1>
             """
         else:
-            inner_html_content = """
+            graphic_content = """
                 <h4 style="color: #1e293b; text-align: center; margin:0; font-weight:bold; font-size:18px;">ورود با تشخیص چهره</h4>
                 <p style="text-align: center; color: #64748b; font-size: 13px; margin: 8px 0 20px 0;">به دوربین جلو نگاه کنید</p>
                 <h1 style="text-align: center; font-size: 65px; margin: 20px 0; color: #facc15;">👤</h1>
             """
 
-        # --- ۸. تزریق پاپ‌آپ نهایی کامپایل شده بدون خطای فرمت رشته ---
-        st.markdown(f"""
+        # ساخت کل پکیج پاپ‌آپ با استفاده از قالب‌بندی امن و استاندارد چندخطی
+        popup_html_code = """
         <div class="custom-overlay-bg" onclick="triggerPythonAction('close_bio')"></div>
         <div class="custom-popup-card">
             <div style="font-size:13px; color:#94a3b8; margin-bottom:12px; text-align:center; font-weight:bold;">☀️ TopSUNify</div>
             
             <div class="segment-tab-container">
-                <a href="#" class="segment-btn {active_face}" onclick="triggerPythonAction('set_face'); return false;">Face ID</a>
-                <a href="#" class="segment-btn {active_finger}" onclick="triggerPythonAction('set_finger'); return false;">Fingerprint</a>
+                <a href="#" class="segment-btn {FACE_CLASS}" onclick="triggerPythonAction('set_face'); return false;">Face ID</a>
+                <a href="#" class="segment-btn {FINGER_CLASS}" onclick="triggerPythonAction('set_finger'); return false;">Fingerprint</a>
             </div>
             
             <div style="min-height: 140px; direction: rtl !important;">
-                {inner_html_content}
+                {BODY_CONTENT}
             </div>
             
             <a href="#" class="html-cancel-link" onclick="triggerPythonAction('close_bio'); return false;">انصراف</a>
@@ -324,9 +323,18 @@ def render_auth_page():
             }}
         }}
         </script>
-        """, unsafe_allow_html=True)
+        """
+        
+        # جایگذاری ایمن متغیرها با استفاده از دکشنری (برای جلوگیری از خطای آکلواد جاوااسکریپت)
+        popup_rendered = popup_html_code.replace("{FACE_CLASS}", active_face)\
+                                        .replace("{FINGER_CLASS}", active_finger)\
+                                        .replace("{BODY_CONTENT}", graphic_content)
+        
+        # رندر پاپ‌آپ واقعی و نهایی بدون نمایش کد خام
+        st.components.v1.html(popup_rendered, height=0, width=0)
+        st.markdown(popup_rendered, unsafe_allow_html=True)
 
-    # اسکریپت زرد کردن دکمه ورود اصلی
+    # اسکریپت زرد کردن دکمه ورود اصلی به اپلیکیشن تاپسان
     st.markdown("""
         <script>
         var buttons = window.parent.document.getElementsByTagName('button');
