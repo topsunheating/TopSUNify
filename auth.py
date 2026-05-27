@@ -104,7 +104,7 @@ def render_auth_page():
     .bio-html-btn {{
         position: absolute !important;
         left: 48px !important; 
-        bottom: 24px !important; /* بالا بردن آیکون به داخل فضای کادر */
+        bottom: 24px !important; 
         z-index: 9999 !important;
         display: inline-block !important;
         width: 22px !important;
@@ -189,13 +189,14 @@ def render_auth_page():
         box-sizing: border-box !important;
     }}
 
+    /* اصلاح چیدمان هدر پاپ آپ: اول لوگو سمت راست، سپس متن سمت چپ */
     .popup-header-brand {{
         display: flex !important;
-        flex-direction: row !important;
+        flex-direction: row-reverse !important; /* چیدمان راست‌به‌چپ برای اولویت لوگو */
         align-items: center !important;
         justify-content: center !important;
-        gap: 8px !important;
-        margin-bottom: 20px !important;
+        gap: 10px !important;
+        margin-bottom: 25px !important;
     }}
 
     .segment-tab-container {{
@@ -293,7 +294,7 @@ def render_auth_page():
         <div class="popup-card-container">
             <div class="popup-header-brand">
                 {logo_html}
-                <span style="font-size: 16px; color:#475569; font-weight:800; direction:ltr;">TopSUNify</span>
+                <span style="font-size: 20px; color:#000000; font-weight:900; direction:ltr;">TopSUNify</span>
             </div>
             
             <div class="segment-tab-container">
