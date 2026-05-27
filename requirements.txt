@@ -52,3 +52,5 @@ uvicorn==0.48.0
 watchdog==6.0.0
 websockets==16.0
 reportlab
+arabic-reshaper
+python-bidi
