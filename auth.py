@@ -18,6 +18,12 @@ def render_auth_page():
         with open(font_path, "rb") as f:
             font_base64 = base64.b64encode(f.read()).decode()
 
+    # تبدیل آیکون جدید biometric.png به base64 جهت استفاده پایدار در استریم‌لیت
+    bio_icon_base64 = ""
+    if os.path.exists("biometric.png"):
+        with open("biometric.png", "rb") as f:
+            bio_icon_base64 = base64.b64encode(f.read()).decode()
+
     auth_css = f"""
     <style>
     @font-face {{
@@ -85,9 +91,10 @@ def render_auth_page():
         margin: 0 auto;
     }}
    
+    /* جایگذاری دکمه بیومتریک تصویری جدید در سمت چپ فیلد */
     div.bio-inside-btn {{
         position: absolute;
-        left: 15px;
+        left: 10px;
         top: 32px;
         z-index: 99;
     }}
@@ -95,9 +102,24 @@ def render_auth_page():
     div.bio-inside-btn button {{
         background: transparent !important;
         border: none !important;
-        font-size: 22px !important;
         padding: 0 !important;
         box-shadow: none !important;
+        width: 28px !important;
+        height: 28px !important;
+        min-width: 28px !important;
+        min-height: 28px !important;
+        cursor: pointer !important;
+    }}
+    
+    div.bio-inside-btn button img {{
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain !important;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }}
+    div.bio-inside-btn button:hover img {{
+        opacity: 1 !important;
     }}
 
     div.stButton > button.yellow-submit-btn {{
@@ -156,8 +178,10 @@ def render_auth_page():
         box-sizing: border-box !important;
     }}
 
+    /* هدر پاپ‌آپ هماهنگ با چیدمان درخواست شده: اول لوگو سپس متن */
     .popup-header-brand {{
         display: flex !important;
+        flex-direction: row !important; /* چیدمان افقی از چپ به راست برای ساختار انگلیسی نام برند */
         align-items: center !important;
         justify-content: center !important;
         gap: 8px !important;
@@ -208,14 +232,19 @@ def render_auth_page():
     st.markdown(auth_css, unsafe_allow_html=True)
     st.markdown('<div style="height: 50px;"></div>', unsafe_allow_html=True)
    
-    # --- لود لوگو ---
+    # --- لود لوگو اصلی سیستم ---
     logo_html = "☀️"
     if os.path.exists("./static/logo.png"):
         with open("./static/logo.png", "rb") as f:
             logo_base64 = base64.b64encode(f.read()).decode()
         logo_html = f'<img src="data:image/png;base64,{logo_base64}" width="45" style="display:inline-block; vertical-align:middle;">'
 
-    # --- هدر اصلی فرم ---
+    # ایجاد تگ تصویر برای دکمه اثر انگشت جدید
+    bio_btn_img = "🪪"
+    if bio_icon_base64:
+        bio_btn_img = f'<img src="data:image/png;base64,{bio_icon_base64}">'
+
+    # --- هدر اصلی فرم ورود صفحه اصلی ---
     st.markdown(f"""
     <div class="brand-flex-container">
         {logo_html}
@@ -225,21 +254,21 @@ def render_auth_page():
 
     st.markdown('<div style="height: 20px;"></div>', unsafe_allow_html=True)
 
-    # --- فیلدهای ورودی ---
+    # --- فیلدهای ورودی نام کاربری و پسورد ---
     username = st.text_input("نام کاربری", value="", placeholder="نام کاربری")
     
     st.markdown('<div class="bio-container">', unsafe_allow_html=True)
     password = st.text_input("رمز ورود", type="password", placeholder="رمز ورود")
    
     st.markdown('<div class="bio-inside-btn">', unsafe_allow_html=True)
-    # با کلیک روی آیکون بیومتریک، پارامتر پاپ‌آپ در URL ست می‌شود
-    if st.button("🪪", key="trigger_bio_popup_btn"):
+    # دکمه استریم‌لیت حاوی تصویر انیمیشنی اثر انگشت جدید شما
+    if st.button(bio_btn_img, key="trigger_bio_popup_btn"):
         st.query_params["show_bio"] = "true"
         st.query_params["bio_tab"] = "fingerprint"
         st.rerun()
     st.markdown('</div></div>', unsafe_allow_html=True)
 
-    # --- دکمه ورود ---
+    # --- دکمه ورود اصلی ---
     if st.button("ورود به TopSUNify", key="submit_yellow_btn", use_container_width=True):
         if username == "admin" and password == "1234":
             st.session_state.logged_in = True
@@ -254,7 +283,7 @@ def render_auth_page():
     st.markdown('<div class="forgot-link"><a href="#">فعال‌سازی / فراموشی رمز</a></div>', unsafe_allow_html=True)
 
     # ==========================================
-    # پاپ‌آپ ۱۰۰٪ خالص HTML/CSS (بدون ریسک جابجایی دکمه‌ها در دسکتاپ/موبایل)
+    # پاپ‌آ‌پ اصلاح‌شده با ساختار جدید هدر و تقارن لوگو/برند
     # ==========================================
     if show_bio:
         active_face = "active" if bio_tab == "face" else ""
@@ -273,7 +302,7 @@ def render_auth_page():
                 <div style="height: 20px;"></div>
             """
 
-        # رندر پاپ‌آپ به همراه لینک‌های تغییر وضعیت با کمک پارامترهای بومی URL هدفگیری‌شده
+        # رندر پاپ‌آپ با ترتیب جدید: اول لوگوی تاپ‌سان و سپس عبارت متنی برند
         popup_html_template = f"""
         <div class="popup-overlay"></div>
         <div class="popup-card-container">
