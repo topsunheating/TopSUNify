@@ -4,7 +4,7 @@ import os
 import base64
 
 def render_auth_page():
-    # مدیریت وضعیت تب انتخاب شده در بیومتریک و پاپ‌آپ
+    # مدیریت وضعیت تب انتخاب شده در بیومتریک و پاپ‌آ‌پ
     if "bio_tab" not in st.session_state:
         st.session_state.bio_tab = "fingerprint"
         
@@ -13,7 +13,7 @@ def render_auth_page():
     if "logged_in" not in st.session_state:
         st.session_state.logged_in = False
 
-    # --- ۱. تزریق فونت ایران‌یکان و استایل‌های پایه صفحه ---
+    # --- ۱. تزریق فونت ایران‌یکان و استایل‌های اصلی صفحه ---
     font_path = "iranyekan.ttf"
     font_base64 = ""
     if os.path.exists(font_path):
@@ -40,7 +40,7 @@ def render_auth_page():
         display: none !important;
     }}
 
-    /* هدر اصلی فرم ورود */
+    /* هدر فرم ورود اصلی */
     .brand-flex-container {{
         display: flex !important;
         flex-direction: row-reverse !important;
@@ -136,59 +136,43 @@ def render_auth_page():
     }}
 
     /* ==========================================
-       استایل‌های پیشرفته پاپ‌آپ بومی استریم‌لیت
+       استایل‌های پاپ‌آپ (کاملاً هماهنگ با عکس نمونه موبایل)
        ========================================== */
 
-    /* لایه بک‌دراپ تاریک */
+    /* لایه تاریک کل صفحه */
     .popup-overlay {{
         position: fixed !important;
         top: 0 !important; left: 0 !important;
         width: 100vw !important; height: 100vh !important;
-        background: rgba(0, 0, 0, 0.55) !important;
+        background: rgba(0, 0, 0, 0.6) !important;
         z-index: 999990 !important;
     }}
 
-    /* کادر سفید اصلی */
+    /* کادر سفید اصلی پاپ‌آپ */
     .popup-card-container {{
         position: fixed !important;
         top: 50% !important; left: 50% !important;
         transform: translate(-50%, -50%) !important;
         background: white !important;
         width: 88% !important;
-        max-width: 350px !important;
-        border-radius: 24px !important;
+        max-width: 340px !important;
+        border-radius: 28px !important;
         padding: 24px !important;
-        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3) !important;
-        z-index: 999999 !important;
+        box-shadow: 0 20px 30px rgba(0,0,0,0.3) !important;
+        z-index: 999995 !important;
         direction: rtl !important;
-    }}
-
-    /* هدر پاپ آپ شامل آیکون و نوشته کاملاً وسط‌چین */
-    .popup-header-brand {{
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        gap: 6px !important;
-        font-size: 14px !important;
-        color: #94a3b8 !important;
-        margin-bottom: 20px !important;
-        font-weight: bold !important;
         text-align: center !important;
-        width: 100% !important;
     }}
 
-    /* باکس سگمنت کنترلر استریم‌لیت */
+    /* باکس نگهدارنده سگمنت تب بومی */
     div.segment-tabs-box {{
         background: #f1f5f9 !important;
         padding: 4px !important;
         border-radius: 30px !important;
-        margin-bottom: 25px !important;
+        margin-bottom: 20px !important;
         width: 100% !important;
-    }}
-    
-    /* استایل دکمه‌های سگمنت پاپ‌آپ */
-    div.segment-tabs-box div[data-testid="stHorizontalBlock"] {{
-        gap: 4px !important;
+        z-index: 999999 !important;
+        position: relative !important;
     }}
     
     div.segment-tabs-box button {{
@@ -201,22 +185,28 @@ def render_auth_page():
         border-radius: 25px !important;
         padding: 8px 0 !important;
         box-shadow: none !important;
-        transition: all 0.2s !important;
     }}
 
-    /* دکمه انصراف قرمز پایین پاپ‌آپ */
+    /* باکس دکمه انصراف در پاپ‌آپ */
+    div.popup-cancel-box {{
+        margin-top: 15px !important;
+        width: 100% !important;
+        text-align: center !important;
+        z-index: 999999 !important;
+        position: relative !important;
+    }}
     div.popup-cancel-box button {{
         width: 100% !important;
         background: transparent !important;
         border: none !important;
-        color: #ef4444 !important;
+        color: #64748b !important; /* رنگ خاکستری شبیه عکس موبایل */
         font-size: 16px !important;
         font-weight: bold !important;
         box-shadow: none !important;
-        margin-top: 15px !important;
     }}
     div.popup-cancel-box button:hover {{
-        background: #fef2f2 !important;
+        color: #ef4444 !important;
+        background: #f1f5f9 !important;
     }}
     </style>
     """
@@ -224,12 +214,12 @@ def render_auth_page():
 
     st.markdown('<div style="height: 50px;"></div>', unsafe_allow_html=True)
    
-    # --- هدر اصلی فرم ---
+    # --- هدر اصلی فرم ورود ---
     logo_html = "☀️"
     if os.path.exists("./static/logo.png"):
         with open("./static/logo.png", "rb") as f:
             logo_base64 = base64.b64encode(f.read()).decode()
-        logo_html = f'<img src="data:image/png;base64,{logo_base64}" width="52" style="display: block; margin: 0; padding: 0;">'
+        logo_html = f'<img src="data:image/png;base64,{logo_base64}" width="52" style="display: block; margin: 0 auto;">'
 
     st.markdown(f"""
     <div class="brand-flex-container">
@@ -240,7 +230,7 @@ def render_auth_page():
 
     st.markdown('<div style="height: 20px;"></div>', unsafe_allow_html=True)
 
-    # --- فیلدهای ورودی نام کاربری و پسورد ---
+    # --- فیلدهای ورودی ---
     username = st.text_input("نام کاربری", value="", placeholder="نام کاربری")
     
     st.markdown('<div class="bio-container">', unsafe_allow_html=True)
@@ -252,7 +242,7 @@ def render_auth_page():
         st.rerun()
     st.markdown('</div></div>', unsafe_allow_html=True)
 
-    # --- دکمه ورود اصلی ---
+    # --- دکمه ورود ---
     if st.button("ورود به TopSUNify", key="submit_yellow_btn", use_container_width=True):
         if username == "admin" and password == "1234":
             st.session_state.logged_in = True
@@ -266,70 +256,68 @@ def render_auth_page():
 
     st.markdown('<div class="forgot-link"><a href="#">فعال‌سازی / فراموشی رمز</a></div>', unsafe_allow_html=True)
 
-    # --- پاپ‌آپ کاملاً بومی و عملیاتی بیومتریک ---
+    # ==========================================
+    # پاپ‌آپ کاملاً بومی، فیکس شده و هماهنگ با ساختار عکس موبایل
+    # ==========================================
     if st.session_state.show_bio_popup:
-        # ایجاد لایه تاریک پس‌زمینه
+        # ۱. لایه تاریک پشت پاپ‌آپ
         st.markdown('<div class="popup-overlay"></div>', unsafe_allow_html=True)
         
-        # باز کردن کادر پاپ‌آپ
+        # ۲. شروع بدنه کادر پاپ‌آپ سفید رنگ
         st.markdown('<div class="popup-card-container">', unsafe_allow_html=True)
         
-        # ۱. هدر پاپ‌آپ: آیکون تاپ‌سان + نوشته (کاملاً وسط‌چین)
-        st.markdown(f"""
-        <div class="popup-header-brand">
-            {logo_html}
-            <span style="font-size: 15px; color:#475569; font-weight:800; letter-spacing:-0.3px;">TopSUNify</span>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # ۲. سگمنت کنترلر بالای پاپ‌آپ با دکمه‌های واقعی و استایل‌دهی شده پایتون
+        # ۳. بخش دکمه‌های تعویض تب (سگمنت بالای پاپ‌آپ)
         st.markdown('<div class="segment-tabs-box">', unsafe_allow_html=True)
         col_tab1, col_tab2 = st.columns(2)
-        
         with col_tab1:
             active_face_style = "background: #2563eb !important; color: white !important;" if st.session_state.bio_tab == "face" else ""
             st.markdown(f'<style>div[data-testid="stColumn"]:nth-of-type(1) button {{ {active_face_style} }}</style>', unsafe_allow_html=True)
             if st.button("Face ID", key="tab_btn_face"):
                 st.session_state.bio_tab = "face"
                 st.rerun()
-                
         with col_tab2:
             active_finger_style = "background: #2563eb !important; color: white !important;" if st.session_state.bio_tab == "fingerprint" else ""
             st.markdown(f'<style>div[data-testid="stColumn"]:nth-of-type(2) button {{ {active_finger_style} }}</style>', unsafe_allow_html=True)
             if st.button("Fingerprint", key="tab_btn_finger"):
                 st.session_state.bio_tab = "fingerprint"
                 st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True) # بستن تب باکس
 
-        # ۳. محتوای میانی پاپ‌آپ (کاملاً وسط‌چین شده)
+        # ۴. بخش لوگو و نوشته‌های میانی پاپ‌آپ (دقیقاً مشابه عکس نمونه موبایل شما)
         if st.session_state.bio_tab == "fingerprint":
-            st.markdown("""
-                <div style="text-align: center; width: 100%; min-height: 70px;">
-                    <h4 style="color: #1e293b; text-align: center; margin:0; font-weight:bold; font-size:18px; width:100%;">ورود با اثر انگشت</h4>
-                    <p style="text-align: center; color: #64748b; font-size: 13px; margin: 8px 0 0 0; width:100%;">حسگر را لمس کنید</p>
+            st.markdown(f"""
+                <div style="text-align: center; width: 100%; display: block; margin: 0 auto;">
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 15px;">
+                        {logo_html}
+                        <span style="font-size: 15px; color:#475569; font-weight:800; letter-spacing:-0.3px;">TopSUNify</span>
+                    </div>
+                    <h4 style="color: #1e293b; text-align: center !important; margin: 0 auto; font-weight: bold; font-size: 18px; width: 100%; display: block;">ورود با اثر انگشت</h4>
+                    <p style="text-align: center !important; color: #64748b; font-size: 14px; margin: 8px auto 0 auto; width: 100%; display: block;">حسگر را لمس کنید</p>
                 </div>
             """, unsafe_allow_html=True)
         else:
-            st.markdown("""
-                <div style="text-align: center; width: 100%; min-height: 70px;">
-                    <h4 style="color: #1e293b; text-align: center; margin:0; font-weight:bold; font-size:18px; width:100%;">ورود با تشخیص چهره</h4>
-                    <p style="text-align: center; color: #64748b; font-size: 13px; margin: 8px 0 0 0; width:100%;">به دوربین جلو نگاه کنید</p>
+            st.markdown(f"""
+                <div style="text-align: center; width: 100%; display: block; margin: 0 auto;">
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 15px;">
+                        {logo_html}
+                        <span style="font-size: 15px; color:#475569; font-weight:800; letter-spacing:-0.3px;">TopSUNify</span>
+                    </div>
+                    <h4 style="color: #1e293b; text-align: center !important; margin: 0 auto; font-weight: bold; font-size: 18px; width: 100%; display: block;">ورود با تشخیص چهره</h4>
+                    <p style="text-align: center !important; color: #64748b; font-size: 14px; margin: 8px auto 0 auto; width: 100%; display: block;">به دوربین جلو نگاه کنید</p>
                 </div>
             """, unsafe_allow_html=True)
 
-        st.markdown('<div style="height: 15px;"></div>', unsafe_allow_html=True)
-
-        # ۴. دکمه انصراف واقعی پایتون با استایل متنی قرمز
+        # ۵. باکس انصراف با دکمه بومی استریم‌لیت
         st.markdown('<div class="popup-cancel-box">', unsafe_allow_html=True)
         if st.button("انصراف", key="popup_cancel_action_btn"):
             st.session_state.show_bio_popup = False
             st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True) # بستن باکس انصراف
         
-        # بستن کادر پاپ‌آپ
+        # ۶. پایان قطعی و بستن کادر پاپ‌آپ سفید رنگ
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # اسکریپت زرد کردن دکمه ورود اصلی فرم لودر
+    # اسکریپت اعمال استایل دکمه اصلی ورود
     st.markdown("""
         <script>
         var buttons = window.parent.document.getElementsByTagName('button');
