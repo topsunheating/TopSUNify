@@ -4,17 +4,10 @@ import os
 import base64
 
 def render_auth_page():
-    # وضعیت‌های اولیه
-    if "bio_tab" not in st.session_state:
-        st.session_state.bio_tab = "fingerprint"
-    if "show_bio_popup" not in st.session_state:
-        st.session_state.show_bio_popup = False
-    if "logged_in" not in st.session_state:
-        st.session_state.logged_in = False
-
-    # ====================== CSS ======================
+    # --- ۱. لود فونت ایران‌یکان و تزریق استایل‌های یکپارچه و فیکس لایه‌ها ---
     font_path = "iranyekan.ttf"
     font_base64 = ""
+
     if os.path.exists(font_path):
         with open(font_path, "rb") as f:
             font_base64 = base64.b64encode(f.read()).decode()
@@ -25,125 +18,176 @@ def render_auth_page():
         font-family: 'iranyekan';
         src: url(data:font/ttf;base64,{font_base64}) format('truetype');
     }}
+
     * {{
         font-family: 'iranyekan', Tahoma, sans-serif !important;
         direction: rtl !important;
         text-align: right !important;
     }}
-    [data-testid="stHeader"] {{ display: none !important; }}
-    body, [data-testid="stAppViewContainer"] {{ background-color: #ffffff !important; }}
+    
+    body, [data-testid="stAppViewContainer"] {{
+        background-color: #ffffff !important;
+    }}
+    
+    [data-testid="stHeader"] {{
+        display: none !important;
+    }}
 
+    /* هدر: چسبیدن کامل لوگو و نوشته */
     .brand-flex-container {{
         display: flex !important;
-        flex-direction: row-reverse !important;
+        flex-direction: row-reverse !important; 
         align-items: center !important;
         justify-content: center !important;
-        gap: 8px !important;
+        gap: 2px !important; 
+        width: 100% !important;
         max-width: 400px !important;
         margin: 0 auto 30px auto !important;
     }}
+    
     .brand-title-text {{
-        font-size: 28px !important;
+        font-size: 26px !important;
         font-weight: 900 !important;
         color: #000000 !important;
+        margin: 0 !important;
+        padding-right: 2px !important; 
+        line-height: 1 !important;
+        letter-spacing: -0.5px !important; 
     }}
 
-    div[data-testid="stTextInput"] {{ max-width: 400px; margin: 0 auto !important; }}
+    /* فیلدهای ورودی تک‌خطی */
+    div[data-testid="stTextInput"] {{
+        max-width: 400px;
+        margin: 0 auto !important;
+    }}
+    
     .stTextInput input {{
-        border: none !important;
+        border-top: none !important;
+        border-left: none !important;
+        border-right: none !important;
         border-bottom: 1px solid #e2e8f0 !important;
-        padding: 12px 8px !important;
+        border-radius: 0px !important;
+        background-color: transparent !important;
+        padding: 12px 5px !important;
+        font-size: 16px !important;
+        color: #1e293b !important;
     }}
-    .stTextInput input:focus {{ border-bottom: 2px solid #ea580c !important; }}
+    .stTextInput input:focus {{
+        border-bottom: 2px solid #ea580c !important;
+        box-shadow: none !important;
+    }}
 
-    /* دکمه بیومتریک */
-    .bio-btn {{
+    /* دکمه بیومتریک درون فیلد رمز عبور */
+    .bio-container {{
+        position: relative;
+        max-width: 400px;
+        margin: 0 auto;
+    }}
+    
+    div.bio-inside-btn {{
         position: absolute;
-        left: 50px;
-        top: 12px;
-        font-size: 26px;
-        background: none;
-        border: none;
+        left: 45px; 
+        top: 36px;
+        z-index: 99;
+    }}
+    
+    div.bio-inside-btn button {{
+        background: transparent !important;
+        border: none !important;
+        font-size: 22px !important;
+        padding: 0 !important;
+        box-shadow: none !important;
         cursor: pointer;
-        z-index: 100;
     }}
 
-    /* دکمه ورود اصلی */
+    /* دکمه اصلی ورود زرد رنگ */
     div.stButton > button.yellow-submit-btn {{
         width: 100% !important;
         max-width: 400px;
-        margin: 35px auto 0 auto !important;
-        background-color: #facc15 !important;
-        color: #1e293b !important;
+        display: block;
+        margin: 40px auto 0 auto !important;
+        background-color: #facc15 !important; 
+        color: #1e293b !important; 
+        border: none !important;
         border-radius: 12px !important;
-        padding: 14px !important;
+        padding: 14px 0 !important;
+        font-size: 16px !important;
         font-weight: bold !important;
+        transition: all 0.3s ease;
     }}
     div.stButton > button.yellow-submit-btn:hover {{
         background-color: #ea580c !important;
         color: white !important;
     }}
+    
+    .forgot-link {{
+        text-align: center;
+        margin-top: 25px;
+    }}
+    .forgot-link a {{
+        color: #2563eb !important;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: bold;
+    }}
 
-    /* پاپ‌آپ */
+    /* 📌 اصلاح ساختار کانتینر پاپ‌آپ واقعی و بیومتریک */
     .custom-overlay-bg {{
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0, 0, 0, 0.65) !important;
+        background: rgba(0, 0, 0, 0.5) !important;
         z-index: 999990 !important;
     }}
+
     .custom-popup-card {{
         position: fixed;
         top: 50%; left: 50%;
         transform: translate(-50%, -50%);
-        background: white;
-        width: 90%;
+        background: white !important;
+        width: 88%;
         max-width: 360px;
-        border-radius: 24px;
-        padding: 25px;
-        box-shadow: 0 25px 35px -10px rgba(0,0,0,0.45);
+        border-radius: 20px;
+        padding: 22px;
+        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
         z-index: 999999 !important;
         text-align: center;
     }}
+
+    /* استایل دکمه‌های سوییچ تب در بالای پاپ‌آپ (مشابه عکس موبایلت شما) */
     .segment-tab-container {{
         display: flex;
         background: #f1f5f9;
-        padding: 5px;
+        padding: 4px;
         border-radius: 30px;
-        margin: 15px 0 25px 0;
+        margin-bottom: 20px;
     }}
-    .segment-btn {{
-        flex: 1;
-        padding: 11px 0;
-        font-size: 15px;
-        font-weight: bold;
-        color: #64748b;
-        border-radius: 25px;
-        text-decoration: none;
-    }}
-    .segment-btn.active {{
-        background: #2563eb;
-        color: white;
-    }}
-    .html-cancel-link {{
-        color: #ef4444;
-        font-weight: bold;
-        margin-top: 25px;
-        display: block;
-        text-decoration: none;
-        font-size: 16px;
+    
+    /* دکمه انصراف ساده و متنی */
+    div.cancel-text-btn button {{
+        background: transparent !important;
+        border: none !important;
+        color: #ef4444 !important;
+        font-size: 16px !important;
+        font-weight: bold !important;
+        box-shadow: none !important;
+        margin-top: 10px;
     }}
     </style>
     """
     st.markdown(auth_css, unsafe_allow_html=True)
 
-    st.markdown('<div style="height: 40px;"></div>', unsafe_allow_html=True)
+    # وضعیت‌های اصلی پاپ‌آپ بیومتریک
+    if "show_bio_popup" not in st.session_state: st.session_state.show_bio_popup = False
+    if "bio_method" not in st.session_state: st.session_state.bio_method = "fingerprint"
 
-    # هدر
+    st.markdown('<div style="height: 50px;"></div>', unsafe_allow_html=True)
+    
+    # --- ۲. هدر: لوگو و متن انگلیسی کاملاً جفت ---
     logo_html = "☀️"
     if os.path.exists("./static/logo.png"):
         with open("./static/logo.png", "rb") as f:
             logo_base64 = base64.b64encode(f.read()).decode()
-        logo_html = f'<img src="data:image/png;base64,{logo_base64}" width="55">'
+        logo_html = f'<img src="data:image/png;base64,{logo_base64}" width="52" style="display: block; margin: 0; padding: 0;">'
 
     st.markdown(f"""
     <div class="brand-flex-container">
@@ -152,114 +196,107 @@ def render_auth_page():
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div style="height: 25px;"></div>', unsafe_allow_html=True)
+    st.markdown('<div style="height: 20px;"></div>', unsafe_allow_html=True)
 
-    # فیلدهای ورودی
-    username = st.text_input("نام کاربری", placeholder="نام کاربری", key="username_input")
-    
-    # فیلد رمز + دکمه بیومتریک
-    col_pw = st.columns([1, 0.12])
-    with col_pw[0]:
-        password = st.text_input("رمز ورود", type="password", placeholder="رمز ورود", key="password_input")
-    
-    with col_pw[1]:
-        if st.button("🪪", key="bio_trigger_btn"):
-            st.session_state.show_bio_popup = True
-            st.rerun()
+    # --- ۳. فیلد نام کاربری (بدون نوشته پیش‌فرض) ---
+    username = st.text_input("نام کاربری", value="", placeholder="نام کاربری")
 
-    # دکمه ورود اصلی
-    if st.button("ورود به TopSUNify", key="main_login_btn", use_container_width=True):
+    # --- ۴. فیلد رمز عبور + دکمه بیومتریک مدرن ---
+    st.markdown('<div class="bio-container">', unsafe_allow_html=True)
+    password = st.text_input("رمز ورود", type="password", placeholder="رمز ورود")
+    
+    st.markdown('<div class="bio-inside-btn">', unsafe_allow_html=True)
+    if st.button("🪪", key="trigger_bio_popup_btn", help="انتخاب روش ورود بیومتریک"):
+        st.session_state.show_bio_popup = True
+        st.rerun()
+    st.markdown('</div></div>', unsafe_allow_html=True)
+
+    # --- ۵. دکمه اصلی ورود (زرد رنگ) ---
+    if st.button("ورود به TopSUNify", key="submit_yellow_btn", use_container_width=True):
         if username == "admin" and password == "1234":
             st.session_state.logged_in = True
-            st.success("ورود موفقیت‌آمیز بود")
-            time.sleep(0.6)
+            st.success("ورود موفقیت‌آمیز بود.")
+            time.sleep(0.5)
             st.rerun()
+        elif username == "" or password == "":
+            st.warning("⚠️ لطفاً نام کاربری و رمز عبور را وارد کنید.")
         else:
-            st.error("نام کاربری یا رمز عبور اشتباه است")
+            st.error("❌ نام کاربری یا رمز ورود اشتباه است.")
 
+    # --- ۶. لینک فعال‌سازی / فراموشی رمز ---
     st.markdown('<div class="forgot-link"><a href="#">فعال‌سازی / فراموشی رمز</a></div>', unsafe_allow_html=True)
 
-    # ====================== پاپ‌آپ بیومتریک ======================
-    if st.session_state.get("show_bio_popup", False):
+    # --- ۷. رندر پاپ‌آپ نیتتیو و فیکس شده ---
+    if st.session_state.show_bio_popup:
+        # کانتینر بک‌گراند تاریک مجهز به جاوااسکریپت برای بستن هوشمند با لمس بیرون کادر
+        st.markdown('<div class="custom-overlay-bg" onclick="document.getElementById(\'close-popup-trigger\').click();"></div>', unsafe_allow_html=True)
         
-        # دکمه‌های مخفی برای کنترل
-        c1, c2, c3 = st.columns([1,1,1])
-        with c1:
-            if st.button("set_finger", key="hidden_finger"):
-                st.session_state.bio_tab = "fingerprint"
-                st.rerun()
-        with c2:
-            if st.button("set_face", key="hidden_face"):
-                st.session_state.bio_tab = "face"
-                st.rerun()
-        with c3:
-            if st.button("close_bio", key="hidden_close"):
-                st.session_state.show_bio_popup = False
-                st.rerun()
+        # کارت سفید وسط صفحه
+        st.markdown('<div class="custom-popup-card">', unsafe_allow_html=True)
+        
+        # هدر پاپ‌آپ مشابه نمونه ارسالی
+        st.markdown('<div style="font-size:14px; color:#64748b; margin-bottom:15px; text-align:center;">☀️ TopSUNify</div>', unsafe_allow_html=True)
+        
+        # دکمه‌های سوییچ شبیه سگمنت کنترلر تصویر موبایلت
+        pop_col1, pop_col2 = st.columns(2)
+        
+        # تعیین وضعیت رنگ بندی دکمه‌ها فعال/غیرفعال برای تطابق کامل با UI تصویر
+        f_type = "primary" if st.session_state.bio_method == "fingerprint" else "secondary"
+        face_type = "primary" if st.session_state.bio_method == "face" else "secondary"
+        
+        if pop_col1.button("Fingerprint", use_container_width=True, type=f_type, key="pop_select_finger"):
+            st.session_state.bio_method = "fingerprint"
+            st.rerun()
+        if pop_col2.button("Face ID", use_container_width=True, type=face_type, key="pop_select_face"):
+            st.session_state.bio_method = "face"
+            st.rerun()
+            
+        st.markdown('<div style="height:15px;"></div>', unsafe_allow_html=True)
+        
+        # محتوای گرافیکی بر اساس تب انتخاب شده
+        if st.session_state.bio_method == "fingerprint":
+            st.markdown('<h4 style="color: #1e293b; text-align: center; margin:0; font-weight:bold;">ورود با اثر انگشت</h4>', unsafe_allow_html=True)
+            st.markdown('<p style="text-align: center; color: #64748b; font-size: 13px; margin: 8px 0;">حسگر را لمس کنید</p>', unsafe_allow_html=True)
+            st.markdown('<h1 style="text-align: center; font-size: 65px; margin: 15px 0; color: #ea580c;">☝️</h1>', unsafe_allow_html=True)
+        else:
+            st.markdown('<h4 style="color: #1e293b; text-align: center; margin:0; font-weight:bold;">ورود با تشخیص چهره</h4>', unsafe_allow_html=True)
+            st.markdown('<p style="text-align: center; color: #64748b; font-size: 13px; margin: 8px 0;">به دوربین جلو نگاه کنید</p>', unsafe_allow_html=True)
+            st.markdown('<h1 style="text-align: center; font-size: 65px; margin: 15px 0; color: #facc15;">👤</h1>', unsafe_allow_html=True)
+            
+        # دکمه انصراف متنی و شیک در پایین کارت پاپ آپ
+        st.markdown('<div class="cancel-text-btn">', unsafe_allow_html=True)
+        if st.button("انصراف", use_container_width=True, key="pop_close_btn"):
+            st.session_state.show_bio_popup = False
+            st.rerun()
+        st.markdown('</div></div>', unsafe_allow_html=True)
 
-        # مخفی کردن دکمه‌های مخفی
+        # دکمه مخفی کمکی که اسکریپت بیرونِ صفحه آن را برای بستن تریگر می‌کند
+        st.markdown('<div style="display:none;">', unsafe_allow_html=True)
+        if st.button("hidden_close", key="hidden_close_back_btn"):
+            st.session_state.show_bio_popup = False
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        # تزریق اسکریپت برای مپ کردن کلیک روی المان کمکی
         st.markdown("""
-        <style>
-        div[data-testid="stColumn"] button {visibility: hidden; height:0px !important; margin:0; padding:0;}
-        </style>
+            <script>
+            var btn = window.parent.document.getElementsByTagName('button');
+            for (var i = 0; i < btn.length; i++) {
+                if (btn[i].innerText === "hidden_close") {
+                    btn[i].id = "close-popup-trigger";
+                }
+            }
+            </script>
         """, unsafe_allow_html=True)
 
-        active_face = "active" if st.session_state.bio_tab == "face" else ""
-        active_finger = "active" if st.session_state.bio_tab == "fingerprint" else ""
-
-        if st.session_state.bio_tab == "fingerprint":
-            content = """
-                <h4 style="margin:5px 0 8px 0; font-size:18px;">ورود با اثر انگشت</h4>
-                <p style="color:#64748b; margin-bottom:25px;">حسگر را لمس کنید</p>
-                <h1 style="font-size:78px; color:#ea580c;">☝️</h1>
-            """
-        else:
-            content = """
-                <h4 style="margin:5px 0 8px 0; font-size:18px;">ورود با تشخیص چهره</h4>
-                <p style="color:#64748b; margin-bottom:25px;">به دوربین جلو نگاه کنید</p>
-                <h1 style="font-size:70px; color:#facc15;">👤</h1>
-            """
-
-        popup_code = f"""
-        <div class="custom-overlay-bg" onclick="triggerPythonAction('close_bio')"></div>
-        <div class="custom-popup-card">
-            <div style="font-size:14px; color:#94a3b8; margin-bottom:12px;">☀️ TopSUNify</div>
-            
-            <div class="segment-tab-container">
-                <a href="#" class="segment-btn {active_face}" onclick="triggerPythonAction('set_face'); return false;">Face ID</a>
-                <a href="#" class="segment-btn {active_finger}" onclick="triggerPythonAction('set_finger'); return false;">Fingerprint</a>
-            </div>
-            
-            <div style="min-height: 170px;">
-                {content}
-            </div>
-            
-            <a href="#" class="html-cancel-link" onclick="triggerPythonAction('close_bio'); return false;">انصراف</a>
-        </div>
-
-        <script>
-        function triggerPythonAction(action) {{
-            var buttons = window.parent.document.querySelectorAll('button');
-            for (var i = 0; i < buttons.length; i++) {{
-                if (buttons[i].innerText === action) {{
-                    buttons[i].click();
-                    break;
-                }}
-            }}
-        }}
-        </script>
-        """
-
-        st.components.v1.html(popup_code, height=600, width=400, scrolling=False)
-
-    # زرد کردن دکمه ورود
+    # اسکریپت نهایی ست کردن رنگ زرد دکمه ورود اصلی به اپلیکیشن
     st.markdown("""
-    <script>
-    var buttons = window.parent.document.getElementsByTagName('button');
-    for (var i = 0; i < buttons.length; i++) {
-        if (buttons[i].innerText === "ورود به TopSUNify") {
-            buttons[i].classList.add("yellow-submit-btn");
+        <script>
+        var buttons = window.parent.document.getElementsByTagName('button');
+        for (var i = 0; i < buttons.length; i++) {
+            if (buttons[i].innerText === "ورود به TopSUNify") {
+                buttons[i].classList.add("yellow-submit-btn");
+            }
         }
-    }
-    </script>
+        </script>
     """, unsafe_allow_html=True)
