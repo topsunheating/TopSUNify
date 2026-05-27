@@ -1,14 +1,22 @@
 import streamlit as st
 
+# حتماً دستور set_page_config در بالاترین خط برنامه باقی بماند
 st.set_page_config(
     page_title="TopSUNify | هوش مصنوعی گرمایش",
     page_icon="./static/logo.png",
     layout="wide"
 )
 
-# این دو خط زیر را موقتاً کامنت کنید و برنامه را ریفرش کنید:
-# import main
-# import Financial
+# ====================== اضافه کردن ماژول احراز هویت ======================
+import auth
+
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+# اگر کاربر لاگین نکرده بود، فرم ورود را نشان بده و بقیه کدها را متوقف کن
+if not st.session_state.logged_in:
+    auth.render_auth_page()
+    st.stop()  # 🛑 این دستور فوق‌العاده حیاتی است؛ اجازه نمی‌دهد کدهای پایین‌تر لود شوند
 
 # ====================== ۲. ایمپورت سایر کتابخانه‌ها و ماژول‌ها ======================
 import Financial
