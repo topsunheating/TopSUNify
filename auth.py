@@ -134,7 +134,7 @@ def render_auth_page():
     with h_col1:
         st.markdown('<h2 style="color: #000000; font-weight: 900; margin: 12px 0 0 0; text-align: left; direction: ltr;">TopSUNify</h2>', unsafe_allow_html=True)
     with h_col2:
-        try: st.image("./static/logo.png", width=65)
+        try: st.image("./static/logo.png", width=35)
         except: st.write("☀️")
 
     st.markdown('<div style="height: 40px;"></div>', unsafe_allow_html=True)
