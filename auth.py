@@ -127,7 +127,7 @@ def render_auth_page():
         margin: 0 auto !important;
     }}
 
-    /* استایل دکمه زرد رنگ */
+    /* استایل دکمه زرد رنگ و Bold کردن فونت دکمه ورود */
     div.stButton > button {{
         width: 100% !important;
         max-width: 400px !important;
@@ -139,9 +139,12 @@ def render_auth_page():
         border-radius: 12px !important;
         padding: 14px 0 !important;
         font-size: 16px !important;
-        font-weight: bold !important;
+        font-weight: 900 !important; /* اعمال ضخامت فوق‌العاده سنگین فونت ایران‌یکان */
         box-shadow: 0 4px 6px -1px rgba(253, 224, 71, 0.2) !important;
         transition: all 0.2s ease-in-out !important;
+    }}
+    div.stButton > button p {{
+        font-weight: 900 !important; /* اطمینان از Bold شدن تگ داخلی متون استریم‌لیت */
     }}
     div.stButton > button:hover {{
         background-color: #ffc300 !important; 
@@ -189,10 +192,10 @@ def render_auth_page():
         box-sizing: border-box !important;
     }}
 
-    /* اصلاح چیدمان هدر پاپ آپ: اول لوگو سمت راست، سپس متن سمت چپ */
+    /* هدر پاپ آپ: اول لوگو سمت راست، سپس متن سمت چپ */
     .popup-header-brand {{
         display: flex !important;
-        flex-direction: row-reverse !important; /* چیدمان راست‌به‌چپ برای اولویت لوگو */
+        flex-direction: row-reverse !important; 
         align-items: center !important;
         justify-content: center !important;
         gap: 10px !important;
@@ -255,7 +258,7 @@ def render_auth_page():
     st.markdown('<a href="?show_bio=true&bio_tab=fingerprint" target="_self" class="bio-html-btn"></a>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # --- دکمه ورود ---
+    # --- دکمه ورود (با ویژگی Bold بودن) ---
     if st.button("ورود به TopSUNify", key="submit_yellow_btn", use_container_width=True):
         if username == "admin" and password == "1234":
             st.session_state.logged_in = True
