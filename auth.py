@@ -87,7 +87,7 @@ def render_auth_page():
         box-shadow: none !important;
     }}
 
-    /* ایجاد فضای خالی در سمت چپ فیلد برای قرارگیری منظم آیکون چشم و بیومتریک */
+    /* ایجاد فضای خالی برای جا شدن منظم آیکون چشم و بیومتریک در سمت چپ */
     .stTextInput input[type="password"] {{
         padding-left: 85px !important;
     }}
@@ -100,12 +100,13 @@ def render_auth_page():
         margin: 0 auto !important;
     }}
    
-    /* قرارگیری آیکون بیومتریک دقیقاً داخل ورودی رمز عبور و در کنار چشم (فیکس شده) */
+    /* کشیدن آیکون به بالا جهت قرارگیری دقیق روی ورودی رمز عبور و در کنار چشم */
     .bio-html-btn {{
         position: absolute !important;
         left: 45px !important; 
-        top: 10px !important;  /* برگشت به جایگاه دقیق و تراز قبلی در داخل فیلد */
-        z-index: 999 !important;
+        bottom: 12px !important; /* قفل شدن بر اساس لبه پایینی اینپوت */
+        transform: translateY(0) !important;
+        z-index: 9999 !important;
         display: inline-block !important;
         width: 24px !important;
         height: 24px !important;
@@ -132,8 +133,8 @@ def render_auth_page():
         width: 100% !important;
         max-width: 400px !important;
         display: block !important;
-        margin: 40px auto 0 auto !important;
-        background-color: #ffd60a !important; /* رنگ زرد ثابت */
+        margin: 30px auto 0 auto !important;
+        background-color: #ffd60a !important; 
         color: #1e293b !important;
         border: none !important;
         border-radius: 12px !important;
@@ -146,10 +147,6 @@ def render_auth_page():
     div.stButton > button:hover {{
         background-color: #ffc300 !important; 
         color: #000000 !important;
-        transform: translateY(-1px);
-    }}
-    div.stButton > button:active {{
-        transform: translateY(0px);
     }}
    
     .forgot-link {{
@@ -266,7 +263,7 @@ def render_auth_page():
     # --- فیلدهای ورودی نام کاربری و پسورد ---
     username = st.text_input("نام کاربری", value="", placeholder="نام کاربری")
     
-    # ساخت کادر پسورد
+    # ساخت کادر پسورد به همراه تزریق مستقیم آیکون بیومتریک
     st.markdown('<div class="bio-container">', unsafe_allow_html=True)
     password = st.text_input("رمز ورود", type="password", placeholder="رمز ورود")
     st.markdown('<a href="?show_bio=true&bio_tab=fingerprint" target="_self" class="bio-html-btn"></a>', unsafe_allow_html=True)
