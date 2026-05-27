@@ -162,7 +162,7 @@ def render_auth_page():
     st.markdown(f"""
     <div class="brand-flex-container">
         {logo_html}
-        <h2 class="brand-title-text">TopSUNify</h2>
+        <h3 class="brand-title-text">TopSUNify</h3>
     </div>
     """, unsafe_allow_html=True)
 
