@@ -100,16 +100,15 @@ def render_auth_page():
         margin: 0 auto !important;
     }}
    
-    /* کشیدن آیکون به بالا جهت قرارگیری دقیق روی ورودی رمز عبور و در کنار چشم */
+    /* تنظیم دقیق و بردن آیکون به بالاتر جهت تراز شدن با مرکز عمودی چشم */
     .bio-html-btn {{
         position: absolute !important;
-        left: 45px !important; 
-        bottom: 12px !important; /* قفل شدن بر اساس لبه پایینی اینپوت */
-        transform: translateY(0) !important;
+        left: 48px !important; 
+        bottom: 24px !important; /* بالا بردن آیکون به داخل فضای کادر */
         z-index: 9999 !important;
         display: inline-block !important;
-        width: 24px !important;
-        height: 24px !important;
+        width: 22px !important;
+        height: 22px !important;
         background: url(data:image/png;base64,{bio_icon_base64}) no-repeat center !important;
         background-size: contain !important;
         cursor: pointer !important;
@@ -133,7 +132,7 @@ def render_auth_page():
         width: 100% !important;
         max-width: 400px !important;
         display: block !important;
-        margin: 30px auto 0 auto !important;
+        margin: 40px auto 0 auto !important;
         background-color: #ffd60a !important; 
         color: #1e293b !important;
         border: none !important;
@@ -224,20 +223,6 @@ def render_auth_page():
         background: #2563eb !important;
         color: white !important;
     }}
-
-    .html-cancel-link {{
-        display: block !important;
-        margin-top: 25px !important;
-        color: #64748b !important;
-        font-size: 16px !important;
-        font-weight: bold !important;
-        text-decoration: none !important;
-        text-align: center !important;
-        width: 100% !important;
-    }}
-    .html-cancel-link:hover {{
-        color: #ef4444 !important;
-    }}
     </style>
     """
     st.markdown(auth_css, unsafe_allow_html=True)
@@ -263,13 +248,13 @@ def render_auth_page():
     # --- فیلدهای ورودی نام کاربری و پسورد ---
     username = st.text_input("نام کاربری", value="", placeholder="نام کاربری")
     
-    # ساخت کادر پسورد به همراه تزریق مستقیم آیکون بیومتریک
+    # ساخت کادر پسورد
     st.markdown('<div class="bio-container">', unsafe_allow_html=True)
     password = st.text_input("رمز ورود", type="password", placeholder="رمز ورود")
     st.markdown('<a href="?show_bio=true&bio_tab=fingerprint" target="_self" class="bio-html-btn"></a>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # --- دکمه ورود (هم‌اندازه فیلدها با پس‌زمینه زرد رنگ) ---
+    # --- دکمه ورود ---
     if st.button("ورود به TopSUNify", key="submit_yellow_btn", use_container_width=True):
         if username == "admin" and password == "1234":
             st.session_state.logged_in = True
