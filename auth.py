@@ -157,7 +157,7 @@ def render_auth_page():
     if os.path.exists("./static/logo.png"):
         with open("./static/logo.png", "rb") as f:
             logo_base64 = base64.b64encode(f.read()).decode()
-        logo_html = f'<img src="data:image/png;base64,{logo_base64}" width="55" style="display: block; margin: 0;">'
+        logo_html = f'<img src="data:image/png;base64,{logo_base64}" width="35" style="display: block; margin: 0;">'
 
     st.markdown(f"""
     <div class="brand-flex-container">
