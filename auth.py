@@ -33,25 +33,27 @@ def render_auth_page():
         display: none !important;
     }}
 
-    /* 📌 کانتینر هوشمند برای قرارگیری لوگو و نوشته دقیقاً کنار هم در یک خط */
+    /* 📌 کانتینر هوشمند برای چسبیدن کامل لوگو و نوشته به یکدیگر */
     .brand-flex-container {{
         display: flex !important;
         flex-direction: row-reverse !important; /* لوگو سمت راست، متن سمت چپ */
         align-items: center !important;
         justify-content: center !important;
-        gap: 12px !important; /* فاصله مینی‌مال بین لوگو و متن */
+        gap: 2px !important; /* فاصله‌ی فوق‌العاده کم و مماس */
         width: 100% !important;
         max-width: 400px !important;
-        margin: 0 auto 40px auto !important;
+        margin: 0 auto 30px auto !important;
     }}
     
     .brand-title-text {{
-        font-size: 28px !important;
+        font-size: 26px !important;
         font-weight: 900 !important;
         color: #000000 !important;
         margin: 0 !important;
+        padding-right: 2px !important; /* حذف هرگونه فاصله کاذب راست */
         line-height: 1 !important;
         font-family: 'iranyekan', sans-serif !important;
+        letter-spacing: -0.5px !important; /* نزدیک‌تر کردن حروف انگلیسی به هم */
     }}
 
     /* کانتینر فیلدهای ورودی تک‌خطی */
@@ -64,7 +66,7 @@ def render_auth_page():
         border-top: none !important;
         border-left: none !important;
         border-right: none !important;
-        border-bottom: 1px solid #e2e8f0 !important; /* خط کمرنگ در حالت عادی */
+        border-bottom: 1px solid #e2e8f0 !important;
         border-radius: 0px !important;
         background-color: transparent !important;
         padding: 12px 5px !important;
@@ -73,7 +75,7 @@ def render_auth_page():
         transition: border-color 0.2s ease;
     }}
     .stTextInput input:focus {{
-        border-bottom: 2px solid #ea580c !important; /* لاین نارنجی هنگام فوکوس */
+        border-bottom: 2px solid #ea580c !important;
         box-shadow: none !important;
     }}
 
@@ -86,7 +88,7 @@ def render_auth_page():
     
     div.bio-inside-btn {{
         position: absolute;
-        left: 45px; /* تنظیم موقعیت دقیق در کنار آیکون چشم استریم‌لیت */
+        left: 45px;
         top: 36px;
         z-index: 99;
     }}
@@ -116,7 +118,7 @@ def render_auth_page():
         transition: all 0.3s ease;
     }}
     div.stButton > button.orange-submit-btn:hover {{
-        background-color: #facc15 !important; /* زرد تاپسان هنگام هاور دکمه */
+        background-color: #facc15 !important;
         color: #1e293b !important;
     }}
     
@@ -145,19 +147,17 @@ def render_auth_page():
     """
     st.markdown(auth_css, unsafe_allow_html=True)
 
-    # مدیریت وضعیت باز/بسته بودن پاپ‌آپ بیومتریک
     if "show_bio" not in st.session_state: st.session_state.show_bio = False
     if "bio_method" not in st.session_state: st.session_state.bio_method = "fingerprint"
 
     st.markdown('<div style="height: 50px;"></div>', unsafe_allow_html=True)
     
-    # --- ۲. هدر: لوگو و متن در یک ردیف واحد بدون استفاده از st.columns برای تراز صد در صد ---
-    # ابتدا لوگو را به صورت base64 در می‌آوریم تا مستقیماً درون کانتینر قرار گیرد
+    # --- ۲. هدر فوق‌العاده چسبیده و مماس (بدون فاصله کاذب) ---
     logo_html = "☀️"
     if os.path.exists("./static/logo.png"):
         with open("./static/logo.png", "rb") as f:
             logo_base64 = base64.b64encode(f.read()).decode()
-        logo_html = f'<img src="data:image/png;base64,{logo_base64}" width="35" style="display: block; margin: 0;">'
+        logo_html = f'<img src="data:image/png;base64,{logo_base64}" width="35" style="display: block; margin: 0; padding: 0;">'
 
     st.markdown(f"""
     <div class="brand-flex-container">
@@ -168,14 +168,13 @@ def render_auth_page():
 
     st.markdown('<div style="height: 20px;"></div>', unsafe_allow_html=True)
 
-    # --- ۳. فیلد نام کاربری (کاملاً خالی و بدون عبارت پیش‌فرض) ---
+    # --- ۳. فیلد نام کاربری ---
     username = st.text_input("نام کاربری", value="", placeholder="نام کاربری")
 
     # --- ۴. فیلد رمز عبور + دکمه مینی‌مال بیومتریک جفت شده ---
     st.markdown('<div class="bio-container">', unsafe_allow_html=True)
     password = st.text_input("رمز ورود", type="password", placeholder="رمز ورود")
     
-    # دکمه اثرانگشت/چهره (🪪) در کنار فیلد
     st.markdown('<div class="bio-inside-btn">', unsafe_allow_html=True)
     if st.button("🪪", key="trigger_bio_popup", help="انتخاب روش ورود بیومتریک"):
         st.session_state.show_bio = True
@@ -205,7 +204,6 @@ def render_auth_page():
             st.markdown('<h3 style="text-align: center; color: #1e293b; margin-bottom: 5px;">روش ورود امن</h3>', unsafe_allow_html=True)
             st.markdown('<p style="text-align: center; color: #64748b; font-size: 13px;">لطفاً روش احراز هویت خود را انتخاب کنید:</p>', unsafe_allow_html=True)
             
-            # سوییچ‌های انتخاب متد بیومتریک
             b_col1, b_col2 = st.columns(2)
             if b_col1.button("☝️ Fingerprint", use_container_width=True, key="set_bio_finger"):
                 st.session_state.bio_method = "fingerprint"
@@ -216,7 +214,6 @@ def render_auth_page():
             
             st.divider()
             
-            # تغییر محتوای پاپ آپ متناسب با انتخاب کاربر
             if st.session_state.bio_method == "fingerprint":
                 st.markdown('<h4 style="color: #ea580c; text-align: center;">ورود با اثر انگشت</h4>', unsafe_allow_html=True)
                 st.markdown('<h1 style="text-align: center; font-size: 55px; margin: 10px 0; color: #ea580c;">🌀</h1>', unsafe_allow_html=True)
@@ -228,7 +225,6 @@ def render_auth_page():
             
             st.markdown('<br>', unsafe_allow_html=True)
             
-            # دکمه بستن پاپ آپ
             if st.button("انصراف و بازگشت", use_container_width=True, key="close_modal_view"):
                 st.session_state.show_bio = False
                 st.rerun()
