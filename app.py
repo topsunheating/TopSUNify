@@ -1,4 +1,16 @@
 import streamlit as st
+
+# تزریق متاتگ‌ها و مانیفست برای اختصاصی کردن آیکون و نام در موبایل
+st.html(
+    """
+    <link rel="manifest" href="https://raw.githubusercontent.com/topsunheating/TopSUNify/main/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="TopSUNify">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/topsunheating/TopSUNify/main/logo.png">
+    """
+)
+import streamlit as st
 import Financial
 import main
 import os
