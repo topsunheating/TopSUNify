@@ -33,7 +33,28 @@ def render_auth_page():
         display: none !important;
     }}
 
-    /* کانتینر فیلدهای ورودی تک‌خطی مشابه تصاویر ارسالی شما */
+    /* 📌 کانتینر هوشمند برای قرارگیری لوگو و نوشته دقیقاً کنار هم در یک خط */
+    .brand-flex-container {{
+        display: flex !important;
+        flex-direction: row-reverse !important; /* لوگو سمت راست، متن سمت چپ */
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 12px !important; /* فاصله مینی‌مال بین لوگو و متن */
+        width: 100% !important;
+        max-width: 400px !important;
+        margin: 0 auto 40px auto !important;
+    }}
+    
+    .brand-title-text {{
+        font-size: 28px !important;
+        font-weight: 900 !important;
+        color: #000000 !important;
+        margin: 0 !important;
+        line-height: 1 !important;
+        font-family: 'iranyekan', sans-serif !important;
+    }}
+
+    /* کانتینر فیلدهای ورودی تک‌خطی */
     div[data-testid="stTextInput"] {{
         max-width: 400px;
         margin: 0 auto !important;
@@ -43,12 +64,13 @@ def render_auth_page():
         border-top: none !important;
         border-left: none !important;
         border-right: none !important;
-        border-bottom: 1.5px solid #cbd5e1 !important;
+        border-bottom: 1px solid #e2e8f0 !important; /* خط کمرنگ در حالت عادی */
         border-radius: 0px !important;
         background-color: transparent !important;
         padding: 12px 5px !important;
         font-size: 16px !important;
         color: #1e293b !important;
+        transition: border-color 0.2s ease;
     }}
     .stTextInput input:focus {{
         border-bottom: 2px solid #ea580c !important; /* لاین نارنجی هنگام فوکوس */
@@ -64,7 +86,7 @@ def render_auth_page():
     
     div.bio-inside-btn {{
         position: absolute;
-        left: 45px; /* تنظیم موقعیت دقیق در کنار آیکون چشم */
+        left: 45px; /* تنظیم موقعیت دقیق در کنار آیکون چشم استریم‌لیت */
         top: 36px;
         z-index: 99;
     }}
@@ -129,15 +151,22 @@ def render_auth_page():
 
     st.markdown('<div style="height: 50px;"></div>', unsafe_allow_html=True)
     
-    # --- ۲. هدر: لوگو سمت راست و متن تیره TopSUNify سمت چپ (رفع مشکل ستون‌ها) ---
-    h_col1, h_col2 = st.columns(1)
-    with h_col1:
-        st.markdown('<h2 style="color: #000000; font-weight: 900; margin: 12px 0 0 0; text-align: left; direction: ltr;">TopSUNify</h2>', unsafe_allow_html=True)
-    with h_col2:
-        try: st.image("./static/logo.png", width=35)
-        except: st.write("☀️")
+    # --- ۲. هدر: لوگو و متن در یک ردیف واحد بدون استفاده از st.columns برای تراز صد در صد ---
+    # ابتدا لوگو را به صورت base64 در می‌آوریم تا مستقیماً درون کانتینر قرار گیرد
+    logo_html = "☀️"
+    if os.path.exists("./static/logo.png"):
+        with open("./static/logo.png", "rb") as f:
+            logo_base64 = base64.b64encode(f.read()).decode()
+        logo_html = f'<img src="data:image/png;base64,{logo_base64}" width="55" style="display: block; margin: 0;">'
 
-    st.markdown('<div style="height: 40px;"></div>', unsafe_allow_html=True)
+    st.markdown(f"""
+    <div class="brand-flex-container">
+        {logo_html}
+        <h2 class="brand-title-text">TopSUNify</h2>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div style="height: 20px;"></div>', unsafe_allow_html=True)
 
     # --- ۳. فیلد نام کاربری (کاملاً خالی و بدون عبارت پیش‌فرض) ---
     username = st.text_input("نام کاربری", value="", placeholder="نام کاربری")
@@ -153,7 +182,7 @@ def render_auth_page():
         st.rerun()
     st.markdown('</div></div>', unsafe_allow_html=True)
 
-    # --- ۵. دکمه اصلی ورود (تم زرد و نارنجی اختصاصی) ---
+    # --- ۵. دکمه اصلی ورود ---
     if st.button("ورود به TopSUNify", key="submit_orange", use_container_width=True):
         if username == "admin" and password == "1234":
             st.session_state.logged_in = True
@@ -206,7 +235,7 @@ def render_auth_page():
                 
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # اسکریپت جاوااسکریپت برای چسباندن استایل نارنجی به دکمه اصلی ورود
+    # اسکریپت برای چسباندن استایل نارنجی به دکمه ورود
     st.markdown("""
         <script>
         var buttons = window.parent.document.getElementsByTagName('button');
