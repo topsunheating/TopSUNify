@@ -1,6 +1,68 @@
 import streamlit as st
+import sqlite3
+import hashlib
 
+# --- توابع مربوط به دیتابیس و امنیت ---
+def DB_connect():
+    """اتصال به دیتابیس SQLite و ساخت جدول کاربران در صورت عدم وجود"""
+    conn = sqlite3.connect("users.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            full_name TEXT,
+            username TEXT UNIQUE,
+            password_hash TEXT
+        )
+    """)
+    conn.commit()
+    return conn
+
+def make_hash(password):
+    """تبدیل رمز عبور ساده به هش امنیتی برای ذخیره در دیتابیس"""
+    return hashlib.sha256(str.encode(password)).hexdigest()
+
+def check_user_exists(username):
+    """بررسی اینکه آیا نام کاربری از قبل وجود دارد یا خیر"""
+    conn = DB_connect()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
+    user = cursor.fetchone()
+    conn.close()
+    return user is not None
+
+def register_user(full_name, username, password):
+    """ثبت نام کاربر جدید در دیتابیس"""
+    try:
+        conn = DB_connect()
+        cursor = conn.cursor()
+        hashed_pw = make_hash(password)
+        cursor.execute(
+            "INSERT INTO users (full_name, username, password_hash) VALUES (?, ?, ?)",
+            (full_name, username, hashed_pw)
+        )
+        conn.commit()
+        conn.close()
+        return True
+    except sqlite3.IntegrityError:
+        return False
+
+def login_user(username, password):
+    """بررسی صحت نام کاربری و رمز عبور موقع ورود"""
+    conn = DB_connect()
+    cursor = conn.cursor()
+    hashed_pw = make_hash(password)
+    cursor.execute("SELECT * FROM users WHERE username = ? AND password_hash = ?", (username, hashed_pw))
+    user = cursor.fetchone()
+    conn.close()
+    return user is not None
+
+
+# --- رندر کردن صفحه ورود و ثبت نام ---
 def render_auth_page():
+    # ساخت دیتابیس در اولین لود برنامه
+    DB_connect()
+
     # استایل کانتینر اصلی فرم ورود هماهنگ با تم نارنجی تاپ‌سانیفای
     st.markdown("""
         <style>
@@ -43,13 +105,17 @@ def render_auth_page():
     if st.session_state.auth_mode == "login":
         with st.form("login_form"):
             st.markdown("<h4 style='text-align: center; color:#1e293b;'>ورود به حساب کاربری</h4>", unsafe_allow_html=True)
-            username = st.text_input("نام کاربری", key="login_username", placeholder="نام کاربری را وارد کنید")
+            username = st.text_input("نام کاربری", key="login_username", placeholder="نام کاربری را وارد کنید").strip()
             password = st.text_input("رمز عبور", type="password", key="login_pass", placeholder="رمز عبور را وارد کنید")
             
             if st.form_submit_button("ورود به برنامه"):
-                if username == "admin" and password == "1234":  # نام کاربری و رمز عبور تست
+                if username == "admin" and password == "1234": # دسترسی ویژه مدیریت برای خودت
                     st.session_state.logged_in = True
                     st.success("ورود با موفقیت انجام شد!")
+                    st.rerun()
+                elif login_user(username, password): # چک کردن کاربران عادی از دیتابیس
+                    st.session_state.logged_in = True
+                    st.success("ورود موفقیت‌آمیز بود!")
                     st.rerun()
                 else:
                     st.error("❌ نام کاربری یا رمز عبور اشتباه است.")
@@ -64,17 +130,22 @@ def render_auth_page():
     elif st.session_state.auth_mode == "signup":
         with st.form("signup_form"):
             st.markdown("<h4 style='text-align: center; color:#1e293b;'>ثبت‌نام و ایجاد حساب</h4>", unsafe_allow_html=True)
-            full_name = st.text_input("نام و نام خانوادگی")
-            new_username = st.text_input("نام کاربری جدید")
-            new_password = st.text_input("رمز عبور", type="password")
+            full_name = st.text_input("نام و نام خانوادگی", placeholder="مثال: رضا محمدی")
+            new_username = st.text_input("نام کاربری جدید", placeholder="فقط حروف انگلیسی یا عدد").strip()
+            new_password = st.text_input("رمز عبور", type="password", placeholder="حداقل ۴ کاراکتر")
             
             if st.form_submit_button("ساخت حساب و ورود"):
                 if not new_username or not new_password:
                     st.error("⚠️ تکمیل نام کاربری و رمز عبور الزامی است.")
+                elif check_user_exists(new_username):
+                    st.error("❌ این نام کاربری قبلاً توسط شخص دیگری گرفته شده است.")
                 else:
-                    st.session_state.logged_in = True
-                    st.success("🎉 حساب کاربری شما با موفقیت ساخته شد!")
-                    st.rerun()
+                    if register_user(full_name, new_username, new_password):
+                        st.session_state.logged_in = True
+                        st.success("🎉 حساب کاربری شما با موفقیت ساخته شد و وارد شدید!")
+                        st.rerun()
+                    else:
+                        st.error("❌ خطایی در ذخیره‌سازی رخ داد. دوباره تلاش کنید.")
 
         _, col_btn, _ = st.columns(3)
         with col_btn:
