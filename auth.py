@@ -1,3 +1,8 @@
+import streamlit as st
+import time
+import os
+import base64
+
 def render_auth_page():
     # مدیریت وضعیت تب انتخاب شده در بیومتریک
     if "bio_tab" not in st.session_state:
@@ -5,8 +10,10 @@ def render_auth_page():
     
     if "show_bio_popup" not in st.session_state:
         st.session_state.show_bio_popup = False
+    if "logged_in" not in st.session_state:
+        st.session_state.logged_in = False
 
-    # --- ۱. تزریق فونت و استایل‌ها ---
+    # --- ۱. تزریق فونت ایران‌یکان و استایل‌ها ---
     font_path = "iranyekan.ttf"
     font_base64 = ""
     if os.path.exists(font_path):
@@ -190,7 +197,7 @@ def render_auth_page():
 
     st.markdown('<div style="height: 50px;"></div>', unsafe_allow_html=True)
    
-    # --- ۲. هدر ---
+    # --- هدر ---
     logo_html = "☀️"
     if os.path.exists("./static/logo.png"):
         with open("./static/logo.png", "rb") as f:
@@ -206,7 +213,7 @@ def render_auth_page():
 
     st.markdown('<div style="height: 20px;"></div>', unsafe_allow_html=True)
 
-    # --- ۳. فیلدهای ورودی ---
+    # --- فیلدهای ورودی ---
     username = st.text_input("نام کاربری", value="", placeholder="نام کاربری")
     
     st.markdown('<div class="bio-container">', unsafe_allow_html=True)
@@ -218,7 +225,7 @@ def render_auth_page():
         st.rerun()
     st.markdown('</div></div>', unsafe_allow_html=True)
 
-    # --- ۴. دکمه ورود ---
+    # --- دکمه ورود ---
     if st.button("ورود به TopSUNify", key="submit_yellow_btn", use_container_width=True):
         if username == "admin" and password == "1234":
             st.session_state.logged_in = True
@@ -230,13 +237,12 @@ def render_auth_page():
         else:
             st.error("❌ نام کاربری یا رمز ورود اشتباه است.")
 
-    # --- ۵. لینک فراموشی ---
+    # --- لینک فراموشی ---
     st.markdown('<div class="forgot-link"><a href="#">فعال‌سازی / فراموشی رمز</a></div>', unsafe_allow_html=True)
 
-    # --- ۶. پاپ‌آپ بیومتریک ---
+    # --- پاپ‌آپ بیومتریک ---
     if st.session_state.show_bio_popup:
         
-        # دکمه‌های مخفی
         col_h1, col_h2, col_h3 = st.columns(3)
         with col_h1:
             if st.button("set_finger", key="btn_h_finger"):
@@ -251,7 +257,6 @@ def render_auth_page():
                 st.session_state.show_bio_popup = False
                 st.rerun()
 
-        # مخفی کردن دکمه‌ها
         st.markdown("""
             <style>
             div[data-testid="stColumn"] button {
@@ -266,11 +271,9 @@ def render_auth_page():
             </style>
         """, unsafe_allow_html=True)
 
-        # تب فعال
         active_face = "active" if st.session_state.bio_tab == "face" else ""
         active_finger = "active" if st.session_state.bio_tab == "fingerprint" else ""
 
-        # محتوای داخل پاپ‌آپ
         if st.session_state.bio_tab == "fingerprint":
             graphic_content = """
                 <h4 style="color: #1e293b; text-align: center; margin:0; font-weight:bold; font-size:18px;">ورود با اثر انگشت</h4>
@@ -284,7 +287,6 @@ def render_auth_page():
                 <h1 style="text-align: center; font-size: 65px; margin: 20px 0; color: #facc15;">👤</h1>
             """
 
-        # کد HTML پاپ‌آپ
         popup_html_code = f"""
         <div class="custom-overlay-bg" onclick="triggerPythonAction('close_bio')"></div>
         <div class="custom-popup-card">
@@ -317,7 +319,7 @@ def render_auth_page():
 
         st.components.v1.html(popup_html_code, height=620, width=400, scrolling=False)
 
-    # --- ۷. اسکریپت زرد کردن دکمه ورود ---
+    # اسکریپت زرد کردن دکمه
     st.markdown("""
         <script>
         var buttons = window.parent.document.getElementsByTagName('button');
