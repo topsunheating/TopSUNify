@@ -4,7 +4,12 @@ import os
 import base64
 
 def render_auth_page():
-    # --- ۱. لود فونت ایران‌یکان و تزریق استایل‌های یکپارچه و فیکس لایه‌ها ---
+    # دریافت و مدیریت تب انتخاب شده در بیومتریک از طریق URL بدون تداخل با دکمه‌های استریم‌لیت
+    query_params = st.query_params
+    if "bio_tab" not in st.session_state:
+        st.session_state.bio_tab = query_params.get("bio_tab", "fingerprint")
+
+    # --- ۱. تزریق فونت ایران‌یکان و استایل‌های فیکس شده لایه‌های پاپ‌آپ نیتتیو ---
     font_path = "iranyekan.ttf"
     font_base64 = ""
 
@@ -77,7 +82,7 @@ def render_auth_page():
         box-shadow: none !important;
     }}
 
-    /* دکمه بیومتریک درون فیلد رمز عبور */
+    /* آیکون بیومتریک انتهای فیلد رمز عبور */
     .bio-container {{
         position: relative;
         max-width: 400px;
@@ -131,7 +136,7 @@ def render_auth_page():
         font-weight: bold;
     }}
 
-    /* 📌 اصلاح ساختار کانتینر پاپ‌آپ واقعی و بیومتریک */
+    /* 📌 پیاده‌سازی پاپ‌آپی که دکمه‌ها درون آن قفل و فیکس هستند */
     .custom-overlay-bg {{
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
@@ -145,40 +150,59 @@ def render_auth_page():
         transform: translate(-50%, -50%);
         background: white !important;
         width: 88%;
-        max-width: 360px;
-        border-radius: 20px;
-        padding: 22px;
+        max-width: 350px;
+        border-radius: 24px;
+        padding: 24px;
         box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
         z-index: 999999 !important;
         text-align: center;
+        direction: rtl !important;
     }}
 
-    /* استایل دکمه‌های سوییچ تب در بالای پاپ‌آپ (مشابه عکس موبایلت شما) */
+    /* استایل سگمنت کنترلر بالای پاپ آپ (کاملاً شبیه عکس موبایلت) */
     .segment-tab-container {{
         display: flex;
         background: #f1f5f9;
         padding: 4px;
         border-radius: 30px;
-        margin-bottom: 20px;
+        margin: 10px 0 20px 0;
+        direction: ltr !important;
     }}
     
-    /* دکمه انصراف ساده و متنی */
-    div.cancel-text-btn button {{
-        background: transparent !important;
-        border: none !important;
+    .segment-btn {{
+        flex: 1;
+        text-align: center;
+        padding: 8px 0;
+        font-size: 14px;
+        font-weight: bold;
+        color: #64748b;
+        text-decoration: none !important;
+        border-radius: 25px;
+        transition: all 0.2s;
+    }}
+    
+    .segment-btn.active {{
+        background: #2563eb !important; /* رنگ آبی انتخابی تب فعال مشابه موبایلت */
+        color: white !important;
+    }}
+
+    /* دکمه انصراف متنی قرمز کاملاً فیکس شده در داخل کادر */
+    .html-cancel-link {{
+        display: block;
+        margin-top: 20px;
         color: #ef4444 !important;
-        font-size: 16px !important;
-        font-weight: bold !important;
-        box-shadow: none !important;
-        margin-top: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        text-decoration: none !important;
+        text-align: center;
+        width: 100%;
     }}
     </style>
     """
     st.markdown(auth_css, unsafe_allow_html=True)
 
-    # وضعیت‌های اصلی پاپ‌آپ بیومتریک
+    # مدیریت استیت باز/بسته بودن پاپ آپ بیومتریک
     if "show_bio_popup" not in st.session_state: st.session_state.show_bio_popup = False
-    if "bio_method" not in st.session_state: st.session_state.bio_method = "fingerprint"
 
     st.markdown('<div style="height: 50px;"></div>', unsafe_allow_html=True)
     
@@ -198,10 +222,10 @@ def render_auth_page():
 
     st.markdown('<div style="height: 20px;"></div>', unsafe_allow_html=True)
 
-    # --- ۳. فیلد نام کاربری (بدون نوشته پیش‌فرض) ---
+    # --- ۳. فیلد نام کاربری ---
     username = st.text_input("نام کاربری", value="", placeholder="نام کاربری")
 
-    # --- ۴. فیلد رمز عبور + دکمه بیومتریک مدرن ---
+    # --- ۴. فیلد رمز عبور + دکمه بیومتریک ---
     st.markdown('<div class="bio-container">', unsafe_allow_html=True)
     password = st.text_input("رمز ورود", type="password", placeholder="رمز ورود")
     
@@ -226,70 +250,85 @@ def render_auth_page():
     # --- ۶. لینک فعال‌سازی / فراموشی رمز ---
     st.markdown('<div class="forgot-link"><a href="#">فعال‌سازی / فراموشی رمز</a></div>', unsafe_allow_html=True)
 
-    # --- ۷. رندر پاپ‌آپ نیتتیو و فیکس شده ---
-    if st.session_state.show_bio_popup:
-        # کانتینر بک‌گراند تاریک مجهز به جاوااسکریپت برای بستن هوشمند با لمس بیرون کادر
-        st.markdown('<div class="custom-overlay-bg" onclick="document.getElementById(\'close-popup-trigger\').click();"></div>', unsafe_allow_html=True)
-        
-        # کارت سفید وسط صفحه
-        st.markdown('<div class="custom-popup-card">', unsafe_allow_html=True)
-        
-        # هدر پاپ‌آپ مشابه نمونه ارسالی
-        st.markdown('<div style="font-size:14px; color:#64748b; margin-bottom:15px; text-align:center;">☀️ TopSUNify</div>', unsafe_allow_html=True)
-        
-        # دکمه‌های سوییچ شبیه سگمنت کنترلر تصویر موبایلت
-        pop_col1, pop_col2 = st.columns(2)
-        
-        # تعیین وضعیت رنگ بندی دکمه‌ها فعال/غیرفعال برای تطابق کامل با UI تصویر
-        f_type = "primary" if st.session_state.bio_method == "fingerprint" else "secondary"
-        face_type = "primary" if st.session_state.bio_method == "face" else "secondary"
-        
-        if pop_col1.button("Fingerprint", use_container_width=True, type=f_type, key="pop_select_finger"):
-            st.session_state.bio_method = "fingerprint"
-            st.rerun()
-        if pop_col2.button("Face ID", use_container_width=True, type=face_type, key="pop_select_face"):
-            st.session_state.bio_method = "face"
-            st.rerun()
-            
-        st.markdown('<div style="height:15px;"></div>', unsafe_allow_html=True)
-        
-        # محتوای گرافیکی بر اساس تب انتخاب شده
-        if st.session_state.bio_method == "fingerprint":
-            st.markdown('<h4 style="color: #1e293b; text-align: center; margin:0; font-weight:bold;">ورود با اثر انگشت</h4>', unsafe_allow_html=True)
-            st.markdown('<p style="text-align: center; color: #64748b; font-size: 13px; margin: 8px 0;">حسگر را لمس کنید</p>', unsafe_allow_html=True)
-            st.markdown('<h1 style="text-align: center; font-size: 65px; margin: 15px 0; color: #ea580c;">☝️</h1>', unsafe_allow_html=True)
-        else:
-            st.markdown('<h4 style="color: #1e293b; text-align: center; margin:0; font-weight:bold;">ورود با تشخیص چهره</h4>', unsafe_allow_html=True)
-            st.markdown('<p style="text-align: center; color: #64748b; font-size: 13px; margin: 8px 0;">به دوربین جلو نگاه کنید</p>', unsafe_allow_html=True)
-            st.markdown('<h1 style="text-align: center; font-size: 65px; margin: 15px 0; color: #facc15;">👤</h1>', unsafe_allow_html=True)
-            
-        # دکمه انصراف متنی و شیک در پایین کارت پاپ آپ
-        st.markdown('<div class="cancel-text-btn">', unsafe_allow_html=True)
-        if st.button("انصراف", use_container_width=True, key="pop_close_btn"):
-            st.session_state.show_bio_popup = False
-            st.rerun()
-        st.markdown('</div></div>', unsafe_allow_html=True)
+    # --- ۷. کنترل کلیک‌ها و اکشن‌های پاپ‌آپ از طریق المان مخفی کمکی استریم‌لیت ---
+    # این دکمه مخفی دستورات صادر شده از دکمه‌های HTML داخل پاپ آپ را در پایتون پردازش می‌کند
+    st.markdown('<div style="display:none;">', unsafe_allow_html=True)
+    action_trigger = st.text_input("popup_action_bridge", value="", key="popup_action_bridge")
+    st.markdown('</div>', unsafe_allow_html=True)
 
-        # دکمه مخفی کمکی که اسکریپت بیرونِ صفحه آن را برای بستن تریگر می‌کند
-        st.markdown('<div style="display:none;">', unsafe_allow_html=True)
-        if st.button("hidden_close", key="hidden_close_back_btn"):
-            st.session_state.show_bio_popup = False
-            st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
+    # پردازش اکشن کلیک‌های پاپ آپ
+    if action_trigger == "switch_to_fingerprint":
+        st.session_state.bio_tab = "fingerprint"
+        st.query_params["bio_tab"] = "fingerprint"
+        st.set_query_params = st.query_params
+        st.markdown("<script>window.parent.document.querySelector('input[aria-label=\"popup_action_bridge\"]').value = '';</script>", unsafe_allow_html=True)
+        st.rerun()
+    elif action_trigger == "switch_to_face":
+        st.session_state.bio_tab = "face"
+        st.query_params["bio_tab"] = "face"
+        st.set_query_params = st.query_params
+        st.markdown("<script>window.parent.document.querySelector('input[aria-label=\"popup_action_bridge\"]').value = '';</script>", unsafe_allow_html=True)
+        st.rerun()
+    elif action_trigger == "close_popup":
+        st.session_state.show_bio_popup = False
+        st.markdown("<script>window.parent.document.querySelector('input[aria-label=\"popup_action_bridge\"]').value = '';</script>", unsafe_allow_html=True)
+        st.rerun()
+
+    # --- ۸. رندر پاپ‌آپ ۱۰۰٪ فیکس و تضمین شده با دکمه‌های داخلی HTML ---
+    if st.session_state.show_bio_popup:
+        # لایه تاریک پس‌زمینه با قابلیت کلیک برای خروج
+        st.markdown('<div class="custom-overlay-bg" onclick="sendPopupAction(\'close_popup\')"></div>', unsafe_allow_html=True)
         
-        # تزریق اسکریپت برای مپ کردن کلیک روی المان کمکی
-        st.markdown("""
-            <script>
-            var btn = window.parent.document.getElementsByTagName('button');
-            for (var i = 0; i < btn.length; i++) {
-                if (btn[i].innerText === "hidden_close") {
-                    btn[i].id = "close-popup-trigger";
-                }
-            }
-            </script>
+        # کارت سفید اصلی پاپ آپ
+        active_f = "active" if st.session_state.bio_tab == "fingerprint" else ""
+        active_face = "active" if st.session_state.bio_tab == "face" else ""
+        
+        # تعیین محتوای متنی و گرافیکی داخلی بر اساس تب فعال
+        if st.session_state.bio_tab == "fingerprint":
+            inner_content = """
+                <h4 style="color: #1e293b; text-align: center; margin:0; font-weight:bold; font-size:18px;">ورود با اثر انگشت</h4>
+                <p style="text-align: center; color: #64748b; font-size: 13px; margin: 8px 0 20px 0;">حسگر را لمس کنید</p>
+                <h1 style="text-align: center; font-size: 65px; margin: 20px 0; color: #ea580c;">☝️</h1>
+            """
+        else:
+            inner_content = """
+                <h4 style="color: #1e293b; text-align: center; margin:0; font-weight:bold; font-size:18px;">ورود با تشخیص چهره</h4>
+                <p style="text-align: center; color: #64748b; font-size: 13px; margin: 8px 0 20px 0;">به دوربین جلو نگاه کنید</p>
+                <h1 style="text-align: center; font-size: 65px; margin: 20px 0; color: #facc15;">👤</h1>
+            """
+
+        st.markdown(f"""
+        <div class="custom-popup-card">
+            <div style="font-size:13px; color:#94a3b8; margin-bottom:12px; text-align:center; font-weight:bold;">☀️ TopSUNify</div>
+            
+            <div class="segment-tab-container">
+                <a href="#" class="segment-btn {active_face}" onclick="sendPopupAction('switch_to_face'); return false;">Face ID</a>
+                <a href="#" class="segment-btn {active_f}" onclick="sendPopupAction('switch_to_fingerprint'); return false;">Fingerprint</a>
+            </div>
+            
+            <div style="min-height: 140px;">
+                {inner_content}
+            </div>
+            
+            <a href="#" class="html-cancel-link" onclick="sendPopupAction('close_popup'); return false;">انصراف</a>
+        </div>
+        
+        <script>
+        function sendPopupAction(actionName) {{
+            var inputs = window.parent.document.getElementsByTagName('input');
+            for (var i = 0; i < inputs.length; i++) {{
+                if (inputs[i].placeholder === "popup_action_bridge" || inputs[i].ariaLabel === "popup_action_bridge") {{
+                    inputs[i].value = actionName;
+                    inputs[i].dispatchEvent(new Event('input', {{ bubbles: true }}));
+                    inputs[i].dispatchEvent(new Event('change', {{ bubbles: true }}));
+                    break;
+                }}
+            }}
+        }}
+        </script>
         """, unsafe_allow_html=True)
 
-    # اسکریپت نهایی ست کردن رنگ زرد دکمه ورود اصلی به اپلیکیشن
+    # اسکریپت اعمال زرد تاپسان روی دکمه ورود اصلی
     st.markdown("""
         <script>
         var buttons = window.parent.document.getElementsByTagName('button');
