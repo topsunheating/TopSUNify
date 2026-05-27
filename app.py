@@ -1,15 +1,14 @@
 import streamlit as st
 
-# تزریق آدرس‌های استاندارد استاتیک به هدر سایت
-st.html(
-    """
-    <link rel="manifest" href="./app/static/manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="TopSUNify">
-    <link rel="apple-touch-icon" href="./app/static/logo.png">
-    """
+# تنظیم عنوان سایت و آیکون اختصاصی تاپ‌سان
+st.set_page_config(
+    page_title="TopSUNify | هوش مصنوعی گرمایش",
+    page_icon="./static/logo.png", # مسیر لوگویی که در پوشه استاتیک آپلود کردید
+    layout="wide" # یا centered بسته به طراحی شما
 )
+
+# اضافه کردن لوگو به بالای منوی سمت چپ (Sidebar) برای زیبایی بیشتر
+st.logo("./static/logo.png", link="https://topsunify-gshdpz3qnjc3itl8ukrxfq.streamlit.app")
 import streamlit as st
 import Financial
 import main
