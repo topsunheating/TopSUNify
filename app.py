@@ -1,13 +1,13 @@
 import streamlit as st
 
-# تنظیم هدر سفارشی برای معرفی آیکون اختصاصی به موبایل
+# تزریق آدرس‌های استاندارد استاتیک به هدر سایت
 st.html(
     """
-    <link rel="manifest" href="https://topsunify-gshdpz3qnjc3itl8ukrxfq.streamlit.app/~/+/manifest.json">
+    <link rel="manifest" href="./app/static/manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="TopSUNify">
-    <link rel="apple-touch-icon" href="https://topsunify-gshdpz3qnjc3itl8ukrxfq.streamlit.app/~/+/logo.png">
+    <link rel="apple-touch-icon" href="./app/static/logo.png">
     """
 )
 import streamlit as st
