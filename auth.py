@@ -19,6 +19,7 @@ def render_auth_page():
         if username_val == "admin" and password_val == "1234":
             st.session_state.logged_in = True
             st.success("ورود موفقیت‌آمیز بود.")
+            st.query_params.clear()
             time.sleep(0.5)
             st.rerun()
         elif username_val == "" or password_val == "":
