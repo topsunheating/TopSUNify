@@ -764,95 +764,79 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# کد اصلاح شده برای رندر صحیح (حتما unsafe_allow_html=True را داشته باشد)
+# ناوبری پایین صفحه - نسخه نهایی (بدون نمایش کد خام)
 # ==============================================================================
 
-# 1. تعریف استایل‌ها
-import streamlit as st
-
-# ====================== CSS ======================
 st.markdown("""
 <style>
-.nav-bar-container {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 70px;
-    background: white;
-    border-top: 1px solid #e2e8f0;
-
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: space-around;
-    align-items: center;
-
-    z-index: 999999;
-}
-
-.nav-button {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    color: #64748b !important;
-    text-decoration: none !important;
-    font-size: 11px !important;
-
-    flex: 1;
-}
-
-.nav-button:hover {
-    color: #2563eb !important;
-}
-
-.nav-icon {
-    font-size: 22px;
-    line-height: 1;
-}
-
-.nav-label {
-    margin-top: 4px;
-}
+    .nav-bar-container {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 76px !important;
+        background-color: #ffffff !important;
+        border-top: 1px solid #e2e8f0 !important;
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-around !important;
+        align-items: center !important;
+        z-index: 999999 !important;
+        box-shadow: 0 -3px 10px rgba(0,0,0,0.08) !important;
+        direction: ltr !important;
+        padding: 0 8px !important;
+    }
+    
+    .nav-button {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        color: #64748b !important;
+        text-decoration: none !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        flex: 1 !important;
+        padding: 6px 0 !important;
+    }
+    
+    .nav-button.active {
+        color: #ea580c !important;
+    }
+    
+    .nav-button div:first-child {
+        font-size: 24px !important;
+        margin-bottom: 4px !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# ====================== HTML ======================
-nav_html = """
-<div class="nav-bar-container">
+# ساخت HTML کامل
+nav_html = '<div class="nav-bar-container">'
 
-    <a href="?nav_tab=dashboard" target="_self" class="nav-button">
-        <div class="nav-icon">📊</div>
-        <div class="nav-label">داشبورد</div>
-    </a>
+tabs = [
+    ("dashboard", "📊", "داشبورد"),
+    ("invoice", "🧾", "پیش‌فاکتور"),
+    ("profile", "👤", "پروفایل")
+]
 
-    <a href="?nav_tab=invoice" target="_self" class="nav-button">
-        <div class="nav-icon">🧾</div>
-        <div class="nav-label">پیش‌فاکتور</div>
-    </a>
+for tab_id, icon, label in tabs:
+    active = "active" if st.session_state.get("active_tab") == tab_id else ""
+    nav_html += f'''
+        <a href="?nav_tab={tab_id}" class="nav-button {active}">
+            <div>{icon}</div>
+            <div>{label}</div>
+        </a>
+    '''
 
-    <a href="?nav_tab=warranty" target="_self" class="nav-button">
-        <div class="nav-icon">🛡️</div>
-        <div class="nav-label">گارانتی</div>
-    </a>
+nav_html += '</div>'
 
-    <a href="?nav_tab=services" target="_self" class="nav-button">
-        <div class="nav-icon">🛠️</div>
-        <div class="nav-label">خدمات</div>
-    </a>
+# نمایش نهایی با st.html (بهترین روش)
+st.html(nav_html)
 
-    <a href="?nav_tab=info" target="_self" class="nav-button">
-        <div class="nav-icon">📚</div>
-        <div class="nav-label">اطلاعات</div>
-    </a>
-
-    <a href="?nav_tab=profile" target="_self" class="nav-button">
-        <div class="nav-icon">👤</div>
-        <div class="nav-label">پروفایل</div>
-    </a>
-
-</div>
-"""
-
-st.markdown(nav_html, unsafe_allow_html=True)
+# مدیریت تغییر تب
+if "nav_tab" in st.query_params:
+    new_tab = st.query_params["nav_tab"]
+    if new_tab in ["dashboard", "invoice", "profile"]:
+        st.session_state.active_tab = new_tab
+        st.rerun()
