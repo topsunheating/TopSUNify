@@ -764,27 +764,53 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری نهایی - نسخه استاندارد و اصلاح شده
+# ناوبری نهایی چسبیده به پایین صفحه (جایگزین تمام کدهای قبلی در انتهای فایل)
 # ==============================================================================
 
-# ایجاد لیست تب‌ها
-tabs = [
-    {"id": "profile", "icon": "👤", "label": "پروفایل"},
-    {"id": "info", "icon": "📚", "label": "اطلاعات"},
-    {"id": "services", "icon": "🛠️", "label": "خدمات"},
-    {"id": "warranty", "icon": "🛡️", "label": "گارانتی"},
-    {"id": "invoice", "icon": "🧾", "label": "پیش‌فاکتور"},
-    {"id": "dashboard", "icon": "📊", "label": "داشبورد"},
+# حذف هرگونه کدی که به متغیر bottom_navigation_html اشاره دارد.
+# از این بلوک برای نمایش منوی پایین استفاده کنید:
+
+st.markdown("""
+<style>
+    /* این استایل برای چسباندن منو به پایین و ایجاد فضای امن برای آیفون/اندروید */
+    .fixed-nav-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: #ffffff;
+        display: flex;
+        justify-content: space-around;
+        padding: 10px 0;
+        border-top: 1px solid #e2e8f0;
+        z-index: 9999;
+    }
+    .nav-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: bold;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# تعریف تب‌ها
+nav_tabs = [
+    ("profile", "👤", "پروفایل"),
+    ("info", "📚", "اطلاعات"),
+    ("services", "🛠️", "خدمات"),
+    ("warranty", "🛡️", "گارانتی"),
+    ("invoice", "🧾", "پیش‌فاکتور"),
+    ("dashboard", "📊", "داشبورد")
 ]
 
-# ایجاد ستون‌ها برای دکمه‌های پایین صفحه
+# ایجاد دکمه‌های ناوبری
 cols = st.columns(6)
-for i, tab in enumerate(tabs):
+for i, (tab_id, icon, label) in enumerate(nav_tabs):
     with cols[i]:
-        # استفاده از دکمه برای تغییر تب (بدون تداخل با متغیرهای حذف شده)
-        if st.button(f"{tab['icon']}\n{tab['label']}", key=f"nav_{tab['id']}", use_container_width=True):
-            st.session_state.active_tab = tab['id']
+        if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}", use_container_width=True):
+            st.session_state.active_tab = tab_id
             st.rerun()
-
-    st.markdown("</div>", unsafe_allow_html=True)
-st.html(bottom_navigation_html)
