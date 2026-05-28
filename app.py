@@ -4,20 +4,36 @@ import streamlit as st
 st.set_page_config(
     page_title="TopSUNify",
     page_icon="./topsunify.png",  # استفاده از لوگوی اصلی تاپسان
-    layout="wide"  # این گزینه به همراه CSS باعث ریسپانسیو شدن کامل در تبلت و دسکتاپ می‌شود
+    layout="wide"
 )
 
-# ====================== ۱. اضافه کردن ماژول احراز هویت ======================
-import auth
-
+# ====================== ۱. مدیریت وضعیت جهانی سیستم (Session State) ======================
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
+if "manual_rooms" not in st.session_state: st.session_state.manual_rooms = []
+if "show_table" not in st.session_state: st.session_state.show_table = False
+if "final_res" not in st.session_state: st.session_state.final_res = {}
+if "m80" not in st.session_state: st.session_state.m80 = 0.0
+if "m40" not in st.session_state: st.session_state.m40 = 0.0
+if "xps" not in st.session_state: st.session_state.xps = 0.0
+if "thermostat_count" not in st.session_state: st.session_state.thermostat_count = 1
+if "panel_count" not in st.session_state: st.session_state.panel_count = 1
+if "source_type" not in st.session_state: st.session_state.source_type = ""
+
+# متغیرهای بخش پروفایل کاربری
+if "user_display_name" not in st.session_state: st.session_state.user_display_name = "رضا تلچی"
+if "user_phone" not in st.session_state: st.session_state.user_phone = "۰۹۱۲۰۱۹۸۲۲۹"
+if "user_role" not in st.session_state: st.session_state.user_role = "کاربر عمومی" 
+if "profile_pic_base64" not in st.session_state: st.session_state.profile_pic_base64 = ""
+
+# ====================== ۲. بررسی احراز هویت قوی ======================
+import auth
 
 if not st.session_state.logged_in:
     auth.render_auth_page()
     st.stop()
 
-# ====================== ۲. ایمپورت کتابخانه‌ها و ماژول‌های مهندسی ======================
+# ====================== ۳. ایمپورت کتابخانه‌ها و ماژول‌های مهندسی ======================
 import Financial
 import main
 import os
@@ -29,7 +45,20 @@ import pandas as pd
 from PIL import Image
 from Financial import calculate_tosunify_proforma, generate_proforma_pdf
 
-# ====================== ۳. هوشمندسازی CSS با فونت ایران‌یکان و ظاهر نیتیو ======================
+# مدیریت تب فعال پایین و آیکون فعال گرید از روی آدرس URL (پایداری کوئری پارامترها)
+if "active_tab" not in st.session_state:
+    st.session_state.active_tab = "dashboard" 
+if "active_sub_action" not in st.session_state:
+    st.session_state.active_sub_action = "file_plan" 
+
+query_p = st.query_params
+if "nav_tab" in query_p:
+    st.session_state.active_tab = query_p["nav_tab"]
+if "sub_act" in query_p:
+    st.session_state.active_sub_action = query_p["sub_act"]
+
+
+# ====================== ۴. هوشمندسازی CSS با فونت ایران‌یکان و ظاهر نیتیو ======================
 def inject_custom_css():
     font_path = "iranyekan.ttf"
     font_base64 = ""
@@ -56,18 +85,16 @@ def inject_custom_css():
         display: none !important;
     }}
 
-    /* --- بهینه‌سازی کانتینر اصلی برای نمایش عالی در تبلت و موبایل --- */
     .main .block-container {{
-        max-width: 550px !important; /* جمع شدن شیک و موبایلی در دسکتاپ */
+        max-width: 550px !important;
         margin: 0 auto !important;
         padding-left: 16px !important;
         padding-right: 16px !important;
-        padding-bottom: 110px !important; /* فضا برای اینکه محتوا زیر منوی پایین نرود */
+        padding-bottom: 110px !important;
         background-color: #f8fafc !important;
         min-height: 100vh;
     }}
 
-    /* هدر بالای اپلیکیشن */
     .app-main-header-container {{
         display: flex !important;
         justify-content: center !important;
@@ -77,7 +104,6 @@ def inject_custom_css():
         margin-bottom: 5px !important;
     }}
 
-    /* --- استایل گرید آیکون‌ها (منوی دسترسی سریع ماژول‌ها) --- */
     .icon-grid-container {{
         display: grid !important;
         grid-template-columns: repeat(3, 1fr) !important;
@@ -111,7 +137,7 @@ def inject_custom_css():
     }}
     
     .icon-item-link.active-action .icon-circle {{
-        background-color: #fef3c7 !important; /* لایت زرد/نارنجی متمایز */
+        background-color: #fef3c7 !important;
         border: 2px solid #ea580c !important;
         color: #ea580c !important;
     }}
@@ -124,7 +150,6 @@ def inject_custom_css():
         white-space: nowrap !important;
     }}
 
-    /* باکس محتوای داخلی هر بخش */
     .module-card-box {{
         background: #ffffff !important;
         padding: 20px !important;
@@ -133,7 +158,7 @@ def inject_custom_css():
         margin-bottom: 20px !important;
     }}
 
-    /* --- استایل‌های اختصاصی بخش پروفایل کاربری --- */
+    /* استایل‌های اختصاصی بخش پروفایل کاربری */
     .profile-header-card {{
         display: flex !important;
         justify-content: space-between !important;
@@ -198,7 +223,6 @@ def inject_custom_css():
         font-weight: 800 !important;
     }}
 
-    /* منوهای خطی لیست ملو */
     .profile-menu-item {{
         display: flex !important;
         justify-content: space-between !important;
@@ -207,7 +231,6 @@ def inject_custom_css():
         border-bottom: 1px solid #f1f5f9 !important;
         text-decoration: none !important;
         color: #334155 !important;
-        transition: background 0.2s !important;
     }}
 
     .profile-menu-item:last-child {{
@@ -231,7 +254,6 @@ def inject_custom_css():
         font-size: 14px !important;
     }}
 
-    /* --- سیستم نویگیشن فیکس شده در پایین (Bottom Navigation) --- */
     .fixed-bottom-nav {{
         position: fixed !important;
         bottom: 0 !important;
@@ -262,7 +284,7 @@ def inject_custom_css():
     }}
 
     .nav-tab-item.active-tab {{
-        color: #ea580c !important; /* رنگ نارنجی سازمانی برند تاپسان */
+        color: #ea580c !important;
     }}
 
     .nav-tab-icon {{
@@ -270,7 +292,6 @@ def inject_custom_css():
         margin-bottom: 3px !important;
     }}
 
-    /* ================= FILE UPLOAD ================= */
     [data-testid="stFileUploadDropzone"],
     [data-testid="stFileUploaderDropzone"] {{
         border: 2px dashed #ea580c !important;
@@ -284,7 +305,7 @@ def inject_custom_css():
 
 inject_custom_css()
 
-# ====================== ۴. هدر بالایی اختصاصی (فقط لوگوی تصویری بدون متن) ======================
+# ====================== ۵. هدر بالایی اختصاصی (لوگوی تصویری) ======================
 header_logo_html = ""
 if os.path.exists("topsunify.png"):
     with open("topsunify.png", "rb") as f:
@@ -295,48 +316,18 @@ if os.path.exists("topsunify.png"):
     </div>
     """
 else:
-    # فال‌بک در صورتی که فایل موقتاً وجود نداشته باشد
     header_logo_html = '<div class="app-main-header-container" style="font-size:24px;">☀️</div>'
 
 st.markdown(header_logo_html, unsafe_allow_html=True)
 st.divider()
 
-# ====================== ۵. مدیریت وضعیت جهانی سیستم (Session State) ======================
-if "manual_rooms" not in st.session_state: st.session_state.manual_rooms = []
-if "show_table" not in st.session_state: st.session_state.show_table = False
-if "final_res" not in st.session_state: st.session_state.final_res = {}
-if "m80" not in st.session_state: st.session_state.m80 = 0.0
-if "m40" not in st.session_state: st.session_state.m40 = 0.0
-if "xps" not in st.session_state: st.session_state.xps = 0.0
-if "thermostat_count" not in st.session_state: st.session_state.thermostat_count = 1
-if "panel_count" not in st.session_state: st.session_state.panel_count = 1
-if "source_type" not in st.session_state: st.session_state.source_type = ""
-
-# متغیرهای پیش‌فرض بخش پروفایل کاربری
-if "user_display_name" not in st.session_state: st.session_state.user_display_name = "رضا تلچی"
-if "user_phone" not in st.session_state: st.session_state.user_phone = "۰۹۱۲۰۱۹۸۲۲۹"
-if "user_role" not in st.session_state: st.session_state.user_role = "کاربر عمومی" 
-if "profile_pic_base64" not in st.session_state: st.session_state.profile_pic_base64 = ""
-
-# مدیریت تب فعال پایین و آیکون فعال گرید از روی آدرس URL (پایداری کوئری پارامترها)
-if "active_tab" not in st.session_state:
-    st.session_state.active_tab = "dashboard" 
-if "active_sub_action" not in st.session_state:
-    st.session_state.active_sub_action = "file_plan" 
-
-query_p = st.query_params
-if "nav_tab" in query_p:
-    st.session_state.active_tab = query_p["nav_tab"]
-if "sub_act" in query_p:
-    st.session_state.active_sub_action = query_p["sub_act"]
-
 
 # ==============================================================================
-# رندر کردن محتوا بر اساس تب انتخاب شده در منوی پایین
+# رندر کردن محتوای صفحات بر اساس تب فعال
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# ۱. محتوای تب: داشبورد (صفحه خانگی یا خلاصه پروژه)
+# ۱. محتوای تب: داشبورد
 # ------------------------------------------------------------------------------
 if st.session_state.active_tab == "dashboard":
     st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
@@ -353,7 +344,7 @@ if st.session_state.active_tab == "dashboard":
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ------------------------------------------------------------------------------
-# ۲. محتوای تب: صدور پیش‌فاکتور (دارای گرید آیکونی اختصاصی در بالا)
+# ۲. محتوای تب: صدور پیش‌فاکتور
 # ------------------------------------------------------------------------------
 elif st.session_state.active_tab == "invoice":
     st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
@@ -391,7 +382,6 @@ elif st.session_state.active_tab == "invoice":
 
         st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
 
-        # الف) ماژول آپلود فایل نقشه
         if st.session_state.active_sub_action == "file_plan":
             st.markdown("<h5 style='color:#334155; margin-bottom:15px;'>فایل نقشه اتوکد کف (DXF / DWG) را انتخاب کنید:</h5>", unsafe_allow_html=True)
             uploaded_file = st.file_uploader(label="", type=['dxf', 'dwg'], key="uploader_main", label_visibility="collapsed")
@@ -435,7 +425,6 @@ elif st.session_state.active_tab == "invoice":
                     except Exception as e:
                         st.error(f"خطا در پردازش فایل: {e}")
 
-        # ب) ماژول ورود دستی ابعاد فضاهای پروژه
         elif st.session_state.active_sub_action == "manual_dim":
             with st.expander("➕ افزودن اتاق جدید", expanded=True):
                 c_name, c_w, c_l = st.columns(3)
@@ -459,10 +448,7 @@ elif st.session_state.active_tab == "invoice":
                             st.session_state.manual_rooms.pop(i)
                             if not st.session_state.manual_rooms: st.session_state.show_table = False
                             st.rerun()
-            else:
-                st.info("هنوز هیچ اتاقی اضافه نشده است.")
 
-        # ج) ماژول ورود مستقیم مقادیر عددی فاکتور
         elif st.session_state.active_sub_action == "direct_val":
             st.write("### 📝 ورود مستقیم مقادیر فاکتور")
             m80_dir = st.number_input("فیلم عرض 80 (متر)", min_value=0.0, key="invoice_m80")
@@ -481,7 +467,6 @@ elif st.session_state.active_tab == "invoice":
 
         st.markdown('</div>', unsafe_allow_html=True)
 
-        # --- محاسبات، فیلترینگ اقلام صفر و صدور فاکتور نهایی ---
         st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
         st.write("### ⚙️ تنظیمات فاکتور")
         col1, col2, col3 = st.columns(3)
@@ -564,16 +549,14 @@ elif st.session_state.active_tab == "info":
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ------------------------------------------------------------------------------
-# ۶. محتوای تب اختصاصی: پروفایل کاربری (مشابه فایل تصویری ارسالی شما)
+# ۶. محتوای تب اختصاصی: پروفایل کاربری
 # ------------------------------------------------------------------------------
 elif st.session_state.active_tab == "profile":
     
-    # تنظیم آواتار تصویر کاربری پیش‌فرض (در صورت نبود فایل، از تصویر پایه استفاده می‌شود)
     avatar_src = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
     if st.session_state.profile_pic_base64:
         avatar_src = f"data:image/png;base64,{st.session_state.profile_pic_base64}"
         
-    # هدر کارت کاربری (مشابه بالای تصویر ارسالی WhatsApp Image 2026-05-27 at 12.15.11 (1).jpeg)
     user_header_html = f"""
     <div class="profile-header-card">
         <div class="profile-info-block">
@@ -587,7 +570,6 @@ elif st.session_state.active_tab == "profile":
     """
     st.markdown(user_header_html, unsafe_allow_html=True)
     
-    # باکس شبیه‌سازی سطح دسترسی (مشابه باکس خاکستری تصویر شما)
     role_badge_html = f"""
     <div class="profile-role-badge-box">
         <div class="profile-role-title">سطح دسترسی حساب:</div>
@@ -596,18 +578,16 @@ elif st.session_state.active_tab == "profile":
     """
     st.markdown(role_badge_html, unsafe_allow_html=True)
     
-    # --- المان‌های بازشوی پنهان برای مدیریت شیک پروفایل (تغییر عکس و سطح) ---
-    with st.expander("⚙️ پنل مدیریت پروفایل و سطح دسترسی (تست مدیر)"):
-        # آپلودر تصویر آواتار
+    # منوی تنظیمات ادمین و تغییرات پروفایل
+    with st.expander("⚙️ تنظیمات کاربری و سطح دسترسی حساب"):
         uploaded_avatar = st.file_uploader("انتخاب یا تغییر عکس پروفایل:", type=["jpg", "png", "jpeg"], key="avatar_uploader_input")
         if uploaded_avatar is not None:
             st.session_state.profile_pic_base64 = base64.b64encode(uploaded_avatar.getvalue()).decode()
             st.toast("📷 عکس پروفایل با موفقیت تغییر یافت.")
             st.rerun()
             
-        # انتخاب سطح دسترسی (طبق بیزنس پلن درخواستی شما)
         selected_role_test = st.selectbox(
-            "تعیین سطح دسترسی کاربر (توسط مدیر):",
+            "تعیین سطح دسترسی حساب:",
             ["کاربر عمومی", "مدیر", "مدیر فروش", "مدیر فنی", "مدیر خدمات", "کارشناس فروش", "نمایندگی", "عاملیت"],
             index=["کاربر عمومی", "مدیر", "مدیر فروش", "مدیر فنی", "مدیر خدمات", "کارشناس فروش", "نمایندگی", "عاملیت"].index(st.session_state.user_role)
         )
@@ -615,14 +595,14 @@ elif st.session_state.active_tab == "profile":
             st.session_state.user_role = selected_role_test
             st.rerun()
 
-    # باکس لیست گزینه‌ها همراه با آیکون و شبیه‌سازی پیکان خطی (مشابه لیست عکس ارسالی)
+    # گرید لیست گزینه‌های درخواستی شما
     st.markdown('<div class="module-card-box" style="padding: 10px 15px !important;">', unsafe_allow_html=True)
     
     menu_items = [
         {"label": "فاکتورهای تکمیل شده", "icon": "✅"},
         {"label": "فاکتورهای باز", "icon": "⏳"},
         {"label": "پیش فاکتورها", "icon": "🧾"},
-        {"label": "مشتریان منتخب", "icon": "⭐"},
+        {"label": "مشتریانی منتخب", "icon": "⭐"},
         {"label": "اعلام موجودی انبار", "icon": "📦"},
         {"label": "تنظیمات", "icon": "⚙️"},
     ]
@@ -641,7 +621,6 @@ elif st.session_state.active_tab == "profile":
         
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # دکمه خروج نهایی در پایین صفحه پروفایل
     if st.button("🚪 خروج از حساب کاربری تاپسان", use_container_width=True):
         st.session_state.logged_in = False
         st.query_params.clear()
