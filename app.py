@@ -1,12 +1,25 @@
 import streamlit as st
 
+# ۱. تنظیمات اولیه
 # 🛑 دستور set_page_config حتماً باید در بالاترین خط برنامه باقی بماند
 st.set_page_config(
     page_title="TopSUNify",
     page_icon="./topsunify.png",  # استفاده از لوگوی اصلی تاپسان
     layout="wide"  # این گزینه به همراه CSS باعث ریسپانسیو شدن کامل در تبلت و دسکتاپ می‌شود
 )
+# ۲. ایمپورت ماژول‌ها
+import auth
+import os
+# ... سایر ایمپورت‌ها
 
+# ۳. مدیریت نشست (Session State) - حتماً قبل از چک کردن لاگین باشد
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+# ۴. چک کردن وضعیت لاگین
+if not st.session_state.logged_in:
+    auth.render_auth_page()
+    st.stop() # اگر لاگین نیست، کدهای بعدی اجرا نمی‌شوند
 # ====================== ۱. اضافه کردن ماژول احراز هویت ======================
 import auth
 
