@@ -706,50 +706,81 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی: کاملاً مستقل، افقی، چسبیده به پایین و بدون کد خام
+
+# ناوبری نهایی: بدون href و بدون خروج از اپ
+
 # ==============================================================================
 
-# ۱. تزریق استایل‌های دقیق برای چیدمان افقی و فیکس در کادر سفید
 st.markdown("""
-<style>
-    /* کانتینر اصلی که در پایین صفحه فیکس می‌شود */
-    .final-fixed-nav {
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        width: 100% !important;
-        max-width: 550px !important;
-        height: 75px !important;
-        background-color: #ffffff !important;
-        border-top: 1px solid #e2e8f0 !important;
-        box-shadow: 0 -4px 10px rgba(0,0,0,0.1) !important;
-        z-index: 999999 !important;
-        display: flex !important;
-        justify-content: space-around !important;
-        align-items: center !important;
-        padding: 0 !important;
-    }
 
-    /* استایل دکمه‌های ناوبری */
-    .final-nav-btn {
-        background: none !important;
-        border: none !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        width: 25% !important;
-        height: 100% !important;
-        cursor: pointer !important;
-        text-decoration: none !important;
-        color: #94a3b8 !important;
-        font-size: 10px !important;
-        font-weight: bold !important;
-    }
-    
-    .final-nav-btn.active { color: #ea580c !important; }
-    .final-nav-icon { font-size: 20px !important; margin-bottom: 2px !important; }
+<style>
+
+/* کانتینر ناوبری پایین */
+.bottom-native-nav {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 100% !important;
+    max-width: 550px !important;
+    height: 78px !important;
+    background: #ffffff !important;
+    border-top: 1px solid #e2e8f0 !important;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.06) !important;
+    z-index: 999999 !important;
+    padding: 8px 12px !important;
+}
+
+/* دکمه‌ها */
+.bottom-native-nav .stButton > button {
+    height: 58px !important;
+    border-radius: 18px !important;
+    background: transparent !important;
+    border: none !important;
+    color: #94a3b8 !important;
+    font-size: 11px !important;
+    font-weight: bold !important;
+    white-space: pre-line !important;
+}
+
+/* هاور */
+.bottom-native-nav .stButton > button:hover {
+    background: #fff7ed !important;
+    color: #ea580c !important;
+}
+
+/* دکمه فعال */
+.active-nav-btn button {
+    color: #ea580c !important;
+    background: #fff7ed !important;
+}
+
 </style>
-<a href="?nav_tab=invoice">
-st.markdown(nav_html, unsafe_allow_html=True)
+
+""", unsafe_allow_html=True)
+
+st.markdown('<div class="bottom-native-nav">', unsafe_allow_html=True)
+
+col1, col2, col3, col4 = st.columns(4)
+
+with col1:
+if st.button("📊\nداشبورد", key="nav_dashboard", use_container_width=True):
+st.session_state.active_tab = "dashboard"
+st.rerun()
+
+with col2:
+if st.button("🧾\nپیش‌فاکتور", key="nav_invoice", use_container_width=True):
+st.session_state.active_tab = "invoice"
+st.rerun()
+
+with col3:
+if st.button("📚\nتاپسان", key="nav_info", use_container_width=True):
+st.session_state.active_tab = "info"
+st.rerun()
+
+with col4:
+if st.button("👤\nپروفایل", key="nav_profile", use_container_width=True):
+st.session_state.active_tab = "profile"
+st.rerun()
+
+st.markdown("</div>", unsafe_allow_html=True)
