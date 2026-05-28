@@ -764,10 +764,9 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation)
+# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه پایدار
 # ==============================================================================
 
-# CSS منو (قوی‌تر و پایدارتر)
 st.markdown("""
 <style>
     .fixed-bottom-nav {
@@ -777,16 +776,15 @@ st.markdown("""
         transform: translateX(-50%) !important;
         width: 100% !important;
         max-width: 550px !important;
-        height: 72px !important;
+        height: 74px !important;
         background-color: #ffffff !important;
-        box-shadow: 0 -4px 12px rgba(0,0,0,0.1) !important;
+        box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
         z-index: 999999 !important;
         display: flex !important;
         justify-content: space-around !important;
         align-items: center !important;
         border-top: 1px solid #e2e8f0 !important;
         direction: ltr !important;
-        padding-bottom: env(safe-area-inset-bottom) !important;
     }
     .nav-tab-item {
         display: flex !important;
@@ -798,24 +796,21 @@ st.markdown("""
         font-size: 10px !important;
         font-weight: 700 !important;
         flex: 1 !important;
-        height: 100% !important;
+        padding: 6px 0 !important;
     }
     .nav-tab-item.active-tab {
         color: #ea580c !important;
     }
     .nav-tab-icon {
-        font-size: 22px !important;
-        margin-bottom: 3px !important;
+        font-size: 23px !important;
+        margin-bottom: 4px !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# ساخت HTML منو
-bottom_nav_html = '''
-<div class="fixed-bottom-nav">
-'''
-
-tabs = [
+# ساخت منو با دکمه (پایدارتر از لینک)
+cols = st.columns(6)
+tab_list = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
     ("warranty", "🛡️", "گارانتی"),
@@ -824,24 +819,33 @@ tabs = [
     ("profile", "👤", "پروفایل")
 ]
 
-for tab_id, icon, label in tabs:
-    active = "active-tab" if st.session_state.active_tab == tab_id else ""
-    bottom_nav_html += f'''
-    <a href="?nav_tab={tab_id}" class="nav-tab-item {active}">
-        <div class="nav-tab-icon">{icon}</div>
-        <div>{label}</div>
-    </a>
-    '''
+for i, (tab_id, icon, label) in enumerate(tab_list):
+    with cols[i]:
+        active = "active-tab" if st.session_state.active_tab == tab_id else ""
+        
+        if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}", 
+                     use_container_width=True,
+                     help=label):
+            st.session_state.active_tab = tab_id
+            st.rerun()
 
-bottom_nav_html += '</div>'
-
-st.html(bottom_nav_html)
-
-# ====================== مهم: مدیریت کوئری پارامتر بعد از نمایش منو ======================
-query_p = st.query_params
-if "nav_tab" in query_p:
-    new_tab = query_p["nav_tab"]
-    if new_tab in ["dashboard", "invoice", "warranty", "services", "info", "profile"]:
-        if st.session_state.active_tab != new_tab:
-            st.session_state.active_tab = new_tab
-            st.rerun()   # ← این خط خیلی مهمه
+# CSS اضافی برای زیباتر کردن دکمه‌ها (شبیه لینک)
+st.markdown("""
+<style>
+    div[data-testid="stButton"] button {
+        background: transparent !important;
+        border: none !important;
+        color: inherit !important;
+        font-size: 10px !important;
+        height: 68px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 4px 0 !important;
+    }
+    div[data-testid="stButton"] button:hover {
+        background: rgba(234, 88, 12, 0.08) !important;
+    }
+</style>
+""", unsafe_allow_html=True)
