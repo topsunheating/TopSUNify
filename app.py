@@ -764,7 +764,7 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری پایین صفحه - ۳ تب (نسخه نهایی - افقی + بدون خروج)
+# ناوبری پایین صفحه - ۳ تب (نسخه نهایی - همیشه افقی حتی روی موبایل)
 # ==============================================================================
 
 st.markdown("""
@@ -776,7 +776,7 @@ st.markdown("""
         transform: translateX(-50%) !important;
         width: 100% !important;
         max-width: 550px !important;
-        height: 80px !important;
+        height: 82px !important;
         background-color: #ffffff !important;
         border-top: 1px solid #e2e8f0 !important;
         box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
@@ -785,53 +785,79 @@ st.markdown("""
         flex-direction: row !important;
         justify-content: space-around !important;
         align-items: center !important;
-        padding: 0 10px !important;
+        padding: 0 8px !important;
+        direction: ltr !important;
     }
     
-    div[data-testid="stButton"] button {
-        background: transparent !important;
-        border: none !important;
-        height: 76px !important;
-        color: #64748b !important;
-        font-size: 11px !important;
-        font-weight: 700 !important;
+    .nav-item-final {
+        flex: 1 !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        padding: 6px 0 !important;
+        color: #64748b !important;
+        text-decoration: none !important;
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        padding: 8px 0 !important;
         border-radius: 12px !important;
+        transition: all 0.2s !important;
     }
     
-    div[data-testid="stButton"] button:hover {
+    .nav-item-final:hover {
         background: rgba(234, 88, 12, 0.08) !important;
+        color: #ea580c !important;
+    }
+    
+    .nav-item-final.active {
+        color: #ea580c !important;
+        background: #fefce8 !important;
+    }
+    
+    .nav-item-final .icon {
+        font-size: 27px !important;
+        margin-bottom: 4px !important;
+    }
+    
+    /* اجبار افقی بودن روی موبایل */
+    @media (max-width: 768px) {
+        .final-bottom-nav {
+            height: 78px !important;
+            padding: 0 5px !important;
+        }
+        .nav-item-final {
+            font-size: 10px !important;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
 
-# منوی ۳ تایی
-col1, col2, col3 = st.columns([1,1,1])
+# ساخت HTML منو
+nav_html = '<div class="final-bottom-nav">'
 
-with col1:
-    if st.button("📊\nداشبورد", key="btn_nav_dash", use_container_width=True):
-        st.session_state.active_tab = "dashboard"
-        st.rerun()
+items = [
+    ("dashboard", "📊", "داشبورد"),
+    ("invoice", "🧾", "پیش‌فاکتور"),
+    ("profile", "👤", "پروفایل")
+]
 
-with col2:
-    if st.button("🧾\nپیش‌فاکتور", key="btn_nav_invoice", use_container_width=True):
-        st.session_state.active_tab = "invoice"
-        st.rerun()
+for tab_id, icon, label in items:
+    active = "active" if st.session_state.get("active_tab") == tab_id else ""
+    nav_html += f'''
+        <a href="?nav_tab={tab_id}" class="nav-item-final {active}">
+            <div class="icon">{icon}</div>
+            <div>{label}</div>
+        </a>
+    '''
 
-with col3:
-    if st.button("👤\nپروفایل", key="btn_nav_profile", use_container_width=True):
-        st.session_state.active_tab = "profile"
-        st.rerun()
+nav_html += '</div>'
 
-# فعال کردن رنگ تب فعلی
-active_tab = st.session_state.get("active_tab", "dashboard")
-if active_tab == "dashboard":
-    st.markdown('<style>button[key="btn_nav_dash"] { color: #ea580c !important; }</style>', unsafe_allow_html=True)
-elif active_tab == "invoice":
-    st.markdown('<style>button[key="btn_nav_invoice"] { color: #ea580c !important; }</style>', unsafe_allow_html=True)
-elif active_tab == "profile":
-    st.markdown('<style>button[key="btn_nav_profile"] { color: #ea580c !important; }</style>', unsafe_allow_html=True)
+st.html(nav_html)
+
+# مدیریت تغییر تب
+if "nav_tab" in st.query_params:
+    new_tab = st.query_params["nav_tab"]
+    if new_tab in ["dashboard", "invoice", "profile"]:
+        if st.session_state.get("active_tab") != new_tab:
+            st.session_state.active_tab = new_tab
+            st.rerun()
