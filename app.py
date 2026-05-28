@@ -564,61 +564,178 @@ elif st.session_state.active_tab == "info":
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ------------------------------------------------------------------------------
-# ۶. محتوای تب اختصاصی: پروفایل کاربری (مشابه فایل تصویری ارسالی شما)
+# ۶. محتوای تب اختصاصی: پروفایل کاربری (طراحی مینیمال و نیتیو بر اساس الگوی سامان)
 # ------------------------------------------------------------------------------
 elif st.session_state.active_tab == "profile":
     
-    # تنظیم آواتار تصویر کاربری پیش‌فرض (در صورت نبود فایل، از تصویر پایه استفاده می‌شود)
+    # تعیین تصویر آواتار پیش‌فرض در صورت عدم آپلود تصویر توسط کاربر
     avatar_src = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
     if st.session_state.profile_pic_base64:
         avatar_src = f"data:image/png;base64,{st.session_state.profile_pic_base64}"
         
-    # هدر کارت کاربری (مشابه بالای تصویر ارسالی WhatsApp Image 2026-05-27 at 12.15.11 (1).jpeg)
-    user_header_html = f"""
-    <div class="profile-header-card">
-        <div class="profile-info-block">
-            <div class="profile-name">{st.session_state.user_display_name}</div>
-            <div class="profile-phone">{st.session_state.user_phone}</div>
+    # تزریق استایل‌های بومی و اختصاصی کارت‌ها و لیست ملو (دقیقاً مشابه عکس ارسالی)
+    st.markdown("""
+    <style>
+    /* هدر اصلی پروفایل کاربری */
+    .sam-profile-card {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        background: #ffffff !important;
+        padding: 16px 20px !important;
+        border-radius: 24px !important;
+        margin-bottom: 12px !important;
+    }
+    
+    .sam-profile-info {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+    }
+    
+    .sam-profile-name {
+        font-size: 19px !important;
+        font-weight: 800 !important;
+        color: #1e293b !important;
+        margin-bottom: 4px !important;
+    }
+    
+    .sam-profile-phone {
+        font-size: 13px !important;
+        color: #64748b !important;
+        letter-spacing: 0.5px;
+    }
+    
+    /* کانتینر تصویر آواتار گرد با رینگ ظریف */
+    .sam-avatar-box {
+        position: relative !important;
+        width: 64px !important;
+        height: 64px !important;
+    }
+    
+    .sam-avatar-img {
+        width: 64px !important;
+        height: 64px !important;
+        border-radius: 50% !important;
+        object-fit: cover !important;
+        border: 2px solid #f1f5f9 !important;
+    }
+    
+    /* باکس ملو تعیین سطح دسترسی حساب کاربری */
+    .sam-role-badge-container {
+        background: #f1f5f9 !important;
+        padding: 14px 20px !important;
+        border-radius: 18px !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        margin-bottom: 24px !important;
+    }
+    
+    .sam-role-label {
+        font-size: 13px !important;
+        color: #64748b !important;
+        font-weight: 500 !important;
+    }
+    
+    .sam-role-value {
+        font-size: 14px !important;
+        color: #1e293b !important;
+        font-weight: 800 !important;
+    }
+    
+    /* استایل لیست گزینه‌های ملو و خطی همراه با فلش راهنما */
+    .sam-menu-list-wrapper {
+        background: #ffffff !important;
+        border-radius: 24px !important;
+        padding: 6px 16px !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02) !important;
+        margin-bottom: 20px !important;
+    }
+    
+    .sam-menu-row-item {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 16px 4px !important;
+        border-bottom: 1px solid #f8fafc !important;
+        cursor: pointer;
+    }
+    
+    .sam-menu-row-item:last-child {
+        border-bottom: none !important;
+    }
+    
+    .sam-menu-row-right {
+        display: flex !important;
+        align-items: center !important;
+        gap: 14px !important;
+    }
+    
+    .sam-menu-row-text {
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        color: #334155 !important;
+    }
+    
+    .sam-menu-row-icon {
+        font-size: 18px !important;
+        color: #475569 !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+    
+    .sam-menu-row-arrow {
+        color: #cbd5e1 !important;
+        font-size: 12px !important;
+        font-weight: bold !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # ۱. بخش هدر کارت کاربری (نمایش نام و شماره تماس کارشناس)
+    st.markdown(f"""
+    <div class="sam-profile-card">
+        <div class="sam-profile-info">
+            <div class="sam-profile-name">{st.session_state.user_display_name}</div>
+            <div class="sam-profile-phone">{st.session_state.user_phone}</div>
         </div>
-        <div class="profile-avatar-container">
-            <img class="profile-avatar-img" src="{avatar_src}">
+        <div class="sam-avatar-box">
+            <img class="sam-avatar-img" src="{avatar_src}">
         </div>
     </div>
-    """
-    st.markdown(user_header_html, unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
     
-    # باکس شبیه‌سازی سطح دسترسی (مشابه باکس خاکستری تصویر شما)
-    role_badge_html = f"""
-    <div class="profile-role-badge-box">
-        <div class="profile-role-title">سطح دسترسی حساب:</div>
-        <div class="profile-role-value">{st.session_state.user_role}</div>
+    # ۲. بخش نمایش سطح دسترسی جاری (باکس ملو طوسی رنگ بر اساس ساختار سامان)
+    st.markdown(f"""
+    <div class="sam-role-badge-container">
+        <div class="sam-role-label">سطح دسترسی حساب:</div>
+        <div class="sam-role-value">{st.session_state.user_role}</div>
     </div>
-    """
-    st.markdown(role_badge_html, unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
     
-    # --- المان‌های بازشوی پنهان برای مدیریت شیک پروفایل (تغییر عکس و سطح) ---
-    with st.expander("⚙️ پنل مدیریت پروفایل و سطح دسترسی (تست مدیر)"):
-        # آپلودر تصویر آواتار
-        uploaded_avatar = st.file_uploader("انتخاب یا تغییر عکس پروفایل:", type=["jpg", "png", "jpeg"], key="avatar_uploader_input")
+    # ۳. ابزار پنهان/توسعه‌دهنده برای مدیریت و شبیه‌سازی تغییرات پروفایل بدون خروج از برنامه
+    with st.expander("🛠️ تنظیمات شبیه‌سازی حساب (مخصوص مدیر سیستم)"):
+        # تغییر عکس کاربری
+        uploaded_avatar = st.file_uploader("تغییر تصویر آواتار:", type=["jpg", "png", "jpeg"], key="sam_avatar_uploader")
         if uploaded_avatar is not None:
+            import base64
             st.session_state.profile_pic_base64 = base64.b64encode(uploaded_avatar.getvalue()).decode()
-            st.toast("📷 عکس پروفایل با موفقیت تغییر یافت.")
+            st.toast("📷 تصویر پروفایل با موفقیت به‌روزرسانی شد.", icon="✅")
             st.rerun()
             
-        # انتخاب سطح دسترسی (طبق بیزنس پلن درخواستی شما)
-        selected_role_test = st.selectbox(
-            "تعیین سطح دسترسی کاربر (توسط مدیر):",
-            ["کاربر عمومی", "مدیر", "مدیر فروش", "مدیر فنی", "مدیر خدمات", "کارشناس فروش", "نمایندگی", "عاملیت"],
-            index=["کاربر عمومی", "مدیر", "مدیر فروش", "مدیر فنی", "مدیر خدمات", "کارشناس فروش", "نمایندگی", "عاملیت"].index(st.session_state.user_role)
-        )
+        # تغییر پویای سطح دسترسی و تست آن در کامپوننت‌ها
+        roles_list = ["کاربر عمومی", "مدیر", "مدیر فروش", "مدیر فنی", "مدیر خدمات", "کارشناس فروش", "نمایندگی", "عاملیت"]
+        current_idx = roles_list.index(st.session_state.user_role) if st.session_state.user_role in roles_list else 0
+        selected_role_test = st.selectbox("تعیین سطح دسترسی کاربر جهت تست فیلترها:", roles_list, index=current_idx)
         if selected_role_test != st.session_state.user_role:
             st.session_state.user_role = selected_role_test
             st.rerun()
 
-    # باکس لیست گزینه‌ها همراه با آیکون و شبیه‌سازی پیکان خطی (مشابه لیست عکس ارسالی)
-    st.markdown('<div class="module-card-box" style="padding: 10px 15px !important;">', unsafe_allow_html=True)
+    # ۴. باکس منوهای خطی ظریف (دقیقاً متناظر با نیازهای اعلام شده و گرافیک تصویر اپلیکیشن سامان)
+    st.markdown('<div class="sam-menu-list-wrapper">', unsafe_allow_html=True)
     
-    menu_items = [
+    sam_items = [
         {"label": "فاکتورهای تکمیل شده", "icon": "✅"},
         {"label": "فاکتورهای باز", "icon": "⏳"},
         {"label": "پیش فاکتورها", "icon": "🧾"},
@@ -627,26 +744,24 @@ elif st.session_state.active_tab == "profile":
         {"label": "تنظیمات", "icon": "⚙️"},
     ]
     
-    for item in menu_items:
-        item_html = f"""
-        <div class="profile-menu-item">
-            <div class="profile-menu-right">
-                <span class="profile-menu-icon">{item['icon']}</span>
-                <span>{item['label']}</span>
+    for item in sam_items:
+        st.markdown(f"""
+        <div class="sam-menu-row-item">
+            <div class="sam-menu-row-right">
+                <span class="sam-menu-row-icon">{item['icon']}</span>
+                <span class="sam-menu-row-text">{item['label']}</span>
             </div>
-            <div class="profile-menu-arrow">◀</div>
+            <div class="sam-menu-row-arrow">◀</div>
         </div>
-        """
-        st.markdown(item_html, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
         
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # دکمه خروج نهایی در پایین صفحه پروفایل
-    if st.button("🚪 خروج از حساب کاربری تاپسان", use_container_width=True):
+    # دکمه خروج ایمن چسبیده به انتهای صفحه پروفایل
+    if st.button("🚪 خروج از حساب کاربری تاپسان", use_container_width=True, type="secondary"):
         st.session_state.logged_in = False
         st.query_params.clear()
         st.rerun()
-
 
 # ==============================================================================
 # ناوبری نهایی چسبیده به پایین صفحه با ۶ تب متوازن (Bottom Navigation Bar)
