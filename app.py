@@ -756,49 +756,82 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی: منوی پایین (نسخه لینک‌های کلیک‌خور)
+# ناوبری نهایی: منوی پایین (نسخه بانکی - کاملاً وسط‌چین و آیکون‌دار)
 # ==============================================================================
 
-# استایل‌دهی به منو
 st.markdown("""
 <style>
-    .mobile-menu-container {
-        position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-        width: 100%; max-width: 550px; height: 85px;
-        background-color: white; border-top: 1px solid #e2e8f0;
-        display: flex; justify-content: space-around; align-items: center;
-        z-index: 9999;
+    /* حذف استایل‌های پیش‌فرض دکمه استریم‌لیت برای جایگزینی با ظاهر بانکی */
+    div[data-testid="stButton"] > button {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        width: 100% !important;
     }
-    .nav-item {
-        text-decoration: none; text-align: center; color: #64748b;
-        display: flex; flex-direction: column; align-items: center;
+    
+    /* کانتینر اصلی منو */
+    .bank-nav-container {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 85px !important;
+        background-color: white !important;
+        border-top: 1px solid #e2e8f0 !important;
+        display: flex !important;
+        justify-content: space-around !important;
+        align-items: center !important;
+        z-index: 999999 !important;
     }
-    .nav-icon {
-        width: 45px; height: 45px; background: #f1f5f9;
-        border-radius: 15px; display: flex; align-items: center;
-        justify-content: center; font-size: 20px; margin-bottom: 4px;
+    
+    /* باکس آیکون گرد */
+    .bank-icon-box {
+        width: 42px !important;
+        height: 42px !important;
+        background-color: #f1f5f9 !important;
+        border-radius: 14px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 20px !important;
+        margin: 0 auto 5px auto !important; /* وسط‌چین کردن آیکون */
     }
-    .nav-item.active .nav-icon { background: #ea580c; color: white; }
-    .nav-item.active { color: #ea580c; font-weight: bold; }
+    
+    /* استایل متن */
+    .bank-nav-text {
+        font-size: 10px !important;
+        color: #64748b !important;
+        font-weight: 700 !important;
+        text-align: center !important;
+    }
+    
+    /* حالت فعال */
+    .active-nav .bank-icon-box { background-color: #ea580c !important; color: white !important; }
+    .active-nav .bank-nav-text { color: #ea580c !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# رندر کردن دکمه‌ها
-tabs = [
+# رندر منو در یک کانتینر فیکس شده
+st.markdown('<div class="bank-nav-container">', unsafe_allow_html=True)
+
+# تعریف تب‌ها
+nav_items = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "فاکتور"),
     ("warranty", "🛡️", "گارانتی"),
     ("services", "🛠️", "خدمات"),
-    ("profile", "👤", "پروفیـل")
+    ("profile", "👤", "پروفایل")
 ]
 
-st.markdown('<div class="mobile-menu-container">', unsafe_allow_html=True)
-for tab_id, icon, label in tabs:
-    # تعیین وضعیت فعال
-    is_active = "active" if st.session_state.active_tab == tab_id else ""
-    
-    # ساخت دکمه با استفاده از متد داخلی استریم‌لیت اما در ظاهر HTML
-    if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}"):
-        st.session_state.active_tab = tab_id
-        st.rerun()
+# ایجاد ستون‌های هم‌اندازه برای تب‌ها
+cols = st.columns(len(nav_items))
+
+for i, (tab_id, icon, label) in enumerate(nav_items):
+    with cols[i]:
+        is_active = "active-nav" if st.session_state.active_tab == tab_id else ""
+        # دکمه با ظاهر کاستوم HTML
+        if st.button(f'<div class="{is_active}"><div class="bank-icon-box">{icon}</div><div class="bank-nav-text">{label}</div></div>', key=f"nav_{tab_id}"):
+            st.session_state.active_tab = tab_id
+            st.rerun()
+
 st.markdown('</div>', unsafe_allow_html=True)
