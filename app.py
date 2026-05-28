@@ -565,52 +565,43 @@ elif st.session_state.active_tab == "info":
 
 import streamlit as st
 
-# استایل برای حذف متن در موبایل یا حذف کامل متن و بهینه‌سازی آیکون‌ها
+# استایل فوق‌العاده قوی برای چسباندن نوار به پایین و اجبار به افقی بودن
 st.markdown("""
 <style>
-    /* تنظیمات نوار ثابت پایین */
-    .fixed-nav {
+    /* حذف فضای خالی زیر دکمه‌ها */
+    .stApp { padding-bottom: 80px !important; }
+
+    /* طراحی نوار ناوبری ثابت */
+    .nav-container {
         position: fixed !important;
         bottom: 0 !important;
         left: 0 !important;
         width: 100% !important;
+        height: 70px !important;
         background-color: white !important;
-        border-top: 1px solid #e0e0e0 !important;
-        padding: 5px 0 !important;
-        z-index: 999999 !important;
         display: flex !important;
+        flex-direction: row !important;
         justify-content: space-around !important;
-    }
-
-    /* حذف فاصله اضافی ستون‌ها */
-    div[data-testid="column"] {
-        flex: 1 !important;
+        align-items: center !important;
+        border-top: 1px solid #ddd !important;
+        z-index: 999999 !important;
         padding: 0 !important;
         margin: 0 !important;
     }
 
-    /* استایل دکمه‌ها برای نمایش بهتر آیکون */
-    div[data-testid="stButton"] button {
-        width: 100% !important;
+    /* تنظیم دکمه‌ها برای چیدمان افقی در موبایل */
+    .nav-button {
+        flex: 1 !important;
+        text-align: center !important;
         border: none !important;
         background: none !important;
-        font-size: 20px !important; /* بزرگ‌تر کردن آیکون */
-        padding: 10px 0 !important;
+        font-size: 24px !important;
+        cursor: pointer !important;
     }
-
-    /* مخفی کردن فوتر استریم‌لیت */
-    #MainMenu, footer {visibility: hidden;}
-    
-    /* فضای خالی برای پایین صفحه */
-    .stApp {padding-bottom: 80px !important;}
 </style>
 """, unsafe_allow_html=True)
 
-# بدنه اصلی
-st.markdown('<div class="fixed-nav">', unsafe_allow_html=True)
-cols = st.columns(4)
-
-# اینجا فقط آیکون‌ها را قرار می‌دهیم (متن حذف شد)
+# تعریف تب‌ها
 tabs = [
     ("dashboard", "📊"),
     ("invoice", "🧾"),
@@ -618,10 +609,15 @@ tabs = [
     ("profile", "👤")
 ]
 
-for i, (tab_id, icon) in enumerate(tabs):
-    with cols[i]:
-        if st.button(icon, key=f"btn_{tab_id}"):
-            st.session_state.active_tab = tab_id
-            st.rerun()
+# ساخت نوار ناوبری با HTML خالص برای جلوگیری از تداخل استریم‌لیت
+nav_html = '<div class="nav-container">'
+for tab_id, icon in tabs:
+    # برای اینکه دکمه‌ها در استریم‌لیت کار کنند، از یک فرم استفاده می‌کنیم
+    # اما ظاهرش را با CSS کنترل می‌کنیم
+    if st.button(icon, key=f"btn_{tab_id}"):
+        st.session_state.active_tab = tab_id
+        st.rerun()
+nav_html += '</div>'
 
-st.markdown('</div>', unsafe_allow_html=True)
+# نمایش نوار
+st.markdown(nav_html, unsafe_allow_html=True)
