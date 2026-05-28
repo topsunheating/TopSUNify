@@ -27,6 +27,11 @@ if not st.session_state.logged_in:
     auth.render_auth_page()
     st.stop()
 
+# 🛑 اینجاست! دقیقاً بعد از بلاک بالا، کد جدید را وارد کنید:
+query_params = st.query_params
+if "nav_tab" in query_params:
+    st.session_state.active_tab = query_params["nav_tab"]
+
 # ==============================================================================
 # IMPORTS
 # ==============================================================================
