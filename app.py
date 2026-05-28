@@ -328,15 +328,34 @@ with nav_col4:
         change_tab("profile")
 
 # استایل CSS برای چسباندن این دکمه‌ها به پایین صفحه
+# این بخش را جایگزین کد استایل قبلی در انتهای فایل app.py کنید
 st.markdown("""
 <style>
-    [data-testid="column"] { padding: 0 !important; }
+    /* تنظیم چیدمان دکمه‌ها در یک ردیف */
+    [data-testid="column"] { 
+        padding: 0px !important; 
+        flex: 1 !important; 
+    }
+    
     div.row-widget.stButton { 
         position: fixed; 
         bottom: 0; 
-        width: 25%; 
+        width: 25%; /* هر دکمه دقیقا یک چهارم عرض صفحه */
         margin: 0; 
-        padding: 5px;
+        padding: 2px;
+    }
+
+    /* کوچک کردن متن و آیکون دکمه‌ها برای موبایل */
+    button {
+        font-size: 10px !important; /* سایز متن کوچکتر */
+        padding: 5px 0 !important;
+        height: 60px !important;
+        white-space: nowrap !important; /* جلوگیری از شکستن خط متن */
+    }
+
+    /* برای جلوگیری از هم‌پوشانی محتوا با دکمه‌های پایین */
+    .block-container {
+        padding-bottom: 80px !important;
     }
 </style>
 """, unsafe_allow_html=True)
