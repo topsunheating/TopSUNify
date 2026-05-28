@@ -764,26 +764,27 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری نهایی: منوی افقی (اصلاح شده)
+# ناوبری نهایی: منوی افقی (نسخه قوی)
 # ==============================================================================
 st.markdown("""
 <style>
-    /* ظرف اصلی منو */
     .fixed-bottom-nav-v2 {
         position: fixed !important;
         bottom: 0 !important;
         left: 0 !important;
         width: 100% !important;
-        height: 72px !important;
+        height: 75px !important;
         background-color: #ffffff !important;
         display: flex !important;
         flex-direction: row !important;
         justify-content: space-around !important;
         align-items: center !important;
         border-top: 1px solid #e2e8f0 !important;
+        box-shadow: 0 -4px 12px rgba(0,0,0,0.1) !important;
         z-index: 999999 !important;
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.08) !important;
         direction: ltr !important;
+        padding: 0 8px !important;
+        box-sizing: border-box !important;
     }
    
     .nav-tab-link {
@@ -794,25 +795,24 @@ st.markdown("""
         text-decoration: none !important;
         color: #94a3b8 !important;
         font-size: 10px !important;
-        font-weight: bold !important;
-        flex: 1 !important;           /* این خیلی مهمه */
+        font-weight: 700 !important;
+        flex: 1 1 0 !important;           /* خیلی مهم */
         min-width: 0 !important;
-        height: 100% !important;
-        padding: 4px 0 !important;
+        padding: 6px 2px !important;
+        line-height: 1.1 !important;
     }
    
     .nav-tab-link.active-link {
         color: #ea580c !important;
     }
-
-    /* جلوگیری از شکستن خط */
-    .fixed-bottom-nav-v2 a {
-        flex-shrink: 0 !important;
+    
+    .nav-tab-link div {
+        margin: 2px 0 !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# تعریف داده‌ها
+# تعریف آیتم‌ها
 nav_items = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
@@ -822,16 +822,18 @@ nav_items = [
     ("profile", "👤", "پروفایل")
 ]
 
-# رندر کردن نوار
-st.markdown('<div class="fixed-bottom-nav-v2">', unsafe_allow_html=True)
+# ساخت یک HTML کامل برای همه آیتم‌ها
+nav_html = '<div class="fixed-bottom-nav-v2">'
 
 for tab_id, icon, label in nav_items:
     active_class = "active-link" if st.session_state.get("active_tab", "dashboard") == tab_id else ""
-    st.markdown(f"""
+    nav_html += f"""
         <a href="?nav_tab={tab_id}" target="_self" class="nav-tab-link {active_class}">
-            <div style="font-size: 21px; margin-bottom: 3px;">{icon}</div>
-            <div style="font-family: 'iranyekan', sans-serif !important; line-height:1;">{label}</div>
+            <div style="font-size: 22px;">{icon}</div>
+            <div>{label}</div>
         </a>
-    """, unsafe_allow_html=True)
+    """
 
-st.markdown('</div>', unsafe_allow_html=True)
+nav_html += '</div>'
+
+st.markdown(nav_html, unsafe_allow_html=True)
