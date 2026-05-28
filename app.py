@@ -756,20 +756,20 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه پایدار
+# ناوبری عمودی در سمت راست صفحه
 # ==============================================================================
 
 st.markdown("""
 <style>
-    /* سایدبار ناوبری عمودی */
+    /* کانتینر اصلی منوی عمودی */
     .vertical-nav-container {
         position: fixed !important;
         top: 0 !important;
-        right: 0 !important; /* یا left: 0 برای سمت چپ */
-        width: 80px !important;
+        right: 0 !important;
+        width: 85px !important;
         height: 100vh !important;
         background-color: #ffffff !important;
-        border-left: 1px solid #e2e8f0 !important; /* اگر right:0 است، border-left */
+        border-left: 1px solid #e2e8f0 !important;
         box-shadow: -2px 0 10px rgba(0,0,0,0.05) !important;
         z-index: 999999 !important;
         display: flex !important;
@@ -778,6 +778,7 @@ st.markdown("""
         align-items: center !important;
     }
     
+    /* هر آیتم منو */
     .nav-item-vertical {
         display: flex !important;
         flex-direction: column !important;
@@ -785,28 +786,55 @@ st.markdown("""
         justify-content: center !important;
         color: #64748b !important;
         text-decoration: none !important;
-        font-size: 10px !important;
+        font-size: 11px !important;
         font-weight: 700 !important;
-        padding: 15px 0 !important;
+        padding: 20px 0 !important;
         width: 100% !important;
-        transition: all 0.2s !important;
+        transition: all 0.2s ease !important;
     }
     
+    /* حالت فعال */
     .nav-item-vertical.active {
         color: #ea580c !important;
         background: #fffbeb !important;
-        border-right: 3px solid #ea580c !important;
+        border-right: 4px solid #ea580c !important;
+    }
+    
+    .nav-item-vertical:hover {
+        background: rgba(234, 88, 12, 0.05) !important;
     }
     
     .nav-item-vertical .icon {
-        font-size: 24px !important;
-        margin-bottom: 5px !important;
+        font-size: 26px !important;
+        margin-bottom: 6px !important;
     }
     
-    /* تنظیم محتوا برای اینکه زیر منو نرود */
-    .main .block-container {
-        margin-right: 100px !important; /* فاصله از منو */
-        max-width: calc(100% - 120px) !important;
+    /* تنظیم فاصله محتوای صفحه از منوی کناری */
+    [data-testid="stAppViewContainer"] {
+        padding-right: 85px !important;
     }
 </style>
 """, unsafe_allow_html=True)
+
+# ساخت منو با ۴ تب
+nav_html = '<div class="vertical-nav-container">'
+
+items = [
+    ("dashboard", "📊", "داشبورد"),
+    ("invoice", "🧾", "پیش‌فاکتور"),
+    ("topsunify", "☀️", "تاپسانیفای"),
+    ("profile", "👤", "پروفایل")
+]
+
+for tab_id, icon, label in items:
+    active = "active" if st.session_state.get("active_tab") == tab_id else ""
+    nav_html += f'''
+        <a href="?nav_tab={tab_id}" target="_self" class="nav-item-vertical {active}">
+            <div class="icon">{icon}</div>
+            <div>{label}</div>
+        </a>
+    '''
+
+nav_html += '</div>'
+
+st.html(nav_html)
