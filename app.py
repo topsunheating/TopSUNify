@@ -567,25 +567,12 @@ elif st.session_state.active_tab == "info":
 # ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه بومی و متصل (سامان)
 # ==============================================================================
 
-# ۱. تزریق استایل‌های سی‌اس‌اس جادویی برای مهار کامل ستون‌های استریم‌لیت
+import streamlit as st
+
+# استایل برای حذف متن در موبایل یا حذف کامل متن و بهینه‌سازی آیکون‌ها
 st.markdown("""
 <style>
-    /* ۱. اجبار به نمایش افقی برای کانتینر اصلی دکمه‌ها در تمام دستگاه‌ها */
-    div[data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important;
-        justify-content: space-between !important;
-        width: 100% !important;
-    }
-
-    /* ۲. تنظیم عرض دقیق ۲۵٪ برای هر دکمه (تا در یک ردیف جا شوند) */
-    div[data-testid="column"] {
-        flex: 0 0 25% !important;
-        max-width: 25% !important;
-    }
-
-    /* ۳. چسباندن نوار به پایین صفحه با اولویت بسیار بالا */
+    /* تنظیمات نوار ثابت پایین */
     .fixed-nav {
         position: fixed !important;
         bottom: 0 !important;
@@ -595,32 +582,50 @@ st.markdown("""
         border-top: 1px solid #e0e0e0 !important;
         padding: 5px 0 !important;
         z-index: 999999 !important;
+        display: flex !important;
+        justify-content: space-around !important;
     }
 
-    /* ۴. ایجاد فضای خالی در انتهای صفحه تا دکمه‌ها روی محتوا نیفتند */
-    .stApp {
-        padding-bottom: 80px !important;
+    /* حذف فاصله اضافی ستون‌ها */
+    div[data-testid="column"] {
+        flex: 1 !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
-    
-    /* ۵. مخفی کردن آیکون Streamlit که روی دکمه‌ها افتاده است */
+
+    /* استایل دکمه‌ها برای نمایش بهتر آیکون */
+    div[data-testid="stButton"] button {
+        width: 100% !important;
+        border: none !important;
+        background: none !important;
+        font-size: 20px !important; /* بزرگ‌تر کردن آیکون */
+        padding: 10px 0 !important;
+    }
+
+    /* مخفی کردن فوتر استریم‌لیت */
     #MainMenu, footer {visibility: hidden;}
+    
+    /* فضای خالی برای پایین صفحه */
+    .stApp {padding-bottom: 80px !important;}
 </style>
 """, unsafe_allow_html=True)
 
-# بدنه اصلی کد شما که دکمه‌ها را می‌سازد
+# بدنه اصلی
 st.markdown('<div class="fixed-nav">', unsafe_allow_html=True)
 cols = st.columns(4)
 
+# اینجا فقط آیکون‌ها را قرار می‌دهیم (متن حذف شد)
 tabs = [
-    ("dashboard", "📊\nداشبورد"),
-    ("invoice", "🧾\nپیش‌فاکتور"),
-    ("top_sunify", "✨\nتاپسانیفای"),
-    ("profile", "👤\nپروفایل")
+    ("dashboard", "📊"),
+    ("invoice", "🧾"),
+    ("top_sunify", "✨"),
+    ("profile", "👤")
 ]
 
-for i, (tab_id, label) in enumerate(tabs):
+for i, (tab_id, icon) in enumerate(tabs):
     with cols[i]:
-        if st.button(label, key=f"btn_{tab_id}"):
+        if st.button(icon, key=f"btn_{tab_id}"):
             st.session_state.active_tab = tab_id
             st.rerun()
+
 st.markdown('</div>', unsafe_allow_html=True)
