@@ -13,9 +13,6 @@ def render_auth_page():
     username_val = st.query_params.get("u", "").strip()
     password_val = st.query_params.get("p", "").strip()
 
-    if "logged_in" not in st.session_state:
-        st.session_state.logged_in = False
-
     # بررسی وضعیت ورود پس از سابمیت فرم HTML
     if form_submitted:
         st.query_params.update({"login_submit": "false"})
