@@ -756,85 +756,72 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری پایین صفحه - ثابت در کانتینر (افقی و ۴تایی)
+# ناوبری پایین صفحه - نسخه فیکس‌شده افقی (بدون استفاده از columns استریم‌لیت)
 # ==============================================================================
 
+# لیست تب‌ها (تعداد را به ۴ مورد کاهش دادیم)
+nav_items = [
+    ("dashboard", "📊", "داشبورد"),
+    ("invoice", "🧾", "پیش‌فاکتور"),
+    ("info", "📚", "تاپسان"),
+    ("profile", "👤", "پروفایل")
+]
+
+# تزریق استایل و ساختار HTML برای قرارگیری افقی مطلق
 st.markdown("""
 <style>
-    /* کانتینر اصلی ناوبری که در پایین فیکس می‌شود */
-    .fixed-bottom-nav {
+    /* کانتینر اصلی که در پایین صفحه فیکس می‌شود */
+    .my-bottom-nav {
         position: fixed !important;
         bottom: 0 !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
+        left: 0 !important;
         width: 100% !important;
-        max-width: 550px !important;
         height: 75px !important;
         background-color: #ffffff !important;
         border-top: 1px solid #e2e8f0 !important;
         display: flex !important;
+        flex-direction: row !important; /* اجبار به چیدمان افقی */
         justify-content: space-around !important;
         align-items: center !important;
         z-index: 999999 !important;
-        box-shadow: 0 -4px 10px rgba(0,0,0,0.05) !important;
+        padding: 0 10px !important;
     }
     
-    /* استایل دکمه‌های ناوبری */
-    .nav-btn {
-        background: none !important;
+    /* دکمه‌های ناوبری */
+    .nav-button-container {
+        flex: 1 !important;
+        display: flex !important;
+        justify-content: center !important;
+    }
+    
+    /* استایل اختصاصی برای دکمه استریم‌لیت تا در ساختار فلکس خراب نشود */
+    div[data-testid="stButton"] {
+        width: 100% !important;
+    }
+    div[data-testid="stButton"] button {
+        width: 100% !important;
+        background: transparent !important;
         border: none !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        cursor: pointer !important;
-        font-size: 10px !important;
-        font-weight: bold !important;
-        color: #94a3b8 !important;
-        width: 25%; /* تقسیم مساوی برای ۴ آیتم */
-    }
-    
-    .nav-btn.active {
-        color: #ea580c !important;
-    }
-    
-    .nav-icon {
-        font-size: 24px !important;
-        margin-bottom: 2px !important;
+        padding: 5px 0 !important;
     }
 </style>
 
-<div class="fixed-bottom-nav">
+<div class="my-bottom-nav">
 """, unsafe_allow_html=True)
 
-# تعریف ۴ آیتم اصلی
-nav_items = [
-    ("dashboard", "📊", "داشبورد"),
-    ("invoice", "🧾", "پیش‌فاکتور"),
-    ("info", "📚", "تاپسان"), # عنوان "تاپسان" به جای اطلاعات
-    ("profile", "👤", "پروفایل")
-]
-
-# رندر کردن دکمه‌ها
+# رندر دکمه‌ها
 for tab_id, icon, label in nav_items:
-    active_class = "active" if st.session_state.active_tab == tab_id else ""
+    # تعیین رنگ بر اساس تب فعال
+    color = "#ea580c" if st.session_state.active_tab == tab_id else "#94a3b8"
     
-    # استفاده از یک فرم کوچک یا دکمه برای تغییر تب (استریم‌لیت به خوبی با این رویداد کار می‌کند)
-    if st.button(f'<div class="nav-icon">{icon}</div>{label}', key=f"nav_{tab_id}", use_container_width=True):
+    # ساخت دکمه با ظاهر افقی
+    if st.button(f'<span style="font-size:20px; color:{color};">{icon}</span><span style="font-size:10px; color:{color};">{label}</span>', 
+                 key=f"nav_{tab_id}"):
         st.session_state.active_tab = tab_id
         st.rerun()
 
 st.markdown('</div>', unsafe_allow_html=True)
-
-# اصلاح استایل دکمه‌های استریم‌لیت برای ظاهر شدن در کانتینر
-st.markdown("""
-<style>
-    div[data-testid="stButton"] { width: 25%; }
-    div[data-testid="stButton"] button {
-        background: none !important;
-        border: none !important;
-        color: inherit !important;
-        padding: 10px 0 !important;
-    }
-</style>
-""", unsafe_allow_html=True)
