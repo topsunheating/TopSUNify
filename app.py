@@ -22,11 +22,11 @@ import auth
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 # فقط اگر لاگین نیست و در صفحه تب‌ها هم نیست، لاگین را نشان بده
-
-# ۲. جلوگیری از اجرای مجدد احراز هویت در صورتی که کاربر قبلاً وارد شده
-if st.session_state.logged_in == False:
+if not st.session_state.logged_in:
     auth.render_auth_page()
-    st.stop() # فقط در صورتی که لاگین نیست، برنامه را متوقف کن
+    # اگر بعد از صدا زدن auth هنوز لاگین نیست، توقف کن
+    if not st.session_state.logged_in:
+        st.stop()
 # ====================== ۲. ایمپورت کتابخانه‌ها و ماژول‌های مهندسی ======================
 import Financial
 import main
