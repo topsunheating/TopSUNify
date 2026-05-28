@@ -331,10 +331,9 @@ with nav_col4:
 # این بخش را جایگزین کد استایل قبلی در انتهای فایل app.py کنید
 st.markdown("""
 # این کد را در انتهای فایل app.py قرار دهید
-nav_html = f"""
-<style>
-    /* این CSS دقیقاً برای موبایل طراحی شده */
-    .mobile-nav {{
+css = """
+    <style>
+    .mobile-nav {
         position: fixed;
         bottom: 0;
         left: 0;
@@ -345,22 +344,15 @@ nav_html = f"""
         padding: 10px 5px;
         box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
         z-index: 999999;
-    }}
-    .nav-item {{
+    }
+    .nav-item {
         text-decoration: none;
         color: #64748b;
         text-align: center;
         flex: 1;
         font-size: 11px;
-    }}
-    .nav-item.active {{ color: #ea580c; }}
-</style>
-
-<div class="mobile-nav">
-    <a href="?nav_tab=dashboard" target="_self" class="nav-item {'active' if st.session_state.active_tab == 'dashboard' else ''}">📊<br>داشبورد</a>
-    <a href="?nav_tab=invoice" target="_self" class="nav-item {'active' if st.session_state.active_tab == 'invoice' else ''}">🧾<br>فاکتور</a>
-    <a href="?nav_tab=info" target="_self" class="nav-item {'active' if st.session_state.active_tab == 'info' else ''}">📚<br>تاپسان</a>
-    <a href="?nav_tab=profile" target="_self" class="nav-item {'active' if st.session_state.active_tab == 'profile' else ''}">👤<br>پروفایل</a>
-</div>
-"""
-st.markdown(nav_html, unsafe_allow_html=True)
+    }
+    .nav-item.active { color: #ea580c; }
+    </style>
+    """
+    st.markdown(css, unsafe_allow_html=True)
