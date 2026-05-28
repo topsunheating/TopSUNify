@@ -756,72 +756,64 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری پایین صفحه - نسخه فیکس‌شده افقی (بدون استفاده از columns استریم‌لیت)
+# ناوبری پایین صفحه (نسخه امن و بدون نمایش کد خام)
 # ==============================================================================
 
-# لیست تب‌ها (تعداد را به ۴ مورد کاهش دادیم)
-nav_items = [
+# ۱. تزریق استایل‌های CSS (بدون نمایش در صفحه)
+st.markdown("""
+<style>
+    .fixed-nav-wrapper {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 70px;
+        background-color: white;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        border-top: 1px solid #ddd;
+        z-index: 9999;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    }
+    .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: #888;
+        font-size: 11px;
+        font-weight: bold;
+    }
+    .nav-item.active { color: #ea580c; }
+</style>
+""", unsafe_allow_html=True)
+
+# ۲. ایجاد منو (استفاده از دکمه‌های استریم‌لیت برای پایداری)
+# با قرار دادن دکمه‌ها در یک ساختار افقی، از نمایش خام جلوگیری می‌کنیم
+cols = st.columns(4) 
+
+items = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
     ("info", "📚", "تاپسان"),
     ("profile", "👤", "پروفایل")
 ]
 
-# تزریق استایل و ساختار HTML برای قرارگیری افقی مطلق
-st.markdown("""
-<style>
-    /* کانتینر اصلی که در پایین صفحه فیکس می‌شود */
-    .my-bottom-nav {
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        height: 75px !important;
-        background-color: #ffffff !important;
-        border-top: 1px solid #e2e8f0 !important;
-        display: flex !important;
-        flex-direction: row !important; /* اجبار به چیدمان افقی */
-        justify-content: space-around !important;
-        align-items: center !important;
-        z-index: 999999 !important;
-        padding: 0 10px !important;
-    }
-    
-    /* دکمه‌های ناوبری */
-    .nav-button-container {
-        flex: 1 !important;
-        display: flex !important;
-        justify-content: center !important;
-    }
-    
-    /* استایل اختصاصی برای دکمه استریم‌لیت تا در ساختار فلکس خراب نشود */
-    div[data-testid="stButton"] {
-        width: 100% !important;
-    }
-    div[data-testid="stButton"] button {
-        width: 100% !important;
-        background: transparent !important;
-        border: none !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        padding: 5px 0 !important;
-    }
-</style>
+# جایگذاری در یک کانتینر فیکس شده (استفاده از div برای جلوگیری از شکستن ستون‌ها)
+st.markdown('<div class="fixed-nav-wrapper">', unsafe_allow_html=True)
 
-<div class="my-bottom-nav">
-""", unsafe_allow_html=True)
+# برای اینکه دکمه‌ها افقی بمانند، از ستون‌بندی داخل کانتینر استفاده می‌کنیم
+# توجه: کدهای زیر صرفاً برای نمایش بصری هستند و منطق کلیک در session_state کنترل می‌شود
+c1, c2, c3, c4 = st.columns(4)
 
-# رندر دکمه‌ها
-for tab_id, icon, label in nav_items:
-    # تعیین رنگ بر اساس تب فعال
-    color = "#ea580c" if st.session_state.active_tab == tab_id else "#94a3b8"
-    
-    # ساخت دکمه با ظاهر افقی
-    if st.button(f'<span style="font-size:20px; color:{color};">{icon}</span><span style="font-size:10px; color:{color};">{label}</span>', 
-                 key=f"nav_{tab_id}"):
-        st.session_state.active_tab = tab_id
-        st.rerun()
+with c1:
+    if st.button("📊\nداشبورد", key="n1"): st.session_state.active_tab = "dashboard"; st.rerun()
+with c2:
+    if st.button("🧾\nفاکتور", key="n2"): st.session_state.active_tab = "invoice"; st.rerun()
+with c3:
+    if st.button("📚\nتاپسان", key="n3"): st.session_state.active_tab = "info"; st.rerun()
+with c4:
+    if st.button("👤\nپروفایل", key="n4"): st.session_state.active_tab = "profile"; st.rerun()
 
 st.markdown('</div>', unsafe_allow_html=True)
