@@ -6,7 +6,7 @@ import time
 # ==============================================================================
 st.set_page_config(
     page_title="TopSUNify | هوش مصنوعی گرمایش",
-    page_icon="🔥",
+    page_icon="topsunify.png",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
