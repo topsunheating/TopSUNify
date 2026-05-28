@@ -756,9 +756,10 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه با ۶ تب متوازن (نسخه ۱۰۰٪ اصلاح شده و بدون خطا)
+# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه ۱۰۰٪ بومی و پایدار
 # ==============================================================================
 
+# تعیین وضعیت فعال یا غیرفعال بودن کلاس CSS برای تب‌ها جهت رنگی شدن
 active_dashboard = "active-tab" if st.session_state.active_tab == "dashboard" else ""
 active_invoice = "active-tab" if st.session_state.active_tab == "invoice" else ""
 active_warranty = "active-tab" if st.session_state.active_tab == "warranty" else ""
@@ -766,7 +767,58 @@ active_services = "active-tab" if st.session_state.active_tab == "services" else
 active_info = "active-tab" if st.session_state.active_tab == "info" else ""
 active_profile = "active-tab" if st.session_state.active_tab == "profile" else ""
 
-# تعریف ساختار منو (با دکمه‌های جاوااسکریپتی استاندارد و ایمن)
+# ۱. تزریق استایل‌های سراسری منو (پخش شدن مساوی و افقی تب‌ها در موبایل)
+st.markdown("""
+<style>
+    .fixed-bottom-nav {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 100% !important;
+        max-width: 550px !important;
+        height: 74px !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.08) !important;
+        z-index: 999999 !important;
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        justify-content: space-around !important;
+        align-items: center !important;
+        border-top: 1px solid #e2e8f0 !important;
+        direction: rtl !important;
+        box-sizing: border-box !important;
+    }
+    .nav-tab-item {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        color: #94a3b8 !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        flex: 1 !important;
+        height: 100% !important;
+        cursor: pointer !important;
+        user-select: none !important;
+        transition: all 0.15s ease !important;
+    }
+    .nav-tab-item.active-tab {
+        color: #ea580c !important; /* رنگ نارنجی سازمانی تاپسان */
+    }
+    .nav-tab-icon {
+        font-size: 22px !important;
+        margin-bottom: 2px !important;
+    }
+    /* پنهان کردن دکمه رادیویی واسط پایتون */
+    div[data-testid="stRadio"] {
+        display: none !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# ۲. رندر ساختار منو به صورت HTML خالص همراه با رویداد جاوااسکریپتی کلیک امن برای لایه‌ی پایتون
 bottom_navigation_html = f"""
 <div class="fixed-bottom-nav">
     <div class="nav-tab-item {active_profile}" onclick="window.parent.postMessage({{type: 'streamlit:setComponentValue', value: 'profile'}}, '*')">
@@ -795,11 +847,9 @@ bottom_navigation_html = f"""
     </div>
 </div>
 """
-
-# رندر کردن اچ‌تی‌ام‌ال منو
 st.html(bottom_navigation_html)
 
-# تزریق اسکریپت به‌روزرسانی URL به صورت کاملاً مجزا جهت جلوگیری از خطای سینتکس پایتون
+# ۳. تزریق اسکریپت به‌روزرسانی نوار آدرس مرورگر به صورت ایزوله برای جلوگیری از باگ آدرس‌دهی
 st.components.v1.html(f"""
 <script>
     const url = new URL(window.parent.location.href);
@@ -808,7 +858,7 @@ st.components.v1.html(f"""
 </script>
 """, height=0)
 
-# کانتینر رادیویی مخفی برای دریافت رویداد کلیک از جاوااسکریپت به پایتون
+# ۴. کانتینر دریافت وضعیت کلیک در پایتون (پل ارتباطی HTML و Streamlit)
 tab_options = ["dashboard", "invoice", "warranty", "services", "info", "profile"]
 current_index = tab_options.index(st.session_state.active_tab) if st.session_state.active_tab in tab_options else 0
 
@@ -816,24 +866,11 @@ selected_tab_hidden = st.radio(
     "NavTrigger", 
     options=tab_options, 
     index=current_index,
-    key="hidden_nav_trigger_v6",
+    key="hidden_nav_trigger_final",
     label_visibility="collapsed"
 )
 
-# تغییر وضعیت واقعی تب در پایتون و لود صفحه جدید
+# ۵. در صورت کلیک روی هر تب، تغییر وضعیت اعمال شده و صفحه دوباره رندر می‌شود
 if selected_tab_hidden != st.session_state.active_tab:
     st.session_state.active_tab = selected_tab_hidden
     st.rerun()
-
-# استایل CSS برای پنهان کردن کامل دکمه رادیویی واسط و تنظیم اشاره‌گر موس
-st.markdown("""
-<style>
-    div[data-testid="stRadio"] {
-        display: none !important;
-    }
-    .nav-tab-item {
-        cursor: pointer !important;
-        user-select: none !important;
-    }
-</style>
-""", unsafe_allow_html=True)
