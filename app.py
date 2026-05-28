@@ -756,13 +756,12 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری پایین صفحه - فیکس شده در کانتینر سفید (نسخه نهایی)
+# ناوبری نهایی - اصلاح موقعیت و چیدمان (آیکون بالا، متن پایین)
 # ==============================================================================
 
-# ۱. تعریف استایل برای کانتینر سفید پایین صفحه
 st.markdown("""
 <style>
-    /* کانتینر فیکس شده در پایین */
+    /* کانتینر اصلی در پایین صفحه */
     .fixed-nav-container {
         position: fixed !important;
         bottom: 0 !important;
@@ -776,41 +775,46 @@ st.markdown("""
         box-shadow: 0 -4px 10px rgba(0,0,0,0.1) !important;
         z-index: 999999 !important;
         display: flex !important;
-        justify-content: space-around !important;
+        justify-content: space-between !important;
         align-items: center !important;
-        padding: 0 5px !important;
+        padding: 0 10px !important;
     }
-    
-    /* استایل دکمه‌ها برای ظاهر اپلیکیشنی */
-    div[data-testid="stVerticalBlock"] div[data-testid="stButton"] button {
+
+    /* تنظیم دکمه‌های استریم‌لیت */
+    div[data-testid="stButton"] {
+        flex: 1 !important;
+        display: flex !important;
+        justify-content: center !important;
+    }
+
+    div[data-testid="stButton"] button {
         background: transparent !important;
         border: none !important;
         display: flex !important;
-        flex-direction: column !important;
+        flex-direction: column !important; /* متن زیر آیکون */
         align-items: center !important;
         justify-content: center !important;
-        font-size: 10px !important;
-        font-weight: 700 !important;
-        color: #94a3b8 !important;
+        gap: 2px !important; /* فاصله آیکون و متن */
         height: 70px !important;
         width: 100% !important;
         padding: 0 !important;
+        color: #94a3b8 !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
     }
     
-    /* رنگ آیکون فعال */
+    /* تغییر رنگ هنگام انتخاب */
+    div[data-testid="stButton"] button:active, 
     div[data-testid="stButton"] button:focus {
         color: #ea580c !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# ۲. ایجاد کانتینر و ستون‌بندی برای دکمه‌ها
+# شروع کانتینر
 st.markdown('<div class="fixed-nav-container">', unsafe_allow_html=True)
 
-# برای نمایش افقی دقیق ۴ آیتم
-cols = st.columns(4)
-
-# لیست آیتم‌ها (۴ تایی)
+# رندر ۴ آیتم اصلی بدون ستون‌بندی استریم‌لیت (برای جلوگیری از تداخل گرید)
 nav_items = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
@@ -818,14 +822,11 @@ nav_items = [
     ("profile", "👤", "پروفایل")
 ]
 
-for i, (tab_id, icon, label) in enumerate(nav_items):
-    with cols[i]:
-        # تغییر رنگ در صورت فعال بودن
-        color = "#ea580c" if st.session_state.active_tab == tab_id else "#94a3b8"
-        
-        # رندر دکمه بدون HTML اضافی که باعث بهم ریختگی می‌شد
-        if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}"):
-            st.session_state.active_tab = tab_id
-            st.rerun()
+# نمایش دکمه‌ها
+for tab_id, icon, label in nav_items:
+    # استفاده از ساختار ساده برای دکمه‌ها
+    if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}"):
+        st.session_state.active_tab = tab_id
+        st.rerun()
 
 st.markdown('</div>', unsafe_allow_html=True)
