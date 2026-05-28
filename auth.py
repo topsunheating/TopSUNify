@@ -24,6 +24,18 @@ def render_auth_page():
         with open("biometric.png", "rb") as f:
             bio_icon_base64 = base64.b64encode(f.read()).decode()
 
+    # لود کردن تصویر منظره برای پایین صفحه (landscape.jpg یا landscape.png)
+    landscape_base64 = ""
+    landscape_path = None
+    for ext in ["jpg", "jpeg", "png"]:
+        if os.path.exists(f"landscape.{ext}"):
+            landscape_path = f"landscape.{ext}"
+            break
+            
+    if landscape_path:
+        with open(landscape_path, "rb") as f:
+            landscape_base64 = base64.b64encode(f.read()).decode()
+
     auth_css = f"""
     <style>
     @font-face {{
@@ -54,7 +66,7 @@ def render_auth_page():
     }}
     
     .brand-flex-container img {{
-        max-width: 220px !important; /* کنترل دقیق ابعاد برای جلوگیری از کشیدگی */
+        max-width: 220px !important;
         height: auto !important;
     }}
 
@@ -63,6 +75,8 @@ def render_auth_page():
         width: 100% !important;
         max-width: 400px !important;
         margin: 0 auto !important;
+        position: relative !important;
+        z-index: 10 !important; /* قرارگیری بالای تصویر پس‌زمینه */
     }}
    
     .stTextInput input {{
@@ -71,7 +85,7 @@ def render_auth_page():
         border-right: none !important;
         border-bottom: 1px solid #e2e8f0 !important;
         border-radius: 0px !important;
-        background-color: transparent !important;
+        background-color: rgba(255, 255, 255, 0.8) !important; /* کمی شفافیت برای زیبایی بیشتر روی عکس */
         padding: 12px 5px !important;
         font-size: 16px !important;
         color: #1e293b !important;
@@ -93,6 +107,7 @@ def render_auth_page():
         width: 100% !important;
         max-width: 400px !important;
         margin: 0 auto !important;
+        z-index: 10 !important;
     }}
    
     /* تنظیم دقیق و بردن آیکون به بالاتر جهت تراز شدن با مرکز عمودی چشم */
@@ -137,6 +152,8 @@ def render_auth_page():
         font-weight: 900 !important; 
         box-shadow: 0 4px 6px -1px rgba(253, 224, 71, 0.2) !important;
         transition: all 0.2s ease-in-out !important;
+        position: relative !important;
+        z-index: 10 !important;
     }}
     div.stButton > button p {{
         font-size: 22px !important;  
@@ -156,12 +173,30 @@ def render_auth_page():
         max-width: 400px !important;
         margin-left: auto !important;
         margin-right: auto !important;
+        position: relative !important;
+        z-index: 10 !important;
     }}
     .forgot-link a {{
         color: #2563eb !important;
         text-decoration: none !important;
         font-size: 14px !important;
         font-weight: bold !important;
+    }}
+
+    /* ==========================================
+       استایل جدید: تصویر منظره فیکس شده در پایین صفحه
+       ========================================== */
+    .bottom-landscape-bg {{
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 28vh !important; /* پوشش ۲۸ درصد از ارتفاع پایین صفحه */
+        background: url(data:image/jpeg;base64,{landscape_base64}) no-repeat center bottom !important;
+        background-size: cover !important;
+        z-index: 1 !important; /* قرارگیری پشت المان‌های فرم */
+        pointer-events: none !important; /* عدم تداخل با کلیک‌ها */
+        opacity: 0.9 !important;
     }}
 
     /* ==========================================
@@ -190,7 +225,6 @@ def render_auth_page():
         box-sizing: border-box !important;
     }}
 
-    /* هدر پاپ آپ برای نمایش واحد لوگوی تصویری جدید */
     .popup-header-brand {{
         display: flex !important;
         align-items: center !important;
@@ -231,38 +265,29 @@ def render_auth_page():
     </style>
     """
     st.markdown(auth_css, unsafe_allow_html=True)
-    st.markdown('<div style="height: 50px;"></div>', unsafe_allow_html=True)
+    st.markdown('<div style="height: 40px;"></div>', unsafe_allow_html=True)
    
-    # --- لود قطعی و ضد کش لوگوی جدید سیستم (TopSUNify.png) ---
+    # --- لود لوگو/تایپوگرافی جدید سیستم (TopSUNify.png) ---
     logo_html = "☀️ TopSUNify"
+    target_logo_path = "TopSUNify.png" if os.path.exists("TopSUNify.png") else "topsunify.png"
     
-    # پیدا کردن مسیر دقیق فایل بدون حساسیت به حروف کوچک و بزرگ
-    possible_paths = ["TopSUNify.png", "topsunify.png", "./TopSUNify.png", "./topsunify.png"]
-    target_logo_path = None
-    for p in possible_paths:
-        if os.path.exists(p):
-            target_logo_path = p
-            break
-    
-    if target_logo_path:
+    if os.path.exists(target_logo_path):
         with open(target_logo_path, "rb") as f:
             logo_base64 = base64.b64encode(f.read()).decode()
-        # استفاده از تگ تصویر خالص متصل به داده‌های بیس۶۴ رمزشده
         logo_html = f'<img src="data:image/png;base64,{logo_base64}" style="display:block; margin: 0 auto;">'
 
-    # --- هدر اصلی فرم (فقط شامل تصویر لوگوی ترکیبی جدید) ---
+    # --- هدر اصلی فرم ---
     st.markdown(f"""
     <div class="brand-flex-container">
         {logo_html}
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div style="height: 20px;"></div>', unsafe_allow_html=True)
+    st.markdown('<div style="height: 15px;"></div>', unsafe_allow_html=True)
 
     # --- فیلدهای ورودی نام کاربری و پسورد ---
     username = st.text_input("نام کاربری", value="", placeholder="نام کاربری")
     
-    # ساخت کادر پسورد
     st.markdown('<div class="bio-container">', unsafe_allow_html=True)
     password = st.text_input("رمز ورود", type="password", placeholder="رمز ورود")
     st.markdown('<a href="?show_bio=true&bio_tab=fingerprint" target="_self" class="bio-html-btn"></a>', unsafe_allow_html=True)
@@ -281,6 +306,10 @@ def render_auth_page():
             st.error("❌ نام کاربری یا رمز ورود اشتباه است.")
 
     st.markdown('<div class="forgot-link"><a href="#">فعال‌سازی / فراموشی رمز</a></div>', unsafe_allow_html=True)
+
+    # --- تزریق عکس منظره در پایین‌ترین لایه صفحه ---
+    if landscape_base64:
+        st.markdown('<div class="bottom-landscape-bg"></div>', unsafe_allow_html=True)
 
     # ==========================================
     # پاپ‌آ‌پ بومی و فیکس شده
