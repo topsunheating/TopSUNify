@@ -764,41 +764,36 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه با ۶ تب متوازن (Bottom Navigation Bar)
+# اصلاح ناوبری برای جلوگیری از خروج ناخواسته
 # ==============================================================================
-active_dashboard = "active-tab" if st.session_state.active_tab == "dashboard" else ""
-active_invoice = "active-tab" if st.session_state.active_tab == "invoice" else ""
-active_warranty = "active-tab" if st.session_state.active_tab == "warranty" else ""
-active_services = "active-tab" if st.session_state.active_tab == "services" else ""
-active_info = "active-tab" if st.session_state.active_tab == "info" else ""
-active_profile = "active-tab" if st.session_state.active_tab == "profile" else ""
 
-bottom_navigation_html = f"""
-<div class="fixed-bottom-nav">
-    <a href="?nav_tab=profile" target="_self" class="nav-tab-item {active_profile}">
-        <div class="nav-tab-icon">👤</div>
-        <div>پروفایل</div>
-    </a>
-    <a href="?nav_tab=info" target="_self" class="nav-tab-item {active_info}">
-        <div class="nav-tab-icon">📚</div>
-        <div>اطلاعات</div>
-    </a>
-    <a href="?nav_tab=services" target="_self" class="nav-tab-item {active_services}">
-        <div class="nav-tab-icon">🛠️</div>
-        <div>خدمات</div>
-    </a>
-    <a href="?nav_tab=warranty" target="_self" class="nav-tab-item {active_warranty}">
-        <div class="nav-tab-icon">🛡️</div>
-        <div>گارانتی</div>
-    </a>
-    <a href="?nav_tab=invoice" target="_self" class="nav-tab-item {active_invoice}">
-        <div class="nav-tab-icon">🧾</div>
-        <div>پیش‌فاکتور</div>
-    </a>
-    <a href="?nav_tab=dashboard" target="_self" class="nav-tab-item {active_dashboard}">
-        <div class="nav-tab-icon">📊</div>
-        <div>داشبورد</div>
-    </a>
-</div>
+# اطمینان از اینکه لاگین فعال است (فقط برای نمایش ناوبری)
+if st.session_state.get("logged_in", False):
+    
+    # تعیین کلاس‌های فعال برای تب‌ها
+    active_tab = st.session_state.get("active_tab", "dashboard")
+    
+    # تعریف منو با استفاده از دکمه‌های استریم‌لیت (بجای لینک مستقیم HTML برای پایداری بیشتر)
+    # این روش باعث می‌شود استریم‌لیت خودش وضعیت را مدیریت کند
+    cols = st.columns(6)
+    
+    tabs = [
+        {"id": "profile", "icon": "👤", "label": "پروفایل"},
+        {"id": "info", "icon": "📚", "label": "اطلاعات"},
+        {"id": "services", "icon": "🛠️", "label": "خدمات"},
+        {"id": "warranty", "icon": "🛡️", "label": "گارانتی"},
+        {"id": "invoice", "icon": "🧾", "label": "پیش‌فاکتور"},
+        {"id": "dashboard", "icon": "📊", "label": "داشبورد"},
+    ]
+
+    # رندر کردن دکمه‌ها در پایین صفحه
+    for i, tab in enumerate(tabs):
+        with cols[i]:
+            # استفاده از دکمه برای جلوگیری از رفرش ناخواسته
+            if st.button(f"{tab['icon']}\n{tab['label']}", key=f"nav_{tab['id']}", use_container_width=True):
+                st.session_state.active_tab = tab['id']
+                st.rerun()
+
+# حذف بخش قدیمی HTML ناوبری که باعث بروز مشکل می‌شد
 """
 st.html(bottom_navigation_html)
