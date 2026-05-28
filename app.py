@@ -568,33 +568,57 @@ elif st.session_state.active_tab == "info":
 # ==============================================================================
 
 # ۱. تزریق استایل‌های سی‌اس‌اس جادویی برای مهار کامل ستون‌های استریم‌لیت
+import streamlit as st
+
+# ۱. استایل CSS برای اجبار به چیدمان افقی و ثابت در پایین صفحه
 st.markdown("""
 <style>
-    /* ۱. شناسایی کانتینر منو و اجبار به نمایش افقی در همه ابعاد */
-    div[data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important;
+    /* این بخش ستون‌ها را مجبور می‌کند در موبایل هم افقی بمانند */
+    div[data-testid="column"] {
+        flex: 1 !important;
+        max-width: 25% !important;
+        padding: 0px !important;
     }
-
-    /* ۲. تنظیم ثابت برای موبایل (چسباندن به پایین صفحه) */
-    @media (max-width: 600px) {
-        div[data-testid="stHorizontalBlock"] {
-            position: fixed !important;
-            bottom: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            background-color: white !important;
-            padding: 10px 0 !important;
-            z-index: 9999 !important;
-            border-top: 1px solid #ddd !important;
-        }
-        
-        /* ۳. اطمینان از اینکه دکمه‌ها ۲۵٪ عرض را بگیرند */
-        div[data-testid="column"] {
-            flex: 1 1 25% !important;
-            max-width: 25% !important;
-        }
+    
+    /* تنظیمات ثابت برای نوار پایین در موبایل و دسکتاپ */
+    .fixed-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: white;
+        z-index: 9999;
+        border-top: 1px solid #e0e0e0;
+        padding: 5px 0;
+        display: flex;
+        justify-content: space-around;
+    }
+    
+    /* فاصله دادن به محتوای اصلی تا زیر دکمه‌ها نرود */
+    .stApp {
+        padding-bottom: 80px;
     }
 </style>
 """, unsafe_allow_html=True)
+
+# ۲. ایجاد ستون‌ها برای دکمه‌ها
+st.markdown('<div class="fixed-nav">', unsafe_allow_html=True)
+cols = st.columns(4)
+
+# تعریف تب‌ها
+tabs = [
+    ("dashboard", "📊", "داشبورد"),
+    ("invoice", "🧾", "پیش‌فاکتور"),
+    ("top_sunify", "✨", "تاپسانیفای"),
+    ("profile", "👤", "پروفایل")
+]
+
+# ۳. نمایش دکمه‌ها
+for i, (tab_id, icon, label) in enumerate(tabs):
+    with cols[i]:
+        # ایجاد دکمه
+        if st.button(f"{icon}\n{label}", key=f"btn_{tab_id}"):
+            st.session_state.active_tab = tab_id
+            st.rerun()
+
+st.markdown('</div>', unsafe_allow_html=True)
