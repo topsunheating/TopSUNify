@@ -756,19 +756,26 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه پایدار
+# ناوبری نهایی چسبیده به پایین صفحه (فقط آیکون)
 # ==============================================================================
 
 st.markdown("""
 <style>
-    .fixed-bottom-nav {
+    /* تثبیت عرض اپلیکیشن */
+    [data-testid="stAppViewContainer"] {
+        max-width: 550px !important;
+        margin: 0 auto !important;
+    }
+    
+    /* کانتینر ناوبری */
+    .bottom-nav-container {
         position: fixed !important;
         bottom: 0 !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         width: 100% !important;
         max-width: 550px !important;
-        height: 74px !important;
+        height: 65px !important;
         background-color: #ffffff !important;
         box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
         z-index: 999999 !important;
@@ -776,68 +783,48 @@ st.markdown("""
         justify-content: space-around !important;
         align-items: center !important;
         border-top: 1px solid #e2e8f0 !important;
-        direction: ltr !important;
     }
-    .nav-tab-item {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        text-decoration: none !important;
-        color: #94a3b8 !important;
-        font-size: 10px !important;
-        font-weight: 700 !important;
-        flex: 1 !important;
-        padding: 6px 0 !important;
-    }
-    .nav-tab-item.active-tab {
-        color: #ea580c !important;
-    }
-    .nav-tab-icon {
-        font-size: 23px !important;
-        margin-bottom: 4px !important;
-    }
-</style>
-""", unsafe_allow_html=True)
 
-# ساخت منو با دکمه (پایدارتر از لینک)
-cols = st.columns(6)
-tab_list = [
-    ("dashboard", "📊", "داشبورد"),
-    ("invoice", "🧾", "پیش‌فاکتور"),
-    ("warranty", "🛡️", "گارانتی"),
-    ("services", "🛠️", "خدمات"),
-    ("info", "📚", "اطلاعات"),
-    ("profile", "👤", "پروفایل")
-]
-
-for i, (tab_id, icon, label) in enumerate(tab_list):
-    with cols[i]:
-        active = "active-tab" if st.session_state.active_tab == tab_id else ""
-        
-        if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}", 
-                     use_container_width=True,
-                     help=label):
-            st.session_state.active_tab = tab_id
-            st.rerun()
-
-# CSS اضافی برای زیباتر کردن دکمه‌ها (شبیه لینک)
-st.markdown("""
-<style>
+    /* استایل دکمه‌های آیکونی */
     div[data-testid="stButton"] button {
         background: transparent !important;
         border: none !important;
-        color: inherit !important;
-        font-size: 10px !important;
-        height: 68px !important;
+        color: #94a3b8 !important;
+        font-size: 24px !important; /* اندازه بزرگتر برای آیکون */
+        height: 60px !important;
+        width: 100% !important;
         display: flex !important;
-        flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        padding: 4px 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        transition: color 0.2s ease !important;
     }
-    div[data-testid="stButton"] button:hover {
-        background: rgba(234, 88, 12, 0.08) !important;
+    
+    /* رنگ آیکون در حالت فعال */
+    .nav-active-icon {
+        color: #ea580c !important;
     }
 </style>
 """, unsafe_allow_html=True)
+
+st.markdown('<div class="bottom-nav-container">', unsafe_allow_html=True)
+cols = st.columns(6)
+# لیست تب‌ها بدون متن (فقط آیکون)
+tab_list = [
+    ("dashboard", "📊"),
+    ("invoice", "🧾"),
+    ("warranty", "🛡️"),
+    ("services", "🛠️"),
+    ("info", "📚"),
+    ("profile", "👤")
+]
+
+for i, (tab_id, icon) in enumerate(tab_list):
+    with cols[i]:
+        # در صورت نیاز به افزودن لیبل، در پارامتر help اضافه شده است
+        if st.button(f"{icon}", key=f"nav_{tab_id}", use_container_width=True):
+            st.session_state.active_tab = tab_id
+            st.rerun()
+
+st.markdown('</div>', unsafe_allow_html=True)
