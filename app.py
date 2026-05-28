@@ -285,11 +285,19 @@ elif st.session_state.active_tab == "profile":
 # Bottom Navigation Native Mobile
 # ==============================================================================
 
-st.markdown("""
+# خواندن تب فعال
+active_tab = st.session_state.active_tab
+
+dashboard_active = "active" if active_tab == "dashboard" else ""
+invoice_active = "active" if active_tab == "invoice" else ""
+info_active = "active" if active_tab == "info" else ""
+profile_active = "active" if active_tab == "profile" else ""
+
+# CSS + HTML
+nav_html = f"""
 <style>
 
-/* کانتینر اصلی */
-.bottom-native-nav {
+.bottom-native-nav {{
     position: fixed;
     bottom: 0;
     left: 50%;
@@ -309,10 +317,9 @@ st.markdown("""
 
     padding: 0;
     margin: 0;
-}
+}}
 
-/* هر آیتم */
-.bottom-nav-item {
+.bottom-nav-item {{
     flex: 1;
     height: 100%;
 
@@ -328,39 +335,25 @@ st.markdown("""
     font-weight: bold;
 
     transition: all 0.2s ease;
-}
+}}
 
-/* آیکون */
-.bottom-nav-icon {
+.bottom-nav-icon {{
     font-size: 22px;
     margin-bottom: 3px;
-}
+}}
 
-/* فعال */
-.bottom-nav-item.active {
+.bottom-nav-item.active {{
     color: #ea580c;
     background: #fff7ed;
-}
+}}
 
-/* هاور */
-.bottom-nav-item:hover {
+.bottom-nav-item:hover {{
     background: #fff7ed;
     color: #ea580c;
-}
+}}
 
 </style>
-""", unsafe_allow_html=True)
 
-# تب فعال
-active_tab = st.session_state.active_tab
-
-dashboard_active = "active" if active_tab == "dashboard" else ""
-invoice_active = "active" if active_tab == "invoice" else ""
-info_active = "active" if active_tab == "info" else ""
-profile_active = "active" if active_tab == "profile" else ""
-
-# HTML ناوبری
-nav_html = f"""
 <div class="bottom-native-nav">
 
     <a href="?tab=dashboard"
@@ -396,7 +389,7 @@ nav_html = f"""
 
 st.markdown(nav_html, unsafe_allow_html=True)
 
-# خواندن تب از URL
+# خواندن URL
 query_params = st.query_params
 
 if "tab" in query_params:
