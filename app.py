@@ -756,64 +756,76 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری پایین صفحه (نسخه امن و بدون نمایش کد خام)
+# ناوبری پایین صفحه - فیکس شده در کانتینر سفید (نسخه نهایی)
 # ==============================================================================
 
-# ۱. تزریق استایل‌های CSS (بدون نمایش در صفحه)
+# ۱. تعریف استایل برای کانتینر سفید پایین صفحه
 st.markdown("""
 <style>
-    .fixed-nav-wrapper {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 70px;
-        background-color: white;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        border-top: 1px solid #ddd;
-        z-index: 9999;
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    /* کانتینر فیکس شده در پایین */
+    .fixed-nav-container {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 100% !important;
+        max-width: 550px !important;
+        height: 75px !important;
+        background-color: #ffffff !important;
+        border-top: 1px solid #e2e8f0 !important;
+        box-shadow: 0 -4px 10px rgba(0,0,0,0.1) !important;
+        z-index: 999999 !important;
+        display: flex !important;
+        justify-content: space-around !important;
+        align-items: center !important;
+        padding: 0 5px !important;
     }
-    .nav-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-decoration: none;
-        color: #888;
-        font-size: 11px;
-        font-weight: bold;
+    
+    /* استایل دکمه‌ها برای ظاهر اپلیکیشنی */
+    div[data-testid="stVerticalBlock"] div[data-testid="stButton"] button {
+        background: transparent !important;
+        border: none !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        color: #94a3b8 !important;
+        height: 70px !important;
+        width: 100% !important;
+        padding: 0 !important;
     }
-    .nav-item.active { color: #ea580c; }
+    
+    /* رنگ آیکون فعال */
+    div[data-testid="stButton"] button:focus {
+        color: #ea580c !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# ۲. ایجاد منو (استفاده از دکمه‌های استریم‌لیت برای پایداری)
-# با قرار دادن دکمه‌ها در یک ساختار افقی، از نمایش خام جلوگیری می‌کنیم
-cols = st.columns(4) 
+# ۲. ایجاد کانتینر و ستون‌بندی برای دکمه‌ها
+st.markdown('<div class="fixed-nav-container">', unsafe_allow_html=True)
 
-items = [
+# برای نمایش افقی دقیق ۴ آیتم
+cols = st.columns(4)
+
+# لیست آیتم‌ها (۴ تایی)
+nav_items = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
     ("info", "📚", "تاپسان"),
     ("profile", "👤", "پروفایل")
 ]
 
-# جایگذاری در یک کانتینر فیکس شده (استفاده از div برای جلوگیری از شکستن ستون‌ها)
-st.markdown('<div class="fixed-nav-wrapper">', unsafe_allow_html=True)
-
-# برای اینکه دکمه‌ها افقی بمانند، از ستون‌بندی داخل کانتینر استفاده می‌کنیم
-# توجه: کدهای زیر صرفاً برای نمایش بصری هستند و منطق کلیک در session_state کنترل می‌شود
-c1, c2, c3, c4 = st.columns(4)
-
-with c1:
-    if st.button("📊\nداشبورد", key="n1"): st.session_state.active_tab = "dashboard"; st.rerun()
-with c2:
-    if st.button("🧾\nفاکتور", key="n2"): st.session_state.active_tab = "invoice"; st.rerun()
-with c3:
-    if st.button("📚\nتاپسان", key="n3"): st.session_state.active_tab = "info"; st.rerun()
-with c4:
-    if st.button("👤\nپروفایل", key="n4"): st.session_state.active_tab = "profile"; st.rerun()
+for i, (tab_id, icon, label) in enumerate(nav_items):
+    with cols[i]:
+        # تغییر رنگ در صورت فعال بودن
+        color = "#ea580c" if st.session_state.active_tab == tab_id else "#94a3b8"
+        
+        # رندر دکمه بدون HTML اضافی که باعث بهم ریختگی می‌شد
+        if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}"):
+            st.session_state.active_tab = tab_id
+            st.rerun()
 
 st.markdown('</div>', unsafe_allow_html=True)
