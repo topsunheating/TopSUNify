@@ -1,34 +1,21 @@
 import streamlit as st
 
-# ۱. تنظیمات اولیه
-# 🛑 دستور set_page_config حتماً باید در بالاترین خط برنامه باقی بماند
-st.set_page_config(
-    page_title="TopSUNify",
-    page_icon="./topsunify.png",  # استفاده از لوگوی اصلی تاپسان
-    layout="wide"  # این گزینه به همراه CSS باعث ریسپانسیو شدن کامل در تبلت و دسکتاپ می‌شود
-)
-# ۲. ایمپورت ماژول‌ها
-import auth
-import os
-# ... سایر ایمپورت‌ها
-st.sidebar.write(f"Logged in status: {st.session_state.logged_in}")
-# ۳. مدیریت نشست (Session State) - حتماً قبل از چک کردن لاگین باشد
+# ۱. اولین قدم: تنظیمات صفحه
+st.set_page_config(page_title="TopSUNify", layout="wide")
+
+# ۲. مقداردهی اولیه به متغیرهای وضعیت (این قسمت حیاتی است)
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
-# ۴. چک کردن وضعیت لاگین
-if not st.session_state.logged_in:
-    auth.render_auth_page()
-    st.stop() # اگر لاگین نیست، کدهای بعدی اجرا نمی‌شوند
-# ====================== ۱. اضافه کردن ماژول احراز هویت ======================
+# ۳. ایمپورت سایر ماژول‌ها (بعد از اطمینان از مقداردهی اولیه)
 import auth
+# سایر ایمپورت‌ها...
 
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
-
+# ۴. حالا که logged_in تعریف شده، می‌توانید لاگین را چک کنید
 if not st.session_state.logged_in:
     auth.render_auth_page()
-    st.stop()
+    st.stop()  # اگر لاگین نیست، اجرای ادامه کد متوقف می‌شود
+
 
 # ====================== ۲. ایمپورت کتابخانه‌ها و ماژول‌های مهندسی ======================
 import Financial
