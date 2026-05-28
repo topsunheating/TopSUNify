@@ -563,61 +563,109 @@ elif st.session_state.active_tab == "info":
     st.write("کاتالوگ‌ها، راهنماهای چیدمان فیلم و نقشه‌های ازپیش تحلیل‌شده به زودی بارگذاری می‌شوند.")
     st.markdown('</div>', unsafe_allow_html=True)
 
-import streamlit as st
+# ==============================================================================
+# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه پایدار ۴ تب
+# ==============================================================================
 
-# استایل فوق‌العاده قوی برای چسباندن نوار به پایین و اجبار به افقی بودن
 st.markdown("""
 <style>
-    /* حذف فضای خالی زیر دکمه‌ها */
-    .stApp { padding-bottom: 80px !important; }
-
-    /* طراحی نوار ناوبری ثابت */
-    .nav-container {
+    .fixed-bottom-nav {
         position: fixed !important;
         bottom: 0 !important;
-        left: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
         width: 100% !important;
-        height: 70px !important;
-        background-color: white !important;
+        max-width: 550px !important;
+        height: 74px !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
+        z-index: 999999 !important;
         display: flex !important;
-        flex-direction: row !important;
         justify-content: space-around !important;
         align-items: center !important;
-        border-top: 1px solid #ddd !important;
-        z-index: 999999 !important;
-        padding: 0 !important;
-        margin: 0 !important;
+        border-top: 1px solid #e2e8f0 !important;
+        direction: ltr !important;
     }
-
-    /* تنظیم دکمه‌ها برای چیدمان افقی در موبایل */
-    .nav-button {
+    .nav-tab-item {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-decoration: none !important;
+        color: #94a3b8 !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
         flex: 1 !important;
-        text-align: center !important;
-        border: none !important;
-        background: none !important;
-        font-size: 24px !important;
-        cursor: pointer !important;
+        padding: 6px 0 !important;
+    }
+    .nav-tab-item.active-tab {
+        color: #ea580c !important;
+    }
+    .nav-tab-icon {
+        font-size: 23px !important;
+        margin-bottom: 4px !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# تعریف تب‌ها
-tabs = [
-    ("dashboard", "📊"),
-    ("invoice", "🧾"),
-    ("top_sunify", "✨"),
-    ("profile", "👤")
+# تغییر تعداد ستون‌ها به ۴ جهت باز شدن فضا در موبایل
+cols = st.columns(4)
+
+# لیست جدید با ۴ تب درخواستی شما
+tab_list = [
+    ("dashboard", "📊", "داشبورد"),
+    ("invoice", "🧾", "پیش‌فاکتور"),
+    ("top_sunify", "✨", "تاپسانیفای"),
+    ("profile", "👤", "پروفایل")
 ]
 
-# ساخت نوار ناوبری با HTML خالص برای جلوگیری از تداخل استریم‌لیت
-nav_html = '<div class="nav-container">'
-for tab_id, icon in tabs:
-    # برای اینکه دکمه‌ها در استریم‌لیت کار کنند، از یک فرم استفاده می‌کنیم
-    # اما ظاهرش را با CSS کنترل می‌کنیم
-    if st.button(icon, key=f"btn_{tab_id}"):
-        st.session_state.active_tab = tab_id
-        st.rerun()
-nav_html += '</div>'
+for i, (tab_id, icon, label) in enumerate(tab_list):
+    with cols[i]:
+        is_active = st.session_state.active_tab == tab_id
+        
+        # در صورتی که این تب فعال باشد، دکمه را داخل کلاس اکتیو می‌گذاریم تا رنگش نارنجی شود
+        if is_active:
+            st.markdown('<div class="active-tab-button">', unsafe_allow_html=True)
+            
+        if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}", 
+                     use_container_width=True,
+                     help=label):
+            st.session_state.active_tab = tab_id
+            st.query_params["nav_tab"] = tab_id
+            st.rerun()
+            
+        if is_active:
+            st.markdown('</div>', unsafe_allow_html=True)
 
-# نمایش نوار
-st.markdown(nav_html, unsafe_allow_html=True)
+# CSS اضافی برای زیباتر کردن دکمه‌ها و اعمال رنگ نارنجی به تب فعال
+st.markdown("""
+<style>
+    div[data-testid="stButton"] button {
+        background: transparent !important;
+        border: none !important;
+        color: #94a3b8 !important; /* رنگ خاکستری دکمه‌های غیرفعال */
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        height: 68px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 4px 0 !important;
+        white-space: pre-line !important;
+    }
+    div[data-testid="stButton"] button:hover {
+        background: rgba(234, 88, 12, 0.08) !important;
+        color: #ea580c !important;
+    }
+    
+    /* افکت تغییر رنگ قطعی دکمه‌ی فعال به نارنجی تاپسان */
+    div.active-tab-button button {
+        color: #ea580c !important;
+    }
+    div.active-tab-button button p {
+        color: #ea580c !important;
+        font-weight: 800 !important;
+    }
+</style>
+""", unsafe_allow_html=True)
