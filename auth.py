@@ -19,9 +19,12 @@ def render_auth_page():
         if username_val == "admin" and password_val == "1234":
             st.session_state.logged_in = True
             st.success("ورود موفقیت‌آمیز بود.")
-            st.query_params.clear()
+            
+            # پاکسازی کامل آدرس برای جلوگیری از تداخل در تب‌ها
+            st.query_params.clear() 
+            
             time.sleep(0.5)
-            st.rerun()
+            st.rerun() # این دستور باعث می‌شود برنامه از نو اجرا شود و شرط لاگین در app.py درست عمل کند
         elif username_val == "" or password_val == "":
             st.warning("⚠️ لطفاً نام کاربری و رمز عبور را وارد کنید.")
         else:
