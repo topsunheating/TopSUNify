@@ -764,80 +764,84 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-
-# ناوبری نهایی چسبیده به پایین صفحه با ۶ تب متوازن (Bottom Navigation Bar)
-
+# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation)
 # ==============================================================================
 
-active_dashboard = "active-tab" if st.session_state.active_tab == "dashboard" else ""
+# CSS منو (قوی‌تر و پایدارتر)
+st.markdown("""
+<style>
+    .fixed-bottom-nav {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 100% !important;
+        max-width: 550px !important;
+        height: 72px !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 -4px 12px rgba(0,0,0,0.1) !important;
+        z-index: 999999 !important;
+        display: flex !important;
+        justify-content: space-around !important;
+        align-items: center !important;
+        border-top: 1px solid #e2e8f0 !important;
+        direction: ltr !important;
+        padding-bottom: env(safe-area-inset-bottom) !important;
+    }
+    .nav-tab-item {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-decoration: none !important;
+        color: #94a3b8 !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        flex: 1 !important;
+        height: 100% !important;
+    }
+    .nav-tab-item.active-tab {
+        color: #ea580c !important;
+    }
+    .nav-tab-icon {
+        font-size: 22px !important;
+        margin-bottom: 3px !important;
+    }
+</style>
+""", unsafe_allow_html=True)
 
-active_invoice = "active-tab" if st.session_state.active_tab == "invoice" else ""
-
-active_warranty = "active-tab" if st.session_state.active_tab == "warranty" else ""
-
-active_services = "active-tab" if st.session_state.active_tab == "services" else ""
-
-active_info = "active-tab" if st.session_state.active_tab == "info" else ""
-
-active_profile = "active-tab" if st.session_state.active_tab == "profile" else ""
-
-
-
-bottom_navigation_html = f"""
-
+# ساخت HTML منو
+bottom_nav_html = '''
 <div class="fixed-bottom-nav">
+'''
 
-    <a href="?nav_tab=profile" target="_self" class="nav-tab-item {active_profile}">
+tabs = [
+    ("dashboard", "📊", "داشبورد"),
+    ("invoice", "🧾", "پیش‌فاکتور"),
+    ("warranty", "🛡️", "گارانتی"),
+    ("services", "🛠️", "خدمات"),
+    ("info", "📚", "اطلاعات"),
+    ("profile", "👤", "پروفایل")
+]
 
-        <div class="nav-tab-icon">👤</div>
-
-        <div>پروفایل</div>
-
+for tab_id, icon, label in tabs:
+    active = "active-tab" if st.session_state.active_tab == tab_id else ""
+    bottom_nav_html += f'''
+    <a href="?nav_tab={tab_id}" class="nav-tab-item {active}">
+        <div class="nav-tab-icon">{icon}</div>
+        <div>{label}</div>
     </a>
+    '''
 
-    <a href="?nav_tab=info" target="_self" class="nav-tab-item {active_info}">
+bottom_nav_html += '</div>'
 
-        <div class="nav-tab-icon">📚</div>
+st.html(bottom_nav_html)
 
-        <div>اطلاعات</div>
-
-    </a>
-
-    <a href="?nav_tab=services" target="_self" class="nav-tab-item {active_services}">
-
-        <div class="nav-tab-icon">🛠️</div>
-
-        <div>خدمات</div>
-
-    </a>
-
-    <a href="?nav_tab=warranty" target="_self" class="nav-tab-item {active_warranty}">
-
-        <div class="nav-tab-icon">🛡️</div>
-
-        <div>گارانتی</div>
-
-    </a>
-
-    <a href="?nav_tab=invoice" target="_self" class="nav-tab-item {active_invoice}">
-
-        <div class="nav-tab-icon">🧾</div>
-
-        <div>پیش‌فاکتور</div>
-
-    </a>
-
-    <a href="?nav_tab=dashboard" target="_self" class="nav-tab-item {active_dashboard}">
-
-        <div class="nav-tab-icon">📊</div>
-
-        <div>داشبورد</div>
-
-    </a>
-
-</div>
-
-"""
-
-st.html(bottom_navigation_html)
-
+# ====================== مهم: مدیریت کوئری پارامتر بعد از نمایش منو ======================
+query_p = st.query_params
+if "nav_tab" in query_p:
+    new_tab = query_p["nav_tab"]
+    if new_tab in ["dashboard", "invoice", "warranty", "services", "info", "profile"]:
+        if st.session_state.active_tab != new_tab:
+            st.session_state.active_tab = new_tab
+            st.rerun()   # ← این خط خیلی مهمه
