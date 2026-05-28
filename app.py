@@ -759,66 +759,59 @@ elif st.session_state.active_tab == "profile":
 # ==============================================================================
 # ناوبری پایین صفحه - ۳ تب (نسخه نهایی - افقی + بدون خروج)
 # ==============================================================================
+# ==============================================================================
+# ناوبری پایین صفحه - نسخه فیکس شده (همیشه افقی)
+# ==============================================================================
+
 st.markdown("""
 <style>
-    .final-bottom-nav {
+    /* کانتینر فیکس شده که در همه دستگاه‌ها افقی می‌ماند */
+    .fixed-nav-wrapper {
         position: fixed !important;
         bottom: 0 !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
+        left: 0 !important;
         width: 100% !important;
-        max-width: 550px !important;
         height: 80px !important;
         background-color: #ffffff !important;
         border-top: 1px solid #e2e8f0 !important;
         box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
         z-index: 999999 !important;
         display: flex !important;
-        flex-direction: row !important;
         justify-content: space-around !important;
         align-items: center !important;
-        padding: 0 10px !important;
+        padding: 0 5px !important;
     }
-   
+
+    /* استایل دکمه‌های داخل کانتینر */
     div[data-testid="stButton"] button {
         background: transparent !important;
         border: none !important;
-        height: 76px !important;
-        color: #64748b !important;
-        font-size: 11px !important;
-        font-weight: 700 !important;
+        width: 100% !important;
+        height: 70px !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        padding: 6px 0 !important;
-        border-radius: 12px !important;
-    }
-   
-    div[data-testid="stButton"] button:hover {
-        background: rgba(234, 88, 12, 0.08) !important;
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        color: #64748b !important;
     }
 </style>
 """, unsafe_allow_html=True)
-# منوی ۳ تایی
-col1, col2, col3 = st.columns([1,1,1])
-with col1:
-    if st.button("📊\nداشبورد", key="btn_nav_dash", use_container_width=True):
-        st.session_state.active_tab = "dashboard"
+
+# رندر منو
+st.markdown('<div class="fixed-nav-wrapper">', unsafe_allow_html=True)
+
+# تعریف آیتم‌ها
+tabs = [("dashboard", "📊", "داشبورد"), ("invoice", "🧾", "پیش‌فاکتور"), ("profile", "👤", "پروفایل")]
+
+for tab_id, icon, label in tabs:
+    # تعیین رنگ فعال
+    color_style = "color: #ea580c !important;" if st.session_state.active_tab == tab_id else ""
+    
+    # ساخت دکمه
+    if st.button(f'<div style="{color_style} font-size:20px;">{icon}</div><div style="{color_style}">{label}</div>', key=f"nav_{tab_id}"):
+        st.session_state.active_tab = tab_id
         st.rerun()
-with col2:
-    if st.button("🧾\nپیش‌فاکتور", key="btn_nav_invoice", use_container_width=True):
-        st.session_state.active_tab = "invoice"
-        st.rerun()
-with col3:
-    if st.button("👤\nپروفایل", key="btn_nav_profile", use_container_width=True):
-        st.session_state.active_tab = "profile"
-        st.rerun()
-# فعال کردن رنگ تب فعلی
-active_tab = st.session_state.get("active_tab", "dashboard")
-if active_tab == "dashboard":
-    st.markdown('<style>button[key="btn_nav_dash"] { color: #ea580c !important; }</style>', unsafe_allow_html=True)
-elif active_tab == "invoice":
-    st.markdown('<style>button[key="btn_nav_invoice"] { color: #ea580c !important; }</style>', unsafe_allow_html=True)
-elif active_tab == "profile":
-    st.markdown('<style>button[key="btn_nav_profile"] { color: #ea580c !important; }</style>', unsafe_allow_html=True)
+
+st.markdown('</div>', unsafe_allow_html=True)
