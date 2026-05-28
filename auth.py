@@ -49,19 +49,34 @@ def render_auth_page():
    
     body, [data-testid="stAppViewContainer"] {{
         background-color: #ffffff !important;
+        overflow: hidden !important; /* جلوگیری از اسکرول خوردن کل صفحه */
     }}
    
     [data-testid="stHeader"] {{
         display: none !important;
     }}
 
-    /* کانتینر هدر اصلی برای لوگوی تصویری جدید */
+    /* =======================================================
+       اصلاحیه جدید: قفل کردن و ثابت نگه‌داشتن کل فرم ورود در مرکز صفحه
+       ======================================================= */
+    .fixed-auth-container {{
+        position: fixed !important;
+        top: 45% !important; /* تراز عمودی عالی */
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 100% !important;
+        max-width: 400px !important;
+        padding: 0 20px !important;
+        z-index: 100 !important;
+        box-sizing: border-box !important;
+    }}
+
+    /* کانتینر هدر اصلی برای لوگوی تصویری */
     .brand-flex-container {{
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         width: 100% !important;
-        max-width: 400px !important;
         margin: 0 auto 30px auto !important;
     }}
     
@@ -75,8 +90,6 @@ def render_auth_page():
         width: 100% !important;
         max-width: 400px !important;
         margin: 0 auto !important;
-        position: relative !important;
-        z-index: 10 !important;
     }}
    
     .stTextInput input {{
@@ -107,7 +120,6 @@ def render_auth_page():
         width: 100% !important;
         max-width: 400px !important;
         margin: 0 auto !important;
-        z-index: 10 !important;
     }}
    
     /* تنظیم دقیق و بردن آیکون به بالاتر جهت تراز شدن با مرکز عمودی چشم */
@@ -152,8 +164,6 @@ def render_auth_page():
         font-weight: 900 !important; 
         box-shadow: 0 4px 6px -1px rgba(253, 224, 71, 0.2) !important;
         transition: all 0.2s ease-in-out !important;
-        position: relative !important;
-        z-index: 10 !important;
     }}
     div.stButton > button p {{
         font-size: 22px !important;  
@@ -173,8 +183,6 @@ def render_auth_page():
         max-width: 400px !important;
         margin-left: auto !important;
         margin-right: auto !important;
-        position: relative !important;
-        z-index: 10 !important;
     }}
     .forgot-link a {{
         color: #2563eb !important;
@@ -184,16 +192,16 @@ def render_auth_page():
     }}
 
     /* =======================================================
-       اصلاحیه طلایی: تصویر پس‌زمینه محدود به عرض ۴۰۰ پیکسل همراه با فید نرم به بالا
+       تصویر پس‌زمینه محدود به عرض ۴۰۰ پیکسل همراه با فید نرم به بالا
        ======================================================= */
     .landscape-wrapper {{
         position: fixed !important;
         bottom: 0 !important;
         left: 50% !important;
-        transform: translateX(-50%) !important; /* تراز دقیق در مرکز طول صفحه */
+        transform: translateX(-50%) !important;
         width: 100% !important;
-        max-width: 400px !important; /* محدود شدن به اندازه دقیق دکمه و فیلدها */
-        height: 25vh !important; /* ارتفاع کنترل شده پس‌زمینه در پایین */
+        max-width: 400px !important;
+        height: 25vh !important;
         z-index: 1 !important;
         pointer-events: none !important;
     }}
@@ -203,7 +211,6 @@ def render_auth_page():
         height: 100% !important;
         background: url(data:image/jpeg;base64,{landscape_base64}) no-repeat center bottom !important;
         background-size: cover !important;
-        /* افکت ماسک گرادینت: پایین ۱۰۰٪ پررنگ و بالای عکس کاملاً شفاف و محو */
         -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 85%) !important;
         mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 85%) !important;
     }}
@@ -274,7 +281,6 @@ def render_auth_page():
     </style>
     """
     st.markdown(auth_css, unsafe_allow_html=True)
-    st.markdown('<div style="height: 40px;"></div>', unsafe_allow_html=True)
    
     # --- لود لوگو/تایپوگرافی جدید سیستم (TopSUNify.png) ---
     logo_html = "☀️ TopSUNify"
@@ -285,16 +291,17 @@ def render_auth_page():
             logo_base64 = base64.b64encode(f.read()).decode()
         logo_html = f'<img src="data:image/png;base64,{logo_base64}" style="display:block; margin: 0 auto;">'
 
-    # --- هدر اصلی فرم ---
+    # --- شروع کانتینر ثابت و قفل شده‌ی فرم ورود ---
+    st.markdown('<div class="fixed-auth-container">', unsafe_allow_html=True)
+
+    # هدر اصلی فرم (لوگو)
     st.markdown(f"""
     <div class="brand-flex-container">
         {logo_html}
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div style="height: 15px;"></div>', unsafe_allow_html=True)
-
-    # --- فیلدهای ورودی نام کاربری و پسورد ---
+    # فیلدهای ورودی نام کاربری و پسورد
     username = st.text_input("نام کاربری", value="", placeholder="نام کاربری")
     
     st.markdown('<div class="bio-container">', unsafe_allow_html=True)
@@ -302,7 +309,7 @@ def render_auth_page():
     st.markdown('<a href="?show_bio=true&bio_tab=fingerprint" target="_self" class="bio-html-btn"></a>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # --- دکمه ورود (با ویژگی Bold بودن و سایز بزرگتر ۲۲) ---
+    # دکمه ورود زرد رنگ
     if st.button("ورود به TopSUNify", key="submit_yellow_btn", use_container_width=True):
         if username == "admin" and password == "1234":
             st.session_state.logged_in = True
@@ -315,6 +322,10 @@ def render_auth_page():
             st.error("❌ نام کاربری یا رمز ورود اشتباه است.")
 
     st.markdown('<div class="forgot-link"><a href="#">فعال‌سازی / فراموشی رمز</a></div>', unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+    # --- پایان کانتینر ثابت فرم ورود ---
+
 
     # --- تزریق عکس منظره محدود شده با افکت محوشدگی نرم به بالا ---
     if landscape_base64:
