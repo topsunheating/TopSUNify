@@ -764,78 +764,81 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری نهایی پایین صفحه - ۳ تب (داشبورد - پیش‌فاکتور - پروفایل)
+# ناوبری نهایی پایین صفحه - فقط ۳ تب (افقی قوی)
 # ==============================================================================
 
 st.markdown("""
 <style>
-    .fixed-bottom-nav {
+    .bottom-nav-3tab {
         position: fixed !important;
         bottom: 0 !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         width: 100% !important;
         max-width: 550px !important;
-        height: 74px !important;
+        height: 78px !important;
         background-color: #ffffff !important;
-        box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
+        box-shadow: 0 -4px 15px rgba(0,0,0,0.12) !important;
         z-index: 999999 !important;
         display: flex !important;
+        flex-direction: row !important;
         justify-content: space-around !important;
         align-items: center !important;
         border-top: 1px solid #e2e8f0 !important;
         direction: ltr !important;
+        padding: 0 10px !important;
     }
     
-    div[data-testid="stButton"] button {
-        background: transparent !important;
-        border: none !important;
-        color: #94a3b8 !important;
-        font-size: 10px !important;
-        font-weight: 700 !important;
-        height: 70px !important;
+    .nav-item-3 {
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        padding: 6px 0 !important;
-        border-radius: 8px !important;
+        text-decoration: none !important;
+        color: #94a3b8 !important;
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        flex: 1 !important;
+        padding: 8px 0 !important;
     }
     
-    div[data-testid="stButton"] button:hover {
-        background: rgba(234, 88, 12, 0.08) !important;
+    .nav-item-3.active {
         color: #ea580c !important;
     }
     
-    div[data-testid="stButton"] button[kind="secondary"] {
-        color: #ea580c !important;
+    .nav-item-3 .icon {
+        font-size: 26px !important;
+        margin-bottom: 4px !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# ساخت منوی ۳ تایی
-col1, col2, col3 = st.columns(3)
+# ساخت HTML کامل منو
+nav_html = '<div class="bottom-nav-3tab">'
 
-with col1:
-    if st.button("📊\nداشبورد", key="nav_dashboard", use_container_width=True):
-        st.session_state.active_tab = "dashboard"
-        st.rerun()
+tabs = [
+    ("dashboard", "📊", "داشبورد"),
+    ("invoice", "🧾", "پیش‌فاکتور"),
+    ("profile", "👤", "پروفایل")
+]
 
-with col2:
-    if st.button("🧾\nپیش‌فاکتور", key="nav_invoice", use_container_width=True):
-        st.session_state.active_tab = "invoice"
-        st.rerun()
+for tab_id, icon, label in tabs:
+    active_class = "active" if st.session_state.active_tab == tab_id else ""
+    nav_html += f'''
+        <a href="?nav_tab={tab_id}" class="nav-item-3 {active_class}">
+            <div class="icon">{icon}</div>
+            <div>{label}</div>
+        </a>
+    '''
 
-with col3:
-    if st.button("👤\nپروفایل", key="nav_profile", use_container_width=True):
-        st.session_state.active_tab = "profile"
-        st.rerun()
+nav_html += '</div>'
 
-# فعال کردن استایل برای تب فعلی
-current_tab = st.session_state.active_tab
-if current_tab == "dashboard":
-    st.markdown('<style>div[data-testid="stButton"] button[key="nav_dashboard"] {color: #ea580c !important;}</style>', unsafe_allow_html=True)
-elif current_tab == "invoice":
-    st.markdown('<style>div[data-testid="stButton"] button[key="nav_invoice"] {color: #ea580c !important;}</style>', unsafe_allow_html=True)
-elif current_tab == "profile":
-    st.markdown('<style>div[data-testid="stButton"] button[key="nav_profile"] {color: #ea580c !important;}</style>', unsafe_allow_html=True)
+st.markdown(nav_html, unsafe_allow_html=True)
+
+# مدیریت تغییر تب
+query_params = st.query_params
+if "nav_tab" in query_params:
+    new_tab = query_params["nav_tab"]
+    if new_tab in ["dashboard", "invoice", "profile"]:
+        st.session_state.active_tab = new_tab
+        # st.rerun()   # اگر لازم بود فعال کن
