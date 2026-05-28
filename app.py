@@ -13,7 +13,7 @@ st.set_page_config(
     page_icon="./topsunify.png",
     layout="wide"
 )
-
+st.write("Current Session State:", st.session_state.logged_in)
 # ==============================================================================
 # AUTH
 # ==============================================================================
