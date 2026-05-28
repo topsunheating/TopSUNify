@@ -764,29 +764,29 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه پایدار
+# ناوبری نهایی: منوی افقی (اصلاح شده)
 # ==============================================================================
-
 st.markdown("""
 <style>
-    .fixed-bottom-nav {
+    /* ظرف اصلی منو */
+    .fixed-bottom-nav-v2 {
         position: fixed !important;
         bottom: 0 !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
+        left: 0 !important;
         width: 100% !important;
-        max-width: 550px !important;
-        height: 74px !important;
+        height: 72px !important;
         background-color: #ffffff !important;
-        box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
-        z-index: 999999 !important;
         display: flex !important;
+        flex-direction: row !important;
         justify-content: space-around !important;
         align-items: center !important;
         border-top: 1px solid #e2e8f0 !important;
+        z-index: 999999 !important;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.08) !important;
         direction: ltr !important;
     }
-    .nav-tab-item {
+   
+    .nav-tab-link {
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
@@ -794,23 +794,26 @@ st.markdown("""
         text-decoration: none !important;
         color: #94a3b8 !important;
         font-size: 10px !important;
-        font-weight: 700 !important;
-        flex: 1 !important;
-        padding: 6px 0 !important;
+        font-weight: bold !important;
+        flex: 1 !important;           /* این خیلی مهمه */
+        min-width: 0 !important;
+        height: 100% !important;
+        padding: 4px 0 !important;
     }
-    .nav-tab-item.active-tab {
+   
+    .nav-tab-link.active-link {
         color: #ea580c !important;
     }
-    .nav-tab-icon {
-        font-size: 23px !important;
-        margin-bottom: 4px !important;
+
+    /* جلوگیری از شکستن خط */
+    .fixed-bottom-nav-v2 a {
+        flex-shrink: 0 !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# ساخت منو با دکمه (پایدارتر از لینک)
-cols = st.columns(6)
-tab_list = [
+# تعریف داده‌ها
+nav_items = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
     ("warranty", "🛡️", "گارانتی"),
@@ -819,33 +822,16 @@ tab_list = [
     ("profile", "👤", "پروفایل")
 ]
 
-for i, (tab_id, icon, label) in enumerate(tab_list):
-    with cols[i]:
-        active = "active-tab" if st.session_state.active_tab == tab_id else ""
-        
-        if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}", 
-                     use_container_width=True,
-                     help=label):
-            st.session_state.active_tab = tab_id
-            st.rerun()
+# رندر کردن نوار
+st.markdown('<div class="fixed-bottom-nav-v2">', unsafe_allow_html=True)
 
-# CSS اضافی برای زیباتر کردن دکمه‌ها (شبیه لینک)
-st.markdown("""
-<style>
-    div[data-testid="stButton"] button {
-        background: transparent !important;
-        border: none !important;
-        color: inherit !important;
-        font-size: 10px !important;
-        height: 68px !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        padding: 4px 0 !important;
-    }
-    div[data-testid="stButton"] button:hover {
-        background: rgba(234, 88, 12, 0.08) !important;
-    }
-</style>
-""", unsafe_allow_html=True)
+for tab_id, icon, label in nav_items:
+    active_class = "active-link" if st.session_state.get("active_tab", "dashboard") == tab_id else ""
+    st.markdown(f"""
+        <a href="?nav_tab={tab_id}" target="_self" class="nav-tab-link {active_class}">
+            <div style="font-size: 21px; margin-bottom: 3px;">{icon}</div>
+            <div style="font-family: 'iranyekan', sans-serif !important; line-height:1;">{label}</div>
+        </a>
+    """, unsafe_allow_html=True)
+
+st.markdown('</div>', unsafe_allow_html=True)
