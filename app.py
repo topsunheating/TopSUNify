@@ -1,21 +1,21 @@
 import streamlit as st
 
-# ۱. اولین قدم: تنظیمات صفحه
-st.set_page_config(page_title="TopSUNify", layout="wide")
+# 🛑 دستور set_page_config حتماً باید در بالاترین خط برنامه باقی بماند
+st.set_page_config(
+    page_title="TopSUNify | سامانه ریسپانسیو تاپسان",
+    page_icon="./static/logo.png",
+    layout="wide"  # این گزینه به همراه CSS باعث ریسپانسیو شدن کامل در تبلت و دسکتاپ می‌شود
+)
 
-# ۲. مقداردهی اولیه به متغیرهای وضعیت (این قسمت حیاتی است)
+# ====================== ۱. اضافه کردن ماژول احراز هویت ======================
+import auth
+
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
-# ۳. ایمپورت سایر ماژول‌ها (بعد از اطمینان از مقداردهی اولیه)
-import auth
-# سایر ایمپورت‌ها...
-
-# ۴. حالا که logged_in تعریف شده، می‌توانید لاگین را چک کنید
 if not st.session_state.logged_in:
     auth.render_auth_page()
-    st.stop()  # اگر لاگین نیست، اجرای ادامه کد متوقف می‌شود
-
+    st.stop()
 
 # ====================== ۲. ایمپورت کتابخانه‌ها و ماژول‌های مهندسی ======================
 import Financial
@@ -29,9 +29,9 @@ import pandas as pd
 from PIL import Image
 from Financial import calculate_tosunify_proforma, generate_proforma_pdf
 
-# ====================== ۳. هوشمندسازی CSS با فونت ایران‌یکان و ظاهر نیتیو ======================
+# ====================== ۳. هوشمندسازی CSS برای ریسپانسیو و تب‌های آیکونی ======================
 def inject_custom_css():
-    font_path = "iranyekan.ttf"
+    font_path = "pinar-regular.ttf"
     font_base64 = ""
 
     if os.path.exists(font_path):
@@ -41,233 +41,106 @@ def inject_custom_css():
     css = f"""
     <style>
     @font-face {{
-        font-family: 'iranyekan';
+        font-family: 'pinar';
         src: url(data:font/ttf;base64,{font_base64}) format('truetype');
     }}
 
     html, body, [class*="css"], * {{
-        font-family: 'iranyekan', Tahoma, sans-serif !important;
+        font-family: 'pinar', sans-serif !important;
         direction: rtl !important;
         text-align: right !important;
     }}
 
-    /* حذف هدر و سایدبار پیش‌فرض برای ظاهر کاملاً اپلیکیشنی */
-    [data-testid="stHeader"], [data-testid="stSidebar"] {{
-        display: none !important;
-    }}
-
     /* --- بهینه‌سازی کانتینر اصلی برای نمایش عالی در تبلت و موبایل --- */
     .main .block-container {{
-        max-width: 550px !important; /* جمع شدن شیک و موبایلی در دسکتاپ */
-        margin: 0 auto !important;
-        padding-left: 16px !important;
-        padding-right: 16px !important;
-        padding-bottom: 110px !important; /* فضا برای اینکه محتوا زیر منوی پایین نرود */
-        background-color: #f8fafc !important;
-        min-height: 100vh;
+        max-width: 100% !important;
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+        padding-bottom: 120px !important; /* فضا برای اینکه محتوا زیر منوی پایین نرود */
     }}
 
-    /* هدر بالای اپلیکیشن */
-    .app-main-header-container {{
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        width: 100% !important;
-        padding: 10px 0 !important;
-        margin-bottom: 5px !important;
-    }}
-
-    /* --- استایل گرید آیکون‌ها (منوی دسترسی سریع ماژول‌ها) --- */
-    .icon-grid-container {{
-        display: grid !important;
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: 12px !important;
-        background: #ffffff !important;
-        padding: 16px 10px !important;
-        border-radius: 20px !important;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
-        margin-bottom: 20px !important;
-    }}
-    
-    .icon-item-link {{
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        text-decoration: none !important;
-        cursor: pointer !important;
-    }}
-    
-    .icon-circle {{
-        width: 54px !important;
-        height: 54px !important;
-        border-radius: 18px !important;
-        background-color: #f1f5f9 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        font-size: 24px !important;
-        margin-bottom: 6px !important;
-        transition: all 0.15s ease !important;
-    }}
-    
-    .icon-item-link.active-action .icon-circle {{
-        background-color: #fef3c7 !important; /* لایت زرد/نارنجی متمایز */
-        border: 2px solid #ea580c !important;
-        color: #ea580c !important;
-    }}
-    
-    .icon-label {{
-        font-size: 11px !important;
-        color: #475569 !important;
-        font-weight: bold !important;
-        text-align: center !important;
-        white-space: nowrap !important;
-    }}
-
-    /* باکس محتوای داخلی هر بخش */
-    .module-card-box {{
-        background: #ffffff !important;
-        padding: 20px !important;
-        border-radius: 24px !important;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04) !important;
-        margin-bottom: 20px !important;
-    }}
-
-    /* --- استایل‌های اختصاصی بخش پروفایل کاربری --- */
-    .profile-header-card {{
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        background: #ffffff !important;
-        padding: 15px !important;
-        border-radius: 24px !important;
-        margin-bottom: 15px !important;
-    }}
-
-    .profile-info-block {{
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: center !important;
-    }}
-
-    .profile-name {{
-        font-size: 18px !important;
-        font-weight: 800 !important;
-        color: #1e293b !important;
-        margin-bottom: 4px !important;
-    }}
-
-    .profile-phone {{
-        font-size: 13px !important;
-        color: #64748b !important;
-    }}
-
-    .profile-avatar-container {{
-        position: relative !important;
-        width: 68px !important;
-        height: 68px !important;
-    }}
-
-    .profile-avatar-img {{
-        width: 68px !important;
-        height: 68px !important;
-        border-radius: 50% !important;
-        object-fit: cover !important;
-        border: 2px solid #e2e8f0 !important;
-    }}
-
-    .profile-role-badge-box {{
-        background: #f1f5f9 !important;
-        padding: 12px 16px !important;
-        border-radius: 16px !important;
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        margin-bottom: 25px !important;
-    }}
-
-    .profile-role-title {{
-        font-size: 14px !important;
-        color: #475569 !important;
-        font-weight: bold !important;
-    }}
-
-    .profile-role-value {{
-        font-size: 14px !important;
-        color: #0f172a !important;
-        font-weight: 800 !important;
-    }}
-
-    /* منوهای خطی لیست ملو */
-    .profile-menu-item {{
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        padding: 16px 8px !important;
-        border-bottom: 1px solid #f1f5f9 !important;
-        text-decoration: none !important;
-        color: #334155 !important;
-        transition: background 0.2s !important;
-    }}
-
-    .profile-menu-item:last-child {{
-        border-bottom: none !important;
-    }}
-
-    .profile-menu-right {{
-        display: flex !important;
-        align-items: center !important;
-        gap: 12px !important;
-        font-size: 15px !important;
-        font-weight: bold !important;
-    }}
-
-    .profile-menu-icon {{
-        font-size: 20px !important;
-    }}
-
-    .profile-menu-arrow {{
-        color: #cbd5e1 !important;
-        font-size: 14px !important;
-    }}
-
-    /* --- سیستم نویگیشن فیکس شده در پایین (Bottom Navigation) --- */
-    .fixed-bottom-nav {{
+    /* --- سیستم نویگیشن چسبیده به پایین (Bottom Navigation) --- */
+    div[data-testid="stTabs"] {{
         position: fixed !important;
         bottom: 0 !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
+        left: 0 !important;
         width: 100% !important;
-        max-width: 550px !important;
-        height: 70px !important;
         background-color: #ffffff !important;
-        box-shadow: 0 -5px 15px rgba(0,0,0,0.06) !important;
+        box-shadow: 0 -5px 15px rgba(0,0,0,0.08) !important;
         z-index: 99999 !important;
-        display: flex !important;
-        justify-content: space-around !important;
-        align-items: center !important;
+        padding: 8px 0px !important;
         border-top: 1px solid #e2e8f0 !important;
-        padding-bottom: env(safe-area-inset-bottom) !important;
+        margin: 0 !important;
+    }}
+    
+    div[data-testid="stTabs"] [data-baseweb="tab-list"] {{
+        background-color: transparent !important;
+        padding: 0 !important;
+        border-radius: 0 !important;
+        gap: 0 !important;
+        max-width: 100% !important;
+        width: 100% !important;
     }}
 
-    .nav-tab-item {{
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        text-decoration: none !important;
-        color: #94a3b8 !important;
-        font-size: 10px !important;
+    div[data-testid="stTabs"] button {{
+        flex: 1 !important;
+        text-align: center !important;
         font-weight: bold !important;
-        transition: all 0.2s ease !important;
+        color: #64748b !important;
+        background-color: transparent !important;
+        border: none !important;
+        padding: 12px 0px !important;
+        transition: all 0.2s ease;
+    }}
+    
+    div[data-testid="stTabs"] button[aria-selected="true"] {{
+        color: #ea580c !important;
+        background-color: transparent !important;
+        border-bottom: none !important;
+        transform: scale(1.05);
     }}
 
-    .nav-tab-item.active-tab {{
-        color: #ea580c !important; /* رنگ نارنجی سازمانی برند تاپسان */
+    /* 📱 استایل‌های اختصاصی موبایل (صفحه‌های کوچک‌تر از 768 پیکسل) */
+    @media (max-width: 768px) {{
+        /* حذف متون داخل دکمه‌های تب و بزرگ کردن آیکون‌ها/اموجی‌ها */
+        div[data-testid="stTabs"] button {{
+            font-size: 24px !important; /* سایز بزرگ برای آیکون‌ها جهت لمس راحت */
+            color: #94a3b8 !important;
+        }}
+        /* ترفند مهندسی برای پنهان کردن متن و نگه‌داشتن اموجی اول */
+        div[data-testid="stTabs"] button span {{
+            font-size: 0px !important;
+            color: transparent !important;
+        }}
+        div[data-testid="stTabs"] button span::first-letter {{
+            font-size: 26px !important;
+            color: initial !important;
+            visibility: visible !important;
+        }}
+        div[data-testid="stTabs"] button[aria-selected="true"]::after {{
+            content: "•";
+            display: block;
+            font-size: 12px;
+            color: #ea580c;
+            line-height: 5px;
+            text-align: center;
+        }}
     }}
 
-    .nav-tab-icon {{
-        font-size: 20px !important;
-        margin-bottom: 3px !important;
+    /* 💻 استایل‌های اختصاصی تبلت و دسکتاپ (بزرگ‌تر از 768 پیکسل) */
+    @media (min-width: 769px) {{
+        div[data-testid="stTabs"] button {{
+            font-size: 15px !important;
+        }}
+        div[data-testid="stTabs"] button[aria-selected="true"] {{
+            background-color: #ea580c !important;
+            color: white !important;
+            border-radius: 12px !important;
+        }}
+        .main .block-container {{
+            max-width: 1100px !important; /* جمع شدن شیک صفحه در مانیتورهای بزرگ */
+            margin: 0 auto !important;
+        }}
     }}
 
     /* ================= FILE UPLOAD ================= */
@@ -276,7 +149,7 @@ def inject_custom_css():
         border: 2px dashed #ea580c !important;
         border-radius: 24px !important;
         background-color: #f8fafc !important;
-        padding: 40px 10px !important;
+        padding: 50px 10px 40px 10px !important;
     }}
     </style>
     """
@@ -284,21 +157,15 @@ def inject_custom_css():
 
 inject_custom_css()
 
-# ====================== ۴. هدر بالایی اختصاصی (فقط لوگوی تصویری بدون متن) ======================
-header_logo_html = ""
-if os.path.exists("topsunify.png"):
-    with open("topsunify.png", "rb") as f:
-        logo_base64 = base64.b64encode(f.read()).decode()
-    header_logo_html = f"""
-    <div class="app-main-header-container">
-        <img src="data:image/png;base64,{logo_base64}" style="max-width: 140px; height: auto; display: block; margin: 0 auto;">
-    </div>
-    """
-else:
-    # فال‌بک در صورتی که فایل موقتاً وجود نداشته باشد
-    header_logo_html = '<div class="app-main-header-container" style="font-size:24px;">☀️</div>'
+# ====================== ۴. هدر بالایی برنامه ======================
+col_logo, col_title = st.columns([0.9, 5])
+with col_logo:
+    try: st.image("./static/logo.png", width=80)
+    except: st.write("☀️")
+with col_title:
+    st.markdown("<h2 style='margin:0;'>TopSUNify</h2>", unsafe_allow_html=True)
+    st.markdown("<h6 style='margin:0; color:#64748b;'>سامانه هوشمند و ریسپانسیو خدمات تاپسان</h6>", unsafe_allow_html=True)
 
-st.markdown(header_logo_html, unsafe_allow_html=True)
 st.divider()
 
 # ====================== ۵. مدیریت وضعیت جهانی سیستم (Session State) ======================
@@ -312,51 +179,19 @@ if "thermostat_count" not in st.session_state: st.session_state.thermostat_count
 if "panel_count" not in st.session_state: st.session_state.panel_count = 1
 if "source_type" not in st.session_state: st.session_state.source_type = ""
 
-# متغیرهای پیش‌فرض بخش پروفایل کاربری
-if "user_display_name" not in st.session_state: st.session_state.user_display_name = "رضا تلچی"
-if "user_phone" not in st.session_state: st.session_state.user_phone = "۰۹۱۲۰۱۹۸۲۲۹"
-if "user_role" not in st.session_state: st.session_state.user_role = "کاربر عمومی" 
-if "profile_pic_base64" not in st.session_state: st.session_state.profile_pic_base64 = ""
-
-# مدیریت تب فعال پایین و آیکون فعال گرید از روی آدرس URL (پایداری کوئری پارامترها)
-if "active_tab" not in st.session_state:
-    st.session_state.active_tab = "dashboard" 
-if "active_sub_action" not in st.session_state:
-    st.session_state.active_sub_action = "file_plan" 
-
-query_p = st.query_params
-if "nav_tab" in query_p:
-    st.session_state.active_tab = query_p["nav_tab"]
-if "sub_act" in query_p:
-    st.session_state.active_sub_action = query_p["sub_act"]
-
+# ====================== ۶. ساخت تب‌های اصلی (با اموجی در ابتدا برای حالت موبایل) ======================
+# در موبایل متن‌ها به کمک CSS غیب می‌شوند و فقط اموجی (آیکون) می‌ماند.
+tab_info, tab_service, tab_warranty, tab_invoice = st.tabs([
+    "📚 اطلاعات فنی", 
+    "🛠️ خدمات فنی", 
+    "🛡️ ثبت گارانتی", 
+    "🧾 صدور پیش‌فاکتور"
+])
 
 # ==============================================================================
-# رندر کردن محتوا بر اساس تب انتخاب شده در منوی پایین
+# تب اول: صدور پیش‌فاکتور
 # ==============================================================================
-
-# ------------------------------------------------------------------------------
-# ۱. محتوای تب: داشبورد (صفحه خانگی یا خلاصه پروژه)
-# ------------------------------------------------------------------------------
-if st.session_state.active_tab == "dashboard":
-    st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
-    st.subheader("📊 داشبورد مدیریتی پروژه")
-    st.write(f"جناب **{st.session_state.user_display_name}**، به سامانه هوشمند تاپسان خوش آمدید.")
-    
-    c1, c2 = st.columns(2)
-    with c1:
-        st.metric(label="متراژ کل فیلم عرض ۸۰ (محاسباتی)", value=f"{st.session_state.m80:.1f} م")
-    with c2:
-        st.metric(label="متراژ کل فیلم عرض ۴۰ (محاسباتی)", value=f"{st.session_state.m40:.1f} م")
-        
-    st.info("برای شروع فرآیند مهندسی یا صدور اسناد، از منوی پایین بخش پیش‌فاکتور را انتخاب کنید.")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# ------------------------------------------------------------------------------
-# ۲. محتوای تب: صدور پیش‌فاکتور (دارای گرید آیکونی اختصاصی در بالا)
-# ------------------------------------------------------------------------------
-elif st.session_state.active_tab == "invoice":
-    st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
+with tab_invoice:
     st.subheader("🧾 صدور پیش‌فاکتور هوشمند")
     
     product_type = st.selectbox(
@@ -364,35 +199,17 @@ elif st.session_state.active_tab == "invoice":
         ["گرمایش کف (سیستم هوشمند)", "زیرفرشی", "رادیاتور", "رستورانی", "عمومی"],
         key="selected_product_type"
     )
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.write("---")
 
     if product_type == "گرمایش کف (سیستم هوشمند)":
-        act_file = "active-action" if st.session_state.active_sub_action == "file_plan" else ""
-        act_manual = "active-action" if st.session_state.active_sub_action == "manual_dim" else ""
-        act_direct = "active-action" if st.session_state.active_sub_action == "direct_val" else ""
-        
-        grid_html = f"""
-        <div class="icon-grid-container">
-            <a href="?nav_tab=invoice&sub_act=file_plan" target="_self" class="icon-item-link {act_file}">
-                <div class="icon-circle">📂</div>
-                <div class="icon-label">فایل پلان</div>
-            </a>
-            <a href="?nav_tab=invoice&sub_act=manual_dim" target="_self" class="icon-item-link {act_manual}">
-                <div class="icon-circle">⌨️</div>
-                <div class="icon-label">ورود دستی ابعاد</div>
-            </a>
-            <a href="?nav_tab=invoice&sub_act=direct_val" target="_self" class="icon-item-link {act_direct}">
-                <div class="icon-circle">✍️</div>
-                <div class="icon-label">مقادیر مستقیم</div>
-            </a>
-        </div>
-        """
-        st.markdown(grid_html, unsafe_allow_html=True)
+        tab_file, tab_room_manual, tab_invoice_manual = st.tabs([
+            "📂 فایل پلان", 
+            "⌨️ ورود دستی ابعاد",
+            "✍️ مقادیر مستقیم فاکتور"
+        ])
 
-        st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
-
-        # الف) ماژول آپلود فایل نقشه
-        if st.session_state.active_sub_action == "file_plan":
+        # --- آپلود فایل اتوکد ---
+        with tab_file:
             st.markdown("<h5 style='color:#334155; margin-bottom:15px;'>فایل نقشه اتوکد کف (DXF / DWG) را انتخاب کنید:</h5>", unsafe_allow_html=True)
             uploaded_file = st.file_uploader(label="", type=['dxf', 'dwg'], key="uploader_main", label_visibility="collapsed")
           
@@ -435,8 +252,8 @@ elif st.session_state.active_tab == "invoice":
                     except Exception as e:
                         st.error(f"خطا در پردازش فایل: {e}")
 
-        # ب) ماژول ورود دستی ابعاد فضاهای پروژه
-        elif st.session_state.active_sub_action == "manual_dim":
+        # --- ورود دستی ابعاد اتاق‌ها ---
+        with tab_room_manual:
             with st.expander("➕ افزودن اتاق جدید", expanded=True):
                 c_name, c_w, c_l = st.columns(3)
                 r_name = c_name.text_input("نام فضا", value="پذیرایی", key="manual_r_name")
@@ -462,8 +279,8 @@ elif st.session_state.active_tab == "invoice":
             else:
                 st.info("هنوز هیچ اتاقی اضافه نشده است.")
 
-        # ج) ماژول ورود مستقیم مقادیر عددی فاکتور
-        elif st.session_state.active_sub_action == "direct_val":
+        # --- ورود مستقیم اقلام فاکتور ---
+        with tab_invoice_manual:
             st.write("### 📝 ورود مستقیم مقادیر فاکتور")
             m80_dir = st.number_input("فیلم عرض 80 (متر)", min_value=0.0, key="invoice_m80")
             m40_dir = st.number_input("فیلم عرض 40 (متر)", min_value=0.0, key="invoice_m40")
@@ -479,10 +296,7 @@ elif st.session_state.active_tab == "invoice":
                 st.session_state.show_table = True
                 st.rerun()
 
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        # --- محاسبات، فیلترینگ اقلام صفر و صدور فاکتور نهایی ---
-        st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
+        # --- تنظیمات فروش و تاریخ ---
         st.write("### ⚙️ تنظیمات فاکتور")
         col1, col2, col3 = st.columns(3)
         enable_inst = col1.checkbox("هزینه نصب")
@@ -492,6 +306,7 @@ elif st.session_state.active_tab == "invoice":
         enable_disc = col3.checkbox("تخفیف")
         disc = col3.number_input("درصد تخفیف", value=0) if enable_disc else 0
 
+        # خروجی نهایی مالی
         if st.session_state.get("show_table", False):
             if st.session_state.get("source_type") == "manual":
                 total_area = sum(r['w'] * r['l'] for r in st.session_state.manual_rooms)
@@ -517,324 +332,42 @@ elif st.session_state.active_tab == "invoice":
                 if st.session_state.m80 > 0: table_data.append(["فیلم عرض ۸۰", f"{st.session_state.m80:.1f}", "متر", f"{res['m80_total']:,.0f}"])
                 if st.session_state.m40 > 0: table_data.append(["فیلم عرض ۴۰", f"{st.session_state.m40:.1f}", "متر", f"{res['m40_total']:,.0f}"])
                 if st.session_state.thermostat_count > 0: table_data.append(["ترموستات", str(st.session_state.thermostat_count), "عدد", f"{res['thermostat_total']:,.0f}"])
-                if p_count > 0: table_data.append(["تابلو فرمان مرکزی", str(p_count), "عدد", f"{res['ControlPanel_Total']:,.0f}"])
-                if st.session_state.xps > 0: table_data.append(["رول عایق تخصصی", f"{st.session_state.xps:.1f}", "مترمربع", f"{(st.session_state.xps * res.get('UnitPrice_insulation_meter', 1450000)):,.0f}"])
                 
-                st.write("### 🧾 ریز پیش‌فاکتور محاسباتی پروژه:")
+                st.write("### 🧾 پیش‌فاکتور محاسباتی:")
                 st.table(pd.DataFrame(table_data, columns=["شرح کالا", "مقدار", "واحد", "مبلغ کل (ریال)"]))
-                st.success(f"**مبلغ نهایی فاکتور: {final_val:,.0f} ریال**")
+                st.success(f"**مبلغ نهایی: {final_val:,.0f} ریال**")
             except Exception as e:
                 st.error(f"خطا در محاسبات: {e}")
-        st.markdown('</div>', unsafe_allow_html=True)
     else:
         st.info(f"بخش **{product_type}** به زودی فعال می‌شود.")
 
-# ------------------------------------------------------------------------------
-# ۳. محتوای تب: ثبت گارانتی
-# ------------------------------------------------------------------------------
-elif st.session_state.active_tab == "warranty":
-    st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
-    st.subheader("🛡️ فرم ثبت گارانتی محصولات تاپسان")
+# ==============================================================================
+# تب دوم: ثبت گارانتی
+# ==============================================================================
+with tab_warranty:
+    st.subheader("🛡️ فرم ثبت گارانتی محصولات")
     with st.form("warranty_form"):
         st.text_input("نام و نام خانوادگی خریدار")
         st.text_input("شماره سریال محصول")
         st.file_uploader("آپلود عکس یا فیلم نصب", type=["jpg", "png", "mp4"])
-        if st.form_submit_button("ثبت گارانتی"): st.success("✅ مشخصات با موفقیت در بانک سامانه ثبت شد.")
-    st.markdown('</div>', unsafe_allow_html=True)
+        if st.form_submit_button("ثبت گارانتی"): st.success("✅ ثبت شد.")
 
-# ------------------------------------------------------------------------------
-# ۴. محتوای تب: درخواست خدمات فنی
-# ------------------------------------------------------------------------------
-elif st.session_state.active_tab == "services":
-    st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
-    st.subheader("🛠️ ثبت درخواست خدمات فنی و مهندسی")
-    st.radio("نوع درخواست:", ["نصب اولیه سیستم گرمایش", "اعلام خرابی/عیب‌یابی", "جابجایی پدها"])
+# ==============================================================================
+# تب سوم: درخواست خدمات فنی
+# ==============================================================================
+with tab_service:
+    st.subheader("🛠️ ثبت درخواست خدمات فنی")
+    st.radio("نوع درخواست:", ["نصب اولیه", "اعلام خرابی", "جابجایی"])
     with st.form("service_form"):
-        st.text_area("آدرس و توضیحات کروکی پروژه")
-        if st.form_submit_button("ارسال درخواست"): st.success("📌 درخواست شما به واحد پشتیبانی ارجاع شد.")
-    st.markdown('</div>', unsafe_allow_html=True)
+        st.text_area("آدرس")
+        if st.form_submit_button("ارسال درخواست"): st.success("📌 ارسال شد.")
 
-# ------------------------------------------------------------------------------
-# ۵. محتوای تب: اطلاعات فنی
-# ------------------------------------------------------------------------------
-elif st.session_state.active_tab == "info":
-    st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
-    st.subheader("📚 بانک اطلاعات فنی و دانشنامه حرارتی")
-    st.write("کاتالوگ‌ها، راهنماهای چیدمان فیلم و نقشه‌های ازپیش تحلیل‌شده به زودی بارگذاری می‌شوند.")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# ------------------------------------------------------------------------------
-# ۶. محتوای تب اختصاصی: پروفایل کاربری (طراحی مینیمال و نیتیو بر اساس الگوی سامان)
-# ------------------------------------------------------------------------------
-elif st.session_state.active_tab == "profile":
-    
-    # تعیین تصویر آواتار پیش‌فرض در صورت عدم آپلود تصویر توسط کاربر
-    avatar_src = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-    if st.session_state.profile_pic_base64:
-        avatar_src = f"data:image/png;base64,{st.session_state.profile_pic_base64}"
-        
-    # تزریق استایل‌های بومی و اختصاصی کارت‌ها و لیست ملو (دقیقاً مشابه عکس ارسالی)
-    st.markdown("""
-    <style>
-    /* هدر اصلی پروفایل کاربری */
-    .sam-profile-card {
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        background: #ffffff !important;
-        padding: 16px 20px !important;
-        border-radius: 24px !important;
-        margin-bottom: 12px !important;
-    }
-    
-    .sam-profile-info {
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: center !important;
-    }
-    
-    .sam-profile-name {
-        font-size: 19px !important;
-        font-weight: 800 !important;
-        color: #1e293b !important;
-        margin-bottom: 4px !important;
-    }
-    
-    .sam-profile-phone {
-        font-size: 13px !important;
-        color: #64748b !important;
-        letter-spacing: 0.5px;
-    }
-    
-    /* کانتینر تصویر آواتار گرد با رینگ ظریف */
-    .sam-avatar-box {
-        position: relative !important;
-        width: 64px !important;
-        height: 64px !important;
-    }
-    
-    .sam-avatar-img {
-        width: 64px !important;
-        height: 64px !important;
-        border-radius: 50% !important;
-        object-fit: cover !important;
-        border: 2px solid #f1f5f9 !important;
-    }
-    
-    /* باکس ملو تعیین سطح دسترسی حساب کاربری */
-    .sam-role-badge-container {
-        background: #f1f5f9 !important;
-        padding: 14px 20px !important;
-        border-radius: 18px !important;
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        margin-bottom: 24px !important;
-    }
-    
-    .sam-role-label {
-        font-size: 13px !important;
-        color: #64748b !important;
-        font-weight: 500 !important;
-    }
-    
-    .sam-role-value {
-        font-size: 14px !important;
-        color: #1e293b !important;
-        font-weight: 800 !important;
-    }
-    
-    /* استایل لیست گزینه‌های ملو و خطی همراه با فلش راهنما */
-    .sam-menu-list-wrapper {
-        background: #ffffff !important;
-        border-radius: 24px !important;
-        padding: 6px 16px !important;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02) !important;
-        margin-bottom: 20px !important;
-    }
-    
-    .sam-menu-row-item {
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        padding: 16px 4px !important;
-        border-bottom: 1px solid #f8fafc !important;
-        cursor: pointer;
-    }
-    
-    .sam-menu-row-item:last-child {
-        border-bottom: none !important;
-    }
-    
-    .sam-menu-row-right {
-        display: flex !important;
-        align-items: center !important;
-        gap: 14px !important;
-    }
-    
-    .sam-menu-row-text {
-        font-size: 14px !important;
-        font-weight: 600 !important;
-        color: #334155 !important;
-    }
-    
-    .sam-menu-row-icon {
-        font-size: 18px !important;
-        color: #475569 !important;
-        display: flex !important;
-        align-items: center !important;
-    }
-    
-    .sam-menu-row-arrow {
-        color: #cbd5e1 !important;
-        font-size: 12px !important;
-        font-weight: bold !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-    # ۱. بخش هدر کارت کاربری (نمایش نام و شماره تماس کارشناس)
-    st.markdown(f"""
-    <div class="sam-profile-card">
-        <div class="sam-profile-info">
-            <div class="sam-profile-name">{st.session_state.user_display_name}</div>
-            <div class="sam-profile-phone">{st.session_state.user_phone}</div>
-        </div>
-        <div class="sam-avatar-box">
-            <img class="sam-avatar-img" src="{avatar_src}">
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # ۲. بخش نمایش سطح دسترسی جاری (باکس ملو طوسی رنگ بر اساس ساختار سامان)
-    st.markdown(f"""
-    <div class="sam-role-badge-container">
-        <div class="sam-role-label">سطح دسترسی حساب:</div>
-        <div class="sam-role-value">{st.session_state.user_role}</div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # ۳. ابزار پنهان/توسعه‌دهنده برای مدیریت و شبیه‌سازی تغییرات پروفایل بدون خروج از برنامه
-    with st.expander("🛠️ تنظیمات شبیه‌سازی حساب (مخصوص مدیر سیستم)"):
-        # تغییر عکس کاربری
-        uploaded_avatar = st.file_uploader("تغییر تصویر آواتار:", type=["jpg", "png", "jpeg"], key="sam_avatar_uploader")
-        if uploaded_avatar is not None:
-            import base64
-            st.session_state.profile_pic_base64 = base64.b64encode(uploaded_avatar.getvalue()).decode()
-            st.toast("📷 تصویر پروفایل با موفقیت به‌روزرسانی شد.", icon="✅")
-            st.rerun()
-            
-        # تغییر پویای سطح دسترسی و تست آن در کامپوننت‌ها
-        roles_list = ["کاربر عمومی", "مدیر", "مدیر فروش", "مدیر فنی", "مدیر خدمات", "کارشناس فروش", "نمایندگی", "عاملیت"]
-        current_idx = roles_list.index(st.session_state.user_role) if st.session_state.user_role in roles_list else 0
-        selected_role_test = st.selectbox("تعیین سطح دسترسی کاربر جهت تست فیلترها:", roles_list, index=current_idx)
-        if selected_role_test != st.session_state.user_role:
-            st.session_state.user_role = selected_role_test
-            st.rerun()
-
-    # ۴. باکس منوهای خطی ظریف (دقیقاً متناظر با نیازهای اعلام شده و گرافیک تصویر اپلیکیشن سامان)
-    st.markdown('<div class="sam-menu-list-wrapper">', unsafe_allow_html=True)
-    
-    sam_items = [
-        {"label": "فاکتورهای تکمیل شده", "icon": "✅"},
-        {"label": "فاکتورهای باز", "icon": "⏳"},
-        {"label": "پیش فاکتورها", "icon": "🧾"},
-        {"label": "مشتریان منتخب", "icon": "⭐"},
-        {"label": "اعلام موجودی انبار", "icon": "📦"},
-        {"label": "تنظیمات", "icon": "⚙️"},
-    ]
-    
-    for item in sam_items:
-        st.markdown(f"""
-        <div class="sam-menu-row-item">
-            <div class="sam-menu-row-right">
-                <span class="sam-menu-row-icon">{item['icon']}</span>
-                <span class="sam-menu-row-text">{item['label']}</span>
-            </div>
-            <div class="sam-menu-row-arrow">◀</div>
-        </div>
-        """, unsafe_allow_html=True)
-        
 # ==============================================================================
-# ناوبری عمودی در سمت راست صفحه
+# تب چهارم: اطلاعات فنی
 # ==============================================================================
-
-st.markdown("""
-<style>
-    /* کانتینر اصلی منوی عمودی */
-    .vertical-nav-container {
-        position: fixed !important;
-        top: 0 !important;
-        right: 0 !important;
-        width: 85px !important;
-        height: 100vh !important;
-        background-color: #ffffff !important;
-        border-left: 1px solid #e2e8f0 !important;
-        box-shadow: -2px 0 10px rgba(0,0,0,0.05) !important;
-        z-index: 999999 !important;
-        display: flex !important;
-        flex-direction: column !important;
-        padding-top: 20px !important;
-        align-items: center !important;
-    }
-    
-    /* هر آیتم منو */
-    .nav-item-vertical {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        color: #64748b !important;
-        text-decoration: none !important;
-        font-size: 11px !important;
-        font-weight: 700 !important;
-        padding: 20px 0 !important;
-        width: 100% !important;
-        transition: all 0.2s ease !important;
-    }
-    
-    /* حالت فعال */
-    .nav-item-vertical.active {
-        color: #ea580c !important;
-        background: #fffbeb !important;
-        border-right: 4px solid #ea580c !important;
-    }
-    
-    .nav-item-vertical:hover {
-        background: rgba(234, 88, 12, 0.05) !important;
-    }
-    
-    .nav-item-vertical .icon {
-        font-size: 26px !important;
-        margin-bottom: 6px !important;
-    }
-    
-    /* تنظیم فاصله محتوای صفحه از منوی کناری */
-    [data-testid="stAppViewContainer"] {
-        padding-right: 85px !important;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# ساخت منو با ۴ تب
-nav_html = '<div class="vertical-nav-container">'
-
-items = [
-    ("dashboard", "📊", "داشبورد"),
-    ("invoice", "🧾", "پیش‌فاکتور"),
-    ("topsunify", "☀️", "تاپسانیفای"),
-    ("profile", "👤", "پروفایل")
-]
-
-for tab_id, icon, label in items:
-    active = "active" if st.session_state.get("active_tab") == tab_id else ""
-    nav_html += f'''
-        <a href="?nav_tab={tab_id}" target="_self" class="nav-item-vertical {active}">
-            <div class="icon">{icon}</div>
-            <div>{label}</div>
-        </a>
-    '''
-
-nav_html += '</div>'
-
-st.html(nav_html)
+with tab_info:
+    st.subheader("📚 بانک اطلاعات فنی")
+    st.write("کاتالوگ‌ها به زودی آپلود می‌شوند.")
+    if st.button("خروج از حساب کاربری"):
+        st.session_state.logged_in = False
+        st.rerun()
