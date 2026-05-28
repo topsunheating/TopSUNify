@@ -26,7 +26,6 @@ st.sidebar.write("تب فعال:", st.session_state.active_tab)
 import auth
 
 # ۵. چک کردن وضعیت ورود
-اگر لاگین نیست، اینجا متوقف می‌شود
 
 # ۶. مدیریت تب‌ها (فقط اگر لاگین بود، این بخش اجرا می‌شود)
 query_params = st.query_params
