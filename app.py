@@ -756,37 +756,47 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی: منوی پایین (نسخه لینک‌دارِ کلیک‌خور - بدون نمایش کد خام)
+# ناوبری نهایی: منوی پایین (افقی و فیکس شده)
 # ==============================================================================
 
 st.markdown("""
 <style>
-    .mobile-menu-container {
-        position: fixed; bottom: 0; left: 0; width: 100%;
-        height: 85px; background-color: white;
-        border-top: 1px solid #e2e8f0; display: flex;
-        justify-content: space-around; align-items: center;
-        z-index: 999999;
+    /* کانتینر اصلی منوی پایین */
+    .fixed-nav-container {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 80px !important;
+        background: white !important;
+        display: flex !important;
+        flex-direction: row !important; /* مجبور کردن به نمایش افقی */
+        justify-content: space-around !important;
+        align-items: center !important;
+        border-top: 1px solid #e2e8f0 !important;
+        z-index: 999999 !important;
+        padding: 5px 0 !important;
+        margin: 0 !important;
     }
-    .nav-link {
-        text-decoration: none; display: flex; flex-direction: column;
-        align-items: center; justify-content: center;
-        width: 100%; color: #64748b; font-size: 10px; font-weight: bold;
+    
+    /* استایل دکمه‌های استریم‌لیت برای جایگیری در منو */
+    .fixed-nav-container button {
+        background: transparent !important;
+        border: none !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 60px !important;
+        height: 70px !important;
     }
-    .icon-box {
-        width: 42px; height: 42px; background: #f1f5f9;
-        border-radius: 14px; display: flex; align-items: center;
-        justify-content: center; font-size: 20px; margin-bottom: 5px;
-    }
-    .active .icon-box { background: #ea580c; color: white; }
-    .active { color: #ea580c; }
 </style>
 """, unsafe_allow_html=True)
 
-# رندر منو با استفاده از لینک‌های کلیک‌خور
-st.markdown('<div class="mobile-menu-container">', unsafe_allow_html=True)
+# ایجاد منو بدون استفاده از columns (که باعث عمودی شدن می‌شود)
+st.markdown('<div class="fixed-nav-container">', unsafe_allow_html=True)
 
-nav_items = [
+tabs = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "فاکتور"),
     ("warranty", "🛡️", "گارانتی"),
@@ -794,27 +804,10 @@ nav_items = [
     ("profile", "👤", "پروفایل")
 ]
 
-# ایجاد ستون‌ها برای جای‌گیری در کنار هم
-cols = st.columns(len(nav_items))
-
-for i, (tab_id, icon, label) in enumerate(nav_items):
-    with cols[i]:
-        active_class = "active" if st.session_state.active_tab == tab_id else ""
-        # استفاده از دکمه استریم‌لیت برای هندل کردن لاجیک، اما بدون تزریق HTML به داخل آن
-        if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}", use_container_width=True):
-            st.session_state.active_tab = tab_id
-            st.rerun()
+for tab_id, icon, label in tabs:
+    # دکمه‌ها را مستقیماً داخل کانتینر HTML می‌گذاریم
+    if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}"):
+        st.session_state.active_tab = tab_id
+        st.rerun()
 
 st.markdown('</div>', unsafe_allow_html=True)
-
-# تزریق CSS برای استایل‌دهی به دکمه‌های استریم‌لیت تا شبیه باکس‌های بانکی شوند
-st.markdown("""
-<style>
-    div[data-testid="stButton"] button {
-        background: transparent !important; border: none !important;
-        height: 70px !important; display: flex !important;
-        flex-direction: column !important; align-items: center !important;
-        justify-content: center !important; font-size: 10px !important;
-    }
-</style>
-""", unsafe_allow_html=True)
