@@ -756,69 +756,49 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی: منوی پایین (نسخه اصلاح شده برای رفع خطا)
+# ناوبری نهایی: منوی پایین (نسخه لینک‌های کلیک‌خور)
 # ==============================================================================
 
+# استایل‌دهی به منو
 st.markdown("""
 <style>
     .mobile-menu-container {
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        width: 100% !important;
-        max-width: 550px !important;
-        height: 90px !important;
-        background-color: #ffffff !important;
-        box-shadow: 0 -4px 15px rgba(0,0,0,0.08) !important;
-        z-index: 999999 !important;
-        display: flex !important;
-        justify-content: space-around !important;
-        align-items: center !important;
-        border-top: 1px solid #f1f5f9 !important;
-        padding: 0 10px !important;
+        position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+        width: 100%; max-width: 550px; height: 85px;
+        background-color: white; border-top: 1px solid #e2e8f0;
+        display: flex; justify-content: space-around; align-items: center;
+        z-index: 9999;
     }
-    .icon-circle-box {
-        width: 48px !important;
-        height: 48px !important;
-        background-color: #f8fafc !important;
-        border-radius: 16px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        font-size: 22px !important;
-        margin-bottom: 4px !important;
-        transition: 0.3s !important;
+    .nav-item {
+        text-decoration: none; text-align: center; color: #64748b;
+        display: flex; flex-direction: column; align-items: center;
     }
-    .active-tab .icon-circle-box {
-        background-color: #ea580c !important;
-        color: white !important;
+    .nav-icon {
+        width: 45px; height: 45px; background: #f1f5f9;
+        border-radius: 15px; display: flex; align-items: center;
+        justify-content: center; font-size: 20px; margin-bottom: 4px;
     }
-    .active-tab { color: #ea580c !important; font-weight: 800 !important; }
-    div[data-testid="stButton"] button {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        width: 100% !important;
-    }
+    .nav-item.active .nav-icon { background: #ea580c; color: white; }
+    .nav-item.active { color: #ea580c; font-weight: bold; }
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="mobile-menu-container">', unsafe_allow_html=True)
-
+# رندر کردن دکمه‌ها
 tabs = [
     ("dashboard", "📊", "داشبورد"),
-    ("invoice", "🧾", "پیش‌فاکتور"),
+    ("invoice", "🧾", "فاکتور"),
     ("warranty", "🛡️", "گارانتی"),
     ("services", "🛠️", "خدمات"),
     ("profile", "👤", "پروفیـل")
 ]
 
+st.markdown('<div class="mobile-menu-container">', unsafe_allow_html=True)
 for tab_id, icon, label in tabs:
-    active_class = "active-tab" if st.session_state.active_tab == tab_id else ""
-    # دکمه با ظاهر کاستوم
-    if st.button(f'<div class="icon-circle-box">{icon}</div><div style="font-size:10px;">{label}</div>', key=f"nav_{tab_id}"):
+    # تعیین وضعیت فعال
+    is_active = "active" if st.session_state.active_tab == tab_id else ""
+    
+    # ساخت دکمه با استفاده از متد داخلی استریم‌لیت اما در ظاهر HTML
+    if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}"):
         st.session_state.active_tab = tab_id
         st.rerun()
-
 st.markdown('</div>', unsafe_allow_html=True)
