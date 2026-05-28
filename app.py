@@ -567,65 +567,85 @@ elif st.session_state.active_tab == "info":
 # ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه بومی و متصل (سامان)
 # ==============================================================================
 
-import streamlit as st
-
-# استایل برای حذف متن در موبایل یا حذف کامل متن و بهینه‌سازی آیکون‌ها
 st.markdown("""
 <style>
-    /* تنظیمات نوار ثابت پایین */
-    .fixed-nav {
+    .fixed-bottom-nav {
         position: fixed !important;
         bottom: 0 !important;
-        left: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
         width: 100% !important;
-        background-color: white !important;
-        border-top: 1px solid #e0e0e0 !important;
-        padding: 5px 0 !important;
+        max-width: 550px !important;
+        height: 74px !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
         z-index: 999999 !important;
         display: flex !important;
         justify-content: space-around !important;
+        align-items: center !important;
+        border-top: 1px solid #e2e8f0 !important;
+        direction: ltr !important;
     }
-
-    /* حذف فاصله اضافی ستون‌ها */
-    div[data-testid="column"] {
+    .nav-tab-item {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-decoration: none !important;
+        color: #94a3b8 !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
         flex: 1 !important;
-        padding: 0 !important;
-        margin: 0 !important;
+        padding: 6px 0 !important;
     }
-
-    /* استایل دکمه‌ها برای نمایش بهتر آیکون */
-    div[data-testid="stButton"] button {
-        width: 100% !important;
-        border: none !important;
-        background: none !important;
-        font-size: 20px !important; /* بزرگ‌تر کردن آیکون */
-        padding: 10px 0 !important;
+    .nav-tab-item.active-tab {
+        color: #ea580c !important;
     }
-
-    /* مخفی کردن فوتر استریم‌لیت */
-    #MainMenu, footer {visibility: hidden;}
-    
-    /* فضای خالی برای پایین صفحه */
-    .stApp {padding-bottom: 80px !important;}
+    .nav-tab-icon {
+        font-size: 23px !important;
+        margin-bottom: 4px !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# بدنه اصلی
-st.markdown('<div class="fixed-nav">', unsafe_allow_html=True)
-cols = st.columns(4)
-
-# اینجا فقط آیکون‌ها را قرار می‌دهیم (متن حذف شد)
-tabs = [
-    ("dashboard", "📊"),
-    ("invoice", "🧾"),
-    ("top_sunify", "✨"),
-    ("profile", "👤")
+# ساخت منو با دکمه (پایدارتر از لینک)
+cols = st.columns(6)
+tab_list = [
+    ("dashboard", "📊", "داشبورد"),
+    ("invoice", "🧾", "پیش‌فاکتور"),
+    ("warranty", "🛡️", "گارانتی"),
+    ("services", "🛠️", "خدمات"),
+    ("info", "📚", "اطلاعات"),
+    ("profile", "👤", "پروفایل")
 ]
 
-for i, (tab_id, icon) in enumerate(tabs):
+for i, (tab_id, icon, label) in enumerate(tab_list):
     with cols[i]:
-        if st.button(icon, key=f"btn_{tab_id}"):
+        active = "active-tab" if st.session_state.active_tab == tab_id else ""
+        
+        if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}", 
+                     use_container_width=True,
+                     help=label):
             st.session_state.active_tab = tab_id
             st.rerun()
 
-st.markdown('</div>', unsafe_allow_html=True)
+# CSS اضافی برای زیباتر کردن دکمه‌ها (شبیه لینک)
+st.markdown("""
+<style>
+    div[data-testid="stButton"] button {
+        background: transparent !important;
+        border: none !important;
+        color: inherit !important;
+        font-size: 10px !important;
+        height: 68px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 4px 0 !important;
+    }
+    div[data-testid="stButton"] button:hover {
+        background: rgba(234, 88, 12, 0.08) !important;
+    }
+</style>
+""", unsafe_allow_html=True)
