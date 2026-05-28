@@ -764,12 +764,12 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری پایین صفحه - ۳ تب (نسخه قوی افقی)
+# ناوبری پایین صفحه - ۳ تب (نسخه نهایی افقی - بدون columns)
 # ==============================================================================
 
 st.markdown("""
 <style>
-    .custom-bottom-nav {
+    .custom-bottom-nav-final {
         position: fixed !important;
         bottom: 0 !important;
         left: 50% !important;
@@ -785,11 +785,11 @@ st.markdown("""
         flex-direction: row !important;
         justify-content: space-around !important;
         align-items: center !important;
-        padding: 0 10px !important;
+        padding: 0 15px !important;
         direction: ltr !important;
     }
     
-    .nav-item-custom {
+    .nav-item-final {
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
@@ -800,26 +800,21 @@ st.markdown("""
         font-weight: 700 !important;
         flex: 1 !important;
         padding: 8px 0 !important;
-        transition: all 0.2s !important;
     }
     
-    .nav-item-custom:hover {
+    .nav-item-final.active {
         color: #ea580c !important;
     }
     
-    .nav-item-custom.active {
-        color: #ea580c !important;
-    }
-    
-    .nav-item-custom .icon {
+    .nav-item-final .icon {
         font-size: 28px !important;
         margin-bottom: 4px !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# ساخت منو
-nav_html = '<div class="custom-bottom-nav">'
+# ساخت HTML کامل
+nav_html = '<div class="custom-bottom-nav-final">'
 
 items = [
     ("dashboard", "📊", "داشبورد"),
@@ -830,7 +825,7 @@ items = [
 for tab_id, icon, label in items:
     active = "active" if st.session_state.get("active_tab") == tab_id else ""
     nav_html += f'''
-        <a href="?nav_tab={tab_id}" class="nav-item-custom {active}">
+        <a href="?nav_tab={tab_id}" class="nav-item-final {active}">
             <div class="icon">{icon}</div>
             <div>{label}</div>
         </a>
@@ -838,9 +833,10 @@ for tab_id, icon, label in items:
 
 nav_html += '</div>'
 
+# نمایش نهایی
 st.html(nav_html)
 
-# مدیریت تغییر تب
+# مدیریت تب (بدون ریلود کامل)
 if "nav_tab" in st.query_params:
     new_tab = st.query_params["nav_tab"]
     if new_tab in ["dashboard", "invoice", "profile"]:
