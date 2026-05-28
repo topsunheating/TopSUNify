@@ -568,57 +568,59 @@ elif st.session_state.active_tab == "info":
 # ==============================================================================
 
 # ۱. تزریق استایل‌های سی‌اس‌اس جادویی برای مهار کامل ستون‌های استریم‌لیت
-import streamlit as st
-
-# ۱. استایل CSS برای اجبار به چیدمان افقی و ثابت در پایین صفحه
 st.markdown("""
 <style>
-    /* این بخش ستون‌ها را مجبور می‌کند در موبایل هم افقی بمانند */
+    /* ۱. اجبار به نمایش افقی برای کانتینر اصلی دکمه‌ها در تمام دستگاه‌ها */
+    div[data-testid="stHorizontalBlock"] {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+    }
+
+    /* ۲. تنظیم عرض دقیق ۲۵٪ برای هر دکمه (تا در یک ردیف جا شوند) */
     div[data-testid="column"] {
-        flex: 1 !important;
+        flex: 0 0 25% !important;
         max-width: 25% !important;
-        padding: 0px !important;
     }
-    
-    /* تنظیمات ثابت برای نوار پایین در موبایل و دسکتاپ */
+
+    /* ۳. چسباندن نوار به پایین صفحه با اولویت بسیار بالا */
     .fixed-nav {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background-color: white;
-        z-index: 9999;
-        border-top: 1px solid #e0e0e0;
-        padding: 5px 0;
-        display: flex;
-        justify-content: space-around;
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        background-color: white !important;
+        border-top: 1px solid #e0e0e0 !important;
+        padding: 5px 0 !important;
+        z-index: 999999 !important;
+    }
+
+    /* ۴. ایجاد فضای خالی در انتهای صفحه تا دکمه‌ها روی محتوا نیفتند */
+    .stApp {
+        padding-bottom: 80px !important;
     }
     
-    /* فاصله دادن به محتوای اصلی تا زیر دکمه‌ها نرود */
-    .stApp {
-        padding-bottom: 80px;
-    }
+    /* ۵. مخفی کردن آیکون Streamlit که روی دکمه‌ها افتاده است */
+    #MainMenu, footer {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
 
-# ۲. ایجاد ستون‌ها برای دکمه‌ها
+# بدنه اصلی کد شما که دکمه‌ها را می‌سازد
 st.markdown('<div class="fixed-nav">', unsafe_allow_html=True)
 cols = st.columns(4)
 
-# تعریف تب‌ها
 tabs = [
-    ("dashboard", "📊", "داشبورد"),
-    ("invoice", "🧾", "پیش‌فاکتور"),
-    ("top_sunify", "✨", "تاپسانیفای"),
-    ("profile", "👤", "پروفایل")
+    ("dashboard", "📊\nداشبورد"),
+    ("invoice", "🧾\nپیش‌فاکتور"),
+    ("top_sunify", "✨\nتاپسانیفای"),
+    ("profile", "👤\nپروفایل")
 ]
 
-# ۳. نمایش دکمه‌ها
-for i, (tab_id, icon, label) in enumerate(tabs):
+for i, (tab_id, label) in enumerate(tabs):
     with cols[i]:
-        # ایجاد دکمه
-        if st.button(f"{icon}\n{label}", key=f"btn_{tab_id}"):
+        if st.button(label, key=f"btn_{tab_id}"):
             st.session_state.active_tab = tab_id
             st.rerun()
-
 st.markdown('</div>', unsafe_allow_html=True)
