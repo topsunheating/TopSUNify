@@ -764,13 +764,22 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری نهایی: منوی پایین (نسخه رندر شونده)
+# ناوبری نهایی: منوی یکپارچه (تولید شده در یک دستور واحد برای جلوگیری از خطای متنی)
 # ==============================================================================
 
-# ۱. تعریف استایل‌ها
-st.markdown("""
+nav_items = [
+    ("dashboard", "📊", "داشبورد"),
+    ("invoice", "🧾", "پیش‌فاکتور"),
+    ("warranty", "🛡️", "گارانتی"),
+    ("services", "🛠️", "خدمات"),
+    ("info", "📚", "اطلاعات"),
+    ("profile", "👤", "پروفایل")
+]
+
+# ساختن کل HTML در یک متغیر واحد
+nav_html = """
 <style>
-    .force-bottom-nav {
+    .fixed-bottom-nav-v2 {
         position: fixed !important;
         bottom: 0 !important;
         left: 0 !important;
@@ -783,50 +792,35 @@ st.markdown("""
         align-items: center !important;
         border-top: 1px solid #e2e8f0 !important;
         z-index: 999999 !important;
-        margin: 0 !important;
-        padding: 0 !important;
         direction: ltr !important;
     }
-    .nav-item-forced {
+    .nav-tab-link {
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
         text-decoration: none !important;
         color: #94a3b8 !important;
-        font-family: sans-serif !important;
         font-size: 10px !important;
+        font-weight: bold !important;
         flex: 1 !important;
         height: 100% !important;
     }
+    .active-link { color: #ea580c !important; }
 </style>
-""", unsafe_allow_html=True)
+<div class="fixed-bottom-nav-v2">
+"""
 
-# ۲. ایجاد منو
-nav_html = '<div class="force-bottom-nav">'
-
-# لیست تب‌ها
-tabs = [
-    ("dashboard", "📊", "داشبورد"),
-    ("invoice", "🧾", "پیش‌فاکتور"),
-    ("warranty", "🛡️", "گارانتی"),
-    ("services", "🛠️", "خدمات"),
-    ("info", "📚", "اطلاعات"),
-    ("profile", "👤", "پروفایل")
-]
-
-for tab_id, icon, label in tabs:
-    # تعیین رنگ برای تب فعال
-    active_style = "color: #ea580c !important;" if st.session_state.active_tab == tab_id else ""
-    
+for tab_id, icon, label in nav_items:
+    active_class = "active-link" if st.session_state.active_tab == tab_id else ""
     nav_html += f'''
-    <a href="?nav_tab={tab_id}" target="_self" class="nav-item-forced" style="{active_style}">
+    <a href="?nav_tab={tab_id}" target="_self" class="nav-tab-link {active_class}">
         <div style="font-size: 20px;">{icon}</div>
-        <div style="font-weight: bold;">{label}</div>
+        <div style="font-family: 'iranyekan', sans-serif !important;">{label}</div>
     </a>
     '''
 
-nav_html += '</div>'
+nav_html += "</div>"
 
-# ۳. رندر نهایی
+# رندر کردن کل منو در یک مرحله
 st.markdown(nav_html, unsafe_allow_html=True)
