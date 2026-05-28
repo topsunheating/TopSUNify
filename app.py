@@ -6,7 +6,7 @@ import time
 # ==============================================================================
 st.set_page_config(
     page_title="TopSUNify | هوش مصنوعی گرمایش",
-    page_icon="topsunify.png",
+    page_icon="🔥",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
@@ -173,7 +173,7 @@ elif st.session_state.active_tab == "profile":
     st.write("**کاربر:** رضا تلچی")
 
 # ==============================================================================
-# 📱 ۶. نوار ناوبری موبایل سفارشی - مجهز به سیستم ضد کش آنی (Anti-Cache)
+# 📱 ۶. نوار ناوبری موبایل سفارشی - پایداری کامل دکمه‌ها و ابطال کش داخلی کدهای HTML
 # ترتیب دقیق از راست به چپ: پیش فاکتور -> خدمات فنی -> داشبورد -> ثبت گارانتی -> اطلاعات فنی -> پروفایل
 # ==============================================================================
 active_invoice = "active-tab" if st.session_state.active_tab == "invoice" else ""
@@ -183,11 +183,11 @@ active_warranty = "active-tab" if st.session_state.active_tab == "warranty" else
 active_info = "active-tab" if st.session_state.active_tab == "info" else ""
 active_profile = "active-tab" if st.session_state.active_tab == "profile" else ""
 
-# استفاده از Timestamp برای وادار کردن کامپوننت HTML به بارگذاری مجدد و پاک کردن کش داخلی iframe
+# تعریف شناسه برای اجبار کردن مرورگر به عدم استفاده از کش کدهای منو
 cache_buster = int(time.time())
 
 bottom_navigation_html = f"""
-<div class="fixed-bottom-nav" data-cache="{cache_buster}">
+<div class="fixed-bottom-nav" data-anti-cache="{cache_buster}">
     <button class="nav-tab-item {active_profile}" onclick="document.getElementById('b_pro').click();">
         <div class="nav-tab-icon">👤</div>
         <div>پروفایل</div>
@@ -215,13 +215,7 @@ bottom_navigation_html = f"""
 </div>
 
 <script>
-// دستور عدم ذخیره‌سازی اطلاعات در کش مرورگر برای این تکه کد
-try {{
-    if (window.performance && window.performance.navigation.type === 1) {{
-        console.log("صفحه رفرش شد - اعمال تغییرات بدون کش");
-    }}
-}} catch(e) {{ console.log(e); }}
-
+// همگام‌سازی دکمه‌های کاستوم با دکمه‌های بک‌اند استریم‌لیت
 const parentDoc = window.parent.document;
 function syncButtons() {{
     const btns = parentDoc.querySelectorAll('button[kind="secondary"]');
@@ -239,5 +233,6 @@ setTimeout(syncButtons, 300);
 </script>
 """
 
-# رندر نهایی منوی ناوبری با کلید منحصر به فرد در هر ثانیه جهت ابطال کامل کش
-st.components.v1.html(bottom_navigation_html, height=66, key=f"nav_component_{cache_buster}")
+# فیکس دائم خطای استریم‌لیت با استفاده از کلید ثابت (key="topsun_bottom_nav") 
+# و قرار دادن ترفند کش‌باستر داخل اتریبیوت‌های تگ HTML بالا
+st.components.v1.html(bottom_navigation_html, height=66, key="topsun_bottom_nav")
