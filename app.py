@@ -755,104 +755,89 @@ elif st.session_state.active_tab == "profile":
         </div>
         """, unsafe_allow_html=True)
         
-#---------------------------------
-import streamlit as st
+# ==============================================================================
+# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه پایدار
+# ==============================================================================
 
-# =========================
-# Session State
-# =========================
-if "active_tab" not in st.session_state:
-    st.session_state.active_tab = "dashboard"
-
-# =========================
-# CSS
-# =========================
 st.markdown("""
 <style>
-
-.bottom-nav-container {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-
-    width: 100%;
-    height: 85px;
-
-    background: white;
-    border-top: 1px solid #e2e8f0;
-
-    z-index: 999999;
-
-    padding: 8px 10px 12px 10px;
-}
-
-.stButton > button {
-    width: 100%;
-    height: 65px;
-
-    border: none !important;
-    background: transparent !important;
-
-    font-size: 14px !important;
-    font-weight: 700 !important;
-
-    color: #64748b !important;
-
-    border-radius: 16px !important;
-}
-
-.stButton > button:hover {
-    background: #f8fafc !important;
-    color: #ea580c !important;
-}
-
-.active-tab {
-    color: #ea580c !important;
-}
-
+    .fixed-bottom-nav {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 100% !important;
+        max-width: 550px !important;
+        height: 74px !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
+        z-index: 999999 !important;
+        display: flex !important;
+        justify-content: space-around !important;
+        align-items: center !important;
+        border-top: 1px solid #e2e8f0 !important;
+        direction: ltr !important;
+    }
+    .nav-tab-item {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-decoration: none !important;
+        color: #94a3b8 !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        flex: 1 !important;
+        padding: 6px 0 !important;
+    }
+    .nav-tab-item.active-tab {
+        color: #ea580c !important;
+    }
+    .nav-tab-icon {
+        font-size: 23px !important;
+        margin-bottom: 4px !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# =========================
-# Page Content
-# =========================
-tab = st.session_state.active_tab
+# ساخت منو با دکمه (پایدارتر از لینک)
+cols = st.columns(6)
+tab_list = [
+    ("dashboard", "📊", "داشبورد"),
+    ("invoice", "🧾", "پیش‌فاکتور"),
+    ("warranty", "🛡️", "گارانتی"),
+    ("services", "🛠️", "خدمات"),
+    ("info", "📚", "اطلاعات"),
+    ("profile", "👤", "پروفایل")
+]
 
-if tab == "dashboard":
-    st.title("📊 داشبورد")
-    st.write("محتوای داشبورد")
+for i, (tab_id, icon, label) in enumerate(tab_list):
+    with cols[i]:
+        active = "active-tab" if st.session_state.active_tab == tab_id else ""
+        
+        if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}", 
+                     use_container_width=True,
+                     help=label):
+            st.session_state.active_tab = tab_id
+            st.rerun()
 
-elif tab == "invoice":
-    st.title("🧾 پیش‌فاکتور")
-    st.write("محتوای پیش‌فاکتور")
-
-elif tab == "profile":
-    st.title("👤 پروفایل")
-    st.write("محتوای پروفایل")
-
-# فاصله پایین
-st.markdown("<div style='height:100px'></div>", unsafe_allow_html=True)
-
-# =========================
-# Bottom Navigation
-# =========================
-st.markdown('<div class="bottom-nav-container">', unsafe_allow_html=True)
-
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    if st.button("📊\nداشبورد", key="dashboard_btn"):
-        st.session_state.active_tab = "dashboard"
-        st.rerun()
-
-with col2:
-    if st.button("🧾\nپیش‌فاکتور", key="invoice_btn"):
-        st.session_state.active_tab = "invoice"
-        st.rerun()
-
-with col3:
-    if st.button("👤\nپروفایل", key="profile_btn"):
-        st.session_state.active_tab = "profile"
-        st.rerun()
-
-st.markdown('</div>', unsafe_allow_html=True)
+# CSS اضافی برای زیباتر کردن دکمه‌ها (شبیه لینک)
+st.markdown("""
+<style>
+    div[data-testid="stButton"] button {
+        background: transparent !important;
+        border: none !important;
+        color: inherit !important;
+        font-size: 10px !important;
+        height: 68px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 4px 0 !important;
+    }
+    div[data-testid="stButton"] button:hover {
+        background: rgba(234, 88, 12, 0.08) !important;
+    }
+</style>
+""", unsafe_allow_html=True)
