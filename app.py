@@ -30,257 +30,185 @@ from PIL import Image
 from Financial import calculate_tosunify_proforma, generate_proforma_pdf
 
 # ====================== ۳. هوشمندسازی CSS با فونت ایران‌یکان و ظاهر نیتیو ======================
+
 def inject_custom_css():
-    font_path = "iranyekan.ttf"
-    font_base64 = ""
 
-    if os.path.exists(font_path):
-        with open(font_path, "rb") as f:
-            font_base64 = base64.b64encode(f.read()).decode()
+```
+font_path = "iranyekan.ttf"
+font_base64 = ""
 
-    css = f"""
-    <style>
-    @font-face {{
-        font-family: 'iranyekan';
-        src: url(data:font/ttf;base64,{font_base64}) format('truetype');
-    }}
+if os.path.exists(font_path):
+    with open(font_path, "rb") as f:
+        font_base64 = base64.b64encode(f.read()).decode()
 
-    html, body, [class*="css"], * {{
-        font-family: 'iranyekan', Tahoma, sans-serif !important;
-        direction: rtl !important;
-        text-align: right !important;
-    }}
+css = f"""
+<style>
 
-    /* حذف هدر و سایدبار پیش‌فرض برای ظاهر کاملاً اپلیکیشنی */
-    [data-testid="stHeader"], [data-testid="stSidebar"] {{
-        display: none !important;
-    }}
+@font-face {{
+    font-family: 'iranyekan';
+    src: url(data:font/ttf;base64,{font_base64}) format('truetype');
+}}
 
-    /* --- بهینه‌سازی کانتینر اصلی برای نمایش عالی در تبلت و موبایل --- */
-    .main .block-container {{
-        max-width: 550px !important; /* جمع شدن شیک و موبایلی در دسکتاپ */
-        margin: 0 auto !important;
-        padding-left: 16px !important;
-        padding-right: 16px !important;
-        padding-bottom: 110px !important; /* فضا برای اینکه محتوا زیر منوی پایین نرود */
-        background-color: #f8fafc !important;
-        min-height: 100vh;
-    }}
+html, body, [class*="css"], * {{
+    font-family: 'iranyekan', Tahoma, sans-serif !important;
+    direction: rtl !important;
+    text-align: right !important;
+}}
 
-    /* هدر بالای اپلیکیشن */
-    .app-main-header-container {{
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        width: 100% !important;
-        padding: 10px 0 !important;
-        margin-bottom: 5px !important;
-    }}
+/* حذف هدر و سایدبار */
+[data-testid="stHeader"],
+[data-testid="stSidebar"] {{
+    display: none !important;
+}}
 
-    /* --- استایل گرید آیکون‌ها (منوی دسترسی سریع ماژول‌ها) --- */
-    .icon-grid-container {{
-        display: grid !important;
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: 12px !important;
-        background: #ffffff !important;
-        padding: 16px 10px !important;
-        border-radius: 20px !important;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
-        margin-bottom: 20px !important;
-    }}
-    
-    .icon-item-link {{
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        text-decoration: none !important;
-        cursor: pointer !important;
-    }}
-    
-    .icon-circle {{
-        width: 54px !important;
-        height: 54px !important;
-        border-radius: 18px !important;
-        background-color: #f1f5f9 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        font-size: 24px !important;
-        margin-bottom: 6px !important;
-        transition: all 0.15s ease !important;
-    }}
-    
-    .icon-item-link.active-action .icon-circle {{
-        background-color: #fef3c7 !important; /* لایت زرد/نارنجی متمایز */
-        border: 2px solid #ea580c !important;
-        color: #ea580c !important;
-    }}
-    
-    .icon-label {{
-        font-size: 11px !important;
-        color: #475569 !important;
-        font-weight: bold !important;
-        text-align: center !important;
-        white-space: nowrap !important;
-    }}
+/* کانتینر اصلی */
+.main .block-container {{
+    max-width: 550px !important;
+    margin: 0 auto !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    padding-bottom: 110px !important;
+    background-color: #f8fafc !important;
+    min-height: 100vh;
+}}
 
-    /* باکس محتوای داخلی هر بخش */
-    .module-card-box {{
-        background: #ffffff !important;
-        padding: 20px !important;
-        border-radius: 24px !important;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04) !important;
-        margin-bottom: 20px !important;
-    }}
+/* هدر اپ */
+.app-main-header-container {{
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    padding: 10px 0 !important;
+    margin-bottom: 5px !important;
+}}
 
-    /* --- استایل‌های اختصاصی بخش پروفایل کاربری --- */
-    .profile-header-card {{
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        background: #ffffff !important;
-        padding: 15px !important;
-        border-radius: 24px !important;
-        margin-bottom: 15px !important;
-    }}
+/* گرید */
+.icon-grid-container {{
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 12px !important;
+    margin-bottom: 20px !important;
+}}
 
-    .profile-info-block {{
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: center !important;
-    }}
+/* باکس محتوا */
+.module-card-box {{
+    background: #ffffff !important;
+    padding: 20px !important;
+    border-radius: 24px !important;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.04) !important;
+    margin-bottom: 20px !important;
+}}
 
-    .profile-name {{
-        font-size: 18px !important;
-        font-weight: 800 !important;
-        color: #1e293b !important;
-        margin-bottom: 4px !important;
-    }}
+/* پروفایل */
+.profile-header-card {{
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    background: #ffffff !important;
+    padding: 15px !important;
+    border-radius: 24px !important;
+    margin-bottom: 15px !important;
+}}
 
-    .profile-phone {{
-        font-size: 13px !important;
-        color: #64748b !important;
-    }}
+.profile-info-block {{
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+}}
 
-    .profile-avatar-container {{
-        position: relative !important;
-        width: 68px !important;
-        height: 68px !important;
-    }}
+.profile-name {{
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    color: #1e293b !important;
+    margin-bottom: 4px !important;
+}}
 
-    .profile-avatar-img {{
-        width: 68px !important;
-        height: 68px !important;
-        border-radius: 50% !important;
-        object-fit: cover !important;
-        border: 2px solid #e2e8f0 !important;
-    }}
+.profile-phone {{
+    font-size: 13px !important;
+    color: #64748b !important;
+}}
 
-    .profile-role-badge-box {{
-        background: #f1f5f9 !important;
-        padding: 12px 16px !important;
-        border-radius: 16px !important;
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        margin-bottom: 25px !important;
-    }}
+.profile-avatar-container {{
+    position: relative !important;
+    width: 68px !important;
+    height: 68px !important;
+}}
 
-    .profile-role-title {{
-        font-size: 14px !important;
-        color: #475569 !important;
-        font-weight: bold !important;
-    }}
+.profile-avatar-img {{
+    width: 68px !important;
+    height: 68px !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    border: 2px solid #e2e8f0 !important;
+}}
 
-    .profile-role-value {{
-        font-size: 14px !important;
-        color: #0f172a !important;
-        font-weight: 800 !important;
-    }}
+/* نقش کاربری */
+.profile-role-badge-box {{
+    background: #f1f5f9 !important;
+    padding: 12px 16px !important;
+    border-radius: 16px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 25px !important;
+}}
 
-    /* منوهای خطی لیست ملو */
-    .profile-menu-item {{
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        padding: 16px 8px !important;
-        border-bottom: 1px solid #f1f5f9 !important;
-        text-decoration: none !important;
-        color: #334155 !important;
-        transition: background 0.2s !important;
-    }}
+.profile-role-title {{
+    font-size: 14px !important;
+    color: #475569 !important;
+    font-weight: bold !important;
+}}
 
-    .profile-menu-item:last-child {{
-        border-bottom: none !important;
-    }}
+.profile-role-value {{
+    font-size: 14px !important;
+    color: #0f172a !important;
+    font-weight: 800 !important;
+}}
 
-    .profile-menu-right {{
-        display: flex !important;
-        align-items: center !important;
-        gap: 12px !important;
-        font-size: 15px !important;
-        font-weight: bold !important;
-    }}
+/* آیتم‌های منو */
+.profile-menu-item {{
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 16px 8px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    text-decoration: none !important;
+    color: #334155 !important;
+}}
 
-    .profile-menu-icon {{
-        font-size: 20px !important;
-    }}
+.profile-menu-item:last-child {{
+    border-bottom: none !important;
+}}
 
-    .profile-menu-arrow {{
-        color: #cbd5e1 !important;
-        font-size: 14px !important;
-    }}
+.profile-menu-right {{
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    font-size: 15px !important;
+    font-weight: bold !important;
+}}
 
-    /* --- سیستم نویگیشن فیکس شده در پایین (Bottom Navigation) --- */
-    .fixed-bottom-nav {{
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        width: 100% !important;
-        max-width: 550px !important;
-        height: 70px !important;
-        background-color: #ffffff !important;
-        box-shadow: 0 -5px 15px rgba(0,0,0,0.06) !important;
-        z-index: 99999 !important;
-        display: flex !important;
-        justify-content: space-around !important;
-        align-items: center !important;
-        border-top: 1px solid #e2e8f0 !important;
-        padding-bottom: env(safe-area-inset-bottom) !important;
-    }}
+.profile-menu-icon {{
+    font-size: 20px !important;
+}}
 
-    .nav-tab-item {{
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        text-decoration: none !important;
-        color: #94a3b8 !important;
-        font-size: 10px !important;
-        font-weight: bold !important;
-        transition: all 0.2s ease !important;
-    }}
+.profile-menu-arrow {{
+    color: #cbd5e1 !important;
+    font-size: 14px !important;
+}}
 
-    .nav-tab-item.active-tab {{
-        color: #ea580c !important; /* رنگ نارنجی سازمانی برند تاپسان */
-    }}
+/* آپلود فایل */
+[data-testid="stFileUploadDropzone"],
+[data-testid="stFileUploaderDropzone"] {{
+    border: 2px dashed #ea580c !important;
+    border-radius: 24px !important;
+    background-color: #f8fafc !important;
+    padding: 40px 10px !important;
+}}
 
-    .nav-tab-icon {{
-        font-size: 20px !important;
-        margin-bottom: 3px !important;
-    }}
-
-    /* ================= FILE UPLOAD ================= */
-    [data-testid="stFileUploadDropzone"],
-    [data-testid="stFileUploaderDropzone"] {{
-        border: 2px dashed #ea580c !important;
-        border-radius: 24px !important;
-        background-color: #f8fafc !important;
-        padding: 40px 10px !important;
-    }}
 /* ================= GRID BUTTONS ================= */
 
-.stButton > button {
+.stButton > button {{
     border-radius: 20px !important;
     height: 90px !important;
     background: #ffffff !important;
@@ -289,16 +217,19 @@ def inject_custom_css():
     font-weight: bold !important;
     transition: all 0.2s ease !important;
     white-space: pre-line !important;
-}
+}}
 
-.stButton > button:hover {
+.stButton > button:hover {{
     border-color: #ea580c !important;
     background: #fff7ed !important;
     color: #ea580c !important;
-}
-    </style>
-    """
-    st.markdown(css, unsafe_allow_html=True)
+}}
+
+</style>
+"""
+
+st.markdown(css, unsafe_allow_html=True)
+```
 
 inject_custom_css()
 
