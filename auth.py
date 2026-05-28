@@ -4,6 +4,14 @@ import os
 import base64
 
 def render_auth_page():
+    def render_auth_page():
+    # اگر کاربر قبلاً لاگین کرده، اصلاً نیازی به بررسی query_params نیست
+    if st.session_state.get("logged_in", False):
+        return 
+
+    # حالا بررسی‌های مربوط به فرم ورود
+    show_bio = st.query_params.get("show_bio", "false") == "true"
+    # ... بقیه کدهای شما
     # خواندن وضعیت پاپ‌آ‌پ، تب‌ها و مقادیر فرم از query_params برای پایداری کامل
     show_bio = st.query_params.get("show_bio", "false") == "true"
     bio_tab = st.query_params.get("bio_tab", "fingerprint")
