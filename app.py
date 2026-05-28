@@ -117,7 +117,7 @@ def inject_custom_css():
     }}
     
     .icon-label {{
-        font-size: 12px !important;
+        font-size: 11px !important;
         color: #475569 !important;
         font-weight: bold !important;
         text-align: center !important;
@@ -158,7 +158,7 @@ def inject_custom_css():
         align-items: center !important;
         text-decoration: none !important;
         color: #94a3b8 !important;
-        font-size: 11px !important;
+        font-size: 10px !important;
         font-weight: bold !important;
         transition: all 0.2s ease !important;
     }}
@@ -168,7 +168,7 @@ def inject_custom_css():
     }}
 
     .nav-tab-icon {{
-        font-size: 22px !important;
+        font-size: 20px !important;
         margin-bottom: 3px !important;
     }}
 
@@ -193,7 +193,7 @@ if os.path.exists("topsunify.png"):
         logo_base64 = base64.b64encode(f.read()).decode()
     header_logo_html = f"""
     <div class="app-main-header-container">
-        <img src="data:image/png;base64,{logo_base64}" style="max-width: 180px; height: auto; display: block; margin: 0 auto;">
+        <img src="data:image/png;base64,{logo_base64}" style="max-width: 170px; height: auto; display: block; margin: 0 auto;">
     </div>
     """
 st.markdown(header_logo_html, unsafe_allow_html=True)
@@ -212,7 +212,7 @@ if "source_type" not in st.session_state: st.session_state.source_type = ""
 
 # مدیریت تب فعال پایین و آیکون فعال گرید از روی آدرس URL (پایداری کوئری پارامترها)
 if "active_tab" not in st.session_state:
-    st.session_state.active_tab = "invoice" # تب پیش‌فرض
+    st.session_state.active_tab = "dashboard" # تب پیش‌فرض جدید تغییر به داشبورد
 if "active_sub_action" not in st.session_state:
     st.session_state.active_sub_action = "file_plan" # ساب‌تب پیش‌فرض پیش‌فاکتور
 
@@ -228,9 +228,27 @@ if "sub_act" in query_p:
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# ۱. محتوای تب: صدور پیش‌فاکتور (دارای گرید آیکونی اختصاصی در بالا)
+# ۱. محتوای تب جدید: داشبورد (صفحه خانگی یا خلاصه پروژه)
 # ------------------------------------------------------------------------------
-if st.session_state.active_tab == "invoice":
+if st.session_state.active_tab == "dashboard":
+    st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
+    st.subheader("📊 داشبورد مدیریتی پروژه")
+    st.write("به سامانه هوشمند تاپسان خوش آمدید.")
+    
+    # نمایش یک خلاصه فشرده و شیک
+    c1, c2 = st.columns(2)
+    with c1:
+        st.metric(label="متراژ کل فیلم عرض ۸۰ (محاسباتی)", value=f"{st.session_state.m80:.1f} م")
+    with c2:
+        st.metric(label="متراژ کل فیلم عرض ۴۰ (محاسباتی)", value=f"{st.session_state.m40:.1f} م")
+        
+    st.info("برای شروع فرآیند مهندسی یا صدور اسناد، از منوی پایین بخش پیش‌فاکتور را انتخاب کنید.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ------------------------------------------------------------------------------
+# ۲. محتوای تب: صدور پیش‌فاکتور (دارای گرید آیکونی اختصاصی در بالا)
+# ------------------------------------------------------------------------------
+elif st.session_state.active_tab == "invoice":
     st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
     st.subheader("🧾 صدور پیش‌فاکتور هوشمند")
     
@@ -242,7 +260,6 @@ if st.session_state.active_tab == "invoice":
     st.markdown('</div>', unsafe_allow_html=True)
 
     if product_type == "گرمایش کف (سیستم هوشمند)":
-        # رندر گرید آیکونی ۳ تایی داینامیک به جای کدهای تب قدیمی
         act_file = "active-action" if st.session_state.active_sub_action == "file_plan" else ""
         act_manual = "active-action" if st.session_state.active_sub_action == "manual_dim" else ""
         act_direct = "active-action" if st.session_state.active_sub_action == "direct_val" else ""
@@ -265,7 +282,6 @@ if st.session_state.active_tab == "invoice":
         """
         st.markdown(grid_html, unsafe_allow_html=True)
 
-        # نمایش ماژول اختصاصی متناسب با آیکون کلیک شده در گرید
         st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
 
         # الف) ماژول آپلود فایل نقشه
@@ -356,7 +372,7 @@ if st.session_state.active_tab == "invoice":
                 st.session_state.show_table = True
                 st.rerun()
 
-        st.markdown('</div>', unsafe_allow_html=True) # پایان باکس ماژول فاکتور
+        st.markdown('</div>', unsafe_allow_html=True)
 
         # --- محاسبات، فیلترینگ اقلام صفر و صدور فاکتور نهایی ---
         st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
@@ -407,7 +423,7 @@ if st.session_state.active_tab == "invoice":
         st.info(f"بخش **{product_type}** به زودی فعال می‌شود.")
 
 # ------------------------------------------------------------------------------
-# ۲. محتوای تب: ثبت گارانتی
+# ۳. محتوای تب: ثبت گارانتی
 # ------------------------------------------------------------------------------
 elif st.session_state.active_tab == "warranty":
     st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
@@ -420,7 +436,7 @@ elif st.session_state.active_tab == "warranty":
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ------------------------------------------------------------------------------
-# ۳. محتوای تب: درخواست خدمات فنی
+# ۴. محتوای تب: درخواست خدمات فنی
 # ------------------------------------------------------------------------------
 elif st.session_state.active_tab == "services":
     st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
@@ -432,12 +448,21 @@ elif st.session_state.active_tab == "services":
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ------------------------------------------------------------------------------
-# ۴. محتوای تب: اطلاعات فنی
+# ۵. محتوای تب: اطلاعات فنی
 # ------------------------------------------------------------------------------
 elif st.session_state.active_tab == "info":
     st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
     st.subheader("📚 بانک اطلاعات فنی و دانشنامه حرارتی")
     st.write("کاتالوگ‌ها، راهنماهای چیدمان فیلم و نقشه‌های ازپیش تحلیل‌شده به زودی بارگذاری می‌شوند.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ------------------------------------------------------------------------------
+# ۶. محتوای تب جدید: پروفایل کاربری
+# ------------------------------------------------------------------------------
+elif st.session_state.active_tab == "profile":
+    st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
+    st.subheader("👤 پروفایل کاربری")
+    st.write("تنظیمات و اطلاعات حساب کاربری شما در این بخش قرار دارد.")
     st.divider()
     if st.button("خروج از حساب کاربری", use_container_width=True):
         st.session_state.logged_in = False
@@ -447,30 +472,40 @@ elif st.session_state.active_tab == "info":
 
 
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation Bar)
+# ناوبری نهایی چسبیده به پایین صفحه با ۶ تب متوازن (Bottom Navigation Bar)
 # ==============================================================================
-active_info = "active-tab" if st.session_state.active_tab == "info" else ""
-active_services = "active-tab" if st.session_state.active_tab == "services" else ""
-active_warranty = "active-tab" if st.session_state.active_tab == "warranty" else ""
+active_dashboard = "active-tab" if st.session_state.active_tab == "dashboard" else ""
 active_invoice = "active-tab" if st.session_state.active_tab == "invoice" else ""
+active_warranty = "active-tab" if st.session_state.active_tab == "warranty" else ""
+active_services = "active-tab" if st.session_state.active_tab == "services" else ""
+active_info = "active-tab" if st.session_state.active_tab == "info" else ""
+active_profile = "active-tab" if st.session_state.active_tab == "profile" else ""
 
 bottom_navigation_html = f"""
 <div class="fixed-bottom-nav">
+    <a href="?nav_tab=profile" target="_self" class="nav-tab-item {active_profile}">
+        <div class="nav-tab-icon">👤</div>
+        <div>پروفایل</div>
+    </a>
     <a href="?nav_tab=info" target="_self" class="nav-tab-item {active_info}">
         <div class="nav-tab-icon">📚</div>
-        <div>اطلاعات فنی</div>
+        <div>اطلاعات</div>
     </a>
     <a href="?nav_tab=services" target="_self" class="nav-tab-item {active_services}">
         <div class="nav-tab-icon">🛠️</div>
-        <div>خدمات فنی</div>
+        <div>خدمات</div>
     </a>
     <a href="?nav_tab=warranty" target="_self" class="nav-tab-item {active_warranty}">
         <div class="nav-tab-icon">🛡️</div>
-        <div>ثبت گارانتی</div>
+        <div>گارانتی</div>
     </a>
     <a href="?nav_tab=invoice" target="_self" class="nav-tab-item {active_invoice}">
         <div class="nav-tab-icon">🧾</div>
         <div>پیش‌فاکتور</div>
+    </a>
+    <a href="?nav_tab=dashboard" target="_self" class="nav-tab-item {active_dashboard}">
+        <div class="nav-tab-icon">📊</div>
+        <div>داشبورد</div>
     </a>
 </div>
 """
