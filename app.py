@@ -330,32 +330,37 @@ with nav_col4:
 # استایل CSS برای چسباندن این دکمه‌ها به پایین صفحه
 # این بخش را جایگزین کد استایل قبلی در انتهای فایل app.py کنید
 st.markdown("""
+# این کد را در انتهای فایل app.py قرار دهید
+nav_html = f"""
 <style>
-    /* تنظیم چیدمان دکمه‌ها در یک ردیف */
-    [data-testid="column"] { 
-        padding: 0px !important; 
-        flex: 1 !important; 
-    }
-    
-    div.row-widget.stButton { 
-        position: fixed; 
-        bottom: 0; 
-        width: 25%; /* هر دکمه دقیقا یک چهارم عرض صفحه */
-        margin: 0; 
-        padding: 2px;
-    }
-
-    /* کوچک کردن متن و آیکون دکمه‌ها برای موبایل */
-    button {
-        font-size: 10px !important; /* سایز متن کوچکتر */
-        padding: 5px 0 !important;
-        height: 60px !important;
-        white-space: nowrap !important; /* جلوگیری از شکستن خط متن */
-    }
-
-    /* برای جلوگیری از هم‌پوشانی محتوا با دکمه‌های پایین */
-    .block-container {
-        padding-bottom: 80px !important;
-    }
+    /* این CSS دقیقاً برای موبایل طراحی شده */
+    .mobile-nav {{
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: white;
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 5px;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        z-index: 999999;
+    }}
+    .nav-item {{
+        text-decoration: none;
+        color: #64748b;
+        text-align: center;
+        flex: 1;
+        font-size: 11px;
+    }}
+    .nav-item.active {{ color: #ea580c; }}
 </style>
-""", unsafe_allow_html=True)
+
+<div class="mobile-nav">
+    <a href="?nav_tab=dashboard" target="_self" class="nav-item {'active' if st.session_state.active_tab == 'dashboard' else ''}">📊<br>داشبورد</a>
+    <a href="?nav_tab=invoice" target="_self" class="nav-item {'active' if st.session_state.active_tab == 'invoice' else ''}">🧾<br>فاکتور</a>
+    <a href="?nav_tab=info" target="_self" class="nav-item {'active' if st.session_state.active_tab == 'info' else ''}">📚<br>تاپسان</a>
+    <a href="?nav_tab=profile" target="_self" class="nav-item {'active' if st.session_state.active_tab == 'profile' else ''}">👤<br>پروفایل</a>
+</div>
+"""
+st.markdown(nav_html, unsafe_allow_html=True)
