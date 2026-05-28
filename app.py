@@ -764,12 +764,12 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری نهایی: منوی افقی، چسبیده و یکپارچه (Bottom Navigation Bar)
+# ناوبری نهایی: منوی افقی (اصلاح شده)
 # ==============================================================================
 
 st.markdown("""
 <style>
-    /* ظرف اصلی منو - تضمین چیدمان افقی (row) */
+    /* ظرف اصلی منو - اعمال لغو جهت‌دهی عمومی */
     .fixed-bottom-nav-v2 {
         position: fixed !important;
         bottom: 0 !important;
@@ -778,26 +778,26 @@ st.markdown("""
         height: 70px !important;
         background-color: #ffffff !important;
         display: flex !important;
-        flex-direction: row !important; /* این خط بسیار مهم است: چیدمان افقی */
-        justify-content: space-around !important; /* توزیع متقارن در طول عرض */
+        flex-direction: row !important; /* چیدمان ردیفی */
+        justify-content: space-around !important;
         align-items: center !important;
         border-top: 1px solid #e2e8f0 !important;
         z-index: 999999 !important;
         margin: 0 !important;
         padding: 0 !important;
+        direction: ltr !important; /* مهم: خنثی‌سازی راست‌چین بودن برای چیدمان ردیفی */
     }
     
-    /* لینک‌ها به صورت ستونی داخل تب (آیکون بالا، متن پایین) */
     .nav-tab-link {
         display: flex !important;
-        flex-direction: column !important; /* آیکون و متن عمودی روی هم */
+        flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
         text-decoration: none !important;
         color: #94a3b8 !important;
         font-size: 10px !important;
         font-weight: bold !important;
-        flex: 1 !important; /* هر تب فضای مساوی بگیرد */
+        flex: 1 !important;
         height: 100% !important;
     }
     
@@ -807,7 +807,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# تعریف ترتیب تب‌ها برای نمایش افقی
+# تعریف داده‌ها
 nav_items = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
@@ -825,7 +825,7 @@ for tab_id, icon, label in nav_items:
     st.markdown(f"""
         <a href="?nav_tab={tab_id}" target="_self" class="nav-tab-link {active_class}">
             <div style="font-size: 20px;">{icon}</div>
-            <div style="margin-top: 2px;">{label}</div>
+            <div style="font-family: 'iranyekan', sans-serif !important;">{label}</div>
         </a>
     """, unsafe_allow_html=True)
 
