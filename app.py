@@ -764,54 +764,57 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری پایین: ظاهر یکپارچه و فیکس (مشابه اپلیکیشن‌های بانکی)
+# ناوبری نهایی: منوی یکپارچه و فیکس پایین (بدون فاصله بین تب‌ها)
 # ==============================================================================
 
-# تزریق CSS برای حذف فواصل استریم‌لیت و ساخت نوار یکپارچه
+# حذف تداخل با استایل‌های پیش‌فرض
 st.markdown("""
 <style>
-    /* پاکسازی کامل استریم‌لیت در منطقه ناوبری */
-    .stApp { padding-bottom: 80px; }
-    
-    .nav-bar-wrapper {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 70px;
-        background-color: white;
-        border-top: 1px solid #e2e8f0;
-        display: flex;
-        flex-direction: row-reverse; /* برای چیدمان راست‌چین */
-        justify-content: space-around;
-        align-items: center;
-        z-index: 999999;
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-    }
-    
-    .nav-item-button {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-        border: none !important;
-        background: transparent !important;
-        color: #64748b !important;
-        font-family: 'iranyekan', sans-serif !important;
-        font-size: 10px !important;
-        font-weight: 700 !important;
+    /* تنظیمات نوار پایین */
+    .fixed-bottom-nav-v2 {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 75px !important;
+        background-color: #ffffff !important;
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-evenly !important;
+        align-items: center !important;
+        border-top: 1px solid #e2e8f0 !important;
+        z-index: 999999 !important;
         padding: 0 !important;
-        cursor: pointer;
+        margin: 0 !important;
     }
     
-    .nav-item-button:hover { color: #ea580c !important; }
+    /* هر تب به صورت یک دکمه لینک‌دار */
+    .nav-tab-link {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-decoration: none !important;
+        color: #94a3b8 !important;
+        width: 100% !important;
+        height: 100% !important;
+        font-size: 10px !important;
+        font-weight: bold !important;
+        transition: color 0.2s !important;
+    }
+    
+    .nav-tab-link.active-link {
+        color: #ea580c !important;
+    }
+    
+    .nav-tab-link:hover {
+        color: #ea580c !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# تعریف تب‌ها
-tabs_list = [
+# تعریف داده‌های تب‌ها
+nav_items = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
     ("warranty", "🛡️", "گارانتی"),
@@ -820,16 +823,18 @@ tabs_list = [
     ("profile", "👤", "پروفایل")
 ]
 
-# ایجاد کانتینر منو
-st.markdown('<div class="nav-bar-wrapper">', unsafe_allow_html=True)
+# رندر کردن نوار ناوبری یکپارچه
+st.markdown('<div class="fixed-bottom-nav-v2">', unsafe_allow_html=True)
 
-# استفاده از ستون‌ها برای جای‌گذاری دکمه‌ها در یک ردیف
-cols = st.columns(6)
-for i, (tab_id, icon, label) in enumerate(tabs_list):
-    with cols[i]:
-        # استایل دکمه را در قالب یک دکمه استریم‌لیت اما با کلاس سفارشی اعمال می‌کنیم
-        if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}", help=label):
-            st.session_state.active_tab = tab_id
-            st.rerun()
+for tab_id, icon, label in nav_items:
+    active_class = "active-link" if st.session_state.active_tab == tab_id else ""
+    
+    # استفاده از لینک برای ناوبری سریع و بدون رفرش کامل
+    st.markdown(f"""
+        <a href="?nav_tab={tab_id}" target="_self" class="nav-tab-link {active_class}">
+            <div style="font-size: 20px; margin-bottom: 2px;">{icon}</div>
+            <div>{label}</div>
+        </a>
+    """, unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
