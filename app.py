@@ -756,54 +756,90 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه پایدار ۴ تب
+# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه ۱۰۰٪ افقی تضمینی در موبایل
 # ==============================================================================
 
+# ۱. تزریق استایل‌های سی‌اس‌اس برای ساخت کانتینر فیکس شده و اجبار دکمه‌ها به چیدمان افقی
 st.markdown("""
 <style>
-    .fixed-bottom-nav {
+    /* کانتینر اصلی منو فیکس شده در پایین صفحه */
+    .fixed-bottom-nav-container {
         position: fixed !important;
         bottom: 0 !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         width: 100% !important;
-        max-width: 550px !important;
-        height: 74px !important;
+        max-width: 550px !important; /* فیکس با عرض قالب موبایل شما */
+        height: 75px !important;
         background-color: #ffffff !important;
         box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
         z-index: 999999 !important;
         display: flex !important;
-        justify-content: space-around !important;
+        flex-direction: row !important;       /* اجبار به چیدمان افقی */
+        flex-wrap: nowrap !important;         /* جلوگیری از شکستن و عمودی شدن */
+        justify-content: space-around !important; /* پخش کردن مساوی دکمه‌ها */
         align-items: center !important;
         border-top: 1px solid #e2e8f0 !important;
-        direction: ltr !important;
+        padding: 0 6px !important;
+        box-sizing: border-box !important;
     }
-    .nav-tab-item {
+
+    /* مهار کردن بلاک‌های دکمه استریم‌لیت و اجبار آن‌ها به پر کردن عرض به صورت مساوی (هر کدام ۲۵٪) */
+    .fixed-bottom-nav-container > div {
+        flex: 1 !important;
+        width: 25% !important;
+        min-width: 25% !important;
+        max-width: 25% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* استایل‌دهی داخلی به خود دکمه‌های پایتون */
+    .fixed-bottom-nav-container button {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        color: #94a3b8 !important; /* رنگ خاکستری پیش‌فرض */
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        height: 70px !important;
+        width: 100% !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        text-decoration: none !important;
-        color: #94a3b8 !important;
-        font-size: 10px !important;
-        font-weight: 700 !important;
-        flex: 1 !important;
-        padding: 6px 0 !important;
+        white-space: pre-line !important; /* اجازه به شکستن خط برای قرارگیری متن زیر آیکون */
+        line-height: 1.4 !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
-    .nav-tab-item.active-tab {
+
+    /* افکت هاور */
+    .fixed-bottom-nav-container button:hover {
+        background: rgba(234, 88, 12, 0.05) !important;
         color: #ea580c !important;
     }
-    .nav-tab-icon {
-        font-size: 23px !important;
-        margin-bottom: 4px !important;
+
+    /* 🟠 استایل رنگ نارنجی سازمانی تاپسان برای تب فعال */
+    .fixed-bottom-nav-container .active-tab-wrapper button {
+        color: #ea580c !important;
+    }
+    .fixed-bottom-nav-container .active-tab-wrapper button p {
+        color: #ea580c !important;
+        font-weight: 800 !important;
+    }
+
+    /* ایجاد فاصله در انتهای صفحه تا محتوای اصلی پشت منو پنهان نشود */
+    .main .block-container {
+        padding-bottom: 110px !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# تغییر تعداد ستون‌ها به ۴ جهت باز شدن فضا در موبایل
-cols = st.columns(4)
+# ۲. ایجاد کانتینر اصلی اچ‌تی‌ام‌ال به عنوان ظرف دکمه‌ها
+st.markdown('<div class="fixed-bottom-nav-container">', unsafe_allow_html=True)
 
-# لیست جدید با ۴ تب درخواستی شما
+# لیست ۴ تب درخواستی شما
 tab_list = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
@@ -811,53 +847,23 @@ tab_list = [
     ("profile", "👤", "پروفایل")
 ]
 
-for i, (tab_id, icon, label) in enumerate(tab_list):
-    with cols[i]:
-        is_active = st.session_state.active_tab == tab_id
-        
-        # در صورتی که این تب فعال باشد، دکمه را داخل کلاس اکتیو می‌گذاریم تا رنگش نارنجی شود
-        if is_active:
-            st.markdown('<div class="active-tab-button">', unsafe_allow_html=True)
-            
-        if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}", 
-                     use_container_width=True,
-                     help=label):
-            st.session_state.active_tab = tab_id
-            st.query_params["nav_tab"] = tab_id
-            st.rerun()
-            
-        if is_active:
-            st.markdown('</div>', unsafe_allow_html=True)
-
-# CSS اضافی برای زیباتر کردن دکمه‌ها و اعمال رنگ نارنجی به تب فعال
-st.markdown("""
-<style>
-    div[data-testid="stButton"] button {
-        background: transparent !important;
-        border: none !important;
-        color: #94a3b8 !important; /* رنگ خاکستری دکمه‌های غیرفعال */
-        font-size: 11px !important;
-        font-weight: 700 !important;
-        height: 68px !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        padding: 4px 0 !important;
-        white-space: pre-line !important;
-    }
-    div[data-testid="stButton"] button:hover {
-        background: rgba(234, 88, 12, 0.08) !important;
-        color: #ea580c !important;
-    }
+# ۳. رندر کردن مستقیم دکمه‌ها پشت سر هم (بدون استفاده از st.columns تا در موبایل نشکند)
+for tab_id, icon, label in tab_list:
+    is_active = st.session_state.active_tab == tab_id
     
-    /* افکت تغییر رنگ قطعی دکمه‌ی فعال به نارنجی تاپسان */
-    div.active-tab-button button {
-        color: #ea580c !important;
-    }
-    div.active-tab-button button p {
-        color: #ea580c !important;
-        font-weight: 800 !important;
-    }
-</style>
-""", unsafe_allow_html=True)
+    # اگر تب فعال بود، آن را در کلاس مخصوص نارنجی شدن می‌گذاریم
+    if is_active:
+        st.markdown('<div class="active-tab-wrapper">', unsafe_allow_html=True)
+    else:
+        st.markdown('<div>', unsafe_allow_html=True)
+        
+    # دکمه کاملاً بومی و پایدار پایتون شما
+    if st.button(f"{icon}\n{label}", key=f"nav_v5_{tab_id}", use_container_width=True):
+        st.session_state.active_tab = tab_id
+        st.query_params["nav_tab"] = tab_id
+        st.rerun()
+        
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# بستن تگ کانتینر اصلی
+st.markdown('</div>', unsafe_allow_html=True)
