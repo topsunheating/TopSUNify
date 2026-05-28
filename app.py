@@ -757,61 +757,63 @@ elif st.session_state.active_tab == "profile":
         
 
 # ==============================================================================
-# ناوبری پایین صفحه - ۳ تب (نسخه نهایی - افقی + بدون خروج)
-# ==============================================================================
-# ==============================================================================
-# ناوبری پایین صفحه - نسخه فیکس شده (همیشه افقی)
+# ناوبری نهایی: منوی بانکی (استفاده از دکمه‌های استایل‌دهی شده - بدون کد خام)
 # ==============================================================================
 
 st.markdown("""
 <style>
-    /* کانتینر فیکس شده که در همه دستگاه‌ها افقی می‌ماند */
-    .fixed-nav-wrapper {
+    /* ۱. کانتینر اصلی که در پایین صفحه فیکس می‌شود */
+    .bank-nav-container {
         position: fixed !important;
         bottom: 0 !important;
         left: 0 !important;
         width: 100% !important;
-        height: 80px !important;
-        background-color: #ffffff !important;
+        background: white !important;
         border-top: 1px solid #e2e8f0 !important;
-        box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
-        z-index: 999999 !important;
         display: flex !important;
         justify-content: space-around !important;
-        align-items: center !important;
-        padding: 0 5px !important;
+        padding: 10px 0 !important;
+        z-index: 999999 !important;
     }
 
-    /* استایل دکمه‌های داخل کانتینر */
-    div[data-testid="stButton"] button {
-        background: transparent !important;
+    /* ۲. تغییر ظاهر دکمه‌های استریم‌لیت به شکلِ باکس‌های بانکی */
+    div[data-testid="stButton"] > button {
+        background: #f1f5f9 !important; /* رنگ پس‌زمینه آیکون */
         border: none !important;
-        width: 100% !important;
-        height: 70px !important;
+        border-radius: 16px !important;
+        width: 60px !important;
+        height: 60px !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        font-size: 11px !important;
-        font-weight: 700 !important;
         color: #64748b !important;
+        font-size: 18px !important;
+        transition: 0.3s !important;
+    }
+
+    /* ۳. وقتی دکمه انتخاب می‌شود، نارنجی شود */
+    div[data-testid="stButton"] > button:active,
+    div[data-testid="stButton"] > button:focus {
+        background: #ea580c !important;
+        color: white !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# رندر منو
-st.markdown('<div class="fixed-nav-wrapper">', unsafe_allow_html=True)
+# باز کردن کانتینر
+st.markdown('<div class="bank-nav-container">', unsafe_allow_html=True)
 
-# تعریف آیتم‌ها
-tabs = [("dashboard", "📊", "داشبورد"), ("invoice", "🧾", "پیش‌فاکتور"), ("profile", "👤", "پروفایل")]
+# دکمه‌ها را در کانتینر می‌چینیم
+if st.button("📊", key="btn_dash"):
+    st.session_state.active_tab = "dashboard"
+    st.rerun()
+if st.button("🧾", key="btn_inv"):
+    st.session_state.active_tab = "invoice"
+    st.rerun()
+if st.button("👤", key="btn_prof"):
+    st.session_state.active_tab = "profile"
+    st.rerun()
 
-for tab_id, icon, label in tabs:
-    # تعیین رنگ فعال
-    color_style = "color: #ea580c !important;" if st.session_state.active_tab == tab_id else ""
-    
-    # ساخت دکمه
-    if st.button(f'<div style="{color_style} font-size:20px;">{icon}</div><div style="{color_style}">{label}</div>', key=f"nav_{tab_id}"):
-        st.session_state.active_tab = tab_id
-        st.rerun()
-
+# بستن کانتینر
 st.markdown('</div>', unsafe_allow_html=True)
