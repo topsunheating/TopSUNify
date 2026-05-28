@@ -29,6 +29,7 @@ def render_auth_page():
             st.warning("⚠️ لطفاً نام کاربری و رمز عبور را وارد کنید.")
         else:
             st.error("❌ نام کاربری یا رمز ورود اشتباه است.")
+            st.query_params.clear()
 
     # --- ۱. تزریق فونت ایران‌یکان و استایل‌های پایه ---
     font_path = "iranyekan.ttf"
