@@ -764,7 +764,7 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه - نسخه اصلاح شده و ایمن
+# ناوبری نهایی - نسخه استاندارد و اصلاح شده
 # ==============================================================================
 
 # ایجاد لیست تب‌ها
@@ -777,37 +777,14 @@ tabs = [
     {"id": "dashboard", "icon": "📊", "label": "داشبورد"},
 ]
 
-# ایجاد کانتینر برای ناوبری
-nav_container = st.container()
-
-with nav_container:
-    # استفاده از استایل اختصاصی برای چسبیدن به پایین
-    st.markdown("""
-    <style>
-    .fixed-footer {
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        background-color: white;
-        border-top: 1px solid #e2e8f0;
-        padding: 10px 0;
-        z-index: 9999;
-        display: flex;
-        justify-content: space-around;
-    }
-    </style>
-    <div class="fixed-footer">
-    """, unsafe_allow_html=True)
-
-    # ایجاد ستون‌ها داخل کانتینر
-    cols = st.columns(6)
-    for i, tab in enumerate(tabs):
-        with cols[i]:
-            # استفاده از دکمه برای تغییر وضعیت
-            if st.button(f"{tab['icon']}\n{tab['label']}", key=f"btn_{tab['id']}", use_container_width=True):
-                st.session_state.active_tab = tab['id']
-                st.rerun()
+# ایجاد ستون‌ها برای دکمه‌های پایین صفحه
+cols = st.columns(6)
+for i, tab in enumerate(tabs):
+    with cols[i]:
+        # استفاده از دکمه برای تغییر تب (بدون تداخل با متغیرهای حذف شده)
+        if st.button(f"{tab['icon']}\n{tab['label']}", key=f"nav_{tab['id']}", use_container_width=True):
+            st.session_state.active_tab = tab['id']
+            st.rerun()
 
     st.markdown("</div>", unsafe_allow_html=True)
 st.html(bottom_navigation_html)
