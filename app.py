@@ -756,7 +756,7 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری عمودی با استفاده از st.radio (پایدار و بدون رفرش)
+# ناوبری عمودی (اصلاح شده)
 # ==============================================================================
 
 # ۱. تعریف گزینه‌ها و نگاشت آن‌ها
@@ -768,14 +768,17 @@ tabs_meta = {
 }
 options = list(tabs_meta.keys())
 
-# ۲. تعیین ایندکس فعلی بر اساس session_state
-current_val = [k for k, v in tabs_meta.items() if v == st.session_state.get("active_tab", "dashboard")]
-default_idx = options.index(current_val) if current_val else 0
+# ۲. تعیین ایندکس فعلی به صورت امن
+# پیدا کردن لیبل مرتبط با تب فعال در session_state
+current_tab = st.session_state.get("active_tab", "dashboard")
+current_label = next((k for k, v in tabs_meta.items() if v == current_tab), "📊 داشبورد")
 
-# ۳. استایل اختصاصی برای تبدیل رادیو به منوی عمودی
+# پیدا کردن ایندکس عددی
+default_idx = options.index(current_label)
+
+# ۳. استایل اختصاصی
 st.markdown("""
 <style>
-    /* مخفی کردن دایره‌های رادیو باتن و تبدیل به باکس‌های آیکونی */
     [data-testid="stSidebar"] { display: none; }
     
     .vertical-nav-box {
@@ -790,7 +793,6 @@ st.markdown("""
         z-index: 9999 !important;
     }
 
-    /* استایل‌دهی رادیو باتن */
     div.row-widget.stRadio > div {
         flex-direction: column !important;
         gap: 10px !important;
@@ -810,7 +812,6 @@ st.markdown("""
         transition: all 0.2s !important;
     }
 
-    /* فاصله محتوای اصلی از منوی راست */
     [data-testid="stAppViewContainer"] {
         padding-right: 90px !important;
     }
@@ -828,7 +829,7 @@ with st.container():
     )
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ۵. آپدیت کردن session_state بدون تغییر URL (جلوگیری از رفرش)
+# ۵. آپدیت کردن session_state
 new_tab = tabs_meta[selection]
 if st.session_state.active_tab != new_tab:
     st.session_state.active_tab = new_tab
