@@ -756,13 +756,11 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه پایدار ۴ تب افقی
+# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه پایدار ۴ تب
 # ==============================================================================
 
-# ۱. تزریق استایل‌های سی‌اس‌اس فوق‌پایدار جهت مهار ستون‌ها و تراز شدن تب‌ها در موبایل
 st.markdown("""
 <style>
-    /* کانتینر اصلی منو جهت ایجاد پس‌زمینه سفید منسجم */
     .fixed-bottom-nav {
         position: fixed !important;
         bottom: 0 !important;
@@ -773,40 +771,13 @@ st.markdown("""
         height: 74px !important;
         background-color: #ffffff !important;
         box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
-        z-index: 999998 !important; /* یک رتبه کمتر از دکمه‌ها برای کلیک‌خور شدن */
-        border-top: 1px solid #e2e8f0 !important;
-    }
-
-    /* 🚨 مهار قطعی ستون‌های استریم‌لیت: اجبار ستون‌ها به قرارگیری افقی بدون شکستگی در موبایل */
-    div[data-testid="stHorizontalBlock"] {
+        z-index: 999999 !important;
         display: flex !important;
-        flex-direction: row !important; /* فیکس کردن در یک ردیف افقی */
-        flex-wrap: nowrap !important;   /* جلوگیری از شکستن به خط بعد */
-        width: 100% !important;
-        max-width: 550px !important;
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        z-index: 999999 !important;     /* بالاترین لایه برای کلیک شدن دکمه‌ها */
-        background-color: #ffffff !important; /* بک‌گراند سفید دکمه‌ها روی موبایل */
-        padding: 4px 0px !important;
-        height: 72px !important;
-        align-items: center !important;
         justify-content: space-around !important;
+        align-items: center !important;
+        border-top: 1px solid #e2e8f0 !important;
+        direction: ltr !important;
     }
-
-    /* 🚨 تقسیم فضا به ۴ قسمت دقیقاً مساوی (هر تب دقیقاً ۲۵٪ عرض صفحه) */
-    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
-        width: 25% !important; 
-        min-width: 25% !important;
-        max-width: 25% !important;
-        flex-grow: 1 !important; 
-        flex-shrink: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-
     .nav-tab-item {
         display: flex !important;
         flex-direction: column !important;
@@ -814,32 +785,29 @@ st.markdown("""
         justify-content: center !important;
         text-decoration: none !important;
         color: #94a3b8 !important;
-        font-size: 11px !important;
+        font-size: 10px !important;
         font-weight: 700 !important;
         flex: 1 !important;
         padding: 6px 0 !important;
     }
-    
-    /* 🟠 استایل اختصاصی برای دکمه‌ی تب فعال (نارنجی برند تاپسان) */
-    div.active-tab-wrapper button {
+    .nav-tab-item.active-tab {
         color: #ea580c !important;
     }
-    div.active-tab-wrapper button p {
-        color: #ea580c !important;
-        font-weight: bold !important;
+    .nav-tab-icon {
+        font-size: 23px !important;
+        margin-bottom: 4px !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# ۲. ایجاد لایه پس‌زمینه سفید فیکس شده
-st.markdown('<div class="fixed-bottom-nav"></div>', unsafe_allow_html=True)
-
-# ۳. تعریف منوی جدید با ۴ تب متوازن (ترتیب راست به چپ)
+# تغییر تعداد ستون‌ها به ۴ جهت باز شدن فضا در موبایل
 cols = st.columns(4)
+
+# لیست جدید با ۴ تب درخواستی شما
 tab_list = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
-    ("top_sunify", "✨", "تاپسانیفای"), # تب جدید درخواستی شما
+    ("top_sunify", "✨", "تاپسانیفای"),
     ("profile", "👤", "پروفایل")
 ]
 
@@ -847,12 +815,11 @@ for i, (tab_id, icon, label) in enumerate(tab_list):
     with cols[i]:
         is_active = st.session_state.active_tab == tab_id
         
-        # اگر تب فعال بود، دکمه را داخل لایه نگهدارنده رنگ نارنجی می‌گذاریم
+        # در صورتی که این تب فعال باشد، دکمه را داخل کلاس اکتیو می‌گذاریم تا رنگش نارنجی شود
         if is_active:
-            st.markdown('<div class="active-tab-wrapper">', unsafe_allow_html=True)
-        
-        # استفاده از دکمه نیتیو و فوق‌پایدار پایتون
-        if st.button(f"{icon}\n{label}", key=f"nav_v4_{tab_id}", 
+            st.markdown('<div class="active-tab-button">', unsafe_allow_html=True)
+            
+        if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}", 
                      use_container_width=True,
                      help=label):
             st.session_state.active_tab = tab_id
@@ -862,13 +829,13 @@ for i, (tab_id, icon, label) in enumerate(tab_list):
         if is_active:
             st.markdown('</div>', unsafe_allow_html=True)
 
-# ۴. CSS ثانویه برای حذف حاشیه‌های دکمه‌ها و شبیه‌سازی کامل منوی اپلیکیشن
+# CSS اضافی برای زیباتر کردن دکمه‌ها و اعمال رنگ نارنجی به تب فعال
 st.markdown("""
 <style>
     div[data-testid="stButton"] button {
         background: transparent !important;
         border: none !important;
-        color: #94a3b8 !important; /* رنگ پیش‌فرض خاکستری */
+        color: #94a3b8 !important; /* رنگ خاکستری دکمه‌های غیرفعال */
         font-size: 11px !important;
         font-weight: 700 !important;
         height: 68px !important;
@@ -877,16 +844,20 @@ st.markdown("""
         align-items: center !important;
         justify-content: center !important;
         padding: 4px 0 !important;
-        white-space: pre-line !important; /* برای قرارگیری آیکون در بالا و متن در پایین */
+        white-space: pre-line !important;
     }
     div[data-testid="stButton"] button:hover {
-        background: rgba(234, 88, 12, 0.05) !important;
+        background: rgba(234, 88, 12, 0.08) !important;
         color: #ea580c !important;
     }
     
-    /* رفع تداخل: ایجاد پدینگ در انتهای بدنه اصلی برنامه تا محتوا به زیر منو نرود */
-    .main .block-container {
-        padding-bottom: 110px !important;
+    /* افکت تغییر رنگ قطعی دکمه‌ی فعال به نارنجی تاپسان */
+    div.active-tab-button button {
+        color: #ea580c !important;
+    }
+    div.active-tab-button button p {
+        color: #ea580c !important;
+        font-weight: 800 !important;
     }
 </style>
 """, unsafe_allow_html=True)
