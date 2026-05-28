@@ -2,8 +2,8 @@ import streamlit as st
 
 # 🛑 دستور set_page_config حتماً باید در بالاترین خط برنامه باقی بماند
 st.set_page_config(
-    page_title="TopSUNify | سامانه ریسپانسیو تاپسان",
-    page_icon="./static/logo.png",
+    page_title="TopSUNify",
+    page_icon="./topsunify.png",  # استفاده از لوگوی اصلی تاپسان
     layout="wide"  # این گزینه به همراه CSS باعث ریسپانسیو شدن کامل در تبلت و دسکتاپ می‌شود
 )
 
@@ -133,7 +133,7 @@ def inject_custom_css():
         margin-bottom: 20px !important;
     }}
 
-    /* --- استایل‌های اختصاصی بخش پروفایل کاربری (مشابه تصویر ارسالی) --- */
+    /* --- استایل‌های اختصاصی بخش پروفایل کاربری --- */
     .profile-header-card {{
         display: flex !important;
         justify-content: space-between !important;
@@ -284,16 +284,20 @@ def inject_custom_css():
 
 inject_custom_css()
 
-# ====================== ۴. هدر بالایی با تصویر متمرکز topsunify.png ======================
-header_logo_html = '<div class="app-main-header-container">☀️ TopSUNify</div>'
+# ====================== ۴. هدر بالایی اختصاصی (فقط لوگوی تصویری بدون متن) ======================
+header_logo_html = ""
 if os.path.exists("topsunify.png"):
     with open("topsunify.png", "rb") as f:
         logo_base64 = base64.b64encode(f.read()).decode()
     header_logo_html = f"""
     <div class="app-main-header-container">
-        <img src="data:image/png;base64,{logo_base64}" style="max-width: 170px; height: auto; display: block; margin: 0 auto;">
+        <img src="data:image/png;base64,{logo_base64}" style="max-width: 140px; height: auto; display: block; margin: 0 auto;">
     </div>
     """
+else:
+    # فال‌بک در صورتی که فایل موقتاً وجود نداشته باشد
+    header_logo_html = '<div class="app-main-header-container" style="font-size:24px;">☀️</div>'
+
 st.markdown(header_logo_html, unsafe_allow_html=True)
 st.divider()
 
@@ -453,7 +457,7 @@ elif st.session_state.active_tab == "invoice":
                         st.markdown(f"**{room['name']}** | مساحت: {room['w'] * room['l']:.1f} مترمربع")
                         if st.button("🗑️ حذف", key=f"delete_room_{i}"):
                             st.session_state.manual_rooms.pop(i)
-                            if not st.session_state.manual_rooms: st.session_table = False
+                            if not st.session_state.manual_rooms: st.session_state.show_table = False
                             st.rerun()
             else:
                 st.info("هنوز هیچ اتاقی اضافه نشده است.")
@@ -560,16 +564,16 @@ elif st.session_state.active_tab == "info":
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ------------------------------------------------------------------------------
-# ۶. محتوای تب اختصاصی: پروفایل کاربری (مشابه نقشه تصویر ارسالی شما)
+# ۶. محتوای تب اختصاصی: پروفایل کاربری (مشابه فایل تصویری ارسالی شما)
 # ------------------------------------------------------------------------------
 elif st.session_state.active_tab == "profile":
     
-    # تنظیم آواتار تصویر کاربری پیش‌فرض (در صورت نبود فایل، از اموجی یا تصویر پایه استفاده می‌شود)
+    # تنظیم آواتار تصویر کاربری پیش‌فرض (در صورت نبود فایل، از تصویر پایه استفاده می‌شود)
     avatar_src = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
     if st.session_state.profile_pic_base64:
         avatar_src = f"data:image/png;base64,{st.session_state.profile_pic_base64}"
         
-    # هدر کارت کاربری (مشابه بالای عکس ارسالی)
+    # هدر کارت کاربری (مشابه بالای تصویر ارسالی WhatsApp Image 2026-05-27 at 12.15.11 (1).jpeg)
     user_header_html = f"""
     <div class="profile-header-card">
         <div class="profile-info-block">
@@ -618,9 +622,9 @@ elif st.session_state.active_tab == "profile":
         {"label": "فاکتورهای تکمیل شده", "icon": "✅"},
         {"label": "فاکتورهای باز", "icon": "⏳"},
         {"label": "پیش فاکتورها", "icon": "🧾"},
-        {"label": "مشتریانی منتخب", "icon": "⭐"},
+        {"label": "مشتریان منتخب", "icon": "⭐"},
         {"label": "اعلام موجودی انبار", "icon": "📦"},
-        {"label": "تنظیمات سیستمی", "icon": "⚙️"},
+        {"label": "تنظیمات", "icon": "⚙️"},
     ]
     
     for item in menu_items:
