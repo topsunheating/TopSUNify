@@ -756,99 +756,10 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه ۱۰۰٪ متوازن و افقی
+# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه ۱۰۰٪ بومی و افقی متوازن
 # ==============================================================================
 
-# تزریق استایل‌های سی‌اس‌اس فوق‌پایدار برای پخش شدن مساوی تب‌ها در کل عرض صفحه
-st.markdown("""
-<style>
-    /* ۱. کانتینر پیش‌زمینه سفید منو */
-    .fixed-bottom-nav {
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        width: 100% !important;
-        max-width: 550px !important;
-        height: 75px !important;
-        background-color: #ffffff !important;
-        box-shadow: 0 -5px 20px rgba(0,0,0,0.08) !important;
-        z-index: 999998 !important;
-        border-top: 1px solid #e2e8f0 !important;
-    }
-
-    /* ۲. اجبار بلاک اصلی ستون‌های استریم‌لیت به پر کردن ۱۰۰٪ عرض و چیدمان افقی */
-    div[data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        flex-direction: row !important; 
-        flex-wrap: nowrap !important;   
-        width: 100% !important;
-        max-width: 550px !important; /* هم‌اندازه با کانتینر اصلی اپلیکیشن شما */
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        z-index: 999999 !important;
-        background-color: #ffffff !important;
-        padding: 4px 0px !important;
-        height: 72px !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-    }
-
-    /* ۳. شلیک به قلب مشکل: اجبار تک تک ستون‌ها به رشد کردن (Flex-Grow) و پر کردن فضا به یک اندازه */
-    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
-        width: 16.66% !important; /* تقسیم دقیق ۱۰۰٪ بر ۶ تب */
-        min-width: 16.66% !important;
-        max-width: 16.66% !important;
-        flex-grow: 1 !important; /* اجبار به پر کردن فضا و جلوگیری از جمع شدن در گوشه */
-        flex-shrink: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-
-    /* ۴. استایل‌دهی دکمه‌ها برای وسط‌چین شدن و حذف حاشیه‌های اضافی */
-    div[data-testid="stHorizontalBlock"] button {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        color: #94a3b8 !important; 
-        font-size: 11px !important;
-        font-weight: 700 !important;
-        height: 65px !important;
-        width: 100% !important; /* دکمه کل عرض یک‌ششم خود را پر کند */
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        white-space: pre-line !important; 
-        line-height: 1.4 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-
-    /* افکت هاور */
-    div[data-testid="stHorizontalBlock"] button:hover {
-        background: rgba(234, 88, 12, 0.04) !important;
-        color: #ea580c !important;
-    }
-
-    /* ۵. استایل رنگ نارنجی سازمانی برای تب فعال */
-    div.active-nav-wrapper button {
-        color: #ea580c !important;
-    }
-    div.active-nav-wrapper button p {
-        color: #ea580c !important;
-    }
-
-    /* ۶. رفع تداخل محتوا با منوی پایین */
-    .main .block-container {
-        padding-bottom: 110px !important; 
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# تعریف لیست مشخصات تب‌ها
+# تعریف مشخصات تب‌ها به همراه اموجی، عنوان و شناسه
 tab_list = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
@@ -858,21 +769,99 @@ tab_list = [
     ("profile", "👤", "پروفایل")
 ]
 
-# ایجاد ردیف دکمه‌های افقی متوازن
-cols = st.columns(6)
-for i, (tab_id, icon, label) in enumerate(tab_list):
-    with cols[i]:
-        is_active = st.session_state.active_tab == tab_id
-        
-        if is_active:
-            st.markdown('<div class="active-nav-wrapper">', unsafe_allow_html=True)
-            
-        button_text = f"{icon}\n{label}"
-        
-        if st.button(button_text, key=f"nav_btn_v4_{tab_id}"):
-            st.session_state.active_tab = tab_id
-            st.query_params["nav_tab"] = tab_id
-            st.rerun()
-            
-        if is_active:
-            st.markdown('</div>', unsafe_allow_html=True)
+# ۱. ساخت کانتینر و آیتم‌های منو به صورت HTML/CSS خام برای کنترل ۱۰۰٪ چیدمان
+menu_html = """
+<div class="fixed-bottom-nav">
+"""
+
+for tab_id, icon, label in tab_list:
+    # بررسی اینکه آیا این تب در حال حاضر فعال است یا خیر
+    is_active = "active-tab" if st.session_state.active_tab == tab_id else ""
+    
+    # ساخت لینک برای هر تب که با کلیک، پارامتر نویگیشن در URL را تغییر می‌دهد
+    menu_html += f"""
+    <a href="?nav_tab={tab_id}" target="_self" class="nav-tab-item {is_active}">
+        <span class="nav-tab-icon">{icon}</span>
+        <span class="nav-tab-label">{label}</span>
+    </a>
+    """
+
+menu_html += "</div>"
+
+# ۲. تزریق استایل‌های فوق‌پایدار CSS که چیدمان افقی و متوازن را در هر موبایلی تضمین می‌کند
+st.markdown(f"""
+<style>
+    /* کانتینر اصلی منو فیکس شده در پایین صفحه */
+    .fixed-bottom-nav {{
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 100% !important;
+        max-width: 550px !important; /* فیکس با عرض قالب موبایلی شما */
+        height: 72px !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.08) !important;
+        z-index: 999999 !important;
+        display: flex !important;
+        flex-direction: row !important;      /* اجبار به چیدمان افقی */
+        flex-wrap: nowrap !important;        /* جلوگیری از شکستن ردیف */
+        justify-content: space-around !important; /* پخش کردن مساوی فضا بین گزینه‌ها */
+        align-items: center !important;
+        border-top: 1px solid #e2e8f0 !important;
+        padding-bottom: env(safe-area-inset-bottom) !important;
+        direction: rtl !important;
+        box-sizing: border-box !important;
+    }}
+
+    /* استایل‌دهی به تک تک تب‌ها جهت پر کردن مساوی فضا */
+    .nav-tab-item {{
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-decoration: none !important;
+        color: #94a3b8 !important; /* رنگ خاکستری تب‌های غیرفعال */
+        flex: 1 !important;        /* جادوی اصلی: اجبار به پر کردن عرض کانتینر به یک اندازه */
+        height: 100% !important;
+        transition: all 0.15s ease !important;
+        font-family: 'iranyekan', Tahoma, sans-serif !important;
+    }}
+
+    /* افکت تغییر وضعیت در صورت نگه داشتن ماوس یا هاور */
+    .nav-tab-item:hover {{
+        background-color: rgba(234, 88, 12, 0.04) !important;
+        color: #ea580c !important;
+    }}
+
+    /* استایل آیکون (اموجی)‌ها */
+    .nav-tab-icon {{
+        font-size: 20px !important;
+        margin-bottom: 2px !important;
+        display: block !important;
+    }}
+
+    /* استایل متن ریز زیر آیکون */
+    .nav-tab-label {{
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        white-space: nowrap !important;
+    }}
+
+    /* 🟠 استایل تب فعال (تغییر به رنگ نارنجی سازمانی برند تاپسان) */
+    .nav-tab-item.active-tab {{
+        color: #ea580c !important;
+    }}
+    .nav-tab-item.active-tab .nav-tab-icon {{
+        transform: scale(1.05) !important;
+    }}
+
+    /* جلوگیری از رفتن محتوای صفحات به زیر منوی ناوبری */
+    .main .block-container {{
+        padding-bottom: 100px !important; 
+    }}
+</style>
+""", unsafe_allow_html=True)
+
+# ۳. رندر کردن نهایی منوی HTML ساخته شده در صفحه
+st.markdown(menu_html, unsafe_allow_html=True)
