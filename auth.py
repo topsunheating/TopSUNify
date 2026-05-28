@@ -4,12 +4,31 @@ import os
 import base64
 
 def render_auth_page():
-    # خواندن وضعیت پاپ‌آ‌پ و تب‌ها از query_params برای پایداری کامل در کلیک‌ها
+    # خواندن وضعیت پاپ‌آ‌پ، تب‌ها و مقادیر فرم از query_params برای پایداری کامل
     show_bio = st.query_params.get("show_bio", "false") == "true"
     bio_tab = st.query_params.get("bio_tab", "fingerprint")
+    
+    # دریافت اطلاعات فیلدها از فرم HTML
+    form_submitted = st.query_params.get("login_submit", "false") == "true"
+    username_val = st.query_params.get("u", "").strip()
+    password_val = st.query_params.get("p", "").strip()
 
     if "logged_in" not in st.session_state:
         st.session_state.logged_in = False
+
+    # بررسی وضعیت ورود پس از سابمیت فرم HTML
+    if form_submitted:
+        # پاک کردن پارامتر سابمیت برای جلوگیری از تکرار لوپ
+        st.query_params.update({"login_submit": "false"})
+        if username_val == "admin" and password_val == "1234":
+            st.session_state.logged_in = True
+            st.success("ورود موفقیت‌آمیز بود.")
+            time.sleep(0.5)
+            st.rerun()
+        elif username_val == "" or password_val == "":
+            st.warning("⚠️ لطفاً نام کاربری و رمز عبور را وارد کنید.")
+        else:
+            st.error("❌ نام کاربری یا رمز ورود اشتباه است.")
 
     # --- ۱. تزریق فونت ایران‌یکان و استایل‌های پایه ---
     font_path = "iranyekan.ttf"
@@ -42,42 +61,47 @@ def render_auth_page():
         font-family: 'iranyekan';
         src: url(data:font/ttf;base64,{font_base64}) format('truetype');
     }}
-    * {{
-        font-family: 'iranyekan', Tahoma, sans-serif !important;
-        direction: rtl !important;
-    }}
-   
-    body, [data-testid="stAppViewContainer"] {{
+    
+    /* قفل کردن اسکرول در تمام کانتینرهای اصلی و لایه‌های پنهان استریم‌لیت */
+    html, body, [data-testid="stAppViewContainer"], [data-testid="stMainBlockContainer"], .main {{
         background-color: #ffffff !important;
-        overflow: hidden !important; /* جلوگیری از اسکرول خوردن کل صفحه */
+        overflow: hidden !important; 
+        height: 100vh !important;
+        width: 100vw !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }}
    
-    [data-testid="stHeader"] {{
+    [data-testid="stHeader"], [data-testid="stSidebar"] {{
         display: none !important;
     }}
 
+    * {{
+        font-family: 'iranyekan', Tahoma, sans-serif !important;
+        direction: rtl !important;
+        box-sizing: border-box !important;
+    }}
+
     /* =======================================================
-       اصلاحیه جدید: قفل کردن و ثابت نگه‌داشتن کل فرم ورود در مرکز صفحه
+       کانتینر بومی فرم ورود: کاملاً فیکس و بدون کوچکترین تکان
        ======================================================= */
-    .fixed-auth-container {{
+    .fixed-auth-card {{
         position: fixed !important;
-        top: 45% !important; /* تراز عمودی عالی */
+        top: 45% !important;
         left: 50% !important;
         transform: translate(-50%, -50%) !important;
         width: 100% !important;
         max-width: 400px !important;
-        padding: 0 20px !important;
-        z-index: 100 !important;
-        box-sizing: border-box !important;
+        padding: 0 25px !important;
+        z-index: 99990 !important;
     }}
 
-    /* کانتینر هدر اصلی برای لوگوی تصویری */
     .brand-flex-container {{
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         width: 100% !important;
-        margin: 0 auto 30px auto !important;
+        margin-bottom: 35px !important;
     }}
     
     .brand-flex-container img {{
@@ -85,14 +109,23 @@ def render_auth_page():
         height: auto !important;
     }}
 
-    /* هماهنگی کامل ابعاد فیلدها */
-    div[data-testid="stTextInput"] {{
+    /* استایل‌دهی فیلدهای ورودی بومی HTML */
+    .input-wrapper {{
         width: 100% !important;
-        max-width: 400px !important;
-        margin: 0 auto !important;
+        margin-bottom: 20px !important;
+        position: relative !important;
     }}
-   
-    .stTextInput input {{
+
+    .input-wrapper label {{
+        display: block !important;
+        font-size: 14px !important;
+        color: #64748b !important;
+        margin-bottom: 6px !important;
+        font-weight: bold !important;
+    }}
+
+    .native-input {{
+        width: 100% !important;
         border-top: none !important;
         border-left: none !important;
         border-right: none !important;
@@ -103,75 +136,57 @@ def render_auth_page():
         font-size: 16px !important;
         color: #1e293b !important;
         text-align: right !important;
+        outline: none !important;
+        transition: border-color 0.2s !important;
     }}
-    .stTextInput input:focus {{
+    
+    .native-input:focus {{
         border-bottom: 2px solid #ea580c !important;
-        box-shadow: none !important;
     }}
 
-    /* ایجاد فضای خالی برای جا شدن منظم آیکون چشم و بیومتریک در سمت چپ */
-    .stTextInput input[type="password"] {{
-        padding-left: 85px !important;
-    }}
-
-    /* کانتینر نگهدارنده فیلد رمز ورود */
-    .bio-container {{
-        position: relative !important;
-        width: 100% !important;
-        max-width: 400px !important;
-        margin: 0 auto !important;
+    /* ایجاد فضای خالی سمت چپ کادر رمز عبور برای دکمه بیومتریک */
+    .password-field {{
+        padding-left: 50px !important;
     }}
    
-    /* تنظیم دقیق و بردن آیکون به بالاتر جهت تراز شدن با مرکز عمودی چشم */
+    /* تنظیم دقیق جایگاه دکمه بیومتریک بومی */
     .bio-html-btn {{
         position: absolute !important;
-        left: 48px !important; 
-        bottom: 24px !important; 
-        z-index: 9999 !important;
+        left: 10px !important; 
+        bottom: 12px !important; 
+        z-index: 100000 !important;
         display: inline-block !important;
-        width: 22px !important;
-        height: 22px !important;
+        width: 24px !important;
+        height: 24px !important;
         background: url(data:image/png;base64,{bio_icon_base64}) no-repeat center !important;
         background-size: contain !important;
         cursor: pointer !important;
         opacity: 0.6 !important;
         transition: opacity 0.2s !important;
         border: none !important;
-        text-decoration: none !important;
     }}
     .bio-html-btn:hover {{
         opacity: 1 !important;
     }}
 
-    /* تنظیم و هماهنگی ابعاد دکمه ورود با فیلدها */
-    div[data-testid="stElementContainer"] {{
-        max-width: 400px !important;
-        margin: 0 auto !important;
-    }}
-
-    /* استایل دکمه زرد رنگ، Bold و تنظیم سایز فونت روی 22px */
-    div.stButton > button {{
+    /* استایل دکمه ورود زرد رنگ بومی کاملاً هماهنگ */
+    .native-submit-btn {{
         width: 100% !important;
-        max-width: 400px !important;
-        display: block !important;
-        margin: 40px auto 0 auto !important;
         background-color: #ffd60a !important; 
         color: #1e293b !important;
         border: none !important;
         border-radius: 12px !important;
-        padding: 12px 0 !important; 
+        padding: 14px 0 !important; 
         font-size: 22px !important; 
         font-weight: 900 !important; 
         box-shadow: 0 4px 6px -1px rgba(253, 224, 71, 0.2) !important;
+        cursor: pointer !important;
         transition: all 0.2s ease-in-out !important;
+        margin-top: 25px !important;
+        text-align: center !important;
     }}
-    div.stButton > button p {{
-        font-size: 22px !important;  
-        font-weight: 900 !important; 
-        margin: 0 !important;
-        line-height: 1.2 !important;
-    }}
-    div.stButton > button:hover {{
+    
+    .native-submit-btn:hover {{
         background-color: #ffc300 !important; 
         color: #000000 !important;
     }}
@@ -180,9 +195,6 @@ def render_auth_page():
         text-align: center !important;
         margin-top: 25px !important;
         width: 100% !important;
-        max-width: 400px !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
     }}
     .forgot-link a {{
         color: #2563eb !important;
@@ -192,7 +204,7 @@ def render_auth_page():
     }}
 
     /* =======================================================
-       تصویر پس‌زمینه محدود به عرض ۴۰۰ پیکسل همراه با فید نرم به بالا
+       تصویر پس‌زمینه فیکس شده با افکت محوشدگی نرم به بالا
        ======================================================= */
     .landscape-wrapper {{
         position: fixed !important;
@@ -216,7 +228,7 @@ def render_auth_page():
     }}
 
     /* ==========================================
-       استایل‌های پاپ‌آپ یکپارچه کاملاً فیکس شده
+       استایل‌های پاپ‌آ‌پ بومی
        ========================================== */
     .popup-overlay {{
         position: fixed !important;
@@ -238,7 +250,6 @@ def render_auth_page():
         box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3) !important;
         z-index: 999995 !important;
         text-align: center !important;
-        box-sizing: border-box !important;
     }}
 
     .popup-header-brand {{
@@ -291,41 +302,42 @@ def render_auth_page():
             logo_base64 = base64.b64encode(f.read()).decode()
         logo_html = f'<img src="data:image/png;base64,{logo_base64}" style="display:block; margin: 0 auto;">'
 
-    # --- شروع کانتینر ثابت و قفل شده‌ی فرم ورود ---
-    st.markdown('<div class="fixed-auth-container">', unsafe_allow_html=True)
+    # --- رندر کادر فرم یکپارچه بومی و فیکس شده بدون قابلیت اسکرول ---
+    # مقدار دهی مجدد فیلدها در صورت پر بودن
+    curr_u = username_val if form_submitted else ""
+    curr_p = password_val if form_submitted else ""
 
-    # هدر اصلی فرم (لوگو)
-    st.markdown(f"""
-    <div class="brand-flex-container">
-        {logo_html}
+    native_form_html = f"""
+    <div class="fixed-auth-card">
+        <form method="get" action="">
+            <input type="hidden" name="login_submit" value="true">
+            <input type="hidden" name="show_bio" value="{str(show_bio).lower()}">
+            <input type="hidden" name="bio_tab" value="{bio_tab}">
+            
+            <div class="brand-flex-container">
+                {logo_html}
+            </div>
+            
+            <div class="input-wrapper">
+                <label>نام کاربری</label>
+                <input type="text" name="u" class="native-input" value="{curr_u}" placeholder="نام کاربری" autocomplete="off" required>
+            </div>
+            
+            <div class="input-wrapper">
+                <label>رمز ورود</label>
+                <input type="password" name="p" class="native-input password-field" value="{curr_p}" placeholder="رمز ورود" required>
+                <a href="?show_bio=true&bio_tab=fingerprint" target="_self" class="bio-html-btn"></a>
+            </div>
+            
+            <button type="submit" class="native-submit-btn">ورود به TopSUNify</button>
+            
+            <div class="forgot-link">
+                <a href="#">فعال‌سازی / فراموشی رمز</a>
+            </div>
+        </form>
     </div>
-    """, unsafe_allow_html=True)
-
-    # فیلدهای ورودی نام کاربری و پسورد
-    username = st.text_input("نام کاربری", value="", placeholder="نام کاربری")
-    
-    st.markdown('<div class="bio-container">', unsafe_allow_html=True)
-    password = st.text_input("رمز ورود", type="password", placeholder="رمز ورود")
-    st.markdown('<a href="?show_bio=true&bio_tab=fingerprint" target="_self" class="bio-html-btn"></a>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    # دکمه ورود زرد رنگ
-    if st.button("ورود به TopSUNify", key="submit_yellow_btn", use_container_width=True):
-        if username == "admin" and password == "1234":
-            st.session_state.logged_in = True
-            st.success("ورود موفقیت‌آمیز بود.")
-            time.sleep(0.5)
-            st.rerun()
-        elif username == "" or password == "":
-            st.warning("⚠️ لطفاً نام کاربری و رمز عبور را وارد کنید.")
-        else:
-            st.error("❌ نام کاربری یا رمز ورود اشتباه است.")
-
-    st.markdown('<div class="forgot-link"><a href="#">فعال‌سازی / فراموشی رمز</a></div>', unsafe_allow_html=True)
-
-    st.markdown('</div>', unsafe_allow_html=True)
-    # --- پایان کانتینر ثابت فرم ورود ---
-
+    """
+    st.html(native_form_html)
 
     # --- تزریق عکس منظره محدود شده با افکت محوشدگی نرم به بالا ---
     if landscape_base64:
@@ -336,7 +348,7 @@ def render_auth_page():
         """, unsafe_allow_html=True)
 
     # ==========================================
-    # پاپ‌آ‌پ بومی و فیکس شده
+    # پاپ‌آ‌پ بومی و فیکس شده بیومتریک
     # ==========================================
     if show_bio:
         active_face = "active" if bio_tab == "face" else ""
@@ -371,7 +383,7 @@ def render_auth_page():
                 {graphic_content}
             </div>
             
-            <a href="?show_bio=false" target="_self" class="html-cancel-link">انصراف</a>
+            <a href="?show_bio=false" target="_self" class="html-cancel-link" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: bold;">انصراف</a>
         </div>
         """
         st.html(popup_html_template)
