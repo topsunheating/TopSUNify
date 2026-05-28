@@ -764,46 +764,77 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری نهایی: منوی یکپارچه و فشرده (Bottom Navigation)
+# ناوبری نهایی: منوی پایین (آیکون بالا، متن پایین، چیدمان ردیفی)
 # ==============================================================================
 
-# حذف کدهای قبلی و جایگزینی با این ساختار یکپارچه
-with st.container():
-    # استایل اختصاصی برای حذف فاصله بین دکمه‌ها و فیکس کردن در پایین
-    st.markdown("""
-    <style>
-    div[data-testid="column"] {
-        padding: 0 !important;
-        margin: 0 !important;
+st.markdown("""
+<style>
+    /* ظرف اصلی منو در پایین صفحه */
+    .bottom-nav-container {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 550px;
+        background-color: #ffffff;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 8px 0;
+        border-top: 1px solid #e2e8f0;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        z-index: 9999;
     }
-    .stButton > button {
-        border: none !important;
-        border-radius: 0 !important;
-        background: transparent !important;
-        height: 60px !important;
-        width: 100% !important;
-        font-size: 12px !important;
-        padding: 0 !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-    # ایجاد ستون‌ها برای تب‌ها
-    cols = st.columns(6)
     
-    # تعریف آیکون و نام تب‌ها
-    nav_items = [
-        ("profile", "👤", "پروفایل"),
-        ("info", "📚", "اطلاعات"),
-        ("services", "🛠️", "خدمات"),
-        ("warranty", "🛡️", "گارانتی"),
-        ("invoice", "🧾", "پیش‌فاکتور"),
-        ("dashboard", "📊", "داشبورد")
-    ]
+    /* استایل دکمه‌های ناوبری */
+    .nav-btn-custom {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        color: #64748b !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        background: none !important;
+        border: none !important;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+    
+    .nav-btn-custom:hover {
+        color: #ea580c !important; /* رنگ سازمانی تاپسان */
+    }
+    
+    .nav-icon {
+        font-size: 20px !important;
+        margin-bottom: 2px !important;
+    }
+</style>
+""", unsafe_allow_html=True)
 
-    # نمایش دکمه‌ها به صورت یکپارچه
-    for i, (tab_id, icon, label) in enumerate(nav_items):
-        with cols[i]:
-            if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}"):
-                st.session_state.active_tab = tab_id
-                st.rerun()
+# تعریف تب‌ها
+nav_items = [
+    ("profile", "👤", "پروفایل"),
+    ("info", "📚", "اطلاعات"),
+    ("services", "🛠️", "خدمات"),
+    ("warranty", "🛡️", "گارانتی"),
+    ("invoice", "🧾", "پیش‌فاکتور"),
+    ("dashboard", "📊", "داشبورد")
+]
+
+# ایجاد ردیف دکمه‌ها
+st.markdown('<div class="bottom-nav-container">', unsafe_allow_html=True)
+
+# استفاده از ستون‌ها برای چیدمان صحیح آیکون‌ها
+cols = st.columns(6)
+
+for i, (tab_id, icon, label) in enumerate(nav_items):
+    with cols[i]:
+        # دکمه با ظاهر سفارشی
+        if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}"):
+            st.session_state.active_tab = tab_id
+            st.rerun()
+
+st.markdown('</div>', unsafe_allow_html=True)
