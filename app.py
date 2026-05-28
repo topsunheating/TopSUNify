@@ -757,12 +757,12 @@ elif st.session_state.active_tab == "profile":
         
 
 # ==============================================================================
-# ناوبری پایین صفحه - ۳ تب (همیشه افقی - حتی روی موبایل)
+# ناوبری پایین صفحه - ۳ تب (نسخه نهایی و بهینه‌شده)
 # ==============================================================================
 
 st.markdown("""
 <style>
-    /* محدود کردن عرض اپلیکیشن مثل موبایل */
+    /* محدود کردن عرض کلی اپلیکیشن برای ظاهر موبایل‌مانند */
     .main .block-container {
         max-width: 420px !important;
         margin: 0 auto !important;
@@ -775,16 +775,16 @@ st.markdown("""
         transform: translateX(-50%) !important;
         width: 100% !important;
         max-width: 420px !important;
-        height: 80px !important;
+        height: 76px !important;
         background-color: #ffffff !important;
         border-top: 1px solid #e2e8f0 !important;
-        box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
+        box-shadow: 0 -4px 12px rgba(0,0,0,0.1) !important;
         z-index: 999999 !important;
         display: flex !important;
         flex-direction: row !important;
         justify-content: space-around !important;
         align-items: center !important;
-        padding: 0 8px !important;
+        padding: 6px 8px !important;
     }
     
     .nav-item-final {
@@ -795,10 +795,11 @@ st.markdown("""
         justify-content: center !important;
         color: #64748b !important;
         text-decoration: none !important;
-        font-size: 11px !important;
+        font-size: 10.5px !important;
         font-weight: 700 !important;
-        padding: 8px 0 !important;
+        padding: 6px 0 !important;
         border-radius: 12px !important;
+        transition: all 0.25s ease !important;
     }
     
     .nav-item-final:hover {
@@ -808,17 +809,17 @@ st.markdown("""
     
     .nav-item-final.active {
         color: #ea580c !important;
-        background: #fefce8 !important;
+        background: #fffbeb !important;
     }
     
     .nav-item-final .icon {
-        font-size: 27px !important;
-        margin-bottom: 4px !important;
+        font-size: 26px !important;
+        margin-bottom: 3px !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# ساخت منو با HTML
+# ساخت منو
 nav_html = '<div class="final-bottom-nav">'
 
 items = [
