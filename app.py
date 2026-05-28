@@ -756,121 +756,125 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه ۱۰۰٪ بومی و پایدار
+# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه ۱۰۰٪ افقی و عملیاتی
 # ==============================================================================
 
-# تعیین وضعیت فعال یا غیرفعال بودن کلاس CSS برای تب‌ها جهت رنگی شدن
-active_dashboard = "active-tab" if st.session_state.active_tab == "dashboard" else ""
-active_invoice = "active-tab" if st.session_state.active_tab == "invoice" else ""
-active_warranty = "active-tab" if st.session_state.active_tab == "warranty" else ""
-active_services = "active-tab" if st.session_state.active_tab == "services" else ""
-active_info = "active-tab" if st.session_state.active_tab == "info" else ""
-active_profile = "active-tab" if st.session_state.active_tab == "profile" else ""
-
-# ۱. تزریق استایل‌های سراسری منو (پخش شدن مساوی و افقی تب‌ها در موبایل)
+# ۱. تزریق استایل‌های سی‌اس‌اس فوق‌پایدار برای اجبار کانتینرها به افقی ماندن در موبایل
 st.markdown("""
 <style>
-    .fixed-bottom-nav {
+    /* کانتینر اصلی منو جهت ایجاد پس‌زمینه سفید منسجم */
+    .fixed-bottom-nav-bg {
         position: fixed !important;
         bottom: 0 !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         width: 100% !important;
         max-width: 550px !important;
-        height: 74px !important;
+        height: 75px !important;
         background-color: #ffffff !important;
-        box-shadow: 0 -4px 20px rgba(0,0,0,0.08) !important;
-        z-index: 999999 !important;
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important;
-        justify-content: space-around !important;
-        align-items: center !important;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.08) !important;
+        z-index: 999998 !important;
         border-top: 1px solid #e2e8f0 !important;
-        direction: rtl !important;
-        box-sizing: border-box !important;
     }
-    .nav-tab-item {
+
+    /* 🚨 خط زدن رفتار موبایل استریم‌لیت: اجبار ستون‌ها به قرارگیری در یک خط افقی بدون شکستگی */
+    div[data-testid="stHorizontalBlock"] {
+        display: flex !important;
+        flex-direction: row !important; 
+        flex-wrap: nowrap !important;   
+        width: 100% !important;
+        max-width: 550px !important;
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        z-index: 999999 !important;
+        background-color: transparent !important;
+        padding: 4px 4px !important;
+        height: 72px !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+    }
+
+    /* 🚨 تقسیم فضای عرض منو به ۶ قسمت دقیقاً مساوی و جلوگیری از جمع شدن تب‌ها */
+    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+        width: 16.66% !important; 
+        min-width: 16.66% !important;
+        max-width: 16.66% !important;
+        flex-grow: 1 !important; 
+        flex-shrink: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* استایل‌دهی داخلی به دکمه‌های نیتیو استریم‌لیت */
+    div[data-testid="stHorizontalBlock"] button {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        color: #94a3b8 !important; /* رنگ پیش‌فرض خاکستری */
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        height: 65px !important;
+        width: 100% !important; 
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        color: #94a3b8 !important;
-        font-size: 10px !important;
-        font-weight: 700 !important;
-        flex: 1 !important;
-        height: 100% !important;
-        cursor: pointer !important;
-        user-select: none !important;
+        white-space: pre-line !important; /* شکستن خط برای قرارگیری متن زیر آیکون */
+        line-height: 1.5 !important;
+        padding: 0 !important;
+        margin: 0 !important;
         transition: all 0.15s ease !important;
     }
-    .nav-tab-item.active-tab {
-        color: #ea580c !important; /* رنگ نارنجی سازمانی تاپسان */
+
+    /* افکت هاور دکمه‌ها */
+    div[data-testid="stHorizontalBlock"] button:hover {
+        background: rgba(234, 88, 12, 0.04) !important;
+        color: #ea580c !important;
     }
-    .nav-tab-icon {
-        font-size: 22px !important;
-        margin-bottom: 2px !important;
+
+    /* 🟠 اعمال استایل اختصاصی رنگ نارنجی برند تاپسان برای تب فعال */
+    div.active-nav-container button {
+        color: #ea580c !important;
     }
-    /* پنهان کردن دکمه رادیویی واسط پایتون */
-    div[data-testid="stRadio"] {
-        display: none !important;
+    div.active-nav-container button p {
+        color: #ea580c !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# ۲. رندر ساختار منو به صورت HTML خالص همراه با رویداد جاوااسکریپتی کلیک امن برای لایه‌ی پایتون
-bottom_navigation_html = f"""
-<div class="fixed-bottom-nav">
-    <div class="nav-tab-item {active_profile}" onclick="window.parent.postMessage({{type: 'streamlit:setComponentValue', value: 'profile'}}, '*')">
-        <div class="nav-tab-icon">👤</div>
-        <div>پروفایل</div>
-    </div>
-    <div class="nav-tab-item {active_info}" onclick="window.parent.postMessage({{type: 'streamlit:setComponentValue', value: 'info'}}, '*')">
-        <div class="nav-tab-icon">📚</div>
-        <div>اطلاعات</div>
-    </div>
-    <div class="nav-tab-item {active_services}" onclick="window.parent.postMessage({{type: 'streamlit:setComponentValue', value: 'services'}}, '*')">
-        <div class="nav-tab-icon">🛠️</div>
-        <div>خدمات</div>
-    </div>
-    <div class="nav-tab-item {active_warranty}" onclick="window.parent.postMessage({{type: 'streamlit:setComponentValue', value: 'warranty'}}, '*')">
-        <div class="nav-tab-icon">🛡️</div>
-        <div>گارانتی</div>
-    </div>
-    <div class="nav-tab-item {active_invoice}" onclick="window.parent.postMessage({{type: 'streamlit:setComponentValue', value: 'invoice'}}, '*')">
-        <div class="nav-tab-icon">🧾</div>
-        <div>پیش‌فاکتور</div>
-    </div>
-    <div class="nav-tab-item {active_dashboard}" onclick="window.parent.postMessage({{type: 'streamlit:setComponentValue', value: 'dashboard'}}, '*')">
-        <div class="nav-tab-icon">📊</div>
-        <div>داشبورد</div>
-    </div>
-</div>
-"""
-st.html(bottom_navigation_html)
+# ۲. تعریف لیست تب‌ها به ترتیب اصولی (راست به چپ)
+tab_list = [
+    ("dashboard", "📊", "داشبورد"),
+    ("invoice", "🧾", "پیش‌فاکتور"),
+    ("warranty", "🛡️", "گارانتی"),
+    ("services", "🛠️", "خدمات"),
+    ("info", "📚", "اطلاعات"),
+    ("profile", "👤", "پروفایل")
+]
 
-# ۳. تزریق اسکریپت به‌روزرسانی نوار آدرس مرورگر به صورت ایزوله برای جلوگیری از باگ آدرس‌دهی
-st.components.v1.html(f"""
-<script>
-    const url = new URL(window.parent.location.href);
-    url.searchParams.set('nav_tab', '{st.session_state.active_tab}');
-    window.parent.history.pushState({{}}, '', url);
-</script>
-""", height=0)
+# ایجاد لایه پس‌زمینه سفید فیکس شده
+st.markdown('<div class="fixed-bottom-nav-bg"></div>', unsafe_allow_html=True)
 
-# ۴. کانتینر دریافت وضعیت کلیک در پایتون (پل ارتباطی HTML و Streamlit)
-tab_options = ["dashboard", "invoice", "warranty", "services", "info", "profile"]
-current_index = tab_options.index(st.session_state.active_tab) if st.session_state.active_tab in tab_options else 0
-
-selected_tab_hidden = st.radio(
-    "NavTrigger", 
-    options=tab_options, 
-    index=current_index,
-    key="hidden_nav_trigger_final",
-    label_visibility="collapsed"
-)
-
-# ۵. در صورت کلیک روی هر تب، تغییر وضعیت اعمال شده و صفحه دوباره رندر می‌شود
-if selected_tab_hidden != st.session_state.active_tab:
-    st.session_state.active_tab = selected_tab_hidden
-    st.rerun()
+# ۳. رندر دکمه‌های بومی پایتون در ستون‌های اصلاح شده توسط CSS
+cols = st.columns(6)
+for i, (tab_id, icon, label) in enumerate(tab_list):
+    with cols[i]:
+        is_active = st.session_state.active_tab == tab_id
+        
+        # در صورت فعال بودن تب، کانتینر کاستوم را برای نارنجی شدن دکمه تزریق می‌کنیم
+        if is_active:
+            st.markdown('<div class="active-nav-container">', unsafe_allow_html=True)
+            
+        # تولید متن دکمه به صورت دو خطی (آیکون بالا، متن پایین)
+        button_text = f"{icon}\n{label}"
+        
+        # دکمه کاملاً بومی پایتون (بنابراین تغییر تب ۱۰۰٪ تضمینی و آنی کار می‌کند)
+        if st.button(button_text, key=f"nav_v7_{tab_id}", use_container_width=True):
+            st.session_state.active_tab = tab_id
+            st.query_params["nav_tab"] = tab_id
+            st.rerun()
+            
+        if is_active:
+            st.markdown('</div>', unsafe_allow_html=True)
