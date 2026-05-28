@@ -764,7 +764,7 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری نهایی: منوی افقی (نسخه اصلاح شده)
+# ناوبری نهایی: منوی افقی
 # ==============================================================================
 st.markdown("""
 <style>
@@ -773,18 +773,17 @@ st.markdown("""
         bottom: 0 !important;
         left: 0 !important;
         width: 100% !important;
-        height: 75px !important;
+        height: 78px !important;
         background-color: #ffffff !important;
         display: flex !important;
         flex-direction: row !important;
         justify-content: space-around !important;
         align-items: center !important;
         border-top: 1px solid #e2e8f0 !important;
-        box-shadow: 0 -4px 12px rgba(0,0,0,0.1) !important;
+        box-shadow: 0 -3px 10px rgba(0,0,0,0.1) !important;
         z-index: 999999 !important;
         direction: ltr !important;
-        padding: 0 5px !important;
-        box-sizing: border-box !important;
+        padding: 0 8px !important;
     }
    
     .nav-tab-link {
@@ -796,9 +795,8 @@ st.markdown("""
         color: #94a3b8 !important;
         font-size: 10px !important;
         font-weight: 700 !important;
-        flex: 1 1 0 !important;
-        min-width: 0 !important;
-        padding: 5px 3px !important;
+        flex: 1 !important;
+        padding: 6px 4px !important;
     }
    
     .nav-tab-link.active-link {
@@ -806,13 +804,15 @@ st.markdown("""
     }
     
     .nav-tab-link div:first-child {
-        font-size: 22px !important;
-        margin-bottom: 3px !important;
+        font-size: 23px !important;
+        margin-bottom: 4px !important;
     }
 </style>
+
+<div class="fixed-bottom-nav-v2">
 """, unsafe_allow_html=True)
 
-# تعریف آیتم‌ها
+# اضافه کردن آیتم‌ها
 nav_items = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
@@ -822,19 +822,14 @@ nav_items = [
     ("profile", "👤", "پروفایل")
 ]
 
-# ساخت HTML کامل
-nav_html = '<div class="fixed-bottom-nav-v2">'
-
 for tab_id, icon, label in nav_items:
     active_class = "active-link" if st.session_state.get("active_tab", "dashboard") == tab_id else ""
-    nav_html += f'''
+    st.markdown(f"""
         <a href="?nav_tab={tab_id}" target="_self" class="nav-tab-link {active_class}">
             <div>{icon}</div>
             <div>{label}</div>
         </a>
-    '''
+    """, unsafe_allow_html=True)
 
-nav_html += '</div>'
-
-# نمایش نهایی
-st.markdown(nav_html, unsafe_allow_html=True)
+# بستن دیو
+st.markdown('</div>', unsafe_allow_html=True)
