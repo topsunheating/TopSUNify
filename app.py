@@ -756,88 +756,80 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه پایدار
+# ناوبری عمودی با استفاده از st.radio (پایدار و بدون رفرش)
 # ==============================================================================
 
+# ۱. تعریف گزینه‌ها و نگاشت آن‌ها
+tabs_meta = {
+    "📊 داشبورد": "dashboard",
+    "🧾 پیش‌فاکتور": "invoice",
+    "☀️ تاپسانیفای": "topsunify",
+    "👤 پروفایل": "profile"
+}
+options = list(tabs_meta.keys())
+
+# ۲. تعیین ایندکس فعلی بر اساس session_state
+current_val = [k for k, v in tabs_meta.items() if v == st.session_state.get("active_tab", "dashboard")]
+default_idx = options.index(current_val) if current_val else 0
+
+# ۳. استایل اختصاصی برای تبدیل رادیو به منوی عمودی
 st.markdown("""
 <style>
-    .fixed-bottom-nav {
+    /* مخفی کردن دایره‌های رادیو باتن و تبدیل به باکس‌های آیکونی */
+    [data-testid="stSidebar"] { display: none; }
+    
+    .vertical-nav-box {
         position: fixed !important;
-        bottom: 0 !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        width: 100% !important;
-        max-width: 550px !important;
-        height: 74px !important;
+        top: 0 !important;
+        right: 0 !important;
+        width: 90px !important;
+        height: 100vh !important;
         background-color: #ffffff !important;
-        box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
-        z-index: 999999 !important;
-        display: flex !important;
-        justify-content: space-around !important;
-        align-items: center !important;
-        border-top: 1px solid #e2e8f0 !important;
-        direction: ltr !important;
+        border-left: 1px solid #e2e8f0 !important;
+        padding-top: 30px !important;
+        z-index: 9999 !important;
     }
-    .nav-tab-item {
+
+    /* استایل‌دهی رادیو باتن */
+    div.row-widget.stRadio > div {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+    
+    div.row-widget.stRadio label {
+        width: 70px !important;
+        height: 70px !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        text-decoration: none !important;
-        color: #94a3b8 !important;
-        font-size: 10px !important;
+        margin: 0 auto !important;
+        border-radius: 16px !important;
+        font-size: 11px !important;
         font-weight: 700 !important;
-        flex: 1 !important;
-        padding: 6px 0 !important;
+        transition: all 0.2s !important;
     }
-    .nav-tab-item.active-tab {
-        color: #ea580c !important;
-    }
-    .nav-tab-icon {
-        font-size: 23px !important;
-        margin-bottom: 4px !important;
+
+    /* فاصله محتوای اصلی از منوی راست */
+    [data-testid="stAppViewContainer"] {
+        padding-right: 90px !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# ساخت منو با دکمه (پایدارتر از لینک)
-cols = st.columns(6)
-tab_list = [
-    ("dashboard", "📊", "داشبورد"),
-    ("invoice", "🧾", "پیش‌فاکتور"),
-    ("warranty", "🛡️", "گارانتی"),
-    ("services", "🛠️", "خدمات"),
-    ("info", "📚", "اطلاعات"),
-    ("profile", "👤", "پروفایل")
-]
+# ۴. رندر کردن منو
+with st.container():
+    st.markdown('<div class="vertical-nav-box">', unsafe_allow_html=True)
+    selection = st.radio(
+        "منو", 
+        options, 
+        index=default_idx, 
+        label_visibility="collapsed"
+    )
+    st.markdown('</div>', unsafe_allow_html=True)
 
-for i, (tab_id, icon, label) in enumerate(tab_list):
-    with cols[i]:
-        active = "active-tab" if st.session_state.active_tab == tab_id else ""
-        
-        if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}", 
-                     use_container_width=True,
-                     help=label):
-            st.session_state.active_tab = tab_id
-            st.rerun()
-
-# CSS اضافی برای زیباتر کردن دکمه‌ها (شبیه لینک)
-st.markdown("""
-<style>
-    div[data-testid="stButton"] button {
-        background: transparent !important;
-        border: none !important;
-        color: inherit !important;
-        font-size: 10px !important;
-        height: 68px !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        padding: 4px 0 !important;
-    }
-    div[data-testid="stButton"] button:hover {
-        background: rgba(234, 88, 12, 0.08) !important;
-    }
-</style>
-""", unsafe_allow_html=True)
+# ۵. آپدیت کردن session_state بدون تغییر URL (جلوگیری از رفرش)
+new_tab = tabs_meta[selection]
+if st.session_state.active_tab != new_tab:
+    st.session_state.active_tab = new_tab
+    st.rerun()
