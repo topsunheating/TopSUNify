@@ -756,18 +756,18 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه (فقط آیکون)
+# ناوبری افقی و یکپارچه (Bottom Navigation)
 # ==============================================================================
 
 st.markdown("""
 <style>
-    /* تثبیت عرض اپلیکیشن */
+    /* تثبیت عرض */
     [data-testid="stAppViewContainer"] {
         max-width: 550px !important;
         margin: 0 auto !important;
     }
     
-    /* کانتینر ناوبری */
+    /* کانتینر اصلی ناوبری */
     .bottom-nav-container {
         position: fixed !important;
         bottom: 0 !important;
@@ -780,9 +780,16 @@ st.markdown("""
         box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
         z-index: 999999 !important;
         display: flex !important;
+        flex-direction: row !important; /* چینش افقی */
         justify-content: space-around !important;
         align-items: center !important;
         border-top: 1px solid #e2e8f0 !important;
+        padding: 0 5px !important;
+    }
+
+    /* حذف فاصله اضافی دکمه‌ها برای چیدمان بهتر */
+    div[data-testid="stVerticalBlock"] {
+        gap: 0 !important;
     }
 
     /* استایل دکمه‌های آیکونی */
@@ -790,7 +797,7 @@ st.markdown("""
         background: transparent !important;
         border: none !important;
         color: #94a3b8 !important;
-        font-size: 24px !important; /* اندازه بزرگتر برای آیکون */
+        font-size: 22px !important;
         height: 60px !important;
         width: 100% !important;
         display: flex !important;
@@ -798,19 +805,18 @@ st.markdown("""
         justify-content: center !important;
         padding: 0 !important;
         margin: 0 !important;
-        transition: color 0.2s ease !important;
     }
     
-    /* رنگ آیکون در حالت فعال */
-    .nav-active-icon {
+    /* تغییر رنگ آیکون در حالت فعال */
+    .active-icon {
         color: #ea580c !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
+# رندر کردن دکمه‌ها در یک ردیف افقی
 st.markdown('<div class="bottom-nav-container">', unsafe_allow_html=True)
-cols = st.columns(6)
-# لیست تب‌ها بدون متن (فقط آیکون)
+
 tab_list = [
     ("dashboard", "📊"),
     ("invoice", "🧾"),
@@ -820,10 +826,15 @@ tab_list = [
     ("profile", "👤")
 ]
 
+# استفاده از ستون‌های برابر برای توزیع یکنواخت آیکون‌ها
+cols = st.columns(len(tab_list))
+
 for i, (tab_id, icon) in enumerate(tab_list):
     with cols[i]:
-        # در صورت نیاز به افزودن لیبل، در پارامتر help اضافه شده است
-        if st.button(f"{icon}", key=f"nav_{tab_id}", use_container_width=True):
+        # اگر تب فعال است، آیکون را با رنگ متمایز نشان بده
+        icon_display = f'<div class="active-icon">{icon}</div>' if st.session_state.active_tab == tab_id else icon
+        
+        if st.button(icon_display, key=f"nav_{tab_id}"):
             st.session_state.active_tab = tab_id
             st.rerun()
 
