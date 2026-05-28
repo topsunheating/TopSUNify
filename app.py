@@ -710,13 +710,10 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-
 # ناوبری نهایی: بدون href و بدون خروج از اپ
-
 # ==============================================================================
 
 st.markdown("""
-
 <style>
 
 /* کانتینر ناوبری پایین */
@@ -753,14 +750,7 @@ st.markdown("""
     color: #ea580c !important;
 }
 
-/* دکمه فعال */
-.active-nav-btn button {
-    color: #ea580c !important;
-    background: #fff7ed !important;
-}
-
 </style>
-
 """, unsafe_allow_html=True)
 
 st.markdown('<div class="bottom-native-nav">', unsafe_allow_html=True)
@@ -768,23 +758,23 @@ st.markdown('<div class="bottom-native-nav">', unsafe_allow_html=True)
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-if st.button("📊\nداشبورد", key="nav_dashboard", use_container_width=True):
-st.session_state.active_tab = "dashboard"
-st.rerun()
+    if st.button("📊\nداشبورد", key="nav_dashboard", use_container_width=True):
+        st.session_state.active_tab = "dashboard"
+        st.rerun()
 
 with col2:
-if st.button("🧾\nپیش‌فاکتور", key="nav_invoice", use_container_width=True):
-st.session_state.active_tab = "invoice"
-st.rerun()
+    if st.button("🧾\nپیش‌فاکتور", key="nav_invoice", use_container_width=True):
+        st.session_state.active_tab = "invoice"
+        st.rerun()
 
 with col3:
-if st.button("📚\nتاپسان", key="nav_info", use_container_width=True):
-st.session_state.active_tab = "info"
-st.rerun()
+    if st.button("📚\nاطلاعات", key="nav_info", use_container_width=True):
+        st.session_state.active_tab = "info"
+        st.rerun()
 
 with col4:
-if st.button("👤\nپروفایل", key="nav_profile", use_container_width=True):
-st.session_state.active_tab = "profile"
-st.rerun()
+    if st.button("👤\nپروفایل", key="nav_profile", use_container_width=True):
+        st.session_state.active_tab = "profile"
+        st.rerun()
 
 st.markdown("</div>", unsafe_allow_html=True)
