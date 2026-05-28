@@ -42,7 +42,7 @@ def render_auth_page():
         with open("biometric.png", "rb") as f:
             bio_icon_base64 = base64.b64encode(f.read()).decode()
 
-    # تبدیل لوگوی جدید ترکیبی TopSUN-Powered.png به base64
+    # تبدیل لوگوی ترکیبی TopSUN-Powered.png به base64
     powered_logo_base64 = ""
     if os.path.exists("TopSUN-Powered.png"):
         with open("TopSUN-Powered.png", "rb") as f:
@@ -198,7 +198,7 @@ def render_auth_page():
     }}
 
     /* =======================================================
-       تغییر نام کلاس و اعمال استایل اختصاصی راست‌نویسِ فیکس شده
+       تنظیم ابعاد جدید: سایز لوگو به درخواست شما نصف (78px) شد
        ======================================================= */
     .topsun-powered-footer-container {{
         position: fixed !important;
@@ -215,7 +215,7 @@ def render_auth_page():
     }}
     
     .topsun-powered-image-node {{
-        max-width: 155px !important; /* سایز بزرگتر و خوانا برای لوگوی جدید */
+        max-width: 78px !important; /* سایز نصف شده برای ظرافت و زیبایی بیشتر */
         height: auto !important;
         display: block !important;
         opacity: 0.95 !important;
