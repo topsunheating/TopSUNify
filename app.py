@@ -756,121 +756,154 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه ۱۰۰٪ یکپارچه اپلیکیشن سامان
+# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه بومی و متصل (سامان)
 # ==============================================================================
 
-# ۱. تزریق استایل‌های سی‌اس‌اس فوق‌پایدار و کاملاً متصل (بدون هیچ‌گونه فاصله‌اندازی استریم‌لیت)
+# ۱. تزریق استایل‌های سی‌اس‌اس جادویی برای مهار کامل ستون‌های استریم‌لیت
 st.markdown("""
 <style>
-    /* کانتینر اصلی نوار منو - فیکس شده و کاملاً چسبیده در پایین صفحه */
-    .saman-bottom-nav {
+    /* الف: مخفی کردن مارکرهای کمکی ما تا فضای دکمه‌ها را خراب نکنند */
+    div[data-testid="stHorizontalBlock"]:has(.nav-marker) div.element-container:has(.nav-marker),
+    div[data-testid="stHorizontalBlock"]:has(.nav-marker) div.element-container:has(.active-nav-marker) {
+        display: none !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* ب: تبدیل کانتینر ستون‌های استریم‌لیت به یک نوار فیکس شده، متصل و کاملاً افقی در موبایل */
+    div[data-testid="stHorizontalBlock"]:has(.nav-marker) {
         position: fixed !important;
         bottom: 0 !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         width: 100% !important;
-        max-width: 550px !important; /* هم‌تراز با بدنه موبایل شما */
-        height: 70px !important;
+        max-width: 550px !important; /* فیکس با عرض قالب موبایلی */
+        height: 72px !important;
         background-color: #ffffff !important;
         box-shadow: 0 -4px 20px rgba(0,0,0,0.08) !important;
         z-index: 999999 !important;
         display: flex !important;
-        flex-direction: row !important;       /* اجبار مطلق به قرارگیری افقی در موبایل */
-        flex-wrap: nowrap !important;         /* جلوگیری از هرگونه شکستگی یا عمودی شدن */
-        justify-content: space-around !important;
+        flex-direction: row !important;       /* 🚨 اجبار به قرارگیری افقی در هر سایزی */
+        flex-wrap: nowrap !important;         /* 🚨 جلوگیری از شکستن خط و عمودی شدن */
+        justify-content: space-between !important;
         align-items: center !important;
         border-top: 1px solid #e2e8f0 !important;
         padding: 0 !important;
         margin: 0 !important;
-        box-sizing: border-box !important;
+        gap: 0 !important;                    /* 🚨 حذف فاصله بین ستون‌ها برای چسبیدن دکمه‌ها */
         direction: rtl !important;
     }
 
-    /* استایل تک‌تک تب‌های متصل به هم (تقسیم دقیق عرض صفحه به ۴ قسمت مساوی ۲۵ درصدی) */
-    .saman-tab-item {
+    /* پ: تقسیم دقیق نوار به ۴ قسمت کاملاً مساوی (۲۵ درصد) */
+    div[data-testid="stHorizontalBlock"]:has(.nav-marker) > div[data-testid="column"] {
+        width: 25% !important;
+        min-width: 25% !important;
+        max-width: 25% !important;
+        flex: 1 1 0% !important;
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
         display: flex !important;
-        flex-direction: column !important;   /* آیکون بالا، متن پایین 👇 */
+        flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        flex: 1 !important;
+    }
+
+    /* ت: حذف حاشیه‌ها و فاصله‌های داخلیِ خود دکمه‌های استریم‌لیت */
+    div[data-testid="stHorizontalBlock"]:has(.nav-marker) div[data-testid="stButton"] {
+        width: 100% !important;
         height: 100% !important;
-        text-decoration: none !important;
-        color: #94a3b8 !important;           /* رنگ خاکستری تب‌های غیرفعال */
-        cursor: pointer !important;
-        user-select: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    /* ث: استایل‌دهی به دکمه بومی پایتون تا دقیقاً شبیه یک تب نیتیو اپلیکیشن شود */
+    div[data-testid="stHorizontalBlock"]:has(.nav-marker) button {
+        width: 100% !important;
+        height: 100% !important;
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important; /* حذف گردی دکمه‌ها برای چسبیدن کامل */
+        padding: 0 !important;
+        margin: 0 !important;
+        color: #94a3b8 !important; /* رنگ خاکستری غیرفعال */
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
         transition: background 0.1s ease, color 0.1s ease !important;
-        padding: 4px 0 !important;
-        box-sizing: border-box !important;
     }
 
-    /* افکت تاچ و هاور روی تب‌ها */
-    .saman-tab-item:hover {
+    /* افکت تاچ و هاور */
+    div[data-testid="stHorizontalBlock"]:has(.nav-marker) button:hover {
         background-color: rgba(234, 88, 12, 0.03) !important;
-    }
-
-    /* استایل آیکون اموجی */
-    .saman-icon {
-        font-size: 22px !important;
-        line-height: 1 !important;
-        margin-bottom: 3px !important;
-    }
-
-    /* استایل برچسب متن زیر آیکون */
-    .saman-label {
-        font-size: 11px !important;
-        font-weight: 700 !important;
-        white-space: nowrap !important;
-    }
-
-    /* 🟠 استایل ویژه و متمایز تب فعال (نارنجی سازمانی برند تاپسان) */
-    .saman-tab-item.active-saman-tab {
         color: #ea580c !important;
     }
-    .saman-tab-item.active-saman-tab .saman-label {
+
+    /* ج: استایل‌دهی به نوشته‌ی داخل دکمه (قرار دادن آیکون در بالا و متن در پایین) */
+    div[data-testid="stHorizontalBlock"]:has(.nav-marker) button p {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        white-space: pre-line !important; /* 🚨 فعال‌سازی شکست خط برای قرارگیری متن زیر آیکون */
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        line-height: 1.4 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* چ: 🟠 استایل نارنجی رنگ برای ستونی که مارکر فعال دارد */
+    div[data-testid="column"]:has(.active-nav-marker) button {
+        color: #ea580c !important;
+    }
+    div[data-testid="column"]:has(.active-nav-marker) button p {
+        color: #ea580c !important;
         font-weight: 800 !important;
     }
 
-    /* ایجاد پدینگ امن در انتهای کل برنامه تا محتوا به پشت نوار منو نرود */
+    /* ایجاد پدینگ امن در انتهای اپلیکیشن تا محتوا زیر منو نرود */
     .main .block-container {
         padding-bottom: 100px !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# ۲. خواندن تب فعلی از وضعیت برنامه جهت اعمال کلاس اکتیو
-current_tab = st.session_state.active_tab
 
-# ۳. طراحی ساختار منو کاملاً متصل و افقی با تگ‌های بهینه‌شده استاندارد بدون استفاده از st.columns
-# ترفند: با کلیک روی هر آیتم، آدرس مرورگر بدون لود مجدد تغییر کرده و سیگنال تغییر تب به پایتون ارسال می‌شود
-saman_menu_html = f"""
-<div class="saman-bottom-nav">
-    <a href="?nav_tab=profile" target="_self" class="saman-tab-item {'active-saman-tab' if current_tab == 'profile' else ''}">
-        <div class="saman-icon">👤</div>
-        <div class="saman-label">پروفایل</div>
-    </a>
-    <a href="?nav_tab=top_sunify" target="_self" class="saman-tab-item {'active-saman-tab' if current_tab == 'top_sunify' else ''}">
-        <div class="saman-icon">✨</div>
-        <div class="saman-label">تاپسانیفای</div>
-    </a>
-    <a href="?nav_tab=invoice" target="_self" class="saman-tab-item {'active-saman-tab' if current_tab == 'invoice' else ''}">
-        <div class="saman-icon">🧾</div>
-        <div class="saman-label">پیش‌فاکتور</div>
-    </a>
-    <a href="?nav_tab=dashboard" target="_self" class="saman-tab-item {'active-saman-tab' if current_tab == 'dashboard' else ''}">
-        <div class="saman-icon">📊</div>
-        <div class="saman-label">داشبورد</div>
-    </a>
-</div>
-"""
+# ۲. ایجاد ستون‌های پایتون (که با CSS بالا در موبایل کاملاً مهار و افقی می‌شوند)
+cols = st.columns(4)
 
-# رندر کردن منوی یکپارچه
-st.html(saman_menu_html)
+# تعریف ۴ تب (ترتیب از راست به چپ)
+tab_list = [
+    ("dashboard", "📊", "داشبورد"),
+    ("invoice", "🧾", "پیش‌فاکتور"),
+    ("top_sunify", "✨", "تاپسانیفای"),
+    ("profile", "👤", "پروفایل")
+]
 
-# ۴. بخش مانیتورینگ پارامتر URL در پایتون (هماهنگ‌سازی آنی کلیک مرورگر با دیتای پایتون)
-query_params = st.query_params
-url_tab = query_params.get("nav_tab", "dashboard")
+# ۳. رندر کردن تب‌ها
+for i, (tab_id, icon, label) in enumerate(tab_list):
+    with cols[i]:
+        # 🚨 تزریق یک مارکر مخفی در ستون اول، تا CSS بتواند کل این ردیف را پیدا و مهار کند
+        if i == 0:
+            st.markdown('<div class="nav-marker"></div>', unsafe_allow_html=True)
 
-# در صورتی که کاربر روی تبی کلیک کرده باشد، وضعیت پایتون فوراً به‌روزرسانی و صفحه بازسازی می‌شود
-if url_tab != st.session_state.active_tab:
-    st.session_state.active_tab = url_tab
-    st.rerun()
+        is_active = st.session_state.active_tab == tab_id
+
+        # 🚨 اگر تب فعال بود، یک مارکر مخفی اکتیو در این ستون می‌گذاریم تا نارنجی شود
+        if is_active:
+            st.markdown('<div class="active-nav-marker"></div>', unsafe_allow_html=True)
+
+        # ساختار متن دکمه بومی (اموجی + اینتر + کلمه)
+        button_text = f"{icon}\n{label}"
+
+        # 🚨 استفاده از دکمه ۱۰۰٪ بومی پایتون (بدون تگ a، بدون جاوااسکریپت، بدون خروج از برنامه)
+        if st.button(button_text, key=f"saman_btn_{tab_id}", use_container_width=True):
+            st.session_state.active_tab = tab_id
+            st.query_params["nav_tab"] = tab_id
+            st.rerun()
