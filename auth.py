@@ -42,11 +42,11 @@ def render_auth_page():
         with open("biometric.png", "rb") as f:
             bio_icon_base64 = base64.b64encode(f.read()).decode()
 
-    # تبدیل آیکون pdf_logo.png به base64 برای بخش Powered by
-    pdf_logo_base64 = ""
-    if os.path.exists("pdf_logo.png"):
-        with open("pdf_logo.png", "rb") as f:
-            pdf_logo_base64 = base64.b64encode(f.read()).decode()
+    # تبدیل لوگوی جدید ترکیبی TopSUN-Powered.png به base64
+    powered_logo_base64 = ""
+    if os.path.exists("TopSUN-Powered.png"):
+        with open("TopSUN-Powered.png", "rb") as f:
+            powered_logo_base64 = base64.b64encode(f.read()).decode()
 
     # لود کردن تصویر منظره برای پایین صفحه (landscape.jpg یا landscape.png)
     landscape_base64 = ""
@@ -198,41 +198,28 @@ def render_auth_page():
     }}
 
     /* =======================================================
-       اصلاحیه طلایی: پوزیشن کاملاً فیکس شده بالای عکس منظره (مدل موبایلت)
+       تنظیم استایل جدید: راست‌نویس و تراز با فرم (مخصوص TopSUN-Powered)
        ======================================================= */
     .powered-by-fixed-bottom {{
         position: fixed !important;
-        bottom: 27vh !important; /* دقیقاً بالای کادر عکس پس‌زمینه قرار می‌گیرد */
+        bottom: 27vh !important; /* فیکس شده دقیقاً بالای لبه منظره */
         left: 50% !important;
         transform: translateX(-50%) !important;
         width: 100% !important;
         max-width: 400px !important;
-        padding: 0 25px !important; /* هم‌تراز با لبه‌های فرم */
+        padding: 0 25px !important; /* هم‌اندازه با پدینگ فرم اصلی */
         display: flex !important;
         flex-direction: column !important;
-        align-items: flex-start !important; /* چپ‌چین شدن کامل مجموعه */
+        align-items: flex-end !important; /* لنگر انداختن و راست‌نویس کردن لوگوی جدید */
         z-index: 99980 !important;
         pointer-events: auto !important;
     }}
     
-    .powered-text {{
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-        font-size: 10px !important;
-        color: #94a3b8 !important;
-        font-weight: 600 !important;
-        margin: 0 0 5px 0 !important;
-        text-transform: lowercase !important;
-        letter-spacing: 0.5px !important;
-        direction: ltr !important;
-        text-align: left !important;
-        opacity: 0.9 !important;
-    }}
-    
-    .powered-logo {{
-        max-width: 85px !important; /* بزرگتر شدن آیکون طبق درخواست شما */
+    .powered-combined-img {{
+        max-width: 140px !important; /* سایز بهینه‌سازی شده برای خوانایی متن Powered by داخل عکس */
         height: auto !important;
         display: block !important;
-        opacity: 0.85 !important;
+        opacity: 0.9 !important;
     }}
 
     /* =======================================================
@@ -325,7 +312,7 @@ def render_auth_page():
     """
     st.markdown(auth_css, unsafe_allow_html=True)
    
-    # --- لود لوگو/تایپوگرافی جدید سیستم (TopSUNify.png) ---
+    # --- لود لوگو/تایپوگرافی اصلی سیستم (TopSUNify.png) ---
     logo_html = "☀️ TopSUNify"
     target_logo_path = "TopSUNify.png" if os.path.exists("TopSUNify.png") else "topsunify.png"
     
@@ -334,10 +321,10 @@ def render_auth_page():
             logo_base64 = base64.b64encode(f.read()).decode()
         logo_html = f'<img src="data:image/png;base64,{logo_base64}" style="display:block; margin: 0 auto;">'
 
-    # --- لود آیکون تکمیلی pdf_logo.png ---
-    pdf_logo_html = ""
-    if pdf_logo_base64:
-        pdf_logo_html = f'<img src="data:image/png;base64,{pdf_logo_base64}" class="powered-logo">'
+    # --- تنظیم ساختار نمایش تصویر یکپارچه TopSUN-Powered.png ---
+    powered_layout_html = ""
+    if powered_logo_base64:
+        powered_layout_html = f'<img src="data:image/png;base64,{powered_logo_base64}" class="powered-combined-img">'
 
     # تنظیم فیلدها در صورت پر بودن فرم
     curr_u = username_val if form_submitted else ""
@@ -374,8 +361,7 @@ def render_auth_page():
     </div>
 
     <div class="powered-by-fixed-bottom">
-        <p class="powered-text">powered by</p>
-        {pdf_logo_html}
+        {powered_layout_html}
     </div>
     """
     st.html(native_form_html)
