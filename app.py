@@ -10,20 +10,14 @@ st.set_page_config(
 # ====================== ۱. اصلاح پایداری احراز هویت ======================\
 import auth
 
-# اطمینان از وجود وضعیت در session_state
+# ۱. مقداردهی اولیه سشن (اگر وجود ندارد)
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
-# بررسی لاگین بودن - فقط اگر لاگین نیست، لاگین را رندر کن
-if not st.session_state.logged_in:
+# ۲. جلوگیری از اجرای مجدد احراز هویت در صورتی که کاربر قبلاً وارد شده
+if st.session_state.logged_in == False:
     auth.render_auth_page()
-    st.stop()
-
-# اضافه کردن این شرط برای اینکه بعد از لاگین، 
-# با تغییرات URL تب‌ها، صفحه لاگین دوباره ظاهر نشود:
-if st.session_state.logged_in:
-    # ادامه اجرای برنامه اصلی
-    pass
+    st.stop() # فقط در صورتی که لاگین نیست، برنامه را متوقف کن
 # ====================== ۲. ایمپورت کتابخانه‌ها و ماژول‌های مهندسی ======================
 import Financial
 import main
