@@ -8,15 +8,12 @@ st.set_page_config(
 )
 
 # ====================== ۱. اضافه کردن ماژول احراز هویت ======================
-import streamlit as st
+import auth
 
-# مدیریت صحیح Stateها
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
-# چک کردن لاگین قبل از هر ایمپورت سنگین
 if not st.session_state.logged_in:
-    import auth
     auth.render_auth_page()
     st.stop()
 
@@ -533,11 +530,38 @@ elif st.session_state.active_tab == "invoice":
         st.info(f"بخش **{product_type}** به زودی فعال می‌شود.")
 
 # ------------------------------------------------------------------------------
+# ۳. محتوای تب: ثبت گارانتی
+# ------------------------------------------------------------------------------
+elif st.session_state.active_tab == "warranty":
+    st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
+    st.subheader("🛡️ فرم ثبت گارانتی محصولات تاپسان")
+    with st.form("warranty_form"):
+        st.text_input("نام و نام خانوادگی خریدار")
+        st.text_input("شماره سریال محصول")
+        st.file_uploader("آپلود عکس یا فیلم نصب", type=["jpg", "png", "mp4"])
+        if st.form_submit_button("ثبت گارانتی"): st.success("✅ مشخصات با موفقیت در بانک سامانه ثبت شد.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ------------------------------------------------------------------------------
+# ۴. محتوای تب: درخواست خدمات فنی
+# ------------------------------------------------------------------------------
+elif st.session_state.active_tab == "services":
+    st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
+    st.subheader("🛠️ ثبت درخواست خدمات فنی و مهندسی")
+    st.radio("نوع درخواست:", ["نصب اولیه سیستم گرمایش", "اعلام خرابی/عیب‌یابی", "جابجایی پدها"])
+    with st.form("service_form"):
+        st.text_area("آدرس و توضیحات کروکی پروژه")
+        if st.form_submit_button("ارسال درخواست"): st.success("📌 درخواست شما به واحد پشتیبانی ارجاع شد.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ------------------------------------------------------------------------------
 # ۵. محتوای تب: اطلاعات فنی
 # ------------------------------------------------------------------------------
-elif st.session_state.active_tab == "topsunify":
-    st.title("☀️ تاپسانیفای")
-    st.write("محتوای صفحه اصلی تاپسانیفای اینجا قرار می‌گیرد")
+elif st.session_state.active_tab == "info":
+    st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
+    st.subheader("📚 بانک اطلاعات فنی و دانشنامه حرارتی")
+    st.write("کاتالوگ‌ها، راهنماهای چیدمان فیلم و نقشه‌های ازپیش تحلیل‌شده به زودی بارگذاری می‌شوند.")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ------------------------------------------------------------------------------
 # ۶. محتوای تب اختصاصی: پروفایل کاربری (طراحی مینیمال و نیتیو بر اساس الگوی سامان)
@@ -731,63 +755,54 @@ elif st.session_state.active_tab == "profile":
         </div>
         """, unsafe_allow_html=True)
         
-
 # ==============================================================================
-# ناوبری اختصاصی موبایل (غیرفعال در دسکتاپ)
+# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه پایدار
 # ==============================================================================
 
 st.markdown("""
 <style>
-    /* این استایل فقط زمانی اجرا می‌شود که عرض صفحه کمتر از 768 پیکسل (موبایل) باشد */
-    @media (max-width: 768px) {
-        .fixed-bottom-nav-v2 {
-            display: flex !important;
-            position: fixed !important;
-            bottom: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            height: 75px !important;
-            background-color: #ffffff !important;
-            flex-direction: row !important;
-            justify-content: space-evenly !important;
-            align-items: center !important;
-            border-top: 1px solid #e2e8f0 !important;
-            z-index: 999999 !important;
-            padding: 0 !important;
-            margin: 0 !important;
-        }
+    .fixed-bottom-nav {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 100% !important;
+        max-width: 550px !important;
+        height: 74px !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
+        z-index: 999999 !important;
+        display: flex !important;
+        justify-content: space-around !important;
+        align-items: center !important;
+        border-top: 1px solid #e2e8f0 !important;
+        direction: ltr !important;
     }
-    
-    /* در دسکتاپ (عرض بیشتر از 768) این منو کلاً مخفی می‌شود */
-    @media (min-width: 769px) {
-        .fixed-bottom-nav-v2 {
-            display: none !important;
-        }
-    }
-
-    .nav-tab-link {
+    .nav-tab-item {
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
         text-decoration: none !important;
         color: #94a3b8 !important;
-        width: 100% !important;
-        height: 100% !important;
         font-size: 10px !important;
-        font-weight: bold !important;
-        transition: color 0.2s !important;
+        font-weight: 700 !important;
+        flex: 1 !important;
+        padding: 6px 0 !important;
     }
-    
-    .nav-tab-link.active-link { color: #ea580c !important; }
-    .nav-tab-link:hover { color: #ea580c !important; }
+    .nav-tab-item.active-tab {
+        color: #ea580c !important;
+    }
+    .nav-tab-icon {
+        font-size: 23px !important;
+        margin-bottom: 4px !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# رندر کردن نوار ناوبری (این دیو فقط در موبایل نمایش داده می‌شود)
-st.markdown('<div class="fixed-bottom-nav-v2">', unsafe_allow_html=True)
-
-nav_items = [
+# ساخت منو با دکمه (پایدارتر از لینک)
+cols = st.columns(6)
+tab_list = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
     ("warranty", "🛡️", "گارانتی"),
@@ -796,13 +811,33 @@ nav_items = [
     ("profile", "👤", "پروفایل")
 ]
 
-for tab_id, icon, label in nav_items:
-    active_class = "active-link" if st.session_state.active_tab == tab_id else ""
-    st.markdown(f"""
-        <a href="?nav_tab={tab_id}" target="_self" class="nav-tab-link {active_class}">
-            <div style="font-size: 20px; margin-bottom: 2px;">{icon}</div>
-            <div>{label}</div>
-        </a>
-    """, unsafe_allow_html=True)
+for i, (tab_id, icon, label) in enumerate(tab_list):
+    with cols[i]:
+        active = "active-tab" if st.session_state.active_tab == tab_id else ""
+        
+        if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}", 
+                     use_container_width=True,
+                     help=label):
+            st.session_state.active_tab = tab_id
+            st.rerun()
 
-st.markdown('</div>', unsafe_allow_html=True)
+# CSS اضافی برای زیباتر کردن دکمه‌ها (شبیه لینک)
+st.markdown("""
+<style>
+    div[data-testid="stButton"] button {
+        background: transparent !important;
+        border: none !important;
+        color: inherit !important;
+        font-size: 10px !important;
+        height: 68px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 4px 0 !important;
+    }
+    div[data-testid="stButton"] button:hover {
+        background: rgba(234, 88, 12, 0.08) !important;
+    }
+</style>
+""", unsafe_allow_html=True)
