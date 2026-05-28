@@ -756,127 +756,137 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه ۱۰۰٪ بومی و ضد شکستگی
+# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه پایدار ۴ تب افقی
 # ==============================================================================
 
-# ۱. تزریق استایل‌های سی‌اس‌اس فوق‌پایدار برای اجبار ستون‌های پایتون به افقی ماندن در موبایل
+# ۱. تزریق استایل‌های سی‌اس‌اس فوق‌پایدار جهت مهار ستون‌ها و تراز شدن تب‌ها در موبایل
 st.markdown("""
 <style>
-    /* کانتینر اصلی نوار برای شبیه‌سازی پس‌زمینه منو */
-    .fixed-nav-background {
+    /* کانتینر اصلی منو جهت ایجاد پس‌زمینه سفید منسجم */
+    .fixed-bottom-nav {
         position: fixed !important;
         bottom: 0 !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         width: 100% !important;
         max-width: 550px !important;
-        height: 75px !important;
+        height: 74px !important;
         background-color: #ffffff !important;
-        box-shadow: 0 -5px 20px rgba(0,0,0,0.08) !important;
-        z-index: 999998 !important;
+        box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
+        z-index: 999998 !important; /* یک رتبه کمتر از دکمه‌ها برای کلیک‌خور شدن */
         border-top: 1px solid #e2e8f0 !important;
     }
 
-    /* 🚨 خنثی‌سازی رفتار موبایل استریم‌لیت: اجبار ستون‌ها به قرارگیری افقی بدون لغزش یا شکستگی */
+    /* 🚨 مهار قطعی ستون‌های استریم‌لیت: اجبار ستون‌ها به قرارگیری افقی بدون شکستگی در موبایل */
     div[data-testid="stHorizontalBlock"] {
         display: flex !important;
-        flex-direction: row !important; 
-        flex-wrap: nowrap !important;   
+        flex-direction: row !important; /* فیکس کردن در یک ردیف افقی */
+        flex-wrap: nowrap !important;   /* جلوگیری از شکستن به خط بعد */
         width: 100% !important;
         max-width: 550px !important;
         position: fixed !important;
         bottom: 0 !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
-        z-index: 999999 !important;
-        background-color: transparent !important;
-        padding: 4px 6px !important;
+        z-index: 999999 !important;     /* بالاترین لایه برای کلیک شدن دکمه‌ها */
+        background-color: #ffffff !important; /* بک‌گراند سفید دکمه‌ها روی موبایل */
+        padding: 4px 0px !important;
         height: 72px !important;
         align-items: center !important;
-        justify-content: space-between !important;
-        box-sizing: border-box !important;
+        justify-content: space-around !important;
     }
 
-    /* 🚨 تقسیم بندی کاملاً ریاضی و مساوی عرض منو به ۶ قسمت (هر تب ۱۶.۶ درصد) */
+    /* 🚨 تقسیم فضا به ۴ قسمت دقیقاً مساوی (هر تب دقیقاً ۲۵٪ عرض صفحه) */
     div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
-        width: 16.66% !important; 
-        min-width: 16.66% !important;
-        max-width: 16.66% !important;
+        width: 25% !important; 
+        min-width: 25% !important;
+        max-width: 25% !important;
         flex-grow: 1 !important; 
         flex-shrink: 0 !important;
         margin: 0 !important;
         padding: 0 !important;
     }
 
-    /* استایل‌دهی به دکمه‌های واقعی پایتون جهت شبیه‌سازی کامل تب */
-    div[data-testid="stHorizontalBlock"] button {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        color: #94a3b8 !important; /* رنگ پیش‌فرض خاکستری تب‌های غیرفعال */
-        font-size: 10px !important;
-        font-weight: 700 !important;
-        height: 64px !important;
-        width: 100% !important; 
+    .nav-tab-item {
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        white-space: pre-line !important; /* اجازه به شکستن خط برای قرارگیری متن زیر آیکون */
-        line-height: 1.4 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        transition: all 0.15s ease !important;
+        text-decoration: none !important;
+        color: #94a3b8 !important;
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        flex: 1 !important;
+        padding: 6px 0 !important;
     }
-
-    /* افکت هاور ملایم دکمه‌ها */
-    div[data-testid="stHorizontalBlock"] button:hover {
-        background: rgba(234, 88, 12, 0.04) !important;
-        color: #ea580c !important;
-    }
-
-    /* 🟠 اعمال رنگ نارنجی سازمانی برند تاپسان برای دکمه‌ی تب فعال */
+    
+    /* 🟠 استایل اختصاصی برای دکمه‌ی تب فعال (نارنجی برند تاپسان) */
     div.active-tab-wrapper button {
         color: #ea580c !important;
     }
     div.active-tab-wrapper button p {
         color: #ea580c !important;
-        font-weight: 800 !important;
+        font-weight: bold !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # ۲. ایجاد لایه پس‌زمینه سفید فیکس شده
-st.markdown('<div class="fixed-nav-background"></div>', unsafe_allow_html=True)
+st.markdown('<div class="fixed-bottom-nav"></div>', unsafe_allow_html=True)
 
-# ۳. تعریف آرایه تب‌ها به ترتیب اصولی (راست به چپ برای نمایش صحیح منو)
+# ۳. تعریف منوی جدید با ۴ تب متوازن (ترتیب راست به چپ)
+cols = st.columns(4)
 tab_list = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
-    ("warranty", "🛡️", "گارانتی"),
-    ("services", "🛠️", "خدمات"),
-    ("info", "📚", "اطلاعات"),
+    ("top_sunify", "✨", "تاپسانیفای"), # تب جدید درخواستی شما
     ("profile", "👤", "پروفایل")
 ]
 
-# ۴. رندر دکمه‌های کاملاً بومی و پایدار پایتون در ۶ ستون بهینه‌سازی شده
-cols = st.columns(6)
 for i, (tab_id, icon, label) in enumerate(tab_list):
     with cols[i]:
         is_active = st.session_state.active_tab == tab_id
         
-        # اگر تب فعال بود، آن را داخل کانتینر اختصاصی جهت اعمال استایل نارنجی می‌گذاریم
+        # اگر تب فعال بود، دکمه را داخل لایه نگهدارنده رنگ نارنجی می‌گذاریم
         if is_active:
             st.markdown('<div class="active-tab-wrapper">', unsafe_allow_html=True)
-            
-        # ساختار متن دکمه: آیکون در خط اول، متن در خط دوم
-        button_display_text = f"{icon}\n{label}"
         
-        # دکمه نیتیو استریم‌لیت (تضمین کارکرد دکمه‌ها و عدم خروج از برنامه)
-        if st.button(button_display_text, key=f"native_nav_btn_{tab_id}", use_container_width=True):
+        # استفاده از دکمه نیتیو و فوق‌پایدار پایتون
+        if st.button(f"{icon}\n{label}", key=f"nav_v4_{tab_id}", 
+                     use_container_width=True,
+                     help=label):
             st.session_state.active_tab = tab_id
             st.query_params["nav_tab"] = tab_id
             st.rerun()
             
         if is_active:
             st.markdown('</div>', unsafe_allow_html=True)
+
+# ۴. CSS ثانویه برای حذف حاشیه‌های دکمه‌ها و شبیه‌سازی کامل منوی اپلیکیشن
+st.markdown("""
+<style>
+    div[data-testid="stButton"] button {
+        background: transparent !important;
+        border: none !important;
+        color: #94a3b8 !important; /* رنگ پیش‌فرض خاکستری */
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        height: 68px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 4px 0 !important;
+        white-space: pre-line !important; /* برای قرارگیری آیکون در بالا و متن در پایین */
+    }
+    div[data-testid="stButton"] button:hover {
+        background: rgba(234, 88, 12, 0.05) !important;
+        color: #ea580c !important;
+    }
+    
+    /* رفع تداخل: ایجاد پدینگ در انتهای بدنه اصلی برنامه تا محتوا به زیر منو نرود */
+    .main .block-container {
+        padding-bottom: 110px !important;
+    }
+</style>
+""", unsafe_allow_html=True)
