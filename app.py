@@ -764,51 +764,54 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری نهایی: منوی افقی، چسبیده و یکپارچه (Bottom Navigation Bar)
+# ناوبری پایین: ظاهر یکپارچه و فیکس (مشابه اپلیکیشن‌های بانکی)
 # ==============================================================================
 
+# تزریق CSS برای حذف فواصل استریم‌لیت و ساخت نوار یکپارچه
 st.markdown("""
 <style>
-    /* ظرف اصلی منو - تضمین چیدمان افقی (row) */
-    .fixed-bottom-nav-v2 {
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        height: 70px !important;
-        background-color: #ffffff !important;
-        display: flex !important;
-        flex-direction: row !important; /* این خط بسیار مهم است: چیدمان افقی */
-        justify-content: space-around !important; /* توزیع متقارن در طول عرض */
-        align-items: center !important;
-        border-top: 1px solid #e2e8f0 !important;
-        z-index: 999999 !important;
-        margin: 0 !important;
-        padding: 0 !important;
+    /* پاکسازی کامل استریم‌لیت در منطقه ناوبری */
+    .stApp { padding-bottom: 80px; }
+    
+    .nav-bar-wrapper {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 70px;
+        background-color: white;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        flex-direction: row-reverse; /* برای چیدمان راست‌چین */
+        justify-content: space-around;
+        align-items: center;
+        z-index: 999999;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
     }
     
-    /* لینک‌ها به صورت ستونی داخل تب (آیکون بالا، متن پایین) */
-    .nav-tab-link {
-        display: flex !important;
-        flex-direction: column !important; /* آیکون و متن عمودی روی هم */
-        align-items: center !important;
-        justify-content: center !important;
-        text-decoration: none !important;
-        color: #94a3b8 !important;
+    .nav-item-button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        border: none !important;
+        background: transparent !important;
+        color: #64748b !important;
+        font-family: 'iranyekan', sans-serif !important;
         font-size: 10px !important;
-        font-weight: bold !important;
-        flex: 1 !important; /* هر تب فضای مساوی بگیرد */
-        height: 100% !important;
+        font-weight: 700 !important;
+        padding: 0 !important;
+        cursor: pointer;
     }
     
-    .nav-tab-link.active-link {
-        color: #ea580c !important;
-    }
+    .nav-item-button:hover { color: #ea580c !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# تعریف ترتیب تب‌ها برای نمایش افقی
-nav_items = [
+# تعریف تب‌ها
+tabs_list = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
     ("warranty", "🛡️", "گارانتی"),
@@ -817,16 +820,16 @@ nav_items = [
     ("profile", "👤", "پروفایل")
 ]
 
-# رندر کردن نوار
-st.markdown('<div class="fixed-bottom-nav-v2">', unsafe_allow_html=True)
+# ایجاد کانتینر منو
+st.markdown('<div class="nav-bar-wrapper">', unsafe_allow_html=True)
 
-for tab_id, icon, label in nav_items:
-    active_class = "active-link" if st.session_state.active_tab == tab_id else ""
-    st.markdown(f"""
-        <a href="?nav_tab={tab_id}" target="_self" class="nav-tab-link {active_class}">
-            <div style="font-size: 20px;">{icon}</div>
-            <div style="margin-top: 2px;">{label}</div>
-        </a>
-    """, unsafe_allow_html=True)
+# استفاده از ستون‌ها برای جای‌گذاری دکمه‌ها در یک ردیف
+cols = st.columns(6)
+for i, (tab_id, icon, label) in enumerate(tabs_list):
+    with cols[i]:
+        # استایل دکمه را در قالب یک دکمه استریم‌لیت اما با کلاس سفارشی اعمال می‌کنیم
+        if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}", help=label):
+            st.session_state.active_tab = tab_id
+            st.rerun()
 
 st.markdown('</div>', unsafe_allow_html=True)
