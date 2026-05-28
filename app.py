@@ -760,125 +760,122 @@ elif st.session_state.active_tab == "profile":
 # ==============================================================================
 
 # ۱. تزریق استایل‌های سی‌اس‌اس جادویی برای مهار کامل ستون‌های استریم‌لیت
+import streamlit as st
+
+# ---------- init ----------
+if "active_tab" not in st.session_state:
+    st.session_state.active_tab = "dashboard"
+
+# ---------- CSS ----------
 st.markdown("""
 <style>
-    /* الف: مخفی کردن مارکرهای کمکی ما تا فضای دکمه‌ها را خراب نکنند */
-    div[data-testid="stHorizontalBlock"]:has(.nav-marker) div.element-container:has(.nav-marker),
-    div[data-testid="stHorizontalBlock"]:has(.nav-marker) div.element-container:has(.active-nav-marker) {
-        display: none !important;
-        height: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
+/* اعمال روی بلوک‌های افقی و عمودی (بدون :has برای سازگاری موبایل) */
+div[data-testid="stHorizontalBlock"],
+div[data-testid="stVerticalBlock"] {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 100% !important;
+    max-width: 550px !important;
+    height: 72px !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.08) !important;
+    z-index: 999999 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-top: 1px solid #e2e8f0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+    direction: rtl !important;
+}
 
-    /* ب: تبدیل کانتینر ستون‌های استریم‌لیت به یک نوار فیکس شده، متصل و کاملاً افقی در موبایل */
-    div[data-testid="stHorizontalBlock"]:has(.nav-marker) {
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        width: 100% !important;
-        max-width: 550px !important; /* فیکس با عرض قالب موبایلی */
-        height: 72px !important;
-        background-color: #ffffff !important;
-        box-shadow: 0 -4px 20px rgba(0,0,0,0.08) !important;
-        z-index: 999999 !important;
-        display: flex !important;
-        flex-direction: row !important;       /* 🚨 اجبار به قرارگیری افقی در هر سایزی */
-        flex-wrap: nowrap !important;         /* 🚨 جلوگیری از شکستن خط و عمودی شدن */
-        justify-content: space-between !important;
-        align-items: center !important;
-        border-top: 1px solid #e2e8f0 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        gap: 0 !important;                    /* 🚨 حذف فاصله بین ستون‌ها برای چسبیدن دکمه‌ها */
-        direction: rtl !important;
-    }
+/* تقسیم دقیق به 4 قسمت */
+div[data-testid="stHorizontalBlock"] > div[data-testid="column"],
+div[data-testid="stVerticalBlock"] > div[data-testid="column"] {
+    width: 25% !important;
+    min-width: 25% !important;
+    max-width: 25% !important;
+    flex: 1 1 0% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
 
-    /* پ: تقسیم دقیق نوار به ۴ قسمت کاملاً مساوی (۲۵ درصد) */
-    div[data-testid="stHorizontalBlock"]:has(.nav-marker) > div[data-testid="column"] {
-        width: 25% !important;
-        min-width: 25% !important;
-        max-width: 25% !important;
-        flex: 1 1 0% !important;
-        height: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
+/* دکمه‌ها و متن */
+div[data-testid="stHorizontalBlock"] div[data-testid="stButton"],
+div[data-testid="stVerticalBlock"] div[data-testid="stButton"] {
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
 
-    /* ت: حذف حاشیه‌ها و فاصله‌های داخلیِ خود دکمه‌های استریم‌لیت */
-    div[data-testid="stHorizontalBlock"]:has(.nav-marker) div[data-testid="stButton"] {
-        width: 100% !important;
-        height: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        display: flex !important;
-        flex-direction: column !important;
-    }
+div[data-testid="stHorizontalBlock"] button,
+div[data-testid="stVerticalBlock"] button {
+    width: 100% !important;
+    height: 100% !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    color: #94a3b8 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: background 0.1s ease, color 0.1s ease !important;
+}
 
-    /* ث: استایل‌دهی به دکمه بومی پایتون تا دقیقاً شبیه یک تب نیتیو اپلیکیشن شود */
-    div[data-testid="stHorizontalBlock"]:has(.nav-marker) button {
-        width: 100% !important;
-        height: 100% !important;
-        background-color: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        border-radius: 0 !important; /* حذف گردی دکمه‌ها برای چسبیدن کامل */
-        padding: 0 !important;
-        margin: 0 !important;
-        color: #94a3b8 !important; /* رنگ خاکستری غیرفعال */
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        transition: background 0.1s ease, color 0.1s ease !important;
-    }
+div[data-testid="stHorizontalBlock"] button:hover,
+div[data-testid="stVerticalBlock"] button:hover {
+    background-color: rgba(234, 88, 12, 0.03) !important;
+    color: #ea580c !important;
+}
 
-    /* افکت تاچ و هاور */
-    div[data-testid="stHorizontalBlock"]:has(.nav-marker) button:hover {
-        background-color: rgba(234, 88, 12, 0.03) !important;
-        color: #ea580c !important;
-    }
+div[data-testid="stHorizontalBlock"] button p,
+div[data-testid="stVerticalBlock"] button p {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: pre-line !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    line-height: 1.4 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
 
-    /* ج: استایل‌دهی به نوشته‌ی داخل دکمه (قرار دادن آیکون در بالا و متن در پایین) */
-    div[data-testid="stHorizontalBlock"]:has(.nav-marker) button p {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        white-space: pre-line !important; /* 🚨 فعال‌سازی شکست خط برای قرارگیری متن زیر آیکون */
-        font-size: 11px !important;
-        font-weight: 700 !important;
-        line-height: 1.4 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
+/* استایل برای ستون‌هایی که کلاس سفارشی active-nav اضافه می‌کنیم */
+.active-nav button,
+.active-nav button p {
+    color: #ea580c !important;
+    font-weight: 800 !important;
+}
 
-    /* چ: 🟠 استایل نارنجی رنگ برای ستونی که مارکر فعال دارد */
-    div[data-testid="column"]:has(.active-nav-marker) button {
-        color: #ea580c !important;
-    }
-    div[data-testid="column"]:has(.active-nav-marker) button p {
-        color: #ea580c !important;
-        font-weight: 800 !important;
-    }
-
-    /* ایجاد پدینگ امن در انتهای اپلیکیشن تا محتوا زیر منو نرود */
-    .main .block-container {
-        padding-bottom: 100px !important;
-    }
+/* ایجاد پدینگ امن برای محتوای اصلی */
+.main .block-container {
+    padding-bottom: 100px !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
-
-# ۲. ایجاد ستون‌های پایتون (که با CSS بالا در موبایل کاملاً مهار و افقی می‌شوند)
+# ---------- ساخت navigation (ستون‌ها) ----------
 cols = st.columns(4)
 
-# تعریف ۴ تب (ترتیب از راست به چپ)
 tab_list = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
@@ -886,24 +883,6 @@ tab_list = [
     ("profile", "👤", "پروفایل")
 ]
 
-# ۳. رندر کردن تب‌ها
 for i, (tab_id, icon, label) in enumerate(tab_list):
-    with cols[i]:
-        # 🚨 تزریق یک مارکر مخفی در ستون اول، تا CSS بتواند کل این ردیف را پیدا و مهار کند
-        if i == 0:
-            st.markdown('<div class="nav-marker"></div>', unsafe_allow_html=True)
+    # برای اضافه کردن کلاس active-n
 
-        is_active = st.session_state.active_tab == tab_id
-
-        # 🚨 اگر تب فعال بود، یک مارکر مخفی اکتیو در این ستون می‌گذاریم تا نارنجی شود
-        if is_active:
-            st.markdown('<div class="active-nav-marker"></div>', unsafe_allow_html=True)
-
-        # ساختار متن دکمه بومی (اموجی + اینتر + کلمه)
-        button_text = f"{icon}\n{label}"
-
-        # 🚨 استفاده از دکمه ۱۰۰٪ بومی پایتون (بدون تگ a، بدون جاوااسکریپت، بدون خروج از برنامه)
-        if st.button(button_text, key=f"saman_btn_{tab_id}", use_container_width=True):
-            st.session_state.active_tab = tab_id
-            st.query_params["nav_tab"] = tab_id
-            st.rerun()
