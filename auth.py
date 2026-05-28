@@ -4,8 +4,7 @@ import os
 import base64
 
 def render_auth_page():
-    if st.session_state.get("logged_in", False):
-        return
+    # خواندن وضعیت پاپ‌آ‌پ، تب‌ها و مقادیر فرم از query_params برای پایداری کامل
     show_bio = st.query_params.get("show_bio", "false") == "true"
     bio_tab = st.query_params.get("bio_tab", "fingerprint")
     
@@ -29,7 +28,6 @@ def render_auth_page():
             st.warning("⚠️ لطفاً نام کاربری و رمز عبور را وارد کنید.")
         else:
             st.error("❌ نام کاربری یا رمز ورود اشتباه است.")
-            st.query_params.clear()
 
     # --- ۱. تزریق فونت ایران‌یکان و استایل‌های پایه ---
     font_path = "iranyekan.ttf"
