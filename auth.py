@@ -7,6 +7,9 @@ def render_auth_page():
     # اگر کاربر قبلاً لاگین کرده، اصلاً نیازی به بررسی query_params نیست
     if st.session_state.get("logged_in", False):
         return 
+        # ۲. محافظت از تب‌ها: اگر کاربر روی تب‌ها کلیک کرده، صفحه لاگین را نمایش نده
+    if "nav_tab" in st.query_params:
+        return
     show_bio = st.query_params.get("show_bio", "false") == "true"
     bio_tab = st.query_params.get("bio_tab", "fingerprint")
     
