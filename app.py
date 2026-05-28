@@ -530,38 +530,11 @@ elif st.session_state.active_tab == "invoice":
         st.info(f"بخش **{product_type}** به زودی فعال می‌شود.")
 
 # ------------------------------------------------------------------------------
-# ۳. محتوای تب: ثبت گارانتی
-# ------------------------------------------------------------------------------
-elif st.session_state.active_tab == "warranty":
-    st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
-    st.subheader("🛡️ فرم ثبت گارانتی محصولات تاپسان")
-    with st.form("warranty_form"):
-        st.text_input("نام و نام خانوادگی خریدار")
-        st.text_input("شماره سریال محصول")
-        st.file_uploader("آپلود عکس یا فیلم نصب", type=["jpg", "png", "mp4"])
-        if st.form_submit_button("ثبت گارانتی"): st.success("✅ مشخصات با موفقیت در بانک سامانه ثبت شد.")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# ------------------------------------------------------------------------------
-# ۴. محتوای تب: درخواست خدمات فنی
-# ------------------------------------------------------------------------------
-elif st.session_state.active_tab == "services":
-    st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
-    st.subheader("🛠️ ثبت درخواست خدمات فنی و مهندسی")
-    st.radio("نوع درخواست:", ["نصب اولیه سیستم گرمایش", "اعلام خرابی/عیب‌یابی", "جابجایی پدها"])
-    with st.form("service_form"):
-        st.text_area("آدرس و توضیحات کروکی پروژه")
-        if st.form_submit_button("ارسال درخواست"): st.success("📌 درخواست شما به واحد پشتیبانی ارجاع شد.")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# ------------------------------------------------------------------------------
 # ۵. محتوای تب: اطلاعات فنی
 # ------------------------------------------------------------------------------
-elif st.session_state.active_tab == "info":
-    st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
-    st.subheader("📚 بانک اطلاعات فنی و دانشنامه حرارتی")
-    st.write("کاتالوگ‌ها، راهنماهای چیدمان فیلم و نقشه‌های ازپیش تحلیل‌شده به زودی بارگذاری می‌شوند.")
-    st.markdown('</div>', unsafe_allow_html=True)
+elif st.session_state.active_tab == "topsunify":
+    st.title("☀️ تاپسانیفای")
+    st.write("محتوای صفحه اصلی تاپسانیفای اینجا قرار می‌گیرد")
 
 # ------------------------------------------------------------------------------
 # ۶. محتوای تب اختصاصی: پروفایل کاربری (طراحی مینیمال و نیتیو بر اساس الگوی سامان)
