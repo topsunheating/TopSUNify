@@ -756,10 +756,10 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه ۱۰۰٪ ریسپانسیو و افقی
+# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه کاملاً ریسپانسیو و بدون خطا
 # ==============================================================================
 
-# تزریق استایل‌های سی‌اس‌اس برای هندل کردن ظاهر افقی در موبایل
+# تزریق استایل‌های سی‌اس‌اس برای هندل کردن ظاهر افقی منو در موبایل و دسکتاپ
 st.markdown("""
 <style>
     /* کانتینر اصلی منوی پایین */
@@ -775,8 +775,7 @@ st.markdown("""
         box-shadow: 0 -4px 16px rgba(0,0,0,0.08) !important;
         z-index: 999999 !important;
         display: flex !important;
-        /* برخلاف st.columns این گرید هرگز در موبایل عمودی نمی‌شود */
-        flex-direction: row !important;
+        flex-direction: row !important; /* فیکس کردن منو به صورت افقی در موبایل */
         justify-content: space-around !important;
         align-items: center !important;
         border-top: 1px solid #e2e8f0 !important;
@@ -784,104 +783,37 @@ st.markdown("""
         direction: rtl !important;
     }
 
-    /* استایل دکمه‌های مخفی منو حرکتی */
-    .nav-submit-btn {
-        background: none !important;
-        border: none !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        cursor: pointer !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        flex: 1 !important;
-        height: 100% !important;
-        text-decoration: none !important;
-        font-family: 'iranyekan', Tahoma, sans-serif !important;
-    }
-
-    .nav-tab-icon {
-        font-size: 20px !important;
-        margin-bottom: 2px !important;
-        color: #94a3b8 !important;
-        transition: color 0.15s ease !important;
-    }
-
-    .nav-tab-label {
-        font-size: 10px !important;
-        font-weight: 700 !important;
-        color: #94a3b8 !important;
-        transition: color 0.15s ease !important;
-    }
-
-    /* استایل تب فعال (نارنجی برند تاپسان) */
-    .active-tab .nav-tab-icon,
-    .active-tab .nav-tab-label {
-        color: #ea580c !important;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# تعریف مشخصات تب‌ها
-tab_list = [
-    ("dashboard", "📊", "داشبورد"),
-    ("invoice", "🧾", "پیش‌فاکتور"),
-    ("warranty", "🛡️", "گارانتی"),
-    ("services", "🛠️", "خدمات"),
-    ("info", "📚", "اطلاعات"),
-    ("profile", "👤", "پروفایل")
-]
-
-# ایجاد ساختار منوی پایدار افقی با استفاده از یک فرم مخفی فرمت‌دهی شده
-with st.container():
-    # باز کردن کانتینر HTML منو
-    html_menu = '<div class="fixed-bottom-nav">'
-    st.markdown(html_menu, unsafe_allow_html=True)
-    
-    # رندر کردن تک تک آیتم‌ها به صورت افقی (موبایل و دسکتاپ یکسان)
-    cols = st.columns(6)
-    for i, (tab_id, icon, label) in enumerate(tab_list):
-        with cols[i]:
-            is_active = st.session_state.active_tab == tab_id
-            active_class = "active-tab" if is_active else ""
-            
-            # ایجاد ظاهر شیک دکمه داخلی
-            button_content = f"""
-            <div class="{active_class}" style="text-align: center; display: flex; flex-direction: column; align-items: center;">
-                <span class="nav-tab-icon">{icon}</span>
-                <span class="nav-tab-label">{label}</span>
-            </div>
-            """
-            
-            # اجرای دکمه نیتیو استریم‌لیت با ظاهر کاستومایز شده فوق‌العاده ظریف
-            if st.button(button_content, key=f"nav_btn_{tab_id}", use_container_width=True, html=True):
-                st.session_state.active_tab = tab_id
-                st.query_params["nav_tab"] = tab_id
-                st.rerun()
-
-    # بستن کانتینر HTML
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# مخفی‌سازی کامل دکمه‌های پیش‌فرض استریم‌لیت و تبدیل آن‌ها به المان‌های نامرئی روی کانتینر افقی ما
-st.markdown("""
-<style>
+    /* استایل‌دهی به دکمه‌های پیش‌فرض استریم‌لیت برای هماهنگی با طرح طراح */
     div[data-testid="stButton"] button {
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
-        padding: 0 !important;
+        color: #94a3b8 !important; /* رنگ پیش‌فرض خاکستری */
+        font-size: 11px !important;
+        font-weight: 700 !important;
         height: 65px !important;
-        margin: 0 auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        white-space: pre-line !important; /* پشتیبانی از شکستن خط (\n) برای قرارگیری متن زیر آیکون */
+        line-height: 1.4 !important;
+        transition: all 0.15s ease !important;
     }
+
+    /* افکت هاور ظریف دکمه‌ها */
     div[data-testid="stButton"] button:hover {
         background: rgba(234, 88, 12, 0.05) !important;
         border-radius: 12px !important;
+        color: #ea580c !important;
     }
-    div[data-testid="stButton"] p {
-        display: none !important; /* حذف متن پیش‌فرض دکمه برای جلوگیری از تداخل */
+
+    /* استایل اختصاصی برای دکمه‌ی تب فعال (نارنجی برند تاپسان) */
+    div.active-nav-container button {
+        color: #ea580c !important;
     }
-    /* حذف مارجین‌های گرید پیش‌فرض استریم‌لیت در موبایل جهت فیکس ماندن کل ردیف */
+
+    /* جلوگیری از شکستن ردیف st.columns در موبایل زیر ۷۶۸ پیکسل */
     div[data-testid="stHorizontalBlock"] {
         display: flex !important;
         flex-direction: row !important;
@@ -897,3 +829,37 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+
+# تعریف مشخصات تب‌ها
+tab_list = [
+    ("dashboard", "📊", "داشبورد"),
+    ("invoice", "🧾", "پیش‌فاکتور"),
+    ("warranty", "🛡️", "گارانتی"),
+    ("services", "🛠️", "خدمات"),
+    ("info", "📚", "اطلاعات"),
+    ("profile", "👤", "پروفایل")
+]
+
+# ایجاد کانتینر پیش‌زمینه سفید منو
+st.markdown('<div class="fixed-bottom-nav"></div>', unsafe_allow_html=True)
+
+# رندر دکمه‌ها داخل گرید بدون شکستن خط در موبایل
+cols = st.columns(6)
+for i, (tab_id, icon, label) in enumerate(tab_list):
+    with cols[i]:
+        is_active = st.session_state.active_tab == tab_id
+        
+        # با کمک یک wrapper سفارشی دکمه فعال را رنگی می‌کنیم
+        if is_active:
+            st.markdown('<div class="active-nav-container">', unsafe_allow_html=True)
+            
+        # با کاراکتر \n آیکون بالا و متن پایین قرار می‌گیرد (کاملاً استاندارد و بدون نیاز به html=True)
+        button_text = f"{icon}\n{label}"
+        
+        if st.button(button_text, key=f"nav_btn_{tab_id}", use_container_width=True):
+            st.session_state.active_tab = tab_id
+            st.query_params["nav_tab"] = tab_id
+            st.rerun()
+            
+        if is_active:
+            st.markdown('</div>', unsafe_allow_html=True)
