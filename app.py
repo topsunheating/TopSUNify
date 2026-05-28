@@ -764,10 +764,10 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری نهایی: حذف ستون‌های استریم‌لیت و استفاده از HTML خالص برای چیدمان افقی
+# کد اصلاح شده برای رندر صحیح (حتما unsafe_allow_html=True را داشته باشد)
 # ==============================================================================
 
-# تزریق CSS بهینه
+# 1. تعریف استایل‌ها
 st.markdown("""
 <style>
     .nav-bar-container {
@@ -779,32 +779,27 @@ st.markdown("""
         background-color: white;
         border-top: 1px solid #e2e8f0;
         display: flex !important;
-        flex-direction: row-reverse !important; /* راست‌چین برای فارسی */
+        flex-direction: row-reverse !important;
         justify-content: space-around !important;
         align-items: center !important;
         z-index: 999999;
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-        padding: 5px 0;
     }
     .nav-button {
-        background: none !important;
-        border: none !important;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         color: #64748b !important;
-        font-family: 'iranyekan', sans-serif !important;
-        font-size: 10px !important;
         text-decoration: none !important;
-        cursor: pointer;
+        font-size: 10px !important;
+        flex: 1;
     }
-    .nav-button:hover { color: #ea580c !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# تعریف تب‌ها
-tabs_list = [
+# 2. تولید HTML و رندر کردن آن در یک مرحله
+nav_html = '<div class="nav-bar-container">'
+tabs = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
     ("warranty", "🛡️", "گارانتی"),
@@ -813,10 +808,7 @@ tabs_list = [
     ("profile", "👤", "پروفایل")
 ]
 
-# رندر مستقیم HTML بدون استفاده از st.columns
-nav_html = '<div class="nav-bar-container">'
-for tab_id, icon, label in tabs_list:
-    # استفاده از لینک برای جابجایی تب (سریع‌تر و بدون ظاهر دکمه استریم‌لیت)
+for tab_id, icon, label in tabs:
     nav_html += f'''
     <a href="?nav_tab={tab_id}" target="_self" class="nav-button">
         <div style="font-size: 20px;">{icon}</div>
@@ -825,8 +817,5 @@ for tab_id, icon, label in tabs_list:
     '''
 nav_html += '</div>'
 
+# این دستور کلید حل مشکل شماست:
 st.markdown(nav_html, unsafe_allow_html=True)
-
-# مدیریت تغییر تب از طریق Query Parameters
-if "nav_tab" in st.query_params:
-    st.session_state.active_tab = st.query_params["nav_tab"]
