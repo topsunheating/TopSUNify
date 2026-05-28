@@ -327,12 +327,12 @@ with nav_col4:
     if st.button("👤\nپروفایل", use_container_width=True, key="nav_prof"):
         change_tab("profile")
 
-# استایل CSS برای چسباندن این دکمه‌ها به پایین صفحه
-# این بخش را جایگزین کد استایل قبلی در انتهای فایل app.py کنید
-st.markdown("""
-# این کد را در انتهای فایل app.py قرار دهید
+# --- پاکسازی فضای خالی پایین صفحه ---
+st.markdown('<div style="height: 100px;"></div>', unsafe_allow_html=True)
+
+# --- استایل CSS برای ناوبری ---
 css = """
-    <style>
+<style>
     .mobile-nav {
         position: fixed;
         bottom: 0;
@@ -353,6 +353,17 @@ css = """
         font-size: 11px;
     }
     .nav-item.active { color: #ea580c; }
-    </style>
-    """
-    st.markdown(css, unsafe_allow_html=True)
+</style>
+"""
+st.markdown(css, unsafe_allow_html=True)
+
+# --- ایجاد دکمه‌های ناوبری ---
+nav_html = f"""
+<div class="mobile-nav">
+    <a href="?nav_tab=dashboard" target="_self" class="nav-item {'active' if st.session_state.active_tab == 'dashboard' else ''}">📊<br>داشبورد</a>
+    <a href="?nav_tab=invoice" target="_self" class="nav-item {'active' if st.session_state.active_tab == 'invoice' else ''}">🧾<br>فاکتور</a>
+    <a href="?nav_tab=info" target="_self" class="nav-item {'active' if st.session_state.active_tab == 'info' else ''}">📚<br>تاپسان</a>
+    <a href="?nav_tab=profile" target="_self" class="nav-item {'active' if st.session_state.active_tab == 'profile' else ''}">👤<br>پروفایل</a>
+</div>
+"""
+st.markdown(nav_html, unsafe_allow_html=True)
