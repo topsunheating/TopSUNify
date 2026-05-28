@@ -769,64 +769,80 @@ elif st.session_state.active_tab == "profile":
 
 import streamlit as st
 
-# =========================
+# =====================================
 # Session State
-# =========================
+# =====================================
 if "active_tab" not in st.session_state:
     st.session_state.active_tab = "dashboard"
 
-# =========================
+# =====================================
+# Tab Change
+# =====================================
+query_params = st.query_params
+
+if "tab" in query_params:
+    st.session_state.active_tab = query_params["tab"]
+
+# =====================================
 # CSS
-# =========================
+# =====================================
 st.markdown("""
 <style>
 
-.bottom-nav-container {
+.bottom-nav {
     position: fixed;
     bottom: 0;
     left: 0;
 
     width: 100%;
-    height: 85px;
+    height: 78px;
 
     background: white;
     border-top: 1px solid #e2e8f0;
 
-    z-index: 999999;
+    display: flex;
+    flex-direction: row !important;
 
-    padding: 8px 10px 12px 10px;
+    justify-content: space-around;
+    align-items: center;
+
+    z-index: 999999;
 }
 
-.stButton > button {
-    width: 100%;
-    height: 65px;
+.bottom-nav a {
+    flex: 1;
 
-    border: none !important;
-    background: transparent !important;
+    display: flex !important;
+    flex-direction: column !important;
 
-    font-size: 14px !important;
-    font-weight: 700 !important;
+    align-items: center;
+    justify-content: center;
+
+    text-decoration: none !important;
 
     color: #64748b !important;
 
-    border-radius: 16px !important;
+    font-size: 11px;
+    font-weight: 700;
+
+    height: 100%;
 }
 
-.stButton > button:hover {
-    background: #f8fafc !important;
+.bottom-nav a.active {
     color: #ea580c !important;
 }
 
-.active-tab {
-    color: #ea580c !important;
+.bottom-nav .icon {
+    font-size: 26px;
+    margin-bottom: 3px;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# =========================
+# =====================================
 # Page Content
-# =========================
+# =====================================
 tab = st.session_state.active_tab
 
 if tab == "dashboard":
@@ -842,28 +858,37 @@ elif tab == "profile":
     st.write("محتوای پروفایل")
 
 # فاصله پایین
-st.markdown("<div style='height:100px'></div>", unsafe_allow_html=True)
+st.markdown("<div style='height:90px'></div>", unsafe_allow_html=True)
 
-# =========================
-# Bottom Navigation
-# =========================
-st.markdown('<div class="bottom-nav-container">', unsafe_allow_html=True)
+# =====================================
+# Active Classes
+# =====================================
+dashboard_active = "active" if tab == "dashboard" else ""
+invoice_active = "active" if tab == "invoice" else ""
+profile_active = "active" if tab == "profile" else ""
 
-col1, col2, col3 = st.columns(3)
+# =====================================
+# Navbar HTML
+# =====================================
+nav_html = f"""
+<div class="bottom-nav">
 
-with col1:
-    if st.button("📊\nداشبورد", key="dashboard_btn"):
-        st.session_state.active_tab = "dashboard"
-        st.rerun()
+    <a href="?tab=dashboard" class="{dashboard_active}">
+        <div class="icon">📊</div>
+        <div>داشبورد</div>
+    </a>
 
-with col2:
-    if st.button("🧾\nپیش‌فاکتور", key="invoice_btn"):
-        st.session_state.active_tab = "invoice"
-        st.rerun()
+    <a href="?tab=invoice" class="{invoice_active}">
+        <div class="icon">🧾</div>
+        <div>پیش‌فاکتور</div>
+    </a>
 
-with col3:
-    if st.button("👤\nپروفایل", key="profile_btn"):
-        st.session_state.active_tab = "profile"
-        st.rerun()
+    <a href="?tab=profile" class="{profile_active}">
+        <div class="icon">👤</div>
+        <div>پروفایل</div>
+    </a>
 
-st.markdown('</div>', unsafe_allow_html=True)
+</div>
+"""
+
+st.components.v1.html(nav_html, height=80)
