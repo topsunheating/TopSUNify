@@ -33,6 +33,7 @@ from Financial import calculate_tosunify_proforma, generate_proforma_pdf
 
 def inject_custom_css():
 
+```
 font_path = "iranyekan.ttf"
 font_base64 = ""
 
@@ -228,8 +229,10 @@ html, body, [class*="css"], * {{
 """
 
 st.markdown(css, unsafe_allow_html=True)
+```
 
 inject_custom_css()
+
 
 # ====================== ۴. هدر بالایی اختصاصی (فقط لوگوی تصویری بدون متن) ======================
 header_logo_html = ""
