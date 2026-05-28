@@ -8,12 +8,15 @@ st.set_page_config(
 )
 
 # ====================== ۱. اضافه کردن ماژول احراز هویت ======================
-import auth
+import streamlit as st
 
+# مدیریت صحیح Stateها
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
+# چک کردن لاگین قبل از هر ایمپورت سنگین
 if not st.session_state.logged_in:
+    import auth
     auth.render_auth_page()
     st.stop()
 
