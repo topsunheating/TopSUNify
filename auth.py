@@ -86,9 +86,6 @@ def render_auth_page():
         box-sizing: border-box !important;
     }}
 
-    /* =======================================================
-       تنظیم جدید: بردن کل فرم به بالاتر (تغییر top از 45% به 38%)
-       ======================================================= */
     .fixed-auth-card {{
         position: fixed !important;
         top: 38% !important; 
@@ -188,12 +185,9 @@ def render_auth_page():
         color: #000000 !important;
     }}
    
-    /* =======================================================
-       تنظیم جدید: نزدیک‌تر کردن لینک فراموشی رمز به دکمه ورود
-       ======================================================= */
     .forgot-link {{
         text-align: center !important;
-        margin-top: 14px !important; /* کاهش فاصله از ۲۵ پیکسل به ۱۴ پیکسل */
+        margin-top: 14px !important; 
         width: 100% !important;
     }}
     .forgot-link a {{
@@ -204,27 +198,33 @@ def render_auth_page():
     }}
 
     /* =======================================================
-       استایل جدید: بخش Powered by و آیکون سازنده سیستم
+       اصلاحیه دیزاین اختصاصی: چپ‌نویس، فونت ظریف و تراز موبایلی
        ======================================================= */
     .powered-by-container {{
-        text-align: center !important;
-        margin-top: 40px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important; /* چپ‌چین کردن کل کانتینر لایه */
+        justify-content: center !important;
+        margin-top: 45px !important;
         width: 100% !important;
-        direction: ltr !important; /* چپ‌چین بودن متن انگلیسی */
+        padding-left: 2px !important; /* یک تراز جزیی با حاشیه فرم */
     }}
     .powered-text {{
-        font-size: 12px !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+        font-size: 11px !important;
         color: #94a3b8 !important;
         font-weight: 500 !important;
-        margin: 0 0 6px 0 !important;
-        letter-spacing: 0.5px !important;
+        margin: 0 0 4px 0 !important;
+        text-transform: lowercase !important; /* استایل تماماً کوچک و مینیمال */
+        letter-spacing: 0.3px !important;
+        direction: ltr !important;
+        text-align: left !important;
     }}
     .powered-logo {{
-        max-width: 65px !important; /* سایز متناسب برای آیکون سازنده */
+        max-width: 60px !important; 
         height: auto !important;
         display: block !important;
-        margin: 0 auto !important;
-        opacity: 0.8 !important;
+        opacity: 0.75 !important;
     }}
 
     /* =======================================================
@@ -364,7 +364,7 @@ def render_auth_page():
             </div>
 
             <div class="powered-by-container">
-                <p class="powered-text">Powered by</p>
+                <p class="powered-text">powered by</p>
                 {pdf_logo_html}
             </div>
         </form>
