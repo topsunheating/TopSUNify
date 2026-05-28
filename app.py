@@ -764,53 +764,49 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری نهایی: منوی پایین (افقی، فیکس، ریسپانسیو)
+# ناوبری نهایی: منوی پایین (نسخه رندر شونده)
 # ==============================================================================
 
+# ۱. تعریف استایل‌ها
 st.markdown("""
 <style>
-    /* کانتینر اصلی منو با اولویت بالا */
-    .fixed-bottom-nav {
+    .force-bottom-nav {
         position: fixed !important;
         bottom: 0 !important;
         left: 0 !important;
         width: 100% !important;
         height: 70px !important;
-        background-color: white !important;
+        background-color: #ffffff !important;
         display: flex !important;
-        flex-direction: row !important; /* چیدمان افقی اجباری */
+        flex-direction: row !important;
         justify-content: space-around !important;
         align-items: center !important;
         border-top: 1px solid #e2e8f0 !important;
         z-index: 999999 !important;
         margin: 0 !important;
         padding: 0 !important;
-        direction: ltr !important; /* خنثی‌سازی rtl عمومی برای افقی شدن */
+        direction: ltr !important;
     }
-    
     .nav-item-forced {
         display: flex !important;
-        flex-direction: column !important; /* آیکون و متن عمودی روی هم */
+        flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
         text-decoration: none !important;
         color: #94a3b8 !important;
-        font-family: 'iranyekan', sans-serif !important;
+        font-family: sans-serif !important;
         font-size: 10px !important;
-        font-weight: 700 !important;
         flex: 1 !important;
         height: 100% !important;
-        transition: color 0.2s !important;
-    }
-
-    .nav-item-forced:hover {
-        color: #ea580c !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# تعریف داده‌های تب‌ها (ترتیب دلخواه شما)
-nav_tabs = [
+# ۲. ایجاد منو
+nav_html = '<div class="force-bottom-nav">'
+
+# لیست تب‌ها
+tabs = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
     ("warranty", "🛡️", "گارانتی"),
@@ -819,17 +815,18 @@ nav_tabs = [
     ("profile", "👤", "پروفایل")
 ]
 
-# ساخت و نمایش نوار
-nav_html = '<div class="fixed-bottom-nav">'
-for tab_id, icon, label in nav_tabs:
-    # تعیین رنگ نارنجی برای تب فعال
-    active_color = "color: #ea580c !important;" if st.session_state.active_tab == tab_id else ""
+for tab_id, icon, label in tabs:
+    # تعیین رنگ برای تب فعال
+    active_style = "color: #ea580c !important;" if st.session_state.active_tab == tab_id else ""
+    
     nav_html += f'''
-    <a href="?nav_tab={tab_id}" target="_self" class="nav-item-forced" style="{active_color}">
-        <div style="font-size: 20px; margin-bottom: 2px;">{icon}</div>
-        <div>{label}</div>
+    <a href="?nav_tab={tab_id}" target="_self" class="nav-item-forced" style="{active_style}">
+        <div style="font-size: 20px;">{icon}</div>
+        <div style="font-weight: bold;">{label}</div>
     </a>
     '''
+
 nav_html += '</div>'
 
+# ۳. رندر نهایی
 st.markdown(nav_html, unsafe_allow_html=True)
