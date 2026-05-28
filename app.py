@@ -1,34 +1,31 @@
-# ==============================================================================
-# TopSUNify - FINAL STABLE VERSION
-# ==============================================================================
-
 import streamlit as st
 
-# ==============================================================================
-# PAGE CONFIG
-# ==============================================================================
-
+# ۱. تنظیمات صفحه (همیشه خط اول)
 st.set_page_config(
     page_title="TopSUNify",
     page_icon="./topsunify.png",
     layout="wide"
 )
-# استفاده از get برای جلوگیری از خطای AttributeError
-st.write("Current Session State:", st.session_state.get("logged_in", "NOT_FOUND"))
-# ==============================================================================
-# AUTH
-# ==============================================================================
 
-import auth
-
+# ۲. مقداردهی اولیه سشن (قبل از هر چیز دیگری)
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
+if "active_tab" not in st.session_state:
+    st.session_state.active_tab = "dashboard"
+
+# ۳. حالا که مقداردهی شد، می‌توانید وضعیت را چک کنید (دیباگ)
+# st.write("Current Session State:", st.session_state.logged_in) 
+
+# ۴. ایمپورت کردن ماژول احراز هویت
+import auth
+
+# ۵. چک کردن وضعیت ورود
 if not st.session_state.logged_in:
     auth.render_auth_page()
-    st.stop()
+    st.stop() # اگر لاگین نیست، اینجا متوقف می‌شود
 
-# 🛑 اینجاست! دقیقاً بعد از بلاک بالا، کد جدید را وارد کنید:
+# ۶. مدیریت تب‌ها (فقط اگر لاگین بود، این بخش اجرا می‌شود)
 query_params = st.query_params
 if "nav_tab" in query_params:
     st.session_state.active_tab = query_params["nav_tab"]
