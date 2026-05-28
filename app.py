@@ -756,16 +756,11 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه پایدار
-# ==============================================================================
-
-# ==============================================================================
-# ناوبری نهایی: منوی پایین شبیه اپلیکیشن‌های بانکی (با آیکون‌های دایره‌ای)
+# ناوبری نهایی: منوی پایین (نسخه اصلاح شده برای رفع خطا)
 # ==============================================================================
 
 st.markdown("""
 <style>
-    /* کانتینر اصلی منو */
     .mobile-menu-container {
         position: fixed !important;
         bottom: 0 !important;
@@ -783,13 +778,11 @@ st.markdown("""
         border-top: 1px solid #f1f5f9 !important;
         padding: 0 10px !important;
     }
-
-    /* دایره آیکون (مشابه عکس بانک) */
     .icon-circle-box {
         width: 48px !important;
         height: 48px !important;
-        background-color: #f8fafc !important; /* طوسی بسیار روشن */
-        border-radius: 16px !important; /* انحنای مدرن */
+        background-color: #f8fafc !important;
+        border-radius: 16px !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -797,18 +790,20 @@ st.markdown("""
         margin-bottom: 4px !important;
         transition: 0.3s !important;
     }
-
-    /* رنگ نارنجی برای آیکون فعال */
     .active-tab .icon-circle-box {
         background-color: #ea580c !important;
         color: white !important;
     }
-    
     .active-tab { color: #ea580c !important; font-weight: 800 !important; }
+    div[data-testid="stButton"] button {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        width: 100% !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# رندر کردن منو با استفاده از html
 st.markdown('<div class="mobile-menu-container">', unsafe_allow_html=True)
 
 tabs = [
@@ -821,24 +816,9 @@ tabs = [
 
 for tab_id, icon, label in tabs:
     active_class = "active-tab" if st.session_state.active_tab == tab_id else ""
-    
-    # ساخت دکمه برای هر آیتم
+    # دکمه با ظاهر کاستوم
     if st.button(f'<div class="icon-circle-box">{icon}</div><div style="font-size:10px;">{label}</div>', key=f"nav_{tab_id}"):
         st.session_state.active_tab = tab_id
         st.rerun()
 
 st.markdown('</div>', unsafe_allow_html=True)
-
-# تنظیمات اضافه برای حذف حاشیه‌های دکمه پیش‌فرض استریم‌لیت
-st.markdown("""
-<style>
-    div[data-testid="stButton"] button {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        width: 100% !important;
-    }
-</style>
-""", unsafe_allow_html=True)
-</style>
-""", unsafe_allow_html=True)
