@@ -764,27 +764,17 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری نهایی: منوی یکپارچه (تولید شده در یک دستور واحد برای جلوگیری از خطای متنی)
+# ناوبری نهایی: منوی افقی (اصلاح شده)
 # ==============================================================================
-
-nav_items = [
-    ("dashboard", "📊", "داشبورد"),
-    ("invoice", "🧾", "پیش‌فاکتور"),
-    ("warranty", "🛡️", "گارانتی"),
-    ("services", "🛠️", "خدمات"),
-    ("info", "📚", "اطلاعات"),
-    ("profile", "👤", "پروفایل")
-]
-
-# ساختن کل HTML در یک متغیر واحد
-nav_html = """
+st.markdown("""
 <style>
+    /* ظرف اصلی منو */
     .fixed-bottom-nav-v2 {
         position: fixed !important;
         bottom: 0 !important;
         left: 0 !important;
         width: 100% !important;
-        height: 70px !important;
+        height: 72px !important;
         background-color: #ffffff !important;
         display: flex !important;
         flex-direction: row !important;
@@ -792,8 +782,10 @@ nav_html = """
         align-items: center !important;
         border-top: 1px solid #e2e8f0 !important;
         z-index: 999999 !important;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.08) !important;
         direction: ltr !important;
     }
+   
     .nav-tab-link {
         display: flex !important;
         flex-direction: column !important;
@@ -803,24 +795,43 @@ nav_html = """
         color: #94a3b8 !important;
         font-size: 10px !important;
         font-weight: bold !important;
-        flex: 1 !important;
+        flex: 1 !important;           /* این خیلی مهمه */
+        min-width: 0 !important;
         height: 100% !important;
+        padding: 4px 0 !important;
     }
-    .active-link { color: #ea580c !important; }
+   
+    .nav-tab-link.active-link {
+        color: #ea580c !important;
+    }
+
+    /* جلوگیری از شکستن خط */
+    .fixed-bottom-nav-v2 a {
+        flex-shrink: 0 !important;
+    }
 </style>
-<div class="fixed-bottom-nav-v2">
-"""
+""", unsafe_allow_html=True)
+
+# تعریف داده‌ها
+nav_items = [
+    ("dashboard", "📊", "داشبورد"),
+    ("invoice", "🧾", "پیش‌فاکتور"),
+    ("warranty", "🛡️", "گارانتی"),
+    ("services", "🛠️", "خدمات"),
+    ("info", "📚", "اطلاعات"),
+    ("profile", "👤", "پروفایل")
+]
+
+# رندر کردن نوار
+st.markdown('<div class="fixed-bottom-nav-v2">', unsafe_allow_html=True)
 
 for tab_id, icon, label in nav_items:
-    active_class = "active-link" if st.session_state.active_tab == tab_id else ""
-    nav_html += f'''
-    <a href="?nav_tab={tab_id}" target="_self" class="nav-tab-link {active_class}">
-        <div style="font-size: 20px;">{icon}</div>
-        <div style="font-family: 'iranyekan', sans-serif !important;">{label}</div>
-    </a>
-    '''
+    active_class = "active-link" if st.session_state.get("active_tab", "dashboard") == tab_id else ""
+    st.markdown(f"""
+        <a href="?nav_tab={tab_id}" target="_self" class="nav-tab-link {active_class}">
+            <div style="font-size: 21px; margin-bottom: 3px;">{icon}</div>
+            <div style="font-family: 'iranyekan', sans-serif !important; line-height:1;">{label}</div>
+        </a>
+    """, unsafe_allow_html=True)
 
-nav_html += "</div>"
-
-# رندر کردن کل منو در یک مرحله
-st.markdown(nav_html, unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
