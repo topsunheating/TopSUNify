@@ -770,18 +770,10 @@ elif st.session_state.active_tab == "profile":
 import streamlit as st
 
 # =========================
-# Active Tab
+# Session State
 # =========================
 if "active_tab" not in st.session_state:
     st.session_state.active_tab = "dashboard"
-
-# =========================
-# Query Params
-# =========================
-params = st.query_params
-
-if "nav_tab" in params:
-    st.session_state.active_tab = params["nav_tab"]
 
 # =========================
 # CSS
@@ -789,47 +781,44 @@ if "nav_tab" in params:
 st.markdown("""
 <style>
 
-.custom-nav {
+.bottom-nav-container {
     position: fixed;
     bottom: 0;
     left: 0;
 
     width: 100%;
-    height: 80px;
+    height: 85px;
 
     background: white;
-    border-top: 1px solid #ddd;
-
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
+    border-top: 1px solid #e2e8f0;
 
     z-index: 999999;
+
+    padding: 8px 10px 12px 10px;
 }
 
-.custom-nav a {
-    text-decoration: none !important;
+.stButton > button {
+    width: 100%;
+    height: 65px;
+
+    border: none !important;
+    background: transparent !important;
+
+    font-size: 14px !important;
+    font-weight: 700 !important;
+
     color: #64748b !important;
 
-    display: flex;
-    flex-direction: column;
-
-    align-items: center;
-    justify-content: center;
-
-    flex: 1;
-
-    font-size: 12px;
-    font-weight: 700;
+    border-radius: 16px !important;
 }
 
-.custom-nav a.active {
+.stButton > button:hover {
+    background: #f8fafc !important;
     color: #ea580c !important;
 }
 
-.icon {
-    font-size: 26px;
-    margin-bottom: 4px;
+.active-tab {
+    color: #ea580c !important;
 }
 
 </style>
@@ -842,39 +831,39 @@ tab = st.session_state.active_tab
 
 if tab == "dashboard":
     st.title("📊 داشبورد")
+    st.write("محتوای داشبورد")
 
 elif tab == "invoice":
     st.title("🧾 پیش‌فاکتور")
+    st.write("محتوای پیش‌فاکتور")
 
 elif tab == "profile":
     st.title("👤 پروفایل")
+    st.write("محتوای پروفایل")
+
+# فاصله پایین
+st.markdown("<div style='height:100px'></div>", unsafe_allow_html=True)
 
 # =========================
-# Bottom Navbar
+# Bottom Navigation
 # =========================
-dashboard_active = "active" if tab == "dashboard" else ""
-invoice_active = "active" if tab == "invoice" else ""
-profile_active = "active" if tab == "profile" else ""
+st.markdown('<div class="bottom-nav-container">', unsafe_allow_html=True)
 
-nav_html = f"""
-<div class="custom-nav">
+col1, col2, col3 = st.columns(3)
 
-    <a href="?nav_tab=dashboard" class="{dashboard_active}">
-        <div class="icon">📊</div>
-        <div>داشبورد</div>
-    </a>
+with col1:
+    if st.button("📊\nداشبورد", key="dashboard_btn"):
+        st.session_state.active_tab = "dashboard"
+        st.rerun()
 
-    <a href="?nav_tab=invoice" class="{invoice_active}">
-        <div class="icon">🧾</div>
-        <div>پیش‌فاکتور</div>
-    </a>
+with col2:
+    if st.button("🧾\nپیش‌فاکتور", key="invoice_btn"):
+        st.session_state.active_tab = "invoice"
+        st.rerun()
 
-    <a href="?nav_tab=profile" class="{profile_active}">
-        <div class="icon">👤</div>
-        <div>پروفایل</div>
-    </a>
+with col3:
+    if st.button("👤\nپروفایل", key="profile_btn"):
+        st.session_state.active_tab = "profile"
+        st.rerun()
 
-</div>
-"""
-
-st.markdown(nav_html, unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
