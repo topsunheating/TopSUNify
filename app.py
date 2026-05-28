@@ -764,76 +764,71 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری نهایی: منوی پایین (آیکون بالا، متن پایین، چیدمان ردیفی)
+# ناوبری پایین: ظاهر یکپارچه و فیکس (مشابه اپلیکیشن‌های بانکی)
 # ==============================================================================
 
+# تزریق CSS برای حذف فواصل استریم‌لیت و ساخت نوار یکپارچه
 st.markdown("""
 <style>
-    /* ظرف اصلی منو در پایین صفحه */
-    .bottom-nav-container {
+    /* پاکسازی کامل استریم‌لیت در منطقه ناوبری */
+    .stApp { padding-bottom: 80px; }
+    
+    .nav-bar-wrapper {
         position: fixed;
         bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
+        left: 0;
         width: 100%;
-        max-width: 550px;
-        background-color: #ffffff;
+        height: 70px;
+        background-color: white;
+        border-top: 1px solid #e2e8f0;
         display: flex;
+        flex-direction: row-reverse; /* برای چیدمان راست‌چین */
         justify-content: space-around;
         align-items: center;
-        padding: 8px 0;
-        border-top: 1px solid #e2e8f0;
+        z-index: 999999;
         box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-        z-index: 9999;
     }
     
-    /* استایل دکمه‌های ناوبری */
-    .nav-btn-custom {
+    .nav-item-button {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        text-decoration: none;
+        width: 100%;
+        height: 100%;
+        border: none !important;
+        background: transparent !important;
         color: #64748b !important;
+        font-family: 'iranyekan', sans-serif !important;
         font-size: 10px !important;
         font-weight: 700 !important;
-        background: none !important;
-        border: none !important;
+        padding: 0 !important;
         cursor: pointer;
-        transition: color 0.2s;
     }
     
-    .nav-btn-custom:hover {
-        color: #ea580c !important; /* رنگ سازمانی تاپسان */
-    }
-    
-    .nav-icon {
-        font-size: 20px !important;
-        margin-bottom: 2px !important;
-    }
+    .nav-item-button:hover { color: #ea580c !important; }
 </style>
 """, unsafe_allow_html=True)
 
 # تعریف تب‌ها
-nav_items = [
-    ("profile", "👤", "پروفایل"),
-    ("info", "📚", "اطلاعات"),
-    ("services", "🛠️", "خدمات"),
-    ("warranty", "🛡️", "گارانتی"),
+tabs_list = [
+    ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
-    ("dashboard", "📊", "داشبورد")
+    ("warranty", "🛡️", "گارانتی"),
+    ("services", "🛠️", "خدمات"),
+    ("info", "📚", "اطلاعات"),
+    ("profile", "👤", "پروفایل")
 ]
 
-# ایجاد ردیف دکمه‌ها
-st.markdown('<div class="bottom-nav-container">', unsafe_allow_html=True)
+# ایجاد کانتینر منو
+st.markdown('<div class="nav-bar-wrapper">', unsafe_allow_html=True)
 
-# استفاده از ستون‌ها برای چیدمان صحیح آیکون‌ها
+# استفاده از ستون‌ها برای جای‌گذاری دکمه‌ها در یک ردیف
 cols = st.columns(6)
-
-for i, (tab_id, icon, label) in enumerate(nav_items):
+for i, (tab_id, icon, label) in enumerate(tabs_list):
     with cols[i]:
-        # دکمه با ظاهر سفارشی
-        if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}"):
+        # استایل دکمه را در قالب یک دکمه استریم‌لیت اما با کلاس سفارشی اعمال می‌کنیم
+        if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}", help=label):
             st.session_state.active_tab = tab_id
             st.rerun()
 
