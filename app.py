@@ -756,13 +756,13 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه ۱۰۰٪ افقی و ضد شکستگی
+# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه ۱۰۰٪ متوازن و افقی
 # ==============================================================================
 
-# تزریق استایل‌های سی‌اس‌اس فوق‌پایدار برای شکستن ساختار عمودی استریم‌لیت در موبایل
+# تزریق استایل‌های سی‌اس‌اس فوق‌پایدار برای پخش شدن مساوی تب‌ها در کل عرض صفحه
 st.markdown("""
 <style>
-    /* کانتینر اصلی منوی پایین جهت ایجاد پس‌زمینه سفید منسجم */
+    /* ۱. کانتینر پیش‌زمینه سفید منو */
     .fixed-bottom-nav {
         position: fixed !important;
         bottom: 0 !important;
@@ -777,72 +777,73 @@ st.markdown("""
         border-top: 1px solid #e2e8f0 !important;
     }
 
-    /* 🚨 خط زدن رفتار پیش‌فرض استریم‌لیت: اجبار کانتینر ستون‌ها به افقی ماندن در موبایل */
+    /* ۲. اجبار بلاک اصلی ستون‌های استریم‌لیت به پر کردن ۱۰۰٪ عرض و چیدمان افقی */
     div[data-testid="stHorizontalBlock"] {
         display: flex !important;
-        flex-direction: row !important; /* جلوگیری قطعی از عمودی شدن */
-        flex-wrap: nowrap !important;   /* جلوگیری از شکستن به خط بعد */
+        flex-direction: row !important; 
+        flex-wrap: nowrap !important;   
         width: 100% !important;
+        max-width: 550px !important; /* هم‌اندازه با کانتینر اصلی اپلیکیشن شما */
         position: fixed !important;
         bottom: 0 !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
-        max-width: 550px !important;
         z-index: 999999 !important;
         background-color: #ffffff !important;
         padding: 4px 0px !important;
         height: 72px !important;
         align-items: center !important;
-        justify-content: space-around !important;
+        justify-content: space-between !important;
     }
 
-    /* 🚨 اجبار تک‌تک ستون‌ها به داشتن عرض مساوی و قرارگیری در یک ردیف */
+    /* ۳. شلیک به قلب مشکل: اجبار تک تک ستون‌ها به رشد کردن (Flex-Grow) و پر کردن فضا به یک اندازه */
     div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
-        width: calc(100% / 6) !important; /* تقسیم مساوی فضا بین ۶ تب */
-        min-width: calc(100% / 6) !important;
-        flex: 1 1 0% !important;
+        width: 16.66% !important; /* تقسیم دقیق ۱۰۰٪ بر ۶ تب */
+        min-width: 16.66% !important;
+        max-width: 16.66% !important;
+        flex-grow: 1 !important; /* اجبار به پر کردن فضا و جلوگیری از جمع شدن در گوشه */
+        flex-shrink: 0 !important;
         margin: 0 !important;
         padding: 0 !important;
     }
 
-    /* استایل‌دهی داخلی دکمه‌های استریم‌لیت جهت نمایش متون زیر آیکون */
+    /* ۴. استایل‌دهی دکمه‌ها برای وسط‌چین شدن و حذف حاشیه‌های اضافی */
     div[data-testid="stHorizontalBlock"] button {
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
-        color: #94a3b8 !important; /* رنگ پیش‌فرض خاکستری منو */
-        font-size: 10px !important;
+        color: #94a3b8 !important; 
+        font-size: 11px !important;
         font-weight: 700 !important;
         height: 65px !important;
-        width: 100% !important;
+        width: 100% !important; /* دکمه کل عرض یک‌ششم خود را پر کند */
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        white-space: pre-line !important; /* فعال‌سازی شکست خط با \n */
-        line-height: 1.5 !important;
+        white-space: pre-line !important; 
+        line-height: 1.4 !important;
         padding: 0 !important;
         margin: 0 !important;
     }
 
-    /* استایل هاور و تغییر رنگ در صورت قرارگیری ماوس */
+    /* افکت هاور */
     div[data-testid="stHorizontalBlock"] button:hover {
         background: rgba(234, 88, 12, 0.04) !important;
         color: #ea580c !important;
     }
 
-    /* تغییر رنگ متن و آیکون دکمه به رنگ نارنجی سازمانی در صورت فعال بودن تب */
+    /* ۵. استایل رنگ نارنجی سازمانی برای تب فعال */
     div.active-nav-wrapper button {
         color: #ea580c !important;
     }
-    
     div.active-nav-wrapper button p {
         color: #ea580c !important;
     }
 
-    /* رفع تداخل و درهم‌ریختگی با محتوای اصلی برنامه */
+    /* ۶. رفع تداخل محتوا با منوی پایین */
     .main .block-container {
-        padding-bottom: 100px !important; /* ایجاد فضای خالی کافی در انتهای صفحه تا محتوا زیر منو نرود */
+        padding-bottom: 110px !important; 
     }
 </style>
 """, unsafe_allow_html=True)
@@ -857,20 +858,18 @@ tab_list = [
     ("profile", "👤", "پروفایل")
 ]
 
-# ایجاد ردیف دکمه‌های افقی و ناوبری
+# ایجاد ردیف دکمه‌های افقی متوازن
 cols = st.columns(6)
 for i, (tab_id, icon, label) in enumerate(tab_list):
     with cols[i]:
         is_active = st.session_state.active_tab == tab_id
         
-        # اگر تب فعال بود، آن را درون کانتینر کاستوم جهت اعمال استایل رنگ نارنجی قرار می‌دهیم
         if is_active:
             st.markdown('<div class="active-nav-wrapper">', unsafe_allow_html=True)
             
-        # ترکیب آیکون و متن با کاراکتر خط جدید (\n)
         button_text = f"{icon}\n{label}"
         
-        if st.button(button_text, key=f"nav_btn_v3_{tab_id}"):
+        if st.button(button_text, key=f"nav_btn_v4_{tab_id}"):
             st.session_state.active_tab = tab_id
             st.query_params["nav_tab"] = tab_id
             st.rerun()
