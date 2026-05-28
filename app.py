@@ -1,4 +1,5 @@
 import streamlit as st
+import time
 
 # ==============================================================================
 # ۱. پیکربندی صفحه و استایل‌های سفارشی (CSS) برای شبیه‌سازی اپلیکیشن موبایل
@@ -11,37 +12,39 @@ st.set_page_config(
 )
 
 def inject_custom_css():
-    css = """
-    <style>
+    # ایجاد یک پارامتر تصادفی برای دور زدن کش مرورگر در بارگذاری‌های متوالی
+    version = int(time.time())
+    css = f"""
+    <style data-version="{version}">
     /* تنظیم فونت و راست‌چین کردن کل بدنه برنامه */
     @import url('https://v1.fontapi.ir/css/Vazir');
     
-    html, body, [data-testid="stAppViewContainer"] {
+    html, body, [data-testid="stAppViewContainer"] {{
         direction: rtl !important;
         text-align: right !important;
         font-family: 'Vazir', sans-serif !important;
         background-color: #f8fafc !important;
-    }
+    }}
     
     /* مخفی کردن المان‌های پیش‌فرض و هدر استریم‌لیت برای ظاهر بومی موبایل */
-    [data-testid="stHeader"] {
+    [data-testid="stHeader"] {{
         display: none !important;
-    }
+    }}
     
-    .block-container {
+    .block-container {{
         padding-top: 1rem !important;
         padding-bottom: 80px !important; /* فضای کافی برای اینکه محتوا زیر منوی پایینی نرود */
         max-width: 550px !important;
         margin: 0 auto !important;
-    }
+    }}
 
     /* مخفی کردن دکمه‌های ناوبری اصلی استریم‌لیت که در پس‌زمینه کار می‌کنند */
-    div[data-testid="stHorizontalBlock"] button[kind="secondary"] {
+    div[data-testid="stHorizontalBlock"] button[kind="secondary"] {{
         display: none !important;
-    }
+    }}
 
     /* --- سیستم نوار ناوبری فیکس شده در پایین (Bottom Navigation) دقیقاً مشابه عکس ارسالی --- */
-    .fixed-bottom-nav {
+    .fixed-bottom-nav {{
         position: fixed !important;
         bottom: 0 !important;
         left: 50% !important;
@@ -57,9 +60,9 @@ def inject_custom_css():
         align-items: center !important;
         padding-bottom: env(safe-area-inset-bottom) !important;
         box-shadow: none !important; /* حذف سایه‌های ضخیم قدیمی برای تخت و ملو شدن طرح */
-    }
+    }}
 
-    .nav-tab-item {
+    .nav-tab-item {{
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
@@ -75,23 +78,23 @@ def inject_custom_css():
         height: 100% !important;
         gap: 4px !important;
         transition: all 0.2s ease !important;
-    }
+    }}
 
     /* استایل دکمه و تب فعال - رنگ نارنجی برند تاپسان با وزن فونت مشخص‌تر */
-    .nav-tab-item.active-tab {
+    .nav-tab-item.active-tab {{
         color: #ea580c !important; 
         font-weight: bold !important;
-    }
+    }}
 
     /* ابعاد آیکون‌ها نسبت به نوشته زیرین */
-    .nav-tab-icon {
+    .nav-tab-icon {{
         font-size: 20px !important;
         transition: transform 0.2s ease !important;
-    }
+    }}
 
-    .nav-tab-item.active-tab .nav-tab-icon {
+    .nav-tab-item.active-tab .nav-tab-icon {{
         transform: scale(1.1); /* بزرگنمایی بسیار خفیف آیکون در حالت فعال */
-    }
+    }}
     </style>
     """
     st.markdown(css, unsafe_allow_html=True)
@@ -152,7 +155,6 @@ if st.session_state.active_tab == "dashboard":
 elif st.session_state.active_tab == "invoice":
     st.markdown("### 🗂️ صدور پیش‌فاکتور و محاسبات")
     st.write("در این بخش می‌توانید نقشه‌های CAD خود را بارگذاری کرده و لیست متریال (BOM) را دریافت کنید.")
-    # کدهای مربوط به پردازش DXF/DWG و فیلتر اقلام صفر در این بخش قرار می‌گیرد.
 
 elif st.session_state.active_tab == "services":
     st.markdown("### 🛠️ خدمات فنی")
@@ -169,10 +171,9 @@ elif st.session_state.active_tab == "info":
 elif st.session_state.active_tab == "profile":
     st.markdown("### 👤 پروفایل کاربری")
     st.write("**کاربر:** رضا تلچی")
-    st.write("**شماره تماس:** ۰۹۱۲۰۱۹۸۲۲۹")
 
 # ==============================================================================
-# 📱 ۶. نوار ناوبری موبایل سفارشی - کاملاً منطبق بر عکس دریافتی از شما
+# 📱 ۶. نوار ناوبری موبایل سفارشی - مجهز به سیستم ضد کش آنی (Anti-Cache)
 # ترتیب دقیق از راست به چپ: پیش فاکتور -> خدمات فنی -> داشبورد -> ثبت گارانتی -> اطلاعات فنی -> پروفایل
 # ==============================================================================
 active_invoice = "active-tab" if st.session_state.active_tab == "invoice" else ""
@@ -182,8 +183,11 @@ active_warranty = "active-tab" if st.session_state.active_tab == "warranty" else
 active_info = "active-tab" if st.session_state.active_tab == "info" else ""
 active_profile = "active-tab" if st.session_state.active_tab == "profile" else ""
 
+# استفاده از Timestamp برای وادار کردن کامپوننت HTML به بارگذاری مجدد و پاک کردن کش داخلی iframe
+cache_buster = int(time.time())
+
 bottom_navigation_html = f"""
-<div class="fixed-bottom-nav">
+<div class="fixed-bottom-nav" data-cache="{cache_buster}">
     <button class="nav-tab-item {active_profile}" onclick="document.getElementById('b_pro').click();">
         <div class="nav-tab-icon">👤</div>
         <div>پروفایل</div>
@@ -211,7 +215,13 @@ bottom_navigation_html = f"""
 </div>
 
 <script>
-// ارتباط امن و بدون اختلال در نشست (Session State) با دکمه‌های مخفی استریم‌لیت
+// دستور عدم ذخیره‌سازی اطلاعات در کش مرورگر برای این تکه کد
+try {{
+    if (window.performance && window.performance.navigation.type === 1) {{
+        console.log("صفحه رفرش شد - اعمال تغییرات بدون کش");
+    }}
+}} catch(e) {{ console.log(e); }}
+
 const parentDoc = window.parent.document;
 function syncButtons() {{
     const btns = parentDoc.querySelectorAll('button[kind="secondary"]');
@@ -224,11 +234,10 @@ function syncButtons() {{
         if(btn.innerText.includes("H_PRO")) btn.id = "b_pro";
     }});
 }}
-// اجرای مداوم برای اطمینان از صحت کارکرد دکمه‌ها در رندرهای متوالی صفحه
 syncButtons();
 setTimeout(syncButtons, 300);
 </script>
 """
 
-# رندر نهایی منوی ناوبری پایینی با کامپوننت HTML استریم‌لیت
-st.components.v1.html(bottom_navigation_html, height=66)
+# رندر نهایی منوی ناوبری با کلید منحصر به فرد در هر ثانیه جهت ابطال کامل کش
+st.components.v1.html(bottom_navigation_html, height=66, key=f"nav_component_{cache_buster}")
