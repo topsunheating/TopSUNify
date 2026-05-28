@@ -342,7 +342,7 @@ nav_html = f"""
         background: white;
         display: flex;
         justify-content: space-between;
-        padding: 10px 5px;
+        padding: 5px 5px;
         box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
         z-index: 999999;
     }}
