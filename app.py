@@ -302,67 +302,41 @@ elif st.session_state.active_tab == "profile":
 # ناوبری نهایی: کاملاً مستقل، افقی، چسبیده به پایین و بدون کد خام
 # ==============================================================================
 
-# ۱. تزریق استایل‌های دقیق برای چیدمان افقی و فیکس در کادر سفید
+# در انتهای فایل app.py، به جای استفاده از HTML خالص، از این کد استفاده کنید:
+
+st.markdown('<div style="height: 100px;"></div>', unsafe_allow_html=True) # برای اینکه محتوا زیرِ دکمه‌های ثابت نرود
+
+# کانتینر برای دکمه‌های ناوبری پایین صفحه
+nav_col1, nav_col2, nav_col3, nav_col4 = st.columns(4)
+
+def change_tab(tab_name):
+    st.query_params["nav_tab"] = tab_name
+    st.session_state.active_tab = tab_name
+    st.rerun()
+
+with nav_col1:
+    if st.button("📊\nداشبورد", use_container_width=True, key="nav_dash"):
+        change_tab("dashboard")
+with nav_col2:
+    if st.button("🧾\nپیش‌فاکتور", use_container_width=True, key="nav_inv"):
+        change_tab("invoice")
+with nav_col3:
+    if st.button("📚\nتاپسان", use_container_width=True, key="nav_info"):
+        change_tab("info")
+with nav_col4:
+    if st.button("👤\nپروفایل", use_container_width=True, key="nav_prof"):
+        change_tab("profile")
+
+# استایل CSS برای چسباندن این دکمه‌ها به پایین صفحه
 st.markdown("""
 <style>
-    /* کانتینر اصلی که در پایین صفحه فیکس می‌شود */
-    .final-fixed-nav {
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        width: 100% !important;
-        max-width: 550px !important;
-        height: 75px !important;
-        background-color: #ffffff !important;
-        border-top: 1px solid #e2e8f0 !important;
-        box-shadow: 0 -4px 10px rgba(0,0,0,0.1) !important;
-        z-index: 999999 !important;
-        display: flex !important;
-        justify-content: space-around !important;
-        align-items: center !important;
-        padding: 0 !important;
+    [data-testid="column"] { padding: 0 !important; }
+    div.row-widget.stButton { 
+        position: fixed; 
+        bottom: 0; 
+        width: 25%; 
+        margin: 0; 
+        padding: 5px;
     }
-
-    /* استایل دکمه‌های ناوبری */
-    .final-nav-btn {
-        background: none !important;
-        border: none !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        width: 25% !important;
-        height: 100% !important;
-        cursor: pointer !important;
-        text-decoration: none !important;
-        color: #94a3b8 !important;
-        font-size: 10px !important;
-        font-weight: bold !important;
-    }
-    
-    .final-nav-btn.active { color: #ea580c !important; }
-    .final-nav-icon { font-size: 20px !important; margin-bottom: 2px !important; }
 </style>
 """, unsafe_allow_html=True)
-
-# ۲. ایجاد کانتینر و دکمه‌ها با استفاده از HTML خالص (برای جلوگیری از نمایش کد خام)
-# توجه: در اینجا از استریم‌لیت استفاده نمی‌کنیم تا چیدمان بهم نریزد
-# در انتهای فایل app-menu.py
-nav_html = f"""
-<div class="final-fixed-nav">
-    <a href="?nav_tab=dashboard" target="_self" class="final-nav-btn {'active' if st.session_state.active_tab == 'dashboard' else ''}">
-        <span class="final-nav-icon">📊</span> داشبورد
-    </a>
-    <a href="?nav_tab=invoice" target="_self" class="final-nav-btn {'active' if st.session_state.active_tab == 'invoice' else ''}">
-        <span class="final-nav-icon">🧾</span> پیش‌فاکتور
-    </a>
-    <a href="?nav_tab=info" target="_self" class="final-nav-btn {'active' if st.session_state.active_tab == 'info' else ''}">
-        <span class="final-nav-icon">📚</span> تاپسان
-    </a>
-    <a href="?nav_tab=profile" target="_self" class="final-nav-btn {'active' if st.session_state.active_tab == 'profile' else ''}">
-        <span class="final-nav-icon">👤</span> پروفایل
-    </a>
-</div>
-"""
-st.markdown(nav_html, unsafe_allow_html=True)
