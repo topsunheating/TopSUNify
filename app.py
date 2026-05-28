@@ -623,7 +623,7 @@ for i, (tab_id, icon) in enumerate(tab_list):
     with cols[i]:
         active = "active-tab" if st.session_state.active_tab == tab_id else ""
         
-        if st.button(f"{icon}", key=f"nav_{tab_id}", 
+        if st.button(f"{icon}", key=f"nav_{tab_id}"), 
                      use_container_width=True,
                 
             st.session_state.active_tab = tab_id
