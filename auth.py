@@ -198,28 +198,27 @@ def render_auth_page():
     }}
 
     /* =======================================================
-       تنظیم استایل جدید: راست‌نویس و تراز با فرم (مخصوص TopSUN-Powered)
+       تغییر نام کلاس و اعمال استایل اختصاصی راست‌نویسِ فیکس شده
        ======================================================= */
-    .powered-by-fixed-bottom {{
+    .topsun-powered-footer-container {{
         position: fixed !important;
-        bottom: 27vh !important; /* فیکس شده دقیقاً بالای لبه منظره */
+        bottom: 26.5vh !important; /* مماس و فیکس شده دقیقاً بالای لبه منظره */
         left: 50% !important;
         transform: translateX(-50%) !important;
         width: 100% !important;
         max-width: 400px !important;
-        padding: 0 25px !important; /* هم‌اندازه با پدینگ فرم اصلی */
+        padding: 0 25px !important; /* هم‌اندازه با حاشیه فیلدها */
         display: flex !important;
         flex-direction: column !important;
-        align-items: flex-end !important; /* لنگر انداختن و راست‌نویس کردن لوگوی جدید */
-        z-index: 99980 !important;
-        pointer-events: auto !important;
+        align-items: flex-end !important; /* تراز راست (راست‌نویس واقعی) */
+        z-index: 99988 !important;
     }}
     
-    .powered-combined-img {{
-        max-width: 140px !important; /* سایز بهینه‌سازی شده برای خوانایی متن Powered by داخل عکس */
+    .topsun-powered-image-node {{
+        max-width: 155px !important; /* سایز بزرگتر و خوانا برای لوگوی جدید */
         height: auto !important;
         display: block !important;
-        opacity: 0.9 !important;
+        opacity: 0.95 !important;
     }}
 
     /* =======================================================
@@ -324,7 +323,7 @@ def render_auth_page():
     # --- تنظیم ساختار نمایش تصویر یکپارچه TopSUN-Powered.png ---
     powered_layout_html = ""
     if powered_logo_base64:
-        powered_layout_html = f'<img src="data:image/png;base64,{powered_logo_base64}" class="powered-combined-img">'
+        powered_layout_html = f'<img src="data:image/png;base64,{powered_logo_base64}" class="topsun-powered-image-node">'
 
     # تنظیم فیلدها در صورت پر بودن فرم
     curr_u = username_val if form_submitted else ""
@@ -360,7 +359,7 @@ def render_auth_page():
         </form>
     </div>
 
-    <div class="powered-by-fixed-bottom">
+    <div class="topsun-powered-footer-container">
         {powered_layout_html}
     </div>
     """
