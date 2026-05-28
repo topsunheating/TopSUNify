@@ -29,9 +29,9 @@ import pandas as pd
 from PIL import Image
 from Financial import calculate_tosunify_proforma, generate_proforma_pdf
 
-# ====================== ۳. هوشمندسازی CSS برای ریسپانسیو و تب‌های آیکونی و منوی پایین ======================
+# ====================== ۳. هوشمندسازی CSS با فونت ایران‌یکان و ظاهر نیتیو ======================
 def inject_custom_css():
-    font_path = "pinar-regular.ttf"
+    font_path = "iranyekan.ttf"
     font_base64 = ""
 
     if os.path.exists(font_path):
@@ -41,12 +41,12 @@ def inject_custom_css():
     css = f"""
     <style>
     @font-face {{
-        font-family: 'pinar';
+        font-family: 'iranyekan';
         src: url(data:font/ttf;base64,{font_base64}) format('truetype');
     }}
 
     html, body, [class*="css"], * {{
-        font-family: 'pinar', sans-serif !important;
+        font-family: 'iranyekan', Tahoma, sans-serif !important;
         direction: rtl !important;
         text-align: right !important;
     }}
@@ -65,6 +65,16 @@ def inject_custom_css():
         padding-bottom: 110px !important; /* فضا برای اینکه محتوا زیر منوی پایین نرود */
         background-color: #f8fafc !important;
         min-height: 100vh;
+    }}
+
+    /* هدر بالای اپلیکیشن */
+    .app-main-header-container {{
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+        padding: 10px 0 !important;
+        margin-bottom: 5px !important;
     }}
 
     /* --- استایل گرید آیکون‌ها (منوی دسترسی سریع ماژول‌ها) --- */
@@ -176,15 +186,17 @@ def inject_custom_css():
 
 inject_custom_css()
 
-# ====================== ۴. هدر بالایی برنامه ======================
-col_logo, col_title = st.columns(2)
-with col_logo:
-    try: st.image("./static/logo.png", width=65)
-    except: st.write("☀️")
-with col_title:
-    st.markdown("<h3 style='margin:0; padding-top:5px;'>TopSUNify</h3>", unsafe_allow_html=True)
-    st.markdown("<h6 style='margin:0; color:#64748b;'>سامانه هوشمند و ریسپانسیو خدمات تاپسان</h6>", unsafe_allow_html=True)
-
+# ====================== ۴. هدر بالایی با تصویر متمرکز topsunify.png ======================
+header_logo_html = '<div class="app-main-header-container">☀️ TopSUNify</div>'
+if os.path.exists("topsunify.png"):
+    with open("topsunify.png", "rb") as f:
+        logo_base64 = base64.b64encode(f.read()).decode()
+    header_logo_html = f"""
+    <div class="app-main-header-container">
+        <img src="data:image/png;base64,{logo_base64}" style="max-width: 180px; height: auto; display: block; margin: 0 auto;">
+    </div>
+    """
+st.markdown(header_logo_html, unsafe_allow_html=True)
 st.divider()
 
 # ====================== ۵. مدیریت وضعیت جهانی سیستم (Session State) ======================
@@ -378,7 +390,6 @@ if st.session_state.active_tab == "invoice":
                 disc_val = (calculated_subtotal + inst_val) * ((disc if enable_disc else 0) / 100)
                 final_val = calculated_subtotal + inst_val - disc_val + ((calculated_subtotal + inst_val - disc_val) * ((tax_rate if enable_tax else 0) / 100))
 
-                # هوشمندسازی نمایش متریال (عدم نمایش گرید اقلام صفر تعداد)
                 table_data = []
                 if st.session_state.m80 > 0: table_data.append(["فیلم عرض ۸۰", f"{st.session_state.m80:.1f}", "متر", f"{res['m80_total']:,.0f}"])
                 if st.session_state.m40 > 0: table_data.append(["فیلم عرض ۴۰", f"{st.session_state.m40:.1f}", "متر", f"{res['m40_total']:,.0f}"])
