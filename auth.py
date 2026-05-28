@@ -1,15 +1,10 @@
 import streamlit as st
-st.write("Current Session State:", st.session_state.logged_in) # ببینید آیا بعد از کلیک روی تب، این مقدار False می‌شود؟import time
+import time
 import os
 import base64
 
 def render_auth_page():
-    # اگر کاربر قبلاً لاگین کرده، اصلاً نیازی به بررسی query_params نیست
-    if st.session_state.get("logged_in", False):
-        return 
-        # ۲. محافظت از تب‌ها: اگر کاربر روی تب‌ها کلیک کرده، صفحه لاگین را نمایش نده
-    if "nav_tab" in st.query_params:
-        return
+    # خواندن وضعیت پاپ‌آ‌پ، تب‌ها و مقادیر فرم از query_params برای پایداری کامل
     show_bio = st.query_params.get("show_bio", "false") == "true"
     bio_tab = st.query_params.get("bio_tab", "fingerprint")
     
@@ -23,24 +18,16 @@ def render_auth_page():
 
     # بررسی وضعیت ورود پس از سابمیت فرم HTML
     if form_submitted:
-        # st.query_params.update({"login_submit": "false"}) # این خط دیگر لازم نیست
-        
+        st.query_params.update({"login_submit": "false"})
         if username_val == "admin" and password_val == "1234":
             st.session_state.logged_in = True
             st.success("ورود موفقیت‌آمیز بود.")
-            
-            # --- اینجاست که باید پاک‌سازی را انجام دهید ---
-            st.query_params.clear()  # پاک کردن تمام پارامترهای URL برای جلوگیری از تداخل
-            
             time.sleep(0.5)
             st.rerun()
-            
         elif username_val == "" or password_val == "":
             st.warning("⚠️ لطفاً نام کاربری و رمز عبور را وارد کنید.")
         else:
             st.error("❌ نام کاربری یا رمز ورود اشتباه است.")
-            # اختیاری: پاک کردن پارامترهای اشتباه برای جلوگیری از گیر کردن در وضعیت خطا
-            st.query_params.clear()
 
     # --- ۱. تزریق فونت ایران‌یکان و استایل‌های پایه ---
     font_path = "iranyekan.ttf"
