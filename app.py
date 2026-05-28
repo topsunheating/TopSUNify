@@ -755,128 +755,128 @@ elif st.session_state.active_tab == "profile":
         </div>
         """, unsafe_allow_html=True)
         
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    # دکمه خروج ایمن چسبیده به انتهای صفحه پروفایل
-    if st.button("🚪 خروج از حساب کاربری تاپسان", use_container_width=True, type="secondary"):
-        st.session_state.logged_in = False
-        st.query_params.clear()
-        st.rerun()
-
 import streamlit as st
 
-# =========================
+# =====================================
 # Session State
-# =========================
+# =====================================
 if "active_tab" not in st.session_state:
     st.session_state.active_tab = "dashboard"
 
-# =========================
-# CSS - قوی و ریسپانسیو
-# =========================
+# =====================================
+# Tab Change
+# =====================================
+query_params = st.query_params
+
+if "tab" in query_params:
+    st.session_state.active_tab = query_params["tab"]
+
+# =====================================
+# CSS
+# =====================================
 st.markdown("""
 <style>
-.bottom-nav-container {
+
+.bottom-nav {
     position: fixed;
     bottom: 0;
     left: 0;
+
     width: 100%;
-    height: 82px;
+    height: 78px;
+
     background: white;
     border-top: 1px solid #e2e8f0;
-    z-index: 999999;
-    display: flex !important;
+
+    display: flex;
     flex-direction: row !important;
-    justify-content: space-around !important;
-    align-items: center !important;
-    padding: 8px 10px;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+
+    justify-content: space-around;
+    align-items: center;
+
+    z-index: 999999;
 }
 
-.nav-btn {
+.bottom-nav a {
     flex: 1;
-    height: 68px;
+
     display: flex !important;
     flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: transparent !important;
-    border: none !important;
+
+    align-items: center;
+    justify-content: center;
+
+    text-decoration: none !important;
+
     color: #64748b !important;
-    font-size: 11px !important;
-    font-weight: 700 !important;
-    border-radius: 12px !important;
-    transition: all 0.2s;
-    cursor: pointer;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    height: 100%;
 }
 
-.nav-btn:hover {
-    background: #f8fafc !important;
+.bottom-nav a.active {
     color: #ea580c !important;
 }
 
-.nav-btn.active {
-    color: #ea580c !important;
-    background: #fefce8 !important;
+.bottom-nav .icon {
+    font-size: 26px;
+    margin-bottom: 3px;
 }
 
-@media (max-width: 768px) {
-    .bottom-nav-container { height: 78px !important; }
-    .nav-btn { font-size: 10px !important; }
-}
 </style>
 """, unsafe_allow_html=True)
 
-# =========================
+# =====================================
 # Page Content
-# =========================
+# =====================================
 tab = st.session_state.active_tab
 
 if tab == "dashboard":
     st.title("📊 داشبورد")
     st.write("محتوای داشبورد")
+
 elif tab == "invoice":
     st.title("🧾 پیش‌فاکتور")
     st.write("محتوای پیش‌فاکتور")
+
 elif tab == "profile":
     st.title("👤 پروفایل")
     st.write("محتوای پروفایل")
 
-# فاصله برای منوی پایین
-st.markdown("<div style='height:100px'></div>", unsafe_allow_html=True)
+# فاصله پایین
+st.markdown("<div style='height:90px'></div>", unsafe_allow_html=True)
 
-# =========================
-# Bottom Navigation - نسخه نهایی
-# =========================
-nav_html = '''
-<div class="bottom-nav-container">
-'''
+# =====================================
+# Active Classes
+# =====================================
+dashboard_active = "active" if tab == "dashboard" else ""
+invoice_active = "active" if tab == "invoice" else ""
+profile_active = "active" if tab == "profile" else ""
 
-items = [
-    ("dashboard", "📊", "داشبورد"),
-    ("invoice", "🧾", "پیش‌فاکتور"),
-    ("profile", "👤", "پروفایل")
-]
+# =====================================
+# Navbar HTML
+# =====================================
+nav_html = f"""
+<div class="bottom-nav">
 
-for tab_id, icon, label in items:
-    active_class = "active" if st.session_state.active_tab == tab_id else ""
-    nav_html += f'''
-        <button onclick="window.parent.location.href='?nav_tab={tab_id}'" 
-                class="nav-btn {active_class}">
-            <div style="font-size:26px; margin-bottom:4px;">{icon}</div>
-            <div>{label}</div>
-        </button>
-    '''
+    <a href="?tab=dashboard" class="{dashboard_active}">
+        <div class="icon">📊</div>
+        <div>داشبورد</div>
+    </a>
 
-nav_html += '</div>'
+    <a href="?tab=invoice" class="{invoice_active}">
+        <div class="icon">🧾</div>
+        <div>پیش‌فاکتور</div>
+    </a>
 
-st.html(nav_html)
+    <a href="?tab=profile" class="{profile_active}">
+        <div class="icon">👤</div>
+        <div>پروفایل</div>
+    </a>
 
-# مدیریت تب (مهم)
-query_params = st.query_params
-if "nav_tab" in query_params:
-    new_tab = query_params["nav_tab"]
-    if new_tab in ["dashboard", "invoice", "profile"]:
-        if st.session_state.active_tab != new_tab:
-            st.session_state.active_tab = new_tab
-            st.rerun()
+</div>
+"""
+
+st.components.v1.html(nav_html, height=80)
