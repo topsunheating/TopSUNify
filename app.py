@@ -759,55 +759,120 @@ elif st.session_state.active_tab == "profile":
 # ناوبری نهایی: منوی پایین (افقی و فیکس شده)
 # ==============================================================================
 
+import streamlit as st
+
+# =========================
+# Session State
+# =========================
+if "active_tab" not in st.session_state:
+    st.session_state.active_tab = "dashboard"
+
+# =========================
+# CSS - قوی و ریسپانسیو
+# =========================
 st.markdown("""
 <style>
-    /* کانتینر اصلی منوی پایین */
-    .fixed-nav-container {
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        height: 80px !important;
-        background: white !important;
-        display: flex !important;
-        flex-direction: row !important; /* مجبور کردن به نمایش افقی */
-        justify-content: space-around !important;
-        align-items: center !important;
-        border-top: 1px solid #e2e8f0 !important;
-        z-index: 999999 !important;
-        padding: 5px 0 !important;
-        margin: 0 !important;
-    }
-    
-    /* استایل دکمه‌های استریم‌لیت برای جایگیری در منو */
-    .fixed-nav-container button {
-        background: transparent !important;
-        border: none !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        width: 60px !important;
-        height: 70px !important;
-    }
+.bottom-nav-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 82px;
+    background: white;
+    border-top: 1px solid #e2e8f0;
+    z-index: 999999;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    padding: 8px 10px;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+}
+
+.nav-btn {
+    flex: 1;
+    height: 68px;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: transparent !important;
+    border: none !important;
+    color: #64748b !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    border-radius: 12px !important;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.nav-btn:hover {
+    background: #f8fafc !important;
+    color: #ea580c !important;
+}
+
+.nav-btn.active {
+    color: #ea580c !important;
+    background: #fefce8 !important;
+}
+
+@media (max-width: 768px) {
+    .bottom-nav-container { height: 78px !important; }
+    .nav-btn { font-size: 10px !important; }
+}
 </style>
 """, unsafe_allow_html=True)
 
-# ایجاد منو بدون استفاده از columns (که باعث عمودی شدن می‌شود)
-st.markdown('<div class="fixed-nav-container">', unsafe_allow_html=True)
+# =========================
+# Page Content
+# =========================
+tab = st.session_state.active_tab
 
-tabs = [
+if tab == "dashboard":
+    st.title("📊 داشبورد")
+    st.write("محتوای داشبورد")
+elif tab == "invoice":
+    st.title("🧾 پیش‌فاکتور")
+    st.write("محتوای پیش‌فاکتور")
+elif tab == "profile":
+    st.title("👤 پروفایل")
+    st.write("محتوای پروفایل")
+
+# فاصله برای منوی پایین
+st.markdown("<div style='height:100px'></div>", unsafe_allow_html=True)
+
+# =========================
+# Bottom Navigation - نسخه نهایی
+# =========================
+nav_html = '''
+<div class="bottom-nav-container">
+'''
+
+items = [
     ("dashboard", "📊", "داشبورد"),
-    ("invoice", "🧾", "فاکتور"),
-    ("warranty", "🛡️", "گارانتی"),
-    ("services", "🛠️", "خدمات"),
+    ("invoice", "🧾", "پیش‌فاکتور"),
     ("profile", "👤", "پروفایل")
 ]
 
-for tab_id, icon, label in tabs:
-    # دکمه‌ها را مستقیماً داخل کانتینر HTML می‌گذاریم
-    if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}"):
-        st.session_state.active_tab = tab_id
-        st.rerun()
+for tab_id, icon, label in items:
+    active_class = "active" if st.session_state.active_tab == tab_id else ""
+    nav_html += f'''
+        <button onclick="window.parent.location.href='?nav_tab={tab_id}'" 
+                class="nav-btn {active_class}">
+            <div style="font-size:26px; margin-bottom:4px;">{icon}</div>
+            <div>{label}</div>
+        </button>
+    '''
 
-st.markdown('</div>', unsafe_allow_html=True)
+nav_html += '</div>'
+
+st.html(nav_html)
+
+# مدیریت تب (مهم)
+query_params = st.query_params
+if "nav_tab" in query_params:
+    new_tab = query_params["nav_tab"]
+    if new_tab in ["dashboard", "invoice", "profile"]:
+        if st.session_state.active_tab != new_tab:
+            st.session_state.active_tab = new_tab
+            st.rerun()
