@@ -756,11 +756,13 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه پایدار
+# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه ۱۰۰٪ ریسپانسیو و افقی
 # ==============================================================================
 
+# تزریق استایل‌های سی‌اس‌اس برای هندل کردن ظاهر افقی در موبایل
 st.markdown("""
 <style>
+    /* کانتینر اصلی منوی پایین */
     .fixed-bottom-nav {
         position: fixed !important;
         bottom: 0 !important;
@@ -768,40 +770,60 @@ st.markdown("""
         transform: translateX(-50%) !important;
         width: 100% !important;
         max-width: 550px !important;
-        height: 74px !important;
+        height: 72px !important;
         background-color: #ffffff !important;
-        box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
+        box-shadow: 0 -4px 16px rgba(0,0,0,0.08) !important;
         z-index: 999999 !important;
         display: flex !important;
+        /* برخلاف st.columns این گرید هرگز در موبایل عمودی نمی‌شود */
+        flex-direction: row !important;
         justify-content: space-around !important;
         align-items: center !important;
         border-top: 1px solid #e2e8f0 !important;
-        direction: ltr !important;
+        padding-bottom: env(safe-area-inset-bottom) !important;
+        direction: rtl !important;
     }
-    .nav-tab-item {
+
+    /* استایل دکمه‌های مخفی منو حرکتی */
+    .nav-submit-btn {
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        cursor: pointer !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
+        flex: 1 !important;
+        height: 100% !important;
         text-decoration: none !important;
+        font-family: 'iranyekan', Tahoma, sans-serif !important;
+    }
+
+    .nav-tab-icon {
+        font-size: 20px !important;
+        margin-bottom: 2px !important;
         color: #94a3b8 !important;
+        transition: color 0.15s ease !important;
+    }
+
+    .nav-tab-label {
         font-size: 10px !important;
         font-weight: 700 !important;
-        flex: 1 !important;
-        padding: 6px 0 !important;
+        color: #94a3b8 !important;
+        transition: color 0.15s ease !important;
     }
-    .nav-tab-item.active-tab {
+
+    /* استایل تب فعال (نارنجی برند تاپسان) */
+    .active-tab .nav-tab-icon,
+    .active-tab .nav-tab-label {
         color: #ea580c !important;
-    }
-    .nav-tab-icon {
-        font-size: 23px !important;
-        margin-bottom: 4px !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# ساخت منو با دکمه (پایدارتر از لینک)
-cols = st.columns(6)
+# تعریف مشخصات تب‌ها
 tab_list = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
@@ -811,33 +833,67 @@ tab_list = [
     ("profile", "👤", "پروفایل")
 ]
 
-for i, (tab_id, icon, label) in enumerate(tab_list):
-    with cols[i]:
-        active = "active-tab" if st.session_state.active_tab == tab_id else ""
-        
-        if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}", 
-                     use_container_width=True,
-                     help=label):
-            st.session_state.active_tab = tab_id
-            st.rerun()
+# ایجاد ساختار منوی پایدار افقی با استفاده از یک فرم مخفی فرمت‌دهی شده
+with st.container():
+    # باز کردن کانتینر HTML منو
+    html_menu = '<div class="fixed-bottom-nav">'
+    st.markdown(html_menu, unsafe_allow_html=True)
+    
+    # رندر کردن تک تک آیتم‌ها به صورت افقی (موبایل و دسکتاپ یکسان)
+    cols = st.columns(6)
+    for i, (tab_id, icon, label) in enumerate(tab_list):
+        with cols[i]:
+            is_active = st.session_state.active_tab == tab_id
+            active_class = "active-tab" if is_active else ""
+            
+            # ایجاد ظاهر شیک دکمه داخلی
+            button_content = f"""
+            <div class="{active_class}" style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                <span class="nav-tab-icon">{icon}</span>
+                <span class="nav-tab-label">{label}</span>
+            </div>
+            """
+            
+            # اجرای دکمه نیتیو استریم‌لیت با ظاهر کاستومایز شده فوق‌العاده ظریف
+            if st.button(button_content, key=f"nav_btn_{tab_id}", use_container_width=True, html=True):
+                st.session_state.active_tab = tab_id
+                st.query_params["nav_tab"] = tab_id
+                st.rerun()
 
-# CSS اضافی برای زیباتر کردن دکمه‌ها (شبیه لینک)
+    # بستن کانتینر HTML
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# مخفی‌سازی کامل دکمه‌های پیش‌فرض استریم‌لیت و تبدیل آن‌ها به المان‌های نامرئی روی کانتینر افقی ما
 st.markdown("""
 <style>
     div[data-testid="stButton"] button {
         background: transparent !important;
         border: none !important;
-        color: inherit !important;
-        font-size: 10px !important;
-        height: 68px !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        padding: 4px 0 !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        height: 65px !important;
+        margin: 0 auto !important;
     }
     div[data-testid="stButton"] button:hover {
-        background: rgba(234, 88, 12, 0.08) !important;
+        background: rgba(234, 88, 12, 0.05) !important;
+        border-radius: 12px !important;
+    }
+    div[data-testid="stButton"] p {
+        display: none !important; /* حذف متن پیش‌فرض دکمه برای جلوگیری از تداخل */
+    }
+    /* حذف مارجین‌های گرید پیش‌فرض استریم‌لیت در موبایل جهت فیکس ماندن کل ردیف */
+    div[data-testid="stHorizontalBlock"] {
+        display: flex !important;
+        flex-direction: row !important;
+        width: 100% !important;
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        max-width: 550px !important;
+        z-index: 1000000 !important;
+        background: transparent !important;
+        padding: 4px 6px !important;
     }
 </style>
 """, unsafe_allow_html=True)
