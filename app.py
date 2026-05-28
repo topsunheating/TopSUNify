@@ -302,68 +302,56 @@ elif st.session_state.active_tab == "profile":
 # ناوبری نهایی: کاملاً مستقل، افقی، چسبیده به پایین و بدون کد خام
 # ==============================================================================
 
-# در انتهای فایل app.py، به جای استفاده از HTML خالص، از این کد استفاده کنید:
+# --- حذف تمام کدهای قبلی ناوبری و جایگزینی با این کد ---
 
-st.markdown('<div style="height: 100px;"></div>', unsafe_allow_html=True) # برای اینکه محتوا زیرِ دکمه‌های ثابت نرود
-
-# کانتینر برای دکمه‌های ناوبری پایین صفحه
-nav_col1, nav_col2, nav_col3, nav_col4 = st.columns(4)
-
-def change_tab(tab_name):
-    st.query_params["nav_tab"] = tab_name
-    st.session_state.active_tab = tab_name
-    st.rerun()
-
-with nav_col1:
-    if st.button("📊\nداشبورد", use_container_width=True, key="nav_dash"):
-        change_tab("dashboard")
-with nav_col2:
-    if st.button("🧾\nپیش‌فاکتور", use_container_width=True, key="nav_inv"):
-        change_tab("invoice")
-with nav_col3:
-    if st.button("📚\nتاپسان", use_container_width=True, key="nav_info"):
-        change_tab("info")
-with nav_col4:
-    if st.button("👤\nپروفایل", use_container_width=True, key="nav_prof"):
-        change_tab("profile")
-
-# --- پاکسازی فضای خالی پایین صفحه ---
-st.markdown('<div style="height: 100px;"></div>', unsafe_allow_html=True)
-
-# --- استایل CSS برای ناوبری ---
-css = """
+# ۱. استایل برای فیکس کردن ستون‌های استریم‌لیت در پایین صفحه
+st.markdown("""
 <style>
-    .mobile-nav {
+    /* فیکس کردن ستون‌ها در پایین صفحه */
+    [data-testid="column"] {
+        padding: 0px !important;
+    }
+    .fixed-footer {
         position: fixed;
         bottom: 0;
         left: 0;
         width: 100%;
-        background: white;
-        display: flex;
-        justify-content: space-between;
-        padding: 10px 5px;
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        background-color: white;
+        padding: 5px;
         z-index: 999999;
+        border-top: 1px solid #e2e8f0;
     }
-    .nav-item {
-        text-decoration: none;
-        color: #64748b;
-        text-align: center;
-        flex: 1;
+    /* استایل دکمه‌های استریم‌لیت برای ظاهر یکپارچه */
+    div.stButton > button {
+        width: 100%;
+        border-radius: 10px;
         font-size: 11px;
+        height: 60px;
+        border: none;
+        background-color: transparent;
     }
-    .nav-item.active { color: #ea580c; }
 </style>
-"""
-st.markdown(css, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
-# --- ایجاد دکمه‌های ناوبری ---
-nav_html = f"""
-<div class="mobile-nav">
-    <a href="?nav_tab=dashboard" target="_self" class="nav-item {'active' if st.session_state.active_tab == 'dashboard' else ''}">📊<br>داشبورد</a>
-    <a href="?nav_tab=invoice" target="_self" class="nav-item {'active' if st.session_state.active_tab == 'invoice' else ''}">🧾<br>فاکتور</a>
-    <a href="?nav_tab=info" target="_self" class="nav-item {'active' if st.session_state.active_tab == 'info' else ''}">📚<br>تاپسان</a>
-    <a href="?nav_tab=profile" target="_self" class="nav-item {'active' if st.session_state.active_tab == 'profile' else ''}">👤<br>پروفایل</a>
-</div>
-"""
-st.markdown(nav_html, unsafe_allow_html=True)
+# ۲. ایجاد کانتینر برای دکمه‌ها در پایین
+st.markdown('<div class="fixed-footer">', unsafe_allow_html=True)
+nav_col1, nav_col2, nav_col3, nav_col4 = st.columns(4)
+
+def change_tab(tab_name):
+    st.session_state.active_tab = tab_name
+    st.query_params["nav_tab"] = tab_name
+    st.rerun()
+
+with nav_col1:
+    if st.button("📊\nداشبورد", key="nav_dash"): change_tab("dashboard")
+with nav_col2:
+    if st.button("🧾\nفاکتور", key="nav_inv"): change_tab("invoice")
+with nav_col3:
+    if st.button("📚\nتاپسان", key="nav_info"): change_tab("info")
+with nav_col4:
+    if st.button("👤\nپروفایل", key="nav_prof"): change_tab("profile")
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+# ۳. ایجاد فضای خالی در انتهای محتوای اصلی برای اینکه روی دکمه‌ها قرار نگیرد
+st.markdown('<div style="height: 80px;"></div>', unsafe_allow_html=True)
