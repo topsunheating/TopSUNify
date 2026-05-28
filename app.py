@@ -1,11 +1,14 @@
+import time
 import streamlit as st
-
+import auth # ایمپورت در بالا
+    
 # ۱. تنظیمات صفحه (همیشه خط اول)
 st.set_page_config(
     page_title="TopSUNify",
     page_icon="./topsunify.png",
     layout="wide"
 )
+time.sleep(0.1) # کمی تاخیر برای اینکه استریم‌لیت فرصت کند سشن را از مرورگر بازیابی کند
 
 # ۲. مقداردهی اولیه سشن (قبل از هر چیز دیگری)
 if "logged_in" not in st.session_state:
@@ -23,14 +26,16 @@ st.sidebar.write("تب فعال:", st.session_state.active_tab)
 import auth
 
 # ۵. چک کردن وضعیت ورود
-if not st.session_state.logged_in:
-    auth.render_auth_page()
-    st.stop() # اگر لاگین نیست، اینجا متوقف می‌شود
+اگر لاگین نیست، اینجا متوقف می‌شود
 
 # ۶. مدیریت تب‌ها (فقط اگر لاگین بود، این بخش اجرا می‌شود)
 query_params = st.query_params
 if "nav_tab" in query_params:
     st.session_state.active_tab = query_params["nav_tab"]
+
+if not st.session_state.logged_in:
+    auth.render_auth_page()
+    st.stop()
 
 # ==============================================================================
 # IMPORTS
