@@ -734,60 +734,20 @@ elif st.session_state.active_tab == "profile":
 # ==============================================================================
 
 st.markdown("""
+```python id="centeralignnav"
 <style>
 
-.main .block-container{
-    max-width:420px !important;
-    margin:0 auto !important;
-    padding-bottom:95px !important;
-}
-
-/* کانتینر اصلی نوبار */
-.bottom-navbar{
-    position:fixed !important;
-    bottom:0 !important;
-    left:50% !important;
-    transform:translateX(-50%) !important;
-
-    width:100% !important;
-    max-width:420px !important;
-    height:78px !important;
-
-    background:#ffffff !important;
-
-    border-top:1px solid #e2e8f0 !important;
-    box-shadow:0 -4px 18px rgba(0,0,0,0.08) !important;
-
-    z-index:999999 !important;
-
-    display:flex !important;
-    flex-direction:row !important;
-    justify-content:space-around !important;
-    align-items:center !important;
-
-    padding:6px 4px !important;
-}
-
-/* حذف استایل پیشفرض استریم‌لیت */
-.stButton > button{
-    background:transparent !important;
-    border:none !important;
-    box-shadow:none !important;
-
-    height:auto !important;
-    min-height:auto !important;
-
-    padding:0 !important;
-}
-
-/* آیتم هر تب */
+/* کل آیتم تب */
 .nav-item{
     width:100% !important;
 
     display:flex !important;
     flex-direction:column !important;
-    align-items:center !important;
+
     justify-content:center !important;
+    align-items:center !important;
+
+    text-align:center !important;
 
     border-radius:14px !important;
 
@@ -796,55 +756,73 @@ st.markdown("""
     transition:all .2s ease !important;
 }
 
-/* تب فعال */
-.nav-active{
-    background:#fff7ed !important;
+/* دکمه داخلی استریم‌لیت */
+.nav-item .stButton{
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+
+    width:100% !important;
+}
+
+/* خود دکمه */
+.nav-item .stButton button{
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+
+    width:100% !important;
+
+    text-align:center !important;
+
+    background:transparent !important;
+    border:none !important;
+    box-shadow:none !important;
+
+    padding:0 !important;
+    margin:0 auto !important;
+
+    min-height:auto !important;
 }
 
 /* آیکون */
 .nav-icon{
+    display:flex !important;
+
+    justify-content:center !important;
+    align-items:center !important;
+
+    width:100% !important;
+
     font-size:22px !important;
     line-height:22px !important;
 
-    margin-bottom:5px !important;
+    text-align:center !important;
+
+    margin-bottom:4px !important;
 }
 
-/* متن */
+/* عنوان */
 .nav-label{
+    width:100% !important;
+
+    text-align:center !important;
+
     font-size:10px !important;
     font-weight:700 !important;
 
     color:#64748b !important;
 
     white-space:nowrap !important;
-}
 
-/* متن تب فعال */
-.nav-active .nav-label{
-    color:#ea580c !important;
-}
-
-.nav-active .nav-icon{
-    color:#ea580c !important;
-}
-
-/* موبایل */
-@media (max-width:480px){
-
-    .bottom-navbar{
-        height:74px !important;
-    }
-
-    .nav-icon{
-        font-size:20px !important;
-    }
-
-    .nav-label{
-        font-size:9px !important;
-    }
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
 }
 
 </style>
+```
+
 """, unsafe_allow_html=True)
 
 
