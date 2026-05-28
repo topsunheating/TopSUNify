@@ -282,115 +282,69 @@ elif st.session_state.active_tab == "profile":
     st.markdown("</div>", unsafe_allow_html=True)
 
 # ==============================================================================
-# Bottom Navigation Native Mobile
+# ناوبری نهایی: کاملاً مستقل، افقی، چسبیده به پایین و بدون کد خام
 # ==============================================================================
 
-# خواندن تب فعال
-active_tab = st.session_state.active_tab
-
-dashboard_active = "active" if active_tab == "dashboard" else ""
-invoice_active = "active" if active_tab == "invoice" else ""
-info_active = "active" if active_tab == "info" else ""
-profile_active = "active" if active_tab == "profile" else ""
-
-# CSS + HTML
-nav_html = f"""
+# ۱. تزریق استایل‌های دقیق برای چیدمان افقی و فیکس در کادر سفید
+st.markdown("""
 <style>
+    /* کانتینر اصلی که در پایین صفحه فیکس می‌شود */
+    .final-fixed-nav {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 100% !important;
+        max-width: 550px !important;
+        height: 75px !important;
+        background-color: #ffffff !important;
+        border-top: 1px solid #e2e8f0 !important;
+        box-shadow: 0 -4px 10px rgba(0,0,0,0.1) !important;
+        z-index: 999999 !important;
+        display: flex !important;
+        justify-content: space-around !important;
+        align-items: center !important;
+        padding: 0 !important;
+    }
 
-.bottom-native-nav {{
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 550px;
-    height: 72px;
-    background: #ffffff;
-    border-top: 1px solid #e2e8f0;
-    box-shadow: 0 -4px 12px rgba(0,0,0,0.06);
-    z-index: 999999;
-
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-
-    padding: 0;
-    margin: 0;
-}}
-
-.bottom-nav-item {{
-    flex: 1;
-    height: 100%;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    text-decoration: none;
-    color: #94a3b8;
-
-    font-size: 11px;
-    font-weight: bold;
-
-    transition: all 0.2s ease;
-}}
-
-.bottom-nav-icon {{
-    font-size: 22px;
-    margin-bottom: 3px;
-}}
-
-.bottom-nav-item.active {{
-    color: #ea580c;
-    background: #fff7ed;
-}}
-
-.bottom-nav-item:hover {{
-    background: #fff7ed;
-    color: #ea580c;
-}}
-
+    /* استایل دکمه‌های ناوبری */
+    .final-nav-btn {
+        background: none !important;
+        border: none !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 25% !important;
+        height: 100% !important;
+        cursor: pointer !important;
+        text-decoration: none !important;
+        color: #94a3b8 !important;
+        font-size: 10px !important;
+        font-weight: bold !important;
+    }
+    
+    .final-nav-btn.active { color: #ea580c !important; }
+    .final-nav-icon { font-size: 20px !important; margin-bottom: 2px !important; }
 </style>
+""", unsafe_allow_html=True)
 
-<div class="bottom-native-nav">
-
-    <a href="?tab=dashboard"
-       target="_self"
-       class="bottom-nav-item {dashboard_active}">
-        <div class="bottom-nav-icon">📊</div>
-        <div>داشبورد</div>
+# ۲. ایجاد کانتینر و دکمه‌ها با استفاده از HTML خالص (برای جلوگیری از نمایش کد خام)
+# توجه: در اینجا از استریم‌لیت استفاده نمی‌کنیم تا چیدمان بهم نریزد
+nav_html = f"""
+<div class="final-fixed-nav">
+    <a href="?nav_tab=dashboard" class="final-nav-btn {'active' if st.session_state.active_tab == 'dashboard' else ''}">
+        <span class="final-nav-icon">📊</span> داشبورد
     </a>
-
-    <a href="?tab=invoice"
-       target="_self"
-       class="bottom-nav-item {invoice_active}">
-        <div class="bottom-nav-icon">🧾</div>
-        <div>پیش‌فاکتور</div>
+    <a href="?nav_tab=invoice" class="final-nav-btn {'active' if st.session_state.active_tab == 'invoice' else ''}">
+        <span class="final-nav-icon">🧾</span> پیش‌فاکتور
     </a>
-
-    <a href="?tab=info"
-       target="_self"
-       class="bottom-nav-item {info_active}">
-        <div class="bottom-nav-icon">📚</div>
-        <div>اطلاعات</div>
+    <a href="?nav_tab=info" class="final-nav-btn {'active' if st.session_state.active_tab == 'info' else ''}">
+        <span class="final-nav-icon">📚</span> تاپسان
     </a>
-
-    <a href="?tab=profile"
-       target="_self"
-       class="bottom-nav-item {profile_active}">
-        <div class="bottom-nav-icon">👤</div>
-        <div>پروفایل</div>
+    <a href="?nav_tab=profile" class="final-nav-btn {'active' if st.session_state.active_tab == 'profile' else ''}">
+        <span class="final-nav-icon">👤</span> پروفایل
     </a>
-
 </div>
 """
-
 st.markdown(nav_html, unsafe_allow_html=True)
-
-# خواندن URL
-query_params = st.query_params
-
-if "tab" in query_params:
-    st.session_state.active_tab = query_params["tab"]
