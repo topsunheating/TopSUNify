@@ -767,79 +767,114 @@ elif st.session_state.active_tab == "profile":
 # ناوبری پایین صفحه - ۳ تب (نسخه نهایی افقی - بدون columns)
 # ==============================================================================
 
+import streamlit as st
+
+# =========================
+# Active Tab
+# =========================
+if "active_tab" not in st.session_state:
+    st.session_state.active_tab = "dashboard"
+
+# =========================
+# Query Params
+# =========================
+params = st.query_params
+
+if "nav_tab" in params:
+    st.session_state.active_tab = params["nav_tab"]
+
+# =========================
+# CSS
+# =========================
 st.markdown("""
 <style>
-    .custom-bottom-nav-final {
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        width: 100% !important;
-        max-width: 550px !important;
-        height: 82px !important;
-        background-color: #ffffff !important;
-        border-top: 1px solid #e2e8f0 !important;
-        box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
-        z-index: 999999 !important;
-        display: flex !important;
-        flex-direction: row !important;
-        justify-content: space-around !important;
-        align-items: center !important;
-        padding: 0 15px !important;
-        direction: ltr !important;
-    }
-    
-    .nav-item-final {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        color: #64748b !important;
-        text-decoration: none !important;
-        font-size: 11px !important;
-        font-weight: 700 !important;
-        flex: 1 !important;
-        padding: 8px 0 !important;
-    }
-    
-    .nav-item-final.active {
-        color: #ea580c !important;
-    }
-    
-    .nav-item-final .icon {
-        font-size: 28px !important;
-        margin-bottom: 4px !important;
-    }
+
+.custom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+
+    width: 100%;
+    height: 80px;
+
+    background: white;
+    border-top: 1px solid #ddd;
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    z-index: 999999;
+}
+
+.custom-nav a {
+    text-decoration: none !important;
+    color: #64748b !important;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    flex: 1;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.custom-nav a.active {
+    color: #ea580c !important;
+}
+
+.icon {
+    font-size: 26px;
+    margin-bottom: 4px;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
-# ساخت HTML کامل
-nav_html = '<div class="custom-bottom-nav-final">'
+# =========================
+# Page Content
+# =========================
+tab = st.session_state.active_tab
 
-items = [
-    ("dashboard", "📊", "داشبورد"),
-    ("invoice", "🧾", "پیش‌فاکتور"),
-    ("profile", "👤", "پروفایل")
-]
+if tab == "dashboard":
+    st.title("📊 داشبورد")
 
-for tab_id, icon, label in items:
-    active = "active" if st.session_state.get("active_tab") == tab_id else ""
-    nav_html += f'''
-        <a href="?nav_tab={tab_id}" class="nav-item-final {active}">
-            <div class="icon">{icon}</div>
-            <div>{label}</div>
-        </a>
-    '''
+elif tab == "invoice":
+    st.title("🧾 پیش‌فاکتور")
 
-nav_html += '</div>'
+elif tab == "profile":
+    st.title("👤 پروفایل")
 
-# نمایش نهایی
-st.html(nav_html)
+# =========================
+# Bottom Navbar
+# =========================
+dashboard_active = "active" if tab == "dashboard" else ""
+invoice_active = "active" if tab == "invoice" else ""
+profile_active = "active" if tab == "profile" else ""
 
-# مدیریت تب (بدون ریلود کامل)
-if "nav_tab" in st.query_params:
-    new_tab = st.query_params["nav_tab"]
-    if new_tab in ["dashboard", "invoice", "profile"]:
-        if st.session_state.get("active_tab") != new_tab:
-            st.session_state.active_tab = new_tab
-            st.rerun()
+nav_html = f"""
+<div class="custom-nav">
+
+    <a href="?nav_tab=dashboard" class="{dashboard_active}">
+        <div class="icon">📊</div>
+        <div>داشبورد</div>
+    </a>
+
+    <a href="?nav_tab=invoice" class="{invoice_active}">
+        <div class="icon">🧾</div>
+        <div>پیش‌فاکتور</div>
+    </a>
+
+    <a href="?nav_tab=profile" class="{profile_active}">
+        <div class="icon">👤</div>
+        <div>پروفایل</div>
+    </a>
+
+</div>
+"""
+
+st.markdown(nav_html, unsafe_allow_html=True)
