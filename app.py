@@ -14,7 +14,9 @@ if "logged_in" not in st.session_state:
 if "active_tab" not in st.session_state:
     st.session_state.active_tab = "dashboard"
 
-# ۳. حالا که مقداردهی شد، می‌توانید وضعیت را چک کنید (دیباگ)
+st.sidebar.title("دیباگ وضعیت")
+st.sidebar.write("وضعیت لاگین:", st.session_state.logged_in)
+st.sidebar.write("تب فعال:", st.session_state.active_tab)
 # st.write("Current Session State:", st.session_state.logged_in) 
 
 # ۴. ایمپورت کردن ماژول احراز هویت
