@@ -563,314 +563,130 @@ elif st.session_state.active_tab == "info":
     st.write("کاتالوگ‌ها، راهنماهای چیدمان فیلم و نقشه‌های ازپیش تحلیل‌شده به زودی بارگذاری می‌شوند.")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ------------------------------------------------------------------------------
-# ۶. محتوای تب اختصاصی: پروفایل کاربری (طراحی مینیمال و نیتیو بر اساس الگوی سامان)
-# ------------------------------------------------------------------------------
-elif st.session_state.active_tab == "profile":
-    
-    # تعیین تصویر آواتار پیش‌فرض در صورت عدم آپلود تصویر توسط کاربر
-    avatar_src = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-    if st.session_state.profile_pic_base64:
-        avatar_src = f"data:image/png;base64,{st.session_state.profile_pic_base64}"
-        
-    # تزریق استایل‌های بومی و اختصاصی کارت‌ها و لیست ملو (دقیقاً مشابه عکس ارسالی)
-    st.markdown("""
-    <style>
-    /* هدر اصلی پروفایل کاربری */
-    .sam-profile-card {
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        background: #ffffff !important;
-        padding: 16px 20px !important;
-        border-radius: 24px !important;
-        margin-bottom: 12px !important;
-    }
-    
-    .sam-profile-info {
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: center !important;
-    }
-    
-    .sam-profile-name {
-        font-size: 19px !important;
-        font-weight: 800 !important;
-        color: #1e293b !important;
-        margin-bottom: 4px !important;
-    }
-    
-    .sam-profile-phone {
-        font-size: 13px !important;
-        color: #64748b !important;
-        letter-spacing: 0.5px;
-    }
-    
-    /* کانتینر تصویر آواتار گرد با رینگ ظریف */
-    .sam-avatar-box {
-        position: relative !important;
-        width: 64px !important;
-        height: 64px !important;
-    }
-    
-    .sam-avatar-img {
-        width: 64px !important;
-        height: 64px !important;
-        border-radius: 50% !important;
-        object-fit: cover !important;
-        border: 2px solid #f1f5f9 !important;
-    }
-    
-    /* باکس ملو تعیین سطح دسترسی حساب کاربری */
-    .sam-role-badge-container {
-        background: #f1f5f9 !important;
-        padding: 14px 20px !important;
-        border-radius: 18px !important;
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        margin-bottom: 24px !important;
-    }
-    
-    .sam-role-label {
-        font-size: 13px !important;
-        color: #64748b !important;
-        font-weight: 500 !important;
-    }
-    
-    .sam-role-value {
-        font-size: 14px !important;
-        color: #1e293b !important;
-        font-weight: 800 !important;
-    }
-    
-    /* استایل لیست گزینه‌های ملو و خطی همراه با فلش راهنما */
-    .sam-menu-list-wrapper {
-        background: #ffffff !important;
-        border-radius: 24px !important;
-        padding: 6px 16px !important;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02) !important;
-        margin-bottom: 20px !important;
-    }
-    
-    .sam-menu-row-item {
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        padding: 16px 4px !important;
-        border-bottom: 1px solid #f8fafc !important;
-        cursor: pointer;
-    }
-    
-    .sam-menu-row-item:last-child {
-        border-bottom: none !important;
-    }
-    
-    .sam-menu-row-right {
-        display: flex !important;
-        align-items: center !important;
-        gap: 14px !important;
-    }
-    
-    .sam-menu-row-text {
-        font-size: 14px !important;
-        font-weight: 600 !important;
-        color: #334155 !important;
-    }
-    
-    .sam-menu-row-icon {
-        font-size: 18px !important;
-        color: #475569 !important;
-        display: flex !important;
-        align-items: center !important;
-    }
-    
-    .sam-menu-row-arrow {
-        color: #cbd5e1 !important;
-        font-size: 12px !important;
-        font-weight: bold !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-    # ۱. بخش هدر کارت کاربری (نمایش نام و شماره تماس کارشناس)
-    st.markdown(f"""
-    <div class="sam-profile-card">
-        <div class="sam-profile-info">
-            <div class="sam-profile-name">{st.session_state.user_display_name}</div>
-            <div class="sam-profile-phone">{st.session_state.user_phone}</div>
-        </div>
-        <div class="sam-avatar-box">
-            <img class="sam-avatar-img" src="{avatar_src}">
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # ۲. بخش نمایش سطح دسترسی جاری (باکس ملو طوسی رنگ بر اساس ساختار سامان)
-    st.markdown(f"""
-    <div class="sam-role-badge-container">
-        <div class="sam-role-label">سطح دسترسی حساب:</div>
-        <div class="sam-role-value">{st.session_state.user_role}</div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # ۳. ابزار پنهان/توسعه‌دهنده برای مدیریت و شبیه‌سازی تغییرات پروفایل بدون خروج از برنامه
-    with st.expander("🛠️ تنظیمات شبیه‌سازی حساب (مخصوص مدیر سیستم)"):
-        # تغییر عکس کاربری
-        uploaded_avatar = st.file_uploader("تغییر تصویر آواتار:", type=["jpg", "png", "jpeg"], key="sam_avatar_uploader")
-        if uploaded_avatar is not None:
-            import base64
-            st.session_state.profile_pic_base64 = base64.b64encode(uploaded_avatar.getvalue()).decode()
-            st.toast("📷 تصویر پروفایل با موفقیت به‌روزرسانی شد.", icon="✅")
-            st.rerun()
-            
-        # تغییر پویای سطح دسترسی و تست آن در کامپوننت‌ها
-        roles_list = ["کاربر عمومی", "مدیر", "مدیر فروش", "مدیر فنی", "مدیر خدمات", "کارشناس فروش", "نمایندگی", "عاملیت"]
-        current_idx = roles_list.index(st.session_state.user_role) if st.session_state.user_role in roles_list else 0
-        selected_role_test = st.selectbox("تعیین سطح دسترسی کاربر جهت تست فیلترها:", roles_list, index=current_idx)
-        if selected_role_test != st.session_state.user_role:
-            st.session_state.user_role = selected_role_test
-            st.rerun()
-
-    # ۴. باکس منوهای خطی ظریف (دقیقاً متناظر با نیازهای اعلام شده و گرافیک تصویر اپلیکیشن سامان)
-    st.markdown('<div class="sam-menu-list-wrapper">', unsafe_allow_html=True)
-    
-    sam_items = [
-        {"label": "فاکتورهای تکمیل شده", "icon": "✅"},
-        {"label": "فاکتورهای باز", "icon": "⏳"},
-        {"label": "پیش فاکتورها", "icon": "🧾"},
-        {"label": "مشتریان منتخب", "icon": "⭐"},
-        {"label": "اعلام موجودی انبار", "icon": "📦"},
-        {"label": "تنظیمات", "icon": "⚙️"},
-    ]
-    
-    for item in sam_items:
-        st.markdown(f"""
-        <div class="sam-menu-row-item">
-            <div class="sam-menu-row-right">
-                <span class="sam-menu-row-icon">{item['icon']}</span>
-                <span class="sam-menu-row-text">{item['label']}</span>
-            </div>
-            <div class="sam-menu-row-arrow">◀</div>
-        </div>
-        """, unsafe_allow_html=True)
-        
 # ==============================================================================
 # ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه بومی و متصل (سامان)
 # ==============================================================================
 
 # ۱. تزریق استایل‌های سی‌اس‌اس جادویی برای مهار کامل ستون‌های استریم‌لیت
-import streamlit as st
-
-# ---------- init ----------
-if "active_tab" not in st.session_state:
-    st.session_state.active_tab = "dashboard"
-
-# ---------- CSS ----------
 st.markdown("""
 <style>
-div[data-testid="stHorizontalBlock"],
-div[data-testid="stVerticalBlock"] {
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 100% !important;
-    max-width: 550px !important;
-    height: 72px !important;
-    background-color: #ffffff !important;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.08) !important;
-    z-index: 999999 !important;
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    border-top: 1px solid #e2e8f0 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    gap: 0 !important;
-    direction: rtl !important;
-}
+    /* الف: مخفی کردن مارکرهای کمکی ما تا فضای دکمه‌ها را خراب نکنند */
+    div[data-testid="stHorizontalBlock"]:has(.nav-marker) div.element-container:has(.nav-marker),
+    div[data-testid="stHorizontalBlock"]:has(.nav-marker) div.element-container:has(.active-nav-marker) {
+        display: none !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
 
-div[data-testid="stHorizontalBlock"] > div[data-testid="column"],
-div[data-testid="stVerticalBlock"] > div[data-testid="column"] {
-    width: 25% !important;
-    min-width: 25% !important;
-    max-width: 25% !important;
-    flex: 1 1 0% !important;
-    height: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
+    /* ب: تبدیل کانتینر ستون‌های استریم‌لیت به یک نوار فیکس شده، متصل و کاملاً افقی در موبایل */
+    div[data-testid="stHorizontalBlock"]:has(.nav-marker) {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 100% !important;
+        max-width: 550px !important; /* فیکس با عرض قالب موبایلی */
+        height: 72px !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.08) !important;
+        z-index: 999999 !important;
+        display: flex !important;
+        flex-direction: row !important;       /* 🚨 اجبار به قرارگیری افقی در هر سایزی */
+        flex-wrap: nowrap !important;         /* 🚨 جلوگیری از شکستن خط و عمودی شدن */
+        justify-content: space-between !important;
+        align-items: center !important;
+        border-top: 1px solid #e2e8f0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;                    /* 🚨 حذف فاصله بین ستون‌ها برای چسبیدن دکمه‌ها */
+        direction: rtl !important;
+    }
 
-div[data-testid="stHorizontalBlock"] div[data-testid="stButton"],
-div[data-testid="stVerticalBlock"] div[data-testid="stButton"] {
-    width: 100% !important;
-    height: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
+    /* پ: تقسیم دقیق نوار به ۴ قسمت کاملاً مساوی (۲۵ درصد) */
+    div[data-testid="stHorizontalBlock"]:has(.nav-marker) > div[data-testid="column"] {
+        width: 25% !important;
+        min-width: 25% !important;
+        max-width: 25% !important;
+        flex: 1 1 0% !important;
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
 
-div[data-testid="stHorizontalBlock"] button,
-div[data-testid="stVerticalBlock"] button {
-    width: 100% !important;
-    height: 100% !important;
-    background-color: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    color: #94a3b8 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    transition: background 0.1s ease, color 0.1s ease !important;
-}
+    /* ت: حذف حاشیه‌ها و فاصله‌های داخلیِ خود دکمه‌های استریم‌لیت */
+    div[data-testid="stHorizontalBlock"]:has(.nav-marker) div[data-testid="stButton"] {
+        width: 100% !important;
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
 
-div[data-testid="stHorizontalBlock"] button:hover,
-div[data-testid="stVerticalBlock"] button:hover {
-    background-color: rgba(234, 88, 12, 0.03) !important;
-    color: #ea580c !important;
-}
+    /* ث: استایل‌دهی به دکمه بومی پایتون تا دقیقاً شبیه یک تب نیتیو اپلیکیشن شود */
+    div[data-testid="stHorizontalBlock"]:has(.nav-marker) button {
+        width: 100% !important;
+        height: 100% !important;
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important; /* حذف گردی دکمه‌ها برای چسبیدن کامل */
+        padding: 0 !important;
+        margin: 0 !important;
+        color: #94a3b8 !important; /* رنگ خاکستری غیرفعال */
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: background 0.1s ease, color 0.1s ease !important;
+    }
 
-div[data-testid="stHorizontalBlock"] button p,
-div[data-testid="stVerticalBlock"] button p {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    white-space: pre-line !important;
-    font-size: 11px !important;
-    font-weight: 700 !important;
-    line-height: 1.4 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
+    /* افکت تاچ و هاور */
+    div[data-testid="stHorizontalBlock"]:has(.nav-marker) button:hover {
+        background-color: rgba(234, 88, 12, 0.03) !important;
+        color: #ea580c !important;
+    }
 
-.active-nav button,
-.active-nav button p {
-    color: #ea580c !important;
-    font-weight: 800 !important;
-}
+    /* ج: استایل‌دهی به نوشته‌ی داخل دکمه (قرار دادن آیکون در بالا و متن در پایین) */
+    div[data-testid="stHorizontalBlock"]:has(.nav-marker) button p {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        white-space: pre-line !important; /* 🚨 فعال‌سازی شکست خط برای قرارگیری متن زیر آیکون */
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        line-height: 1.4 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
 
-.main .block-container {
-    padding-bottom: 100px !important;
-}
+    /* چ: 🟠 استایل نارنجی رنگ برای ستونی که مارکر فعال دارد */
+    div[data-testid="column"]:has(.active-nav-marker) button {
+        color: #ea580c !important;
+    }
+    div[data-testid="column"]:has(.active-nav-marker) button p {
+        color: #ea580c !important;
+        font-weight: 800 !important;
+    }
+
+    /* ایجاد پدینگ امن در انتهای اپلیکیشن تا محتوا زیر منو نرود */
+    .main .block-container {
+        padding-bottom: 100px !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# ---------- ساخت navigation (ستون‌ها) ----------
+
+# ۲. ایجاد ستون‌های پایتون (که با CSS بالا در موبایل کاملاً مهار و افقی می‌شوند)
 cols = st.columns(4)
 
+# تعریف ۴ تب (ترتیب از راست به چپ)
 tab_list = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
@@ -878,36 +694,24 @@ tab_list = [
     ("profile", "👤", "پروفایل")
 ]
 
+# ۳. رندر کردن تب‌ها
 for i, (tab_id, icon, label) in enumerate(tab_list):
     with cols[i]:
-        is_active = (st.session_state.active_tab == tab_id)
+        # 🚨 تزریق یک مارکر مخفی در ستون اول، تا CSS بتواند کل این ردیف را پیدا و مهار کند
+        if i == 0:
+            st.markdown('<div class="nav-marker"></div>', unsafe_allow_html=True)
 
-        # wrapper داخلی برای اعمال کلاس active-nav هنگام فعال بودن
+        is_active = st.session_state.active_tab == tab_id
+
+        # 🚨 اگر تب فعال بود، یک مارکر مخفی اکتیو در این ستون می‌گذاریم تا نارنجی شود
         if is_active:
-            st.markdown('<div class="active-nav" style="width:100%;height:100%;">', unsafe_allow_html=True)
-        else:
-            st.markdown('<div style="width:100%;height:100%;">', unsafe_allow_html=True)
+            st.markdown('<div class="active-nav-marker"></div>', unsafe_allow_html=True)
 
+        # ساختار متن دکمه بومی (اموجی + اینتر + کلمه)
         button_text = f"{icon}\n{label}"
+
+        # 🚨 استفاده از دکمه ۱۰۰٪ بومی پایتون (بدون تگ a، بدون جاوااسکریپت، بدون خروج از برنامه)
         if st.button(button_text, key=f"saman_btn_{tab_id}", use_container_width=True):
             st.session_state.active_tab = tab_id
-            st.experimental_set_query_params(nav_tab=tab_id)
-            # نیازی به st.rerun() نیست
-
-        st.markdown('</div>', unsafe_allow_html=True)
-
-# ---------- محتوا بر اساس تب ----------
-st.write(f"تب فعلی: {st.session_state.active_tab}")
-
-if st.session_state.active_tab == "dashboard":
-    st.header("داشبورد")
-    st.write("محتوای داشبورد اینجا نمایش داده می‌شود.")
-elif st.session_state.active_tab == "invoice":
-    st.header("پیش‌فاکتور")
-    st.write("محتوای پیش‌فاکتور اینجا نمایش داده می‌شود.")
-elif st.session_state.active_tab == "top_sunify":
-    st.header("تاپسانیفای")
-    st.write("محتوای تاپسانیفای اینجا نمایش داده می‌شود.")
-elif st.session_state.active_tab == "profile":
-    st.header("پروفایل")
-    st.write("محتوای پروفایل اینجا نمایش داده می‌شود.")
+            st.query_params["nav_tab"] = tab_id
+            st.rerun()
