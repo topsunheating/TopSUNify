@@ -278,6 +278,24 @@ def inject_custom_css():
         background-color: #f8fafc !important;
         padding: 40px 10px !important;
     }}
+/* ================= GRID BUTTONS ================= */
+
+.stButton > button {
+    border-radius: 20px !important;
+    height: 90px !important;
+    background: #ffffff !important;
+    border: 2px solid #f1f5f9 !important;
+    font-size: 15px !important;
+    font-weight: bold !important;
+    transition: all 0.2s ease !important;
+    white-space: pre-line !important;
+}
+
+.stButton > button:hover {
+    border-color: #ea580c !important;
+    background: #fff7ed !important;
+    color: #ea580c !important;
+}
     </style>
     """
     st.markdown(css, unsafe_allow_html=True)
@@ -324,17 +342,6 @@ if "active_tab" not in st.session_state:
 if "active_sub_action" not in st.session_state:
     st.session_state.active_sub_action = "file_plan" 
 
-query_p = st.query_params
-if "nav_tab" in query_p:
-    st.session_state.active_tab = query_p["nav_tab"]
-if "sub_act" in query_p:
-    st.session_state.active_sub_action = query_p["sub_act"]
-
-
-# ==============================================================================
-# رندر کردن محتوا بر اساس تب انتخاب شده در منوی پایین
-# ==============================================================================
-
 # ------------------------------------------------------------------------------
 # ۱. محتوای تب: داشبورد (صفحه خانگی یا خلاصه پروژه)
 # ------------------------------------------------------------------------------
@@ -371,22 +378,36 @@ elif st.session_state.active_tab == "invoice":
         act_manual = "active-action" if st.session_state.active_sub_action == "manual_dim" else ""
         act_direct = "active-action" if st.session_state.active_sub_action == "direct_val" else ""
         
-        grid_html = f"""
-        <div class="icon-grid-container">
-            <a href="?nav_tab=invoice&sub_act=file_plan" target="_self" class="icon-item-link {act_file}">
-                <div class="icon-circle">📂</div>
-                <div class="icon-label">فایل پلان</div>
-            </a>
-            <a href="?nav_tab=invoice&sub_act=manual_dim" target="_self" class="icon-item-link {act_manual}">
-                <div class="icon-circle">⌨️</div>
-                <div class="icon-label">ورود دستی ابعاد</div>
-            </a>
-            <a href="?nav_tab=invoice&sub_act=direct_val" target="_self" class="icon-item-link {act_direct}">
-                <div class="icon-circle">✍️</div>
-                <div class="icon-label">مقادیر مستقیم</div>
-            </a>
-        </div>
-        """
+# ====================== گرید انتخاب حالت پیش‌فاکتور ======================
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    if st.button(
+        "📂\nفایل پلان",
+        key="btn_file_plan",
+        use_container_width=True
+    ):
+        st.session_state.active_sub_action = "file_plan"
+        st.rerun()
+
+with col2:
+    if st.button(
+        "⌨️\nورود دستی ابعاد",
+        key="btn_manual_dim",
+        use_container_width=True
+    ):
+        st.session_state.active_sub_action = "manual_dim"
+        st.rerun()
+
+with col3:
+    if st.button(
+        "✍️\nمقادیر مستقیم",
+        key="btn_direct_val",
+        use_container_width=True
+    ):
+        st.session_state.active_sub_action = "direct_val"
+        st.rerun()
         st.markdown(grid_html, unsafe_allow_html=True)
 
         st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
@@ -801,24 +822,5 @@ st.markdown("""
     .final-nav-btn.active { color: #ea580c !important; }
     .final-nav-icon { font-size: 20px !important; margin-bottom: 2px !important; }
 </style>
-""", unsafe_allow_html=True)
-
-# ۲. ایجاد کانتینر و دکمه‌ها با استفاده از HTML خالص (برای جلوگیری از نمایش کد خام)
-# توجه: در اینجا از استریم‌لیت استفاده نمی‌کنیم تا چیدمان بهم نریزد
-nav_html = f"""
-<div class="final-fixed-nav">
-    <a href="?nav_tab=dashboard" class="final-nav-btn {'active' if st.session_state.active_tab == 'dashboard' else ''}">
-        <span class="final-nav-icon">📊</span> داشبورد
-    </a>
-    <a href="?nav_tab=invoice" class="final-nav-btn {'active' if st.session_state.active_tab == 'invoice' else ''}">
-        <span class="final-nav-icon">🧾</span> پیش‌فاکتور
-    </a>
-    <a href="?nav_tab=info" class="final-nav-btn {'active' if st.session_state.active_tab == 'info' else ''}">
-        <span class="final-nav-icon">📚</span> تاپسان
-    </a>
-    <a href="?nav_tab=profile" class="final-nav-btn {'active' if st.session_state.active_tab == 'profile' else ''}">
-        <span class="final-nav-icon">👤</span> پروفایل
-    </a>
-</div>
-"""
+<a href="?nav_tab=invoice">
 st.markdown(nav_html, unsafe_allow_html=True)
