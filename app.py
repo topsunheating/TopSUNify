@@ -764,16 +764,13 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری پایین: ظاهر یکپارچه و فیکس (مشابه اپلیکیشن‌های بانکی)
+# ناوبری نهایی: حذف ستون‌های استریم‌لیت و استفاده از HTML خالص برای چیدمان افقی
 # ==============================================================================
 
-# تزریق CSS برای حذف فواصل استریم‌لیت و ساخت نوار یکپارچه
+# تزریق CSS بهینه
 st.markdown("""
 <style>
-    /* پاکسازی کامل استریم‌لیت در منطقه ناوبری */
-    .stApp { padding-bottom: 80px; }
-    
-    .nav-bar-wrapper {
+    .nav-bar-container {
         position: fixed;
         bottom: 0;
         left: 0;
@@ -781,32 +778,28 @@ st.markdown("""
         height: 70px;
         background-color: white;
         border-top: 1px solid #e2e8f0;
-        display: flex;
-        flex-direction: row-reverse; /* برای چیدمان راست‌چین */
-        justify-content: space-around;
-        align-items: center;
+        display: flex !important;
+        flex-direction: row-reverse !important; /* راست‌چین برای فارسی */
+        justify-content: space-around !important;
+        align-items: center !important;
         z-index: 999999;
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        padding: 5px 0;
     }
-    
-    .nav-item-button {
+    .nav-button {
+        background: none !important;
+        border: none !important;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        width: 100%;
-        height: 100%;
-        border: none !important;
-        background: transparent !important;
         color: #64748b !important;
         font-family: 'iranyekan', sans-serif !important;
         font-size: 10px !important;
-        font-weight: 700 !important;
-        padding: 0 !important;
+        text-decoration: none !important;
         cursor: pointer;
     }
-    
-    .nav-item-button:hover { color: #ea580c !important; }
+    .nav-button:hover { color: #ea580c !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -820,16 +813,20 @@ tabs_list = [
     ("profile", "👤", "پروفایل")
 ]
 
-# ایجاد کانتینر منو
-st.markdown('<div class="nav-bar-wrapper">', unsafe_allow_html=True)
+# رندر مستقیم HTML بدون استفاده از st.columns
+nav_html = '<div class="nav-bar-container">'
+for tab_id, icon, label in tabs_list:
+    # استفاده از لینک برای جابجایی تب (سریع‌تر و بدون ظاهر دکمه استریم‌لیت)
+    nav_html += f'''
+    <a href="?nav_tab={tab_id}" target="_self" class="nav-button">
+        <div style="font-size: 20px;">{icon}</div>
+        <div style="margin-top:2px;">{label}</div>
+    </a>
+    '''
+nav_html += '</div>'
 
-# استفاده از ستون‌ها برای جای‌گذاری دکمه‌ها در یک ردیف
-cols = st.columns(6)
-for i, (tab_id, icon, label) in enumerate(tabs_list):
-    with cols[i]:
-        # استایل دکمه را در قالب یک دکمه استریم‌لیت اما با کلاس سفارشی اعمال می‌کنیم
-        if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}", help=label):
-            st.session_state.active_tab = tab_id
-            st.rerun()
+st.markdown(nav_html, unsafe_allow_html=True)
 
-st.markdown('</div>', unsafe_allow_html=True)
+# مدیریت تغییر تب از طریق Query Parameters
+if "nav_tab" in st.query_params:
+    st.session_state.active_tab = st.query_params["nav_tab"]
