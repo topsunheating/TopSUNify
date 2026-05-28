@@ -619,7 +619,7 @@ tab_list = [
     ("profile", "👤")
 ]
 
-for i, (tab_id, icon, label) in enumerate(tab_list):
+for i, (tab_id, icon) in enumerate(tab_list):
     with cols[i]:
         active = "active-tab" if st.session_state.active_tab == tab_id else ""
         
