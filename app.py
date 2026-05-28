@@ -6,8 +6,12 @@ import ezdxf
 import tempfile
 import pandas as pd
 from PIL import Image
-import auth
-from Financial import calculate_tosunify_proforma, generate_proforma_pdf, main # فرض بر اینکه ماژول‌ها در کنار فایل هستند
+import authimport sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+# حالا سعی کنید ایمپورت کنید
+from Financial import calculate_tosunify_proforma, generate_proforma_pdf, main
 
 # --- کانفیگ اصلی ---
 st.set_page_config(page_title="TopSUNify", layout="wide")
