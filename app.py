@@ -756,112 +756,80 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه ۱۰۰٪ بومی و افقی متوازن
+
+# ناوبری نهایی چسبیده به پایین صفحه با ۶ تب متوازن (Bottom Navigation Bar)
+
 # ==============================================================================
 
-# تعریف مشخصات تب‌ها به همراه اموجی، عنوان و شناسه
-tab_list = [
-    ("dashboard", "📊", "داشبورد"),
-    ("invoice", "🧾", "پیش‌فاکتور"),
-    ("warranty", "🛡️", "گارانتی"),
-    ("services", "🛠️", "خدمات"),
-    ("info", "📚", "اطلاعات"),
-    ("profile", "👤", "پروفایل")
-]
+active_dashboard = "active-tab" if st.session_state.active_tab == "dashboard" else ""
 
-# ۱. ساخت کانتینر و آیتم‌های منو به صورت HTML/CSS خام برای کنترل ۱۰۰٪ چیدمان
-menu_html = """
+active_invoice = "active-tab" if st.session_state.active_tab == "invoice" else ""
+
+active_warranty = "active-tab" if st.session_state.active_tab == "warranty" else ""
+
+active_services = "active-tab" if st.session_state.active_tab == "services" else ""
+
+active_info = "active-tab" if st.session_state.active_tab == "info" else ""
+
+active_profile = "active-tab" if st.session_state.active_tab == "profile" else ""
+
+
+
+bottom_navigation_html = f"""
+
 <div class="fixed-bottom-nav">
+
+    <a href="?nav_tab=profile" target="_self" class="nav-tab-item {active_profile}">
+
+        <div class="nav-tab-icon">👤</div>
+
+        <div>پروفایل</div>
+
+    </a>
+
+    <a href="?nav_tab=info" target="_self" class="nav-tab-item {active_info}">
+
+        <div class="nav-tab-icon">📚</div>
+
+        <div>اطلاعات</div>
+
+    </a>
+
+    <a href="?nav_tab=services" target="_self" class="nav-tab-item {active_services}">
+
+        <div class="nav-tab-icon">🛠️</div>
+
+        <div>خدمات</div>
+
+    </a>
+
+    <a href="?nav_tab=warranty" target="_self" class="nav-tab-item {active_warranty}">
+
+        <div class="nav-tab-icon">🛡️</div>
+
+        <div>گارانتی</div>
+
+    </a>
+
+    <a href="?nav_tab=invoice" target="_self" class="nav-tab-item {active_invoice}">
+
+        <div class="nav-tab-icon">🧾</div>
+
+        <div>پیش‌فاکتور</div>
+
+    </a>
+
+    <a href="?nav_tab=dashboard" target="_self" class="nav-tab-item {active_dashboard}">
+
+        <div class="nav-tab-icon">📊</div>
+
+        <div>داشبورد</div>
+
+    </a>
+
+</div>
+
 """
 
-for tab_id, icon, label in tab_list:
-    # بررسی اینکه آیا این تب در حال حاضر فعال است یا خیر
-    is_active = "active-tab" if st.session_state.active_tab == tab_id else ""
-    
-    # ساخت لینک برای هر تب که با کلیک، پارامتر نویگیشن در URL را تغییر می‌دهد
-    menu_html += f"""
-    <a href="?nav_tab={tab_id}" target="_self" class="nav-tab-item {is_active}">
-        <span class="nav-tab-icon">{icon}</span>
-        <span class="nav-tab-label">{label}</span>
-    </a>
-    """
+st.html(bottom_navigation_html)
 
-menu_html += "</div>"
-
-# ۲. تزریق استایل‌های فوق‌پایدار CSS که چیدمان افقی و متوازن را در هر موبایلی تضمین می‌کند
-st.markdown(f"""
-<style>
-    /* کانتینر اصلی منو فیکس شده در پایین صفحه */
-    .fixed-bottom-nav {{
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        width: 100% !important;
-        max-width: 550px !important; /* فیکس با عرض قالب موبایلی شما */
-        height: 72px !important;
-        background-color: #ffffff !important;
-        box-shadow: 0 -4px 20px rgba(0,0,0,0.08) !important;
-        z-index: 999999 !important;
-        display: flex !important;
-        flex-direction: row !important;      /* اجبار به چیدمان افقی */
-        flex-wrap: nowrap !important;        /* جلوگیری از شکستن ردیف */
-        justify-content: space-around !important; /* پخش کردن مساوی فضا بین گزینه‌ها */
-        align-items: center !important;
-        border-top: 1px solid #e2e8f0 !important;
-        padding-bottom: env(safe-area-inset-bottom) !important;
-        direction: rtl !important;
-        box-sizing: border-box !important;
-    }}
-
-    /* استایل‌دهی به تک تک تب‌ها جهت پر کردن مساوی فضا */
-    .nav-tab-item {{
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        text-decoration: none !important;
-        color: #94a3b8 !important; /* رنگ خاکستری تب‌های غیرفعال */
-        flex: 1 !important;        /* جادوی اصلی: اجبار به پر کردن عرض کانتینر به یک اندازه */
-        height: 100% !important;
-        transition: all 0.15s ease !important;
-        font-family: 'iranyekan', Tahoma, sans-serif !important;
-    }}
-
-    /* افکت تغییر وضعیت در صورت نگه داشتن ماوس یا هاور */
-    .nav-tab-item:hover {{
-        background-color: rgba(234, 88, 12, 0.04) !important;
-        color: #ea580c !important;
-    }}
-
-    /* استایل آیکون (اموجی)‌ها */
-    .nav-tab-icon {{
-        font-size: 20px !important;
-        margin-bottom: 2px !important;
-        display: block !important;
-    }}
-
-    /* استایل متن ریز زیر آیکون */
-    .nav-tab-label {{
-        font-size: 10px !important;
-        font-weight: 700 !important;
-        white-space: nowrap !important;
-    }}
-
-    /* 🟠 استایل تب فعال (تغییر به رنگ نارنجی سازمانی برند تاپسان) */
-    .nav-tab-item.active-tab {{
-        color: #ea580c !important;
-    }}
-    .nav-tab-item.active-tab .nav-tab-icon {{
-        transform: scale(1.05) !important;
-    }}
-
-    /* جلوگیری از رفتن محتوای صفحات به زیر منوی ناوبری */
-    .main .block-container {{
-        padding-bottom: 100px !important; 
-    }}
-</style>
-""", unsafe_allow_html=True)
-
-# ۳. رندر کردن نهایی منوی HTML (با اضافه شدن آرگومان رفع مشکل کد خام)
-st.markdown(menu_html, unsafe_allow_html=True)
