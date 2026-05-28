@@ -23,7 +23,6 @@ st.sidebar.write("تب فعال:", st.session_state.active_tab)
 # st.write("Current Session State:", st.session_state.logged_in) 
 
 # ۴. ایمپورت کردن ماژول احراز هویت
-import auth
 
 # ۵. چک کردن وضعیت ورود
 if not st.session_state.logged_in:
