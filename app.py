@@ -304,14 +304,13 @@ elif st.session_state.active_tab == "profile":
 
 st.markdown("""
 <style>
-    /* این بخش ستون‌ها را در موبایل هم مجبور به افقی بودن می‌کند */
+    /* ستون‌ها را در موبایل کنار هم نگه می‌دارد */
     [data-testid="column"] {
         width: 25% !important;
         flex: 0 0 25% !important;
         max-width: 25% !important;
     }
     
-    /* کانتینر اصلی ستون‌ها را مجبور به حالت افقی می‌کند */
     div[data-testid="stHorizontalBlock"] {
         display: flex !important;
         flex-direction: row !important;
@@ -323,19 +322,22 @@ st.markdown("""
         left: 0;
         width: 100%;
         background-color: white;
-        padding: 5px;
+        padding: 2px;
         z-index: 999999;
         border-top: 1px solid #e2e8f0;
     }
     
+    /* تنظیمات دکمه و فونت */
     div.stButton > button {
         width: 100%;
         border-radius: 10px;
-        font-size: 10px; /* کمی کوچکتر برای موبایل */
-        height: 55px;
+        font-size: 9px !important; /* فونت کوچک‌تر شد */
+        padding: 2px !important;
+        height: 50px; /* ارتفاع کمتر برای اشغال فضای کمتر */
         border: none;
         background-color: transparent;
-        white-space: nowrap; /* جلوگیری از شکستن متن */
+        white-space: nowrap;
+        line-height: 1.2 !important;
     }
 </style>
 """, unsafe_allow_html=True)
