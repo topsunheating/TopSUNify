@@ -756,67 +756,85 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری پایین صفحه - نسخه Flexbox (افقی و غیرقابل شکست)
+# ناوبری پایین صفحه - ثابت در کانتینر (افقی و ۴تایی)
 # ==============================================================================
 
 st.markdown("""
 <style>
-    /* کانتینر اصلی ناوبری */
-    .fixed-bottom-nav-flex {
+    /* کانتینر اصلی ناوبری که در پایین فیکس می‌شود */
+    .fixed-bottom-nav {
         position: fixed !important;
         bottom: 0 !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         width: 100% !important;
         max-width: 550px !important;
-        height: 70px !important;
+        height: 75px !important;
         background-color: #ffffff !important;
-        box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
-        z-index: 999999 !important;
-        display: flex !important;
-        flex-direction: row !important; /* اجبار به چیدمان افقی */
-        justify-content: space-between !important;
-        align-items: center !important;
         border-top: 1px solid #e2e8f0 !important;
-        padding: 0 10px !important;
-    }
-
-    /* دکمه‌های ناوبری در کانتینر فلکس */
-    .nav-btn-wrapper {
-        flex: 1 !important;
         display: flex !important;
+        justify-content: space-around !important;
+        align-items: center !important;
+        z-index: 999999 !important;
+        box-shadow: 0 -4px 10px rgba(0,0,0,0.05) !important;
+    }
+    
+    /* استایل دکمه‌های ناوبری */
+    .nav-btn {
+        background: none !important;
+        border: none !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
         justify-content: center !important;
+        cursor: pointer !important;
+        font-size: 10px !important;
+        font-weight: bold !important;
+        color: #94a3b8 !important;
+        width: 25%; /* تقسیم مساوی برای ۴ آیتم */
+    }
+    
+    .nav-btn.active {
+        color: #ea580c !important;
+    }
+    
+    .nav-icon {
+        font-size: 24px !important;
+        margin-bottom: 2px !important;
     }
 </style>
+
+<div class="fixed-bottom-nav">
 """, unsafe_allow_html=True)
 
-# شروع کانتینر ناوبری
-st.markdown('<div class="fixed-bottom-nav-flex">', unsafe_allow_html=True)
-
-tab_list = [
+# تعریف ۴ آیتم اصلی
+nav_items = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
-    ("warranty", "🛡️", "گارانتی"),
-    ("services", "🛠️", "خدمات"),
-    ("info", "📚", "اطلاعات"),
+    ("info", "📚", "تاپسان"), # عنوان "تاپسان" به جای اطلاعات
     ("profile", "👤", "پروفایل")
 ]
 
-# نمایش دکمه‌ها بدون ستون‌بندی استریم‌لیت (استفاده از HTML برای چیدمان)
-for tab_id, icon, label in tab_list:
-    active_color = "#ea580c" if st.session_state.active_tab == tab_id else "#94a3b8"
+# رندر کردن دکمه‌ها
+for tab_id, icon, label in nav_items:
+    active_class = "active" if st.session_state.active_tab == tab_id else ""
     
-    # ساخت دکمه با استایل بسیار ساده
-    btn_html = f"""
-    <div class="nav-btn-wrapper">
-        <button onclick="window.location.href='?nav_tab={tab_id}'" 
-                style="background:none; border:none; color:{active_color}; 
-                display:flex; flex-direction:column; align-items:center; cursor:pointer; font-size:10px; font-weight:bold;">
-            <span style="font-size:22px; margin-bottom:2px;">{icon}</span>
-            {label}
-        </button>
-    </div>
-    """
-    st.markdown(btn_html, unsafe_allow_html=True)
+    # استفاده از یک فرم کوچک یا دکمه برای تغییر تب (استریم‌لیت به خوبی با این رویداد کار می‌کند)
+    if st.button(f'<div class="nav-icon">{icon}</div>{label}', key=f"nav_{tab_id}", use_container_width=True):
+        st.session_state.active_tab = tab_id
+        st.rerun()
 
 st.markdown('</div>', unsafe_allow_html=True)
+
+# اصلاح استایل دکمه‌های استریم‌لیت برای ظاهر شدن در کانتینر
+st.markdown("""
+<style>
+    div[data-testid="stButton"] { width: 25%; }
+    div[data-testid="stButton"] button {
+        background: none !important;
+        border: none !important;
+        color: inherit !important;
+        padding: 10px 0 !important;
+    }
+</style>
+""", unsafe_allow_html=True)
