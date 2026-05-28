@@ -611,12 +611,12 @@ st.markdown("""
 # ساخت منو با دکمه (پایدارتر از لینک)
 cols = st.columns(6)
 tab_list = [
-    ("dashboard", "📊", "داشبورد"),
-    ("invoice", "🧾", "پیش‌فاکتور"),
-    ("warranty", "🛡️", "گارانتی"),
-    ("services", "🛠️", "خدمات"),
-    ("info", "📚", "اطلاعات"),
-    ("profile", "👤", "پروفایل")
+    ("dashboard", "📊"),
+    ("invoice", "🧾"),
+    ("warranty", "🛡️"),
+    ("services", "🛠️"),
+    ("info", "📚"),
+    ("profile", "👤")
 ]
 
 for i, (tab_id, icon, label) in enumerate(tab_list):
