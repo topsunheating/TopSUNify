@@ -302,65 +302,53 @@ elif st.session_state.active_tab == "profile":
 # ناوبری نهایی: کاملاً مستقل، افقی، چسبیده به پایین و بدون کد خام
 # ==============================================================================
 
+# این کد را جایگزین کل بخش دکمه‌های پایین کنید
 st.markdown("""
 <style>
-    /* ستون‌ها را در موبایل کنار هم نگه می‌دارد */
-    [data-testid="column"] {
-        width: 25% !important;
-        flex: 0 0 25% !important;
-        max-width: 25% !important;
-    }
-    
-    div[data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        flex-direction: row !important;
-    }
-
-    .fixed-footer {
+    .footer-nav-container {
         position: fixed;
         bottom: 0;
         left: 0;
         width: 100%;
+        display: flex !important;
+        flex-direction: row !important;
         background-color: white;
-        padding: 2px;
         z-index: 999999;
         border-top: 1px solid #e2e8f0;
+        padding: 5px 0;
     }
-    
-    /* تنظیمات دکمه و فونت */
-    div.stButton > button {
+    .nav-btn-wrapper {
+        flex: 1;
+        text-align: center;
+    }
+    /* استایل دکمه‌های استریم‌لیت را اینجا دستکاری می‌کنیم */
+    .footer-nav-container div[data-testid="stButton"] {
         width: 100%;
-        border-radius: 10px;
-        font-size: 9px !important; /* فونت کوچک‌تر شد */
-        padding: 2px !important;
-        height: 50px; /* ارتفاع کمتر برای اشغال فضای کمتر */
-        border: none;
-        background-color: transparent;
-        white-space: nowrap;
-        line-height: 1.2 !important;
+    }
+    .footer-nav-container button {
+        width: 100% !important;
+        font-size: 9px !important;
+        height: 50px !important;
+        border: none !important;
+        background: none !important;
     }
 </style>
-""", unsafe_allow_html=True)
 
-# ۲. ایجاد کانتینر برای دکمه‌ها در پایین
-st.markdown('<div class="fixed-footer">', unsafe_allow_html=True)
-nav_col1, nav_col2, nav_col3, nav_col4 = st.columns(4)
+<div class="footer-nav-container">
+    <div class="nav-btn-wrapper">""", unsafe_allow_html=True)
 
-def change_tab(tab_name):
-    st.session_state.active_tab = tab_name
-    st.query_params["nav_tab"] = tab_name
-    st.rerun()
+if st.button("📊\nداشبورد"): st.session_state.active_tab = "dashboard"; st.rerun()
 
-with nav_col1:
-    if st.button("📊\nداشبورد", key="nav_dash"): change_tab("dashboard")
-with nav_col2:
-    if st.button("🧾\nفاکتور", key="nav_inv"): change_tab("invoice")
-with nav_col3:
-    if st.button("📚\nتاپسان", key="nav_info"): change_tab("info")
-with nav_col4:
-    if st.button("👤\nپروفایل", key="nav_prof"): change_tab("profile")
+st.markdown('</div><div class="nav-btn-wrapper">', unsafe_allow_html=True)
 
-st.markdown('</div>', unsafe_allow_html=True)
+if st.button("🧾\nفاکتور"): st.session_state.active_tab = "invoice"; st.rerun()
 
-# ۳. ایجاد فضای خالی در انتهای محتوای اصلی برای اینکه روی دکمه‌ها قرار نگیرد
-st.markdown('<div style="height: 80px;"></div>', unsafe_allow_html=True)
+st.markdown('</div><div class="nav-btn-wrapper">', unsafe_allow_html=True)
+
+if st.button("📚\nتاپسان"): st.session_state.active_tab = "info"; st.rerun()
+
+st.markdown('</div><div class="nav-btn-wrapper">', unsafe_allow_html=True)
+
+if st.button("👤\nپروفایل"): st.session_state.active_tab = "profile"; st.rerun()
+
+st.markdown('</div></div>', unsafe_allow_html=True)
