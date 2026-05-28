@@ -730,109 +730,210 @@ elif st.session_state.active_tab == "profile":
         
 
 # ==============================================================================
-# ناوبری پایین صفحه - ۴ تب (داشبورد - پیش‌فاکتور - تاپسانیفای - پروفایل)
-# ==============================================================================
-
-# ==============================================================================
-# ناوبری پایین صفحه - ۴ تب (نسخه اصلاح شده بدون خروج از اپلیکیشن)
+# ناوبری پایین صفحه - نسخه حرفه‌ای موبایل/دسکتاپ
 # ==============================================================================
 
 st.markdown("""
 <style>
-    .main .block-container {
-        max-width: 420px !important;
-        margin: 0 auto !important;
-        padding-bottom: 100px !important;
+
+.main .block-container{
+    max-width:420px !important;
+    margin:0 auto !important;
+    padding-bottom:95px !important;
+}
+
+/* کانتینر اصلی نوبار */
+.bottom-navbar{
+    position:fixed !important;
+    bottom:0 !important;
+    left:50% !important;
+    transform:translateX(-50%) !important;
+
+    width:100% !important;
+    max-width:420px !important;
+    height:78px !important;
+
+    background:#ffffff !important;
+
+    border-top:1px solid #e2e8f0 !important;
+    box-shadow:0 -4px 18px rgba(0,0,0,0.08) !important;
+
+    z-index:999999 !important;
+
+    display:flex !important;
+    flex-direction:row !important;
+    justify-content:space-around !important;
+    align-items:center !important;
+
+    padding:6px 4px !important;
+}
+
+/* حذف استایل پیشفرض استریم‌لیت */
+.stButton > button{
+    background:transparent !important;
+    border:none !important;
+    box-shadow:none !important;
+
+    height:auto !important;
+    min-height:auto !important;
+
+    padding:0 !important;
+}
+
+/* آیتم هر تب */
+.nav-item{
+    width:100% !important;
+
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    border-radius:14px !important;
+
+    padding:6px 0 !important;
+
+    transition:all .2s ease !important;
+}
+
+/* تب فعال */
+.nav-active{
+    background:#fff7ed !important;
+}
+
+/* آیکون */
+.nav-icon{
+    font-size:22px !important;
+    line-height:22px !important;
+
+    margin-bottom:5px !important;
+}
+
+/* متن */
+.nav-label{
+    font-size:10px !important;
+    font-weight:700 !important;
+
+    color:#64748b !important;
+
+    white-space:nowrap !important;
+}
+
+/* متن تب فعال */
+.nav-active .nav-label{
+    color:#ea580c !important;
+}
+
+.nav-active .nav-icon{
+    color:#ea580c !important;
+}
+
+/* موبایل */
+@media (max-width:480px){
+
+    .bottom-navbar{
+        height:74px !important;
     }
 
-    .final-bottom-nav {
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        width: 100% !important;
-        max-width: 420px !important;
-        height: 78px !important;
-        background-color: #ffffff !important;
-        border-top: 1px solid #e2e8f0 !important;
-        box-shadow: 0 -4px 12px rgba(0,0,0,0.1) !important;
-        z-index: 999999 !important;
-        display: flex !important;
-        justify-content: space-around !important;
-        align-items: center !important;
-        padding: 6px !important;
+    .nav-icon{
+        font-size:20px !important;
     }
 
-    .nav-btn button {
-        border: none !important;
-        background: transparent !important;
-        color: #64748b !important;
-        font-size: 11px !important;
-        font-weight: 700 !important;
-        height: 60px !important;
-        border-radius: 12px !important;
-        transition: all 0.2s ease !important;
+    .nav-label{
+        font-size:9px !important;
     }
+}
 
-    .nav-btn button:hover {
-        background: rgba(234, 88, 12, 0.08) !important;
-        color: #ea580c !important;
-    }
-
-    .active-nav button {
-        background: #fffbeb !important;
-        color: #ea580c !important;
-    }
 </style>
 """, unsafe_allow_html=True)
 
-# ---------- NAVIGATION STATE ----------
+
+# ==============================================================================
+# STATE
+# ==============================================================================
+
 if "active_tab" not in st.session_state:
     st.session_state.active_tab = "dashboard"
 
-# ---------- BOTTOM NAV ----------
-st.markdown('<div class="final-bottom-nav">', unsafe_allow_html=True)
 
-col1, col2, col3, col4 = st.columns(4)
+# ==============================================================================
+# NAVBAR
+# ==============================================================================
 
-with col1:
-    nav_class = "active-nav" if st.session_state.active_tab == "dashboard" else "nav-btn"
-    st.markdown(f'<div class="{nav_class}">', unsafe_allow_html=True)
+st.markdown('<div class="bottom-navbar">', unsafe_allow_html=True)
 
-    if st.button("📊\nداشبورد", key="tab_dashboard", use_container_width=True):
+c1, c2, c3, c4 = st.columns(4)
+
+# ------------------------------------------------------------------------------
+# DASHBOARD
+# ------------------------------------------------------------------------------
+
+with c1:
+
+    active = "nav-active" if st.session_state.active_tab == "dashboard" else ""
+
+    st.markdown(f'<div class="nav-item {active}">', unsafe_allow_html=True)
+
+    if st.button("📊", key="dashboard_btn", use_container_width=True):
         st.session_state.active_tab = "dashboard"
         st.rerun()
 
+    st.markdown('<div class="nav-label">داشبورد</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-with col2:
-    nav_class = "active-nav" if st.session_state.active_tab == "invoice" else "nav-btn"
-    st.markdown(f'<div class="{nav_class}">', unsafe_allow_html=True)
 
-    if st.button("🧾\nپیش‌فاکتور", key="tab_invoice", use_container_width=True):
+# ------------------------------------------------------------------------------
+# INVOICE
+# ------------------------------------------------------------------------------
+
+with c2:
+
+    active = "nav-active" if st.session_state.active_tab == "invoice" else ""
+
+    st.markdown(f'<div class="nav-item {active}">', unsafe_allow_html=True)
+
+    if st.button("🧾", key="invoice_btn", use_container_width=True):
         st.session_state.active_tab = "invoice"
         st.rerun()
 
+    st.markdown('<div class="nav-label">پیش‌فاکتور</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-with col3:
-    nav_class = "active-nav" if st.session_state.active_tab == "topsunify" else "nav-btn"
-    st.markdown(f'<div class="{nav_class}">', unsafe_allow_html=True)
 
-    if st.button("☀️\nتاپسانیفای", key="tab_topsunify", use_container_width=True):
+# ------------------------------------------------------------------------------
+# TOPSUNIFY
+# ------------------------------------------------------------------------------
+
+with c3:
+
+    active = "nav-active" if st.session_state.active_tab == "topsunify" else ""
+
+    st.markdown(f'<div class="nav-item {active}">', unsafe_allow_html=True)
+
+    if st.button("☀️", key="topsunify_btn", use_container_width=True):
         st.session_state.active_tab = "topsunify"
         st.rerun()
 
+    st.markdown('<div class="nav-label">تاپسانیفای</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-with col4:
-    nav_class = "active-nav" if st.session_state.active_tab == "profile" else "nav-btn"
-    st.markdown(f'<div class="{nav_class}">', unsafe_allow_html=True)
 
-    if st.button("👤\nپروفایل", key="tab_profile", use_container_width=True):
+# ------------------------------------------------------------------------------
+# PROFILE
+# ------------------------------------------------------------------------------
+
+with c4:
+
+    active = "nav-active" if st.session_state.active_tab == "profile" else ""
+
+    st.markdown(f'<div class="nav-item {active}">', unsafe_allow_html=True)
+
+    if st.button("👤", key="profile_btn", use_container_width=True):
         st.session_state.active_tab = "profile"
         st.rerun()
 
+    st.markdown('<div class="nav-label">پروفایل</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
+
 
 st.markdown('</div>', unsafe_allow_html=True)
