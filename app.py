@@ -13,7 +13,8 @@ st.set_page_config(
     page_icon="./topsunify.png",
     layout="wide"
 )
-st.write("Current Session State:", st.session_state.logged_in)
+# استفاده از get برای جلوگیری از خطای AttributeError
+st.write("Current Session State:", st.session_state.get("logged_in", "NOT_FOUND"))
 # ==============================================================================
 # AUTH
 # ==============================================================================
