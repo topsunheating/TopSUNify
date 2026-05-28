@@ -764,7 +764,7 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری نهایی: منوی افقی (نسخه قوی)
+# ناوبری نهایی: منوی افقی (نسخه اصلاح شده)
 # ==============================================================================
 st.markdown("""
 <style>
@@ -783,7 +783,7 @@ st.markdown("""
         box-shadow: 0 -4px 12px rgba(0,0,0,0.1) !important;
         z-index: 999999 !important;
         direction: ltr !important;
-        padding: 0 8px !important;
+        padding: 0 5px !important;
         box-sizing: border-box !important;
     }
    
@@ -796,18 +796,18 @@ st.markdown("""
         color: #94a3b8 !important;
         font-size: 10px !important;
         font-weight: 700 !important;
-        flex: 1 1 0 !important;           /* خیلی مهم */
+        flex: 1 1 0 !important;
         min-width: 0 !important;
-        padding: 6px 2px !important;
-        line-height: 1.1 !important;
+        padding: 5px 3px !important;
     }
    
     .nav-tab-link.active-link {
         color: #ea580c !important;
     }
     
-    .nav-tab-link div {
-        margin: 2px 0 !important;
+    .nav-tab-link div:first-child {
+        font-size: 22px !important;
+        margin-bottom: 3px !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -822,18 +822,19 @@ nav_items = [
     ("profile", "👤", "پروفایل")
 ]
 
-# ساخت یک HTML کامل برای همه آیتم‌ها
+# ساخت HTML کامل
 nav_html = '<div class="fixed-bottom-nav-v2">'
 
 for tab_id, icon, label in nav_items:
     active_class = "active-link" if st.session_state.get("active_tab", "dashboard") == tab_id else ""
-    nav_html += f"""
+    nav_html += f'''
         <a href="?nav_tab={tab_id}" target="_self" class="nav-tab-link {active_class}">
-            <div style="font-size: 22px;">{icon}</div>
+            <div>{icon}</div>
             <div>{label}</div>
         </a>
-    """
+    '''
 
 nav_html += '</div>'
 
+# نمایش نهایی
 st.markdown(nav_html, unsafe_allow_html=True)
