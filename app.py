@@ -756,19 +756,20 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری افقی و یکپارچه (Bottom Navigation)
+# ناوبری پایین صفحه (پایدار و افقی)
 # ==============================================================================
 
 st.markdown("""
 <style>
-    /* تثبیت عرض */
-    [data-testid="stAppViewContainer"] {
+    /* قفل کردن عرض کلی در دسکتاپ و موبایل */
+    [data-testid="stAppViewContainer"], .main .block-container {
         max-width: 550px !important;
         margin: 0 auto !important;
+        padding-bottom: 80px !important; /* جلوگیری از پوشانده شدن محتوا */
     }
-    
+
     /* کانتینر اصلی ناوبری */
-    .bottom-nav-container {
+    .fixed-bottom-nav {
         position: fixed !important;
         bottom: 0 !important;
         left: 50% !important;
@@ -777,47 +778,30 @@ st.markdown("""
         max-width: 550px !important;
         height: 65px !important;
         background-color: #ffffff !important;
-        box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
-        z-index: 999999 !important;
+        box-shadow: 0 -4px 10px rgba(0,0,0,0.05) !important;
+        z-index: 99999 !important;
         display: flex !important;
-        flex-direction: row !important; /* چینش افقی */
-        justify-content: space-around !important;
+        justify-content: space-between !important;
         align-items: center !important;
-        border-top: 1px solid #e2e8f0 !important;
-        padding: 0 5px !important;
+        border-top: 1px solid #e1e1e1 !important;
+        padding: 0 15px !important;
     }
 
-    /* حذف فاصله اضافی دکمه‌ها برای چیدمان بهتر */
-    div[data-testid="stVerticalBlock"] {
-        gap: 0 !important;
-    }
-
-    /* استایل دکمه‌های آیکونی */
-    div[data-testid="stButton"] button {
-        background: transparent !important;
+    /* استایل دکمه‌های ناوبری */
+    .nav-btn {
+        background: none !important;
         border: none !important;
-        color: #94a3b8 !important;
         font-size: 22px !important;
-        height: 60px !important;
-        width: 100% !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-    
-    /* تغییر رنگ آیکون در حالت فعال */
-    .active-icon {
-        color: #ea580c !important;
+        cursor: pointer !important;
+        padding: 10px !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# رندر کردن دکمه‌ها در یک ردیف افقی
-st.markdown('<div class="bottom-nav-container">', unsafe_allow_html=True)
+# رندر ناوبری
+st.markdown('<div class="fixed-bottom-nav">', unsafe_allow_html=True)
 
-tab_list = [
+tabs = [
     ("dashboard", "📊"),
     ("invoice", "🧾"),
     ("warranty", "🛡️"),
@@ -826,16 +810,23 @@ tab_list = [
     ("profile", "👤")
 ]
 
-# استفاده از ستون‌های برابر برای توزیع یکنواخت آیکون‌ها
-cols = st.columns(len(tab_list))
-
-for i, (tab_id, icon) in enumerate(tab_list):
-    with cols[i]:
-        # اگر تب فعال است، آیکون را با رنگ متمایز نشان بده
-        icon_display = f'<div class="active-icon">{icon}</div>' if st.session_state.active_tab == tab_id else icon
-        
-        if st.button(icon_display, key=f"nav_{tab_id}"):
-            st.session_state.active_tab = tab_id
-            st.rerun()
+for tab_id, icon in tabs:
+    # تعیین رنگ برای حالت فعال
+    color = "#ea580c" if st.session_state.active_tab == tab_id else "#94a3b8"
+    
+    # استفاده از دکمه استریم‌لیت در یک ساختار افقی
+    if st.button(icon, key=f"nav_{tab_id}"):
+        st.session_state.active_tab = tab_id
+        st.rerun()
+    
+    # اعمال رنگ فعال با تزریق استایل به دکمه
+    st.markdown(f"""
+        <style>
+            button[kind="secondary"][key="nav_{tab_id}"] {{
+                color: {color} !important;
+                background: none !important;
+            }}
+        </style>
+    """, unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
