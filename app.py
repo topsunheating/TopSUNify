@@ -764,13 +764,13 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری نهایی: منوی تماماً دستی (بدون وابستگی به استایل‌های استریم‌لیت)
+# ناوبری نهایی: منوی پایین (افقی، فیکس، ریسپانسیو)
 # ==============================================================================
 
-# تزریق استایل با اولویت بسیار بالا (Important)
 st.markdown("""
 <style>
-    .force-bottom-nav {
+    /* کانتینر اصلی منو با اولویت بالا */
+    .fixed-bottom-nav {
         position: fixed !important;
         bottom: 0 !important;
         left: 0 !important;
@@ -778,45 +778,55 @@ st.markdown("""
         height: 70px !important;
         background-color: white !important;
         display: flex !important;
-        flex-direction: row !important; /* اجبار به افقی بودن */
+        flex-direction: row !important; /* چیدمان افقی اجباری */
         justify-content: space-around !important;
         align-items: center !important;
         border-top: 1px solid #e2e8f0 !important;
         z-index: 999999 !important;
         margin: 0 !important;
         padding: 0 !important;
-        direction: ltr !important; /* خنثی‌سازی rtl عمومی */
+        direction: ltr !important; /* خنثی‌سازی rtl عمومی برای افقی شدن */
     }
     
     .nav-item-forced {
         display: flex !important;
-        flex-direction: column !important; /* آیکون و متن عمودی */
+        flex-direction: column !important; /* آیکون و متن عمودی روی هم */
         align-items: center !important;
         justify-content: center !important;
         text-decoration: none !important;
         color: #94a3b8 !important;
         font-family: 'iranyekan', sans-serif !important;
         font-size: 10px !important;
+        font-weight: 700 !important;
         flex: 1 !important;
         height: 100% !important;
+        transition: color 0.2s !important;
+    }
+
+    .nav-item-forced:hover {
+        color: #ea580c !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# رندر مستقیم HTML بدون ستون‌بندی استریم‌لیت
-nav_html = '<div class="force-bottom-nav">'
-for tab_id, icon, label in [
+# تعریف داده‌های تب‌ها (ترتیب دلخواه شما)
+nav_tabs = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
     ("warranty", "🛡️", "گارانتی"),
     ("services", "🛠️", "خدمات"),
     ("info", "📚", "اطلاعات"),
     ("profile", "👤", "پروفایل")
-]:
-    active_style = "color: #ea580c !important;" if st.session_state.active_tab == tab_id else ""
+]
+
+# ساخت و نمایش نوار
+nav_html = '<div class="fixed-bottom-nav">'
+for tab_id, icon, label in nav_tabs:
+    # تعیین رنگ نارنجی برای تب فعال
+    active_color = "color: #ea580c !important;" if st.session_state.active_tab == tab_id else ""
     nav_html += f'''
-    <a href="?nav_tab={tab_id}" target="_self" class="nav-item-forced" style="{active_style}">
-        <div style="font-size: 20px;">{icon}</div>
+    <a href="?nav_tab={tab_id}" target="_self" class="nav-item-forced" style="{active_color}">
+        <div style="font-size: 20px; margin-bottom: 2px;">{icon}</div>
         <div>{label}</div>
     </a>
     '''
