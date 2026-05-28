@@ -177,7 +177,7 @@ def inject_custom_css():
 inject_custom_css()
 
 # ====================== ۴. هدر بالایی برنامه ======================
-col_logo, col_title = st.columns()
+col_logo, col_title = st.columns(2)
 with col_logo:
     try: st.image("./static/logo.png", width=65)
     except: st.write("☀️")
