@@ -29,17 +29,18 @@ import pandas as pd
 from PIL import Image
 from Financial import calculate_tosunify_proforma, generate_proforma_pdf
 
-# ====================== ۳. هوشمندسازی CSS با فونت ایران‌یکان و ظاهر نیتیو ======================
-
+## ====================== ۳. هوشمندسازی CSS با فونت ایران‌یکان و ظاهر نیتیو ======================
 def inject_custom_css():
+    # دقت کنید که تمام خطوط زیر باید حداقل 4 فاصله (Indent) داشته باشند
+    font_path = "iranyekan.ttf"
+    font_base64 = ""
 
-
-font_path = "iranyekan.ttf"
-font_base64 = ""
-
-if os.path.exists(font_path):
-    with open(font_path, "rb") as f:
-        font_base64 = base64.b64encode(f.read()).decode()
+    if os.path.exists(font_path):
+        with open(font_path, "rb") as f:
+            font_base64 = base64.b64encode(f.read()).decode()
+            
+    # بقیه کدهای این تابع هم باید همین مقدار فاصله داشته باشند...
+    # ...
 
 css = f"""
 <style>
