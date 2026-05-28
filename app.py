@@ -756,124 +756,149 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه ۴ تب (آیکون بالا، متن زیر)
+# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه پایدار ۴ تب
 # ==============================================================================
 
-# ۱. تزریق استایل‌های هوشمند سی‌اس‌اس برای چیدمان عمودی آیکون و متن داخل دکمه‌ها
 st.markdown("""
 <style>
-    /* کانتینر اصلی نوار ناوبری در پایین صفحه */
-    .fixed-bottom-nav-container {
+    /* کانتینر اصلی منو جهت ایجاد پس‌زمینه سفید منسجم */
+    .fixed-bottom-nav {
         position: fixed !important;
         bottom: 0 !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         width: 100% !important;
-        max-width: 550px !important; /* فیکس با پهنای استاندارد موبایل شما */
-        height: 75px !important;
+        max-width: 550px !important;
+        height: 74px !important;
         background-color: #ffffff !important;
         box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
-        z-index: 999999 !important;
-        display: flex !important;
-        flex-direction: row !important;       /* اجبار به قرارگیری در یک خط افقی */
-        flex-wrap: nowrap !important;         /* جلوگیری از زیر هم رفتن تب‌ها در موبایل */
-        justify-content: space-around !important; /* پخش متوازن فضا */
-        align-items: center !important;
+        z-index: 999998 !important; /* یک لایه زیر دکمه‌ها برای کلیک‌خور شدن کامل */
         border-top: 1px solid #e2e8f0 !important;
-        padding: 0 4px !important;
-        box-sizing: border-box !important;
     }
 
-    /* تقسیم دقیق کانتینر به ۴ بخش مساوی (هر تب دقیقاً ۲۵٪ عرض) */
-    .fixed-bottom-nav-container > div {
-        flex: 1 !important;
-        width: 25% !important;
+    /* 🚨 مهار قطعی رفتارهای موبایل استریم‌لیت: اجبار ستون‌ها به افقی ماندن در هر موبایلی */
+    div[data-testid="stHorizontalBlock"] {
+        display: flex !important;
+        flex-direction: row !important; /* چینش افقی در یک خط */
+        flex-wrap: nowrap !important;   /* جلوگیری از زیر هم رفتن تب‌ها */
+        width: 100% !important;
+        max-width: 550px !important;
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        z-index: 999999 !important;     /* بالاترین لایه برای فشرده شدن دکمه‌ها */
+        background-color: #ffffff !important;
+        padding: 4px 0px !important;
+        height: 72px !important;
+        align-items: center !important;
+        justify-content: space-around !important;
+    }
+
+    /* 🚨 تقسیم فضای دقیقاً مساوی برای هر کدام از ۴ ستون دکمه‌ها (هر کدام ۲۵٪) */
+    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+        width: 25% !important; 
         min-width: 25% !important;
         max-width: 25% !important;
+        flex-grow: 1 !important; 
+        flex-shrink: 0 !important;
         margin: 0 !important;
         padding: 0 !important;
     }
 
-    /* 🚨 جادوی اصلی: بازنویسی تگ دکمه استریم‌لیت برای بردن آیکون به بالا و متن به زیر آن */
-    .fixed-bottom-nav-container button {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        color: #94a3b8 !important; /* رنگ خاکستری تب‌های غیرفعال */
-        height: 70px !important;
-        width: 100% !important;
-        padding: 0 !important;
-        margin: 0 !important;
+    .nav-tab-item {
         display: flex !important;
-        /* جابجایی دکمه به حالت ستونی برای قرارگیری متن زیر آیکون 👇 */
-        flex-direction: column !important; 
+        flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-    }
-
-    /* تنظیمات تگ متن (p) داخل دکمه‌های استریم‌لیت */
-    .fixed-bottom-nav-container button p {
-        display: flex !important;
-        flex-direction: column !important; /* اجبار به ساختار ستونی داخل متن */
-        align-items: center !important;
-        justify-content: center !important;
-        white-space: pre-line !important;  /* اعمال شکست خط (\n) */
-        font-size: 11px !important;
+        text-decoration: none !important;
+        color: #94a3b8 !important;
+        font-size: 10px !important;
         font-weight: 700 !important;
-        line-height: 1.3 !important;
+        flex: 1 !important;
+        padding: 6px 0 !important;
     }
-
-    /* افکت هاور ملایم دکمه‌ها */
-    .fixed-bottom-nav-container button:hover {
-        background: rgba(234, 88, 12, 0.05) !important;
+    
+    /* 🟠 استایل دکمه‌ی فعال (تغییر به رنگ نارنجی سازمانی برند تاپسان) */
+    div.active-tab-button button {
         color: #ea580c !important;
     }
-
-    /* 🟠 استایل رنگ نارنجی سازمانی برند تاپسان برای تب فعال */
-    .fixed-bottom-nav-container .active-tab-wrapper button {
-        color: #ea580c !important;
-    }
-    .fixed-bottom-nav-container .active-tab-wrapper button p {
+    div.active-tab-button button p {
         color: #ea580c !important;
         font-weight: 800 !important;
     }
+</style>
+""", unsafe_allow_html=True)
 
-    /* ایجاد فاصله در پایین صفحه تا محتوای اصلی به زیر منو نرود */
+# ایجاد لایه پس‌زمینه فیکس شده
+st.markdown('<div class="fixed-bottom-nav"></div>', unsafe_allow_html=True)
+
+# ساخت منو با ۴ ستون جهت چیدمان عریض‌تر و باز شدن فضا در موبایل
+cols = st.columns(4)
+tab_list = [
+    ("dashboard", "📊", "داشبورد"),
+    ("invoice", "🧾", "پیش‌فاکتور"),
+    ("top_sunify", "✨", "تاپسانیفای"),
+    ("profile", "👤", "پروفایل")
+]
+
+for i, (tab_id, icon, label) in enumerate(tab_list):
+    with cols[i]:
+        is_active = st.session_state.active_tab == tab_id
+        
+        # 🚨 منطق هوشمند درخواستی شما: 
+        # اگر تب فعال باشد، آیکون و اسم زیرش باهم لود می‌شوند. اگر غیرفعال باشد فقط آیکون لود می‌شود.
+        if is_active:
+            button_text = f"{icon}\n{label}"
+            st.markdown('<div class="active-tab-button">', unsafe_allow_html=True)
+        else:
+            button_text = f"{icon}"
+            st.markdown('<div>', unsafe_allow_html=True)
+        
+        # رندر دکمه بومی پایتون بر اساس تکست مشخص شده
+        if st.button(button_text, key=f"nav_v9_{tab_id}", 
+                     use_container_width=True,
+                     help=label):
+            st.session_state.active_tab = tab_id
+            st.query_params["nav_tab"] = tab_id
+            st.rerun()
+            
+        st.markdown('</div>', unsafe_allow_html=True)
+
+# CSS اضافی برای زیباتر کردن و ساختار عمودی آیکون-متن درون دکمه‌ها
+st.markdown("""
+<style>
+    div[data-testid="stButton"] button {
+        background: transparent !important;
+        border: none !important;
+        color: #94a3b8 !important; /* رنگ خاکستری پیش‌فرض برای دکمه‌های عادی */
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        height: 68px !important;
+        display: flex !important;
+        flex-direction: column !important; /* بردن متن به زیر آیکون */
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 4px 0 !important;
+    }
+    
+    div[data-testid="stButton"] button p {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        white-space: pre-line !important; /* فعال‌سازی شکست خط برای قرارگیری اسم تب در خط زیرین آیکون */
+        line-height: 1.3 !important;
+    }
+    
+    div[data-testid="stButton"] button:hover {
+        background: rgba(234, 88, 12, 0.05) !important;
+        color: #ea580c !important;
+    }
+    
+    /* پدینگ کمکی انتهای صفحه تا متن صفحات پشت منو قفل نشوند */
     .main .block-container {
         padding-bottom: 110px !important;
     }
 </style>
 """, unsafe_allow_html=True)
-
-# ۲. ایجاد لایه نگهدارنده منو
-st.markdown('<div class="fixed-bottom-nav-container">', unsafe_allow_html=True)
-
-# لیست ۴ تب شما با کاراکتر خط جدید (\n) بین آیکون و متن برای فرستادن کلمه به خط پایین
-tab_list = [
-    ("dashboard", "📊\nداشبورد"),
-    ("invoice", "🧾\nپیش‌فاکتور"),
-    ("top_sunify", "✨\nتاپسانیفای"),
-    ("profile", "👤\nپروفایل")
-]
-
-# ۳. رندر کردن دکمه‌های نیتیو پایتون بدون شکستگی ستونی در موبایل
-for tab_id, button_text in tab_list:
-    # بخش اول متغیر یعنی شناسه تب را برای بررسی وضعیت فعال جدا می‌کنیم
-    is_active = st.session_state.active_tab == tab_id
-    
-    # اعمال کلاس رنگ نارنجی در صورت فعال بودن تب
-    if is_active:
-        st.markdown('<div class="active-tab-wrapper">', unsafe_allow_html=True)
-    else:
-        st.markdown('<div>', unsafe_allow_html=True)
-        
-    # دکمه کاملاً بومی و پایدار پایتون
-    if st.button(button_text, key=f"nav_v6_{tab_id}", use_container_width=True):
-        st.session_state.active_tab = tab_id
-        st.query_params["nav_tab"] = tab_id
-        st.rerun()
-        
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# بستن تگ کانتینر اصلی
-st.markdown('</div>', unsafe_allow_html=True)
