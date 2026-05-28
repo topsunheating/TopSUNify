@@ -76,7 +76,7 @@ def render_auth_page():
         max-width: 400px !important;
         margin: 0 auto !important;
         position: relative !important;
-        z-index: 10 !important; /* قرارگیری بالای تصویر پس‌زمینه */
+        z-index: 10 !important;
     }}
    
     .stTextInput input {{
@@ -85,7 +85,7 @@ def render_auth_page():
         border-right: none !important;
         border-bottom: 1px solid #e2e8f0 !important;
         border-radius: 0px !important;
-        background-color: rgba(255, 255, 255, 0.8) !important; /* کمی شفافیت برای زیبایی بیشتر روی عکس */
+        background-color: transparent !important;
         padding: 12px 5px !important;
         font-size: 16px !important;
         color: #1e293b !important;
@@ -183,20 +183,29 @@ def render_auth_page():
         font-weight: bold !important;
     }}
 
-    /* ==========================================
-       استایل جدید: تصویر منظره فیکس شده در پایین صفحه
-       ========================================== */
-    .bottom-landscape-bg {{
+    /* =======================================================
+       اصلاحیه طلایی: تصویر پس‌زمینه محدود به عرض ۴۰۰ پیکسل همراه با فید نرم به بالا
+       ======================================================= */
+    .landscape-wrapper {{
         position: fixed !important;
         bottom: 0 !important;
-        left: 0 !important;
-        width: 100vw !important;
-        height: 28vh !important; /* پوشش ۲۸ درصد از ارتفاع پایین صفحه */
+        left: 50% !important;
+        transform: translateX(-50%) !important; /* تراز دقیق در مرکز طول صفحه */
+        width: 100% !important;
+        max-width: 400px !important; /* محدود شدن به اندازه دقیق دکمه و فیلدها */
+        height: 25vh !important; /* ارتفاع کنترل شده پس‌زمینه در پایین */
+        z-index: 1 !important;
+        pointer-events: none !important;
+    }}
+
+    .bottom-landscape-bg {{
+        width: 100% !important;
+        height: 100% !important;
         background: url(data:image/jpeg;base64,{landscape_base64}) no-repeat center bottom !important;
         background-size: cover !important;
-        z-index: 1 !important; /* قرارگیری پشت المان‌های فرم */
-        pointer-events: none !important; /* عدم تداخل با کلیک‌ها */
-        opacity: 0.9 !important;
+        /* افکت ماسک گرادینت: پایین ۱۰۰٪ پررنگ و بالای عکس کاملاً شفاف و محو */
+        -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 85%) !important;
+        mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 85%) !important;
     }}
 
     /* ==========================================
@@ -307,9 +316,13 @@ def render_auth_page():
 
     st.markdown('<div class="forgot-link"><a href="#">فعال‌سازی / فراموشی رمز</a></div>', unsafe_allow_html=True)
 
-    # --- تزریق عکس منظره در پایین‌ترین لایه صفحه ---
+    # --- تزریق عکس منظره محدود شده با افکت محوشدگی نرم به بالا ---
     if landscape_base64:
-        st.markdown('<div class="bottom-landscape-bg"></div>', unsafe_allow_html=True)
+        st.markdown("""
+        <div class="landscape-wrapper">
+            <div class="bottom-landscape-bg"></div>
+        </div>
+        """, unsafe_allow_html=True)
 
     # ==========================================
     # پاپ‌آ‌پ بومی و فیکس شده
