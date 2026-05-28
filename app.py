@@ -764,79 +764,70 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری پایین صفحه - نسخه نهایی (بدون نمایش کد خام)
+# ناوبری پایین صفحه - ۳ تب (روش دکمه‌ای - بدون خروج از برنامه)
 # ==============================================================================
 
 st.markdown("""
 <style>
-    .nav-bar-container {
+    .bottom-nav-container {
         position: fixed !important;
         bottom: 0 !important;
-        left: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
         width: 100% !important;
-        height: 76px !important;
-        background-color: #ffffff !important;
+        max-width: 550px !important;
+        height: 78px !important;
+        background: #ffffff !important;
         border-top: 1px solid #e2e8f0 !important;
+        box-shadow: 0 -4px 12px rgba(0,0,0,0.1) !important;
+        z-index: 999999 !important;
         display: flex !important;
         flex-direction: row !important;
         justify-content: space-around !important;
         align-items: center !important;
-        z-index: 999999 !important;
-        box-shadow: 0 -3px 10px rgba(0,0,0,0.08) !important;
-        direction: ltr !important;
-        padding: 0 8px !important;
     }
     
-    .nav-button {
+    div[data-testid="stButton"] button {
+        background: transparent !important;
+        border: none !important;
+        height: 72px !important;
+        color: #64748b !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        color: #64748b !important;
-        text-decoration: none !important;
-        font-size: 10px !important;
-        font-weight: 700 !important;
-        flex: 1 !important;
-        padding: 6px 0 !important;
+        padding: 4px 0 !important;
     }
     
-    .nav-button.active {
+    div[data-testid="stButton"] button:hover {
+        background: rgba(234, 88, 12, 0.08) !important;
+    }
+    
+    /* تب فعال */
+    button[key="nav_dashboard"].stButton button,
+    button[key="nav_invoice"].stButton button,
+    button[key="nav_profile"].stButton button {
         color: #ea580c !important;
-    }
-    
-    .nav-button div:first-child {
-        font-size: 24px !important;
-        margin-bottom: 4px !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# ساخت HTML کامل
-nav_html = '<div class="nav-bar-container">'
+# سه ستون برای سه تب
+col1, col2, col3 = st.columns(3)
 
-tabs = [
-    ("dashboard", "📊", "داشبورد"),
-    ("invoice", "🧾", "پیش‌فاکتور"),
-    ("profile", "👤", "پروفایل")
-]
+with col1:
+    if st.button("📊\nداشبورد", key="nav_dashboard", use_container_width=True):
+        st.session_state.active_tab = "dashboard"
+        st.rerun()
 
-for tab_id, icon, label in tabs:
-    active = "active" if st.session_state.get("active_tab") == tab_id else ""
-    nav_html += f'''
-        <a href="?nav_tab={tab_id}" class="nav-button {active}">
-            <div>{icon}</div>
-            <div>{label}</div>
-        </a>
-    '''
+with col2:
+    if st.button("🧾\nپیش‌فاکتور", key="nav_invoice", use_container_width=True):
+        st.session_state.active_tab = "invoice"
+        st.rerun()
 
-nav_html += '</div>'
-
-# نمایش نهایی با st.html (بهترین روش)
-st.html(nav_html)
-
-# مدیریت تغییر تب
-if "nav_tab" in st.query_params:
-    new_tab = st.query_params["nav_tab"]
-    if new_tab in ["dashboard", "invoice", "profile"]:
-        st.session_state.active_tab = new_tab
+with col3:
+    if st.button("👤\nپروفایل", key="nav_profile", use_container_width=True):
+        st.session_state.active_tab = "profile"
         st.rerun()
