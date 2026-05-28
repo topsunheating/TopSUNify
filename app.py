@@ -764,7 +764,7 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری نهایی پایین صفحه - فقط ۳ تب (افقی قوی)
+# ناوبری نهایی پایین صفحه - ۳ تب (نسخه بدون نمایش کد خام)
 # ==============================================================================
 
 st.markdown("""
@@ -776,7 +776,7 @@ st.markdown("""
         transform: translateX(-50%) !important;
         width: 100% !important;
         max-width: 550px !important;
-        height: 78px !important;
+        height: 80px !important;
         background-color: #ffffff !important;
         box-shadow: 0 -4px 15px rgba(0,0,0,0.12) !important;
         z-index: 999999 !important;
@@ -813,8 +813,10 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ساخت HTML کامل منو
-nav_html = '<div class="bottom-nav-3tab">'
+# ساخت HTML کامل
+nav_html = '''
+<div class="bottom-nav-3tab">
+'''
 
 tabs = [
     ("dashboard", "📊", "داشبورد"),
@@ -823,7 +825,7 @@ tabs = [
 ]
 
 for tab_id, icon, label in tabs:
-    active_class = "active" if st.session_state.active_tab == tab_id else ""
+    active_class = "active" if st.session_state.get("active_tab") == tab_id else ""
     nav_html += f'''
         <a href="?nav_tab={tab_id}" class="nav-item-3 {active_class}">
             <div class="icon">{icon}</div>
@@ -833,12 +835,14 @@ for tab_id, icon, label in tabs:
 
 nav_html += '</div>'
 
-st.markdown(nav_html, unsafe_allow_html=True)
+# نمایش با st.html (بهترین روش برای جلوگیری از نمایش کد خام)
+st.html(nav_html)
 
-# مدیریت تغییر تب
+# مدیریت تب (بعد از نمایش منو)
 query_params = st.query_params
 if "nav_tab" in query_params:
     new_tab = query_params["nav_tab"]
     if new_tab in ["dashboard", "invoice", "profile"]:
-        st.session_state.active_tab = new_tab
-        # st.rerun()   # اگر لازم بود فعال کن
+        if st.session_state.active_tab != new_tab:
+            st.session_state.active_tab = new_tab
+            st.rerun()
