@@ -18,7 +18,6 @@ def render_auth_page():
 
     # بررسی وضعیت ورود پس از سابمیت فرم HTML
     if form_submitted:
-        # پاک کردن پارامتر سابمیت برای جلوگیری از تکرار لوپ
         st.query_params.update({"login_submit": "false"})
         if username_val == "admin" and password_val == "1234":
             st.session_state.logged_in = True
@@ -43,6 +42,12 @@ def render_auth_page():
         with open("biometric.png", "rb") as f:
             bio_icon_base64 = base64.b64encode(f.read()).decode()
 
+    # تبدیل آیکون pdf_logo.png به base64 برای بخش Powered by
+    pdf_logo_base64 = ""
+    if os.path.exists("pdf_logo.png"):
+        with open("pdf_logo.png", "rb") as f:
+            pdf_logo_base64 = base64.b64encode(f.read()).decode()
+
     # لود کردن تصویر منظره برای پایین صفحه (landscape.jpg یا landscape.png)
     landscape_base64 = ""
     landscape_path = None
@@ -62,7 +67,6 @@ def render_auth_page():
         src: url(data:font/ttf;base64,{font_base64}) format('truetype');
     }}
     
-    /* قفل کردن اسکرول در تمام کانتینرهای اصلی و لایه‌های پنهان استریم‌لیت */
     html, body, [data-testid="stAppViewContainer"], [data-testid="stMainBlockContainer"], .main {{
         background-color: #ffffff !important;
         overflow: hidden !important; 
@@ -83,11 +87,11 @@ def render_auth_page():
     }}
 
     /* =======================================================
-       کانتینر بومی فرم ورود: کاملاً فیکس و بدون کوچکترین تکان
+       تنظیم جدید: بردن کل فرم به بالاتر (تغییر top از 45% به 38%)
        ======================================================= */
     .fixed-auth-card {{
         position: fixed !important;
-        top: 45% !important;
+        top: 38% !important; 
         left: 50% !important;
         transform: translate(-50%, -50%) !important;
         width: 100% !important;
@@ -101,7 +105,7 @@ def render_auth_page():
         align-items: center !important;
         justify-content: center !important;
         width: 100% !important;
-        margin-bottom: 35px !important;
+        margin-bottom: 30px !important;
     }}
     
     .brand-flex-container img {{
@@ -109,10 +113,9 @@ def render_auth_page():
         height: auto !important;
     }}
 
-    /* استایل‌دهی فیلدهای ورودی بومی HTML */
     .input-wrapper {{
         width: 100% !important;
-        margin-bottom: 20px !important;
+        margin-bottom: 18px !important;
         position: relative !important;
     }}
 
@@ -120,7 +123,7 @@ def render_auth_page():
         display: block !important;
         font-size: 14px !important;
         color: #64748b !important;
-        margin-bottom: 6px !important;
+        margin-bottom: 4px !important;
         font-weight: bold !important;
     }}
 
@@ -132,28 +135,25 @@ def render_auth_page():
         border-bottom: 1px solid #e2e8f0 !important;
         border-radius: 0px !important;
         background-color: transparent !important;
-        padding: 12px 5px !important;
+        padding: 10px 5px !important;
         font-size: 16px !important;
         color: #1e293b !important;
         text-align: right !important;
         outline: none !important;
-        transition: border-color 0.2s !important;
     }}
     
     .native-input:focus {{
         border-bottom: 2px solid #ea580c !important;
     }}
 
-    /* ایجاد فضای خالی سمت چپ کادر رمز عبور برای دکمه بیومتریک */
     .password-field {{
         padding-left: 50px !important;
     }}
    
-    /* تنظیم دقیق جایگاه دکمه بیومتریک بومی */
     .bio-html-btn {{
         position: absolute !important;
         left: 10px !important; 
-        bottom: 12px !important; 
+        bottom: 10px !important; 
         z-index: 100000 !important;
         display: inline-block !important;
         width: 24px !important;
@@ -162,14 +162,12 @@ def render_auth_page():
         background-size: contain !important;
         cursor: pointer !important;
         opacity: 0.6 !important;
-        transition: opacity 0.2s !important;
         border: none !important;
     }}
     .bio-html-btn:hover {{
         opacity: 1 !important;
     }}
 
-    /* استایل دکمه ورود زرد رنگ بومی کاملاً هماهنگ */
     .native-submit-btn {{
         width: 100% !important;
         background-color: #ffd60a !important; 
@@ -181,7 +179,6 @@ def render_auth_page():
         font-weight: 900 !important; 
         box-shadow: 0 4px 6px -1px rgba(253, 224, 71, 0.2) !important;
         cursor: pointer !important;
-        transition: all 0.2s ease-in-out !important;
         margin-top: 25px !important;
         text-align: center !important;
     }}
@@ -191,9 +188,12 @@ def render_auth_page():
         color: #000000 !important;
     }}
    
+    /* =======================================================
+       تنظیم جدید: نزدیک‌تر کردن لینک فراموشی رمز به دکمه ورود
+       ======================================================= */
     .forgot-link {{
         text-align: center !important;
-        margin-top: 25px !important;
+        margin-top: 14px !important; /* کاهش فاصله از ۲۵ پیکسل به ۱۴ پیکسل */
         width: 100% !important;
     }}
     .forgot-link a {{
@@ -201,6 +201,30 @@ def render_auth_page():
         text-decoration: none !important;
         font-size: 14px !important;
         font-weight: bold !important;
+    }}
+
+    /* =======================================================
+       استایل جدید: بخش Powered by و آیکون سازنده سیستم
+       ======================================================= */
+    .powered-by-container {{
+        text-align: center !important;
+        margin-top: 40px !important;
+        width: 100% !important;
+        direction: ltr !important; /* چپ‌چین بودن متن انگلیسی */
+    }}
+    .powered-text {{
+        font-size: 12px !important;
+        color: #94a3b8 !important;
+        font-weight: 500 !important;
+        margin: 0 0 6px 0 !important;
+        letter-spacing: 0.5px !important;
+    }}
+    .powered-logo {{
+        max-width: 65px !important; /* سایز متناسب برای آیکون سازنده */
+        height: auto !important;
+        display: block !important;
+        margin: 0 auto !important;
+        opacity: 0.8 !important;
     }}
 
     /* =======================================================
@@ -302,8 +326,12 @@ def render_auth_page():
             logo_base64 = base64.b64encode(f.read()).decode()
         logo_html = f'<img src="data:image/png;base64,{logo_base64}" style="display:block; margin: 0 auto;">'
 
-    # --- رندر کادر فرم یکپارچه بومی و فیکس شده بدون قابلیت اسکرول ---
-    # مقدار دهی مجدد فیلدها در صورت پر بودن
+    # --- لود آیکون تکمیلی pdf_logo.png ---
+    pdf_logo_html = ""
+    if pdf_logo_base64:
+        pdf_logo_html = f'<img src="data:image/png;base64,{pdf_logo_base64}" class="powered-logo">'
+
+    # تنظیم فیلدها در صورت پر بودن فرم
     curr_u = username_val if form_submitted else ""
     curr_p = password_val if form_submitted else ""
 
@@ -334,6 +362,11 @@ def render_auth_page():
             <div class="forgot-link">
                 <a href="#">فعال‌سازی / فراموشی رمز</a>
             </div>
+
+            <div class="powered-by-container">
+                <p class="powered-text">Powered by</p>
+                {pdf_logo_html}
+            </div>
         </form>
     </div>
     """
@@ -348,7 +381,7 @@ def render_auth_page():
         """, unsafe_allow_html=True)
 
     # ==========================================
-    # پاپ‌آ‌پ بومی و فیکس شده بیومتریک
+    # پاپ‌آ‌پ بومی بیومتریک
     # ==========================================
     if show_bio:
         active_face = "active" if bio_tab == "face" else ""
