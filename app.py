@@ -756,80 +756,70 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-
-# ناوبری نهایی چسبیده به پایین صفحه با ۶ تب متوازن (Bottom Navigation Bar)
-
+# ناوبری نهایی چسبیده به پایین صفحه با ۶ تب متوازن (نسخه اصلاح شده بدون خروج)
 # ==============================================================================
 
 active_dashboard = "active-tab" if st.session_state.active_tab == "dashboard" else ""
-
 active_invoice = "active-tab" if st.session_state.active_tab == "invoice" else ""
-
 active_warranty = "active-tab" if st.session_state.active_tab == "warranty" else ""
-
 active_services = "active-tab" if st.session_state.active_tab == "services" else ""
-
 active_info = "active-tab" if st.session_state.active_tab == "info" else ""
-
 active_profile = "active-tab" if st.session_state.active_tab == "profile" else ""
 
-
-
+# تعریف ساختار منو با دکمه‌های جاوااسکریپتی امن (تگ a حذف شده تا از برنامه خارج نشود)
 bottom_navigation_html = f"""
-
 <div class="fixed-bottom-nav">
-
-    <a href="?nav_tab=profile" target="_self" class="nav-tab-item {active_profile}">
-
+    <div class="nav-tab-item {active_profile}" onclick="window.parent.postMessage({{type: 'streamlit:setComponentValue', value: 'profile'}}, '*')">
         <div class="nav-tab-icon">👤</div>
-
         <div>پروفایل</div>
-
-    </a>
-
-    <a href="?nav_tab=info" target="_self" class="nav-tab-item {active_info}">
-
+    </div>
+    <div class="nav-tab-item {active_info}" onclick="window.parent.postMessage({{type: 'streamlit:setComponentValue', value: 'info'}}, '*')">
         <div class="nav-tab-icon">📚</div>
-
         <div>اطلاعات</div>
-
-    </a>
-
-    <a href="?nav_tab=services" target="_self" class="nav-tab-item {active_services}">
-
+    </div>
+    <div class="nav-tab-item {active_services}" onclick="window.parent.postMessage({{type: 'streamlit:setComponentValue', value: 'services'}}, '*')">
         <div class="nav-tab-icon">🛠️</div>
-
         <div>خدمات</div>
-
-    </a>
-
-    <a href="?nav_tab=warranty" target="_self" class="nav-tab-item {active_warranty}">
-
+    </div>
+    <div class="nav-tab-item {active_warranty}" onclick="window.parent.postMessage({{type: 'streamlit:setComponentValue', value: 'warranty'}}, '*')">
         <div class="nav-tab-icon">🛡️</div>
-
         <div>گارانتی</div>
-
-    </a>
-
-    <a href="?nav_tab=invoice" target="_self" class="nav-tab-item {active_invoice}">
-
+    </div>
+    <div class="nav-tab-item {active_invoice}" onclick="window.parent.postMessage({{type: 'streamlit:setComponentValue', value: 'invoice'}}, '*')">
         <div class="nav-tab-icon">🧾</div>
-
         <div>پیش‌فاکتور</div>
-
-    </a>
-
-    <a href="?nav_tab=dashboard" target="_self" class="nav-tab-item {active_dashboard}">
-
+    </div>
+    <div class="nav-tab-item {active_dashboard}" onclick="window.parent.postMessage({{type: 'streamlit:setComponentValue', value: 'dashboard'}}, '*')">
         <div class="nav-tab-icon">📊</div>
-
         <div>داشبورد</div>
-
-    </a>
-
+    </div>
 </div>
 
+<script>
+    // به‌روزرسانی امن و ملایم آدرس URL مرورگر بدون اینکه صفحه ریست یا خارج شود
+    const tabs = document.querySelectorAll('.nav-tab-item');
+    tabs.forEach(tab => {{
+        tab.addEventListener('click', function() {{
+            let targetTab = 'dashboard';
+            if (this.classList.contains('{active_profile}')) targetTab = 'profile';
+            else if (this.classList.contains('{active_info}')) targetTab = 'info';
+            else if (this.classList.contains('{active_services}')) targetTab = 'services';
+            else if (this.classList.contains('{active_warranty}')) targetTab = 'warranty';
+            else if (this.classList.contains('{active_invoice}')) targetTab = 'invoice';
+            
+            const url = new URL(window.location.href);
+            url.searchParams.set('nav_tab', targetTab);
+            window.history.pushState({{}}, '', url);
+        }});
+    }});
+</script>
 """
 
+# رندر کردن اچ‌تی‌ام‌ال منو
 st.html(bottom_navigation_html)
 
+# کانتینر رادیویی مخفی برای دریافت رویداد کلیک از جاوااسکریپت به پایتون
+tab_options = ["dashboard", "invoice", "warranty", "services", "info", "profile"]
+selected_tab_hidden = st.radio(
+    "NavTrigger", 
+    options=tab_options,
