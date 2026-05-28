@@ -863,5 +863,5 @@ st.markdown(f"""
 </style>
 """, unsafe_allow_html=True)
 
-# ۳. رندر کردن نهایی منوی HTML ساخته شده در صفحه
+# ۳. رندر کردن نهایی منوی HTML (با اضافه شدن آرگومان رفع مشکل کد خام)
 st.markdown(menu_html, unsafe_allow_html=True)
