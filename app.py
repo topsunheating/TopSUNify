@@ -756,13 +756,14 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی - اصلاح موقعیت و چیدمان (آیکون بالا، متن پایین)
+# ناوبری نهایی: کاملاً مستقل، افقی، چسبیده به پایین و بدون کد خام
 # ==============================================================================
 
+# ۱. تزریق استایل‌های دقیق برای چیدمان افقی و فیکس در کادر سفید
 st.markdown("""
 <style>
-    /* کانتینر اصلی در پایین صفحه */
-    .fixed-nav-container {
+    /* کانتینر اصلی که در پایین صفحه فیکس می‌شود */
+    .final-fixed-nav {
         position: fixed !important;
         bottom: 0 !important;
         left: 50% !important;
@@ -775,58 +776,49 @@ st.markdown("""
         box-shadow: 0 -4px 10px rgba(0,0,0,0.1) !important;
         z-index: 999999 !important;
         display: flex !important;
-        justify-content: space-between !important;
+        justify-content: space-around !important;
         align-items: center !important;
-        padding: 0 10px !important;
+        padding: 0 !important;
     }
 
-    /* تنظیم دکمه‌های استریم‌لیت */
-    div[data-testid="stButton"] {
-        flex: 1 !important;
-        display: flex !important;
-        justify-content: center !important;
-    }
-
-    div[data-testid="stButton"] button {
-        background: transparent !important;
+    /* استایل دکمه‌های ناوبری */
+    .final-nav-btn {
+        background: none !important;
         border: none !important;
         display: flex !important;
-        flex-direction: column !important; /* متن زیر آیکون */
+        flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        gap: 2px !important; /* فاصله آیکون و متن */
-        height: 70px !important;
-        width: 100% !important;
-        padding: 0 !important;
+        width: 25% !important;
+        height: 100% !important;
+        cursor: pointer !important;
+        text-decoration: none !important;
         color: #94a3b8 !important;
         font-size: 10px !important;
-        font-weight: 700 !important;
+        font-weight: bold !important;
     }
     
-    /* تغییر رنگ هنگام انتخاب */
-    div[data-testid="stButton"] button:active, 
-    div[data-testid="stButton"] button:focus {
-        color: #ea580c !important;
-    }
+    .final-nav-btn.active { color: #ea580c !important; }
+    .final-nav-icon { font-size: 20px !important; margin-bottom: 2px !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# شروع کانتینر
-st.markdown('<div class="fixed-nav-container">', unsafe_allow_html=True)
-
-# رندر ۴ آیتم اصلی بدون ستون‌بندی استریم‌لیت (برای جلوگیری از تداخل گرید)
-nav_items = [
-    ("dashboard", "📊", "داشبورد"),
-    ("invoice", "🧾", "پیش‌فاکتور"),
-    ("info", "📚", "تاپسان"),
-    ("profile", "👤", "پروفایل")
-]
-
-# نمایش دکمه‌ها
-for tab_id, icon, label in nav_items:
-    # استفاده از ساختار ساده برای دکمه‌ها
-    if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}"):
-        st.session_state.active_tab = tab_id
-        st.rerun()
-
-st.markdown('</div>', unsafe_allow_html=True)
+# ۲. ایجاد کانتینر و دکمه‌ها با استفاده از HTML خالص (برای جلوگیری از نمایش کد خام)
+# توجه: در اینجا از استریم‌لیت استفاده نمی‌کنیم تا چیدمان بهم نریزد
+nav_html = f"""
+<div class="final-fixed-nav">
+    <a href="?nav_tab=dashboard" class="final-nav-btn {'active' if st.session_state.active_tab == 'dashboard' else ''}">
+        <span class="final-nav-icon">📊</span> داشبورد
+    </a>
+    <a href="?nav_tab=invoice" class="final-nav-btn {'active' if st.session_state.active_tab == 'invoice' else ''}">
+        <span class="final-nav-icon">🧾</span> پیش‌فاکتور
+    </a>
+    <a href="?nav_tab=info" class="final-nav-btn {'active' if st.session_state.active_tab == 'info' else ''}">
+        <span class="final-nav-icon">📚</span> تاپسان
+    </a>
+    <a href="?nav_tab=profile" class="final-nav-btn {'active' if st.session_state.active_tab == 'profile' else ''}">
+        <span class="final-nav-icon">👤</span> پروفایل
+    </a>
+</div>
+"""
+st.markdown(nav_html, unsafe_allow_html=True)
