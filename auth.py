@@ -52,6 +52,11 @@ def render_auth_page():
         max-width: 400px !important;
         margin: 0 auto 30px auto !important;
     }}
+    
+    .brand-flex-container img {{
+        max-width: 220px !important; /* کنترل دقیق ابعاد برای جلوگیری از کشیدگی */
+        height: auto !important;
+    }}
 
     /* هماهنگی کامل ابعاد فیلدها */
     div[data-testid="stTextInput"] {{
@@ -192,6 +197,11 @@ def render_auth_page():
         justify-content: center !important;
         margin-bottom: 25px !important;
     }}
+    
+    .popup-header-brand img {{
+        max-width: 180px !important;
+        height: auto !important;
+    }}
 
     .segment-tab-container {{
         display: flex !important;
@@ -223,16 +233,22 @@ def render_auth_page():
     st.markdown(auth_css, unsafe_allow_html=True)
     st.markdown('<div style="height: 50px;"></div>', unsafe_allow_html=True)
    
-    # --- لود لوگو/تایپوگرافی جدید سیستم (TopSUNify.png) ---
+    # --- لود قطعی و ضد کش لوگوی جدید سیستم (TopSUNify.png) ---
     logo_html = "☀️ TopSUNify"
-    # بررسی مسیر فایل با حروف کوچک و بزرگ برای اطمینان از خوانش صحیح در سیستم‌عامل‌ها
-    target_logo_path = "TopSUNify.png" if os.path.exists("TopSUNify.png") else "topsunify.png"
     
-    if os.path.exists(target_logo_path):
+    # پیدا کردن مسیر دقیق فایل بدون حساسیت به حروف کوچک و بزرگ
+    possible_paths = ["TopSUNify.png", "topsunify.png", "./TopSUNify.png", "./topsunify.png"]
+    target_logo_path = None
+    for p in possible_paths:
+        if os.path.exists(p):
+            target_logo_path = p
+            break
+    
+    if target_logo_path:
         with open(target_logo_path, "rb") as f:
             logo_base64 = base64.b64encode(f.read()).decode()
-        # عرض آن را روی 180 پیکسل تنظیم کردم تا هم در هدر و هم پاپ‌آپ تناسب عالی داشته باشد
-        logo_html = f'<img src="data:image/png;base64,{logo_base64}" width="180" style="display:block; margin: 0 auto;">'
+        # استفاده از تگ تصویر خالص متصل به داده‌های بیس۶۴ رمزشده
+        logo_html = f'<img src="data:image/png;base64,{logo_base64}" style="display:block; margin: 0 auto;">'
 
     # --- هدر اصلی فرم (فقط شامل تصویر لوگوی ترکیبی جدید) ---
     st.markdown(f"""
