@@ -757,63 +757,93 @@ elif st.session_state.active_tab == "profile":
         
 
 # ==============================================================================
-# ناوبری نهایی: منوی بانکی (استفاده از دکمه‌های استایل‌دهی شده - بدون کد خام)
+# ناوبری پایین صفحه - ۳ تب (همیشه افقی - حتی روی موبایل)
 # ==============================================================================
 
 st.markdown("""
 <style>
-    /* ۱. کانتینر اصلی که در پایین صفحه فیکس می‌شود */
-    .bank-nav-container {
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        background: white !important;
-        border-top: 1px solid #e2e8f0 !important;
-        display: flex !important;
-        justify-content: space-around !important;
-        padding: 10px 0 !important;
-        z-index: 999999 !important;
+    /* محدود کردن عرض اپلیکیشن مثل موبایل */
+    .main .block-container {
+        max-width: 420px !important;
+        margin: 0 auto !important;
     }
 
-    /* ۲. تغییر ظاهر دکمه‌های استریم‌لیت به شکلِ باکس‌های بانکی */
-    div[data-testid="stButton"] > button {
-        background: #f1f5f9 !important; /* رنگ پس‌زمینه آیکون */
-        border: none !important;
-        border-radius: 16px !important;
-        width: 60px !important;
-        height: 60px !important;
+    .final-bottom-nav {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 100% !important;
+        max-width: 420px !important;
+        height: 80px !important;
+        background-color: #ffffff !important;
+        border-top: 1px solid #e2e8f0 !important;
+        box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
+        z-index: 999999 !important;
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-around !important;
+        align-items: center !important;
+        padding: 0 8px !important;
+    }
+    
+    .nav-item-final {
+        flex: 1 !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
         color: #64748b !important;
-        font-size: 18px !important;
-        transition: 0.3s !important;
+        text-decoration: none !important;
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        padding: 8px 0 !important;
+        border-radius: 12px !important;
     }
-
-    /* ۳. وقتی دکمه انتخاب می‌شود، نارنجی شود */
-    div[data-testid="stButton"] > button:active,
-    div[data-testid="stButton"] > button:focus {
-        background: #ea580c !important;
-        color: white !important;
+    
+    .nav-item-final:hover {
+        background: rgba(234, 88, 12, 0.08) !important;
+        color: #ea580c !important;
+    }
+    
+    .nav-item-final.active {
+        color: #ea580c !important;
+        background: #fefce8 !important;
+    }
+    
+    .nav-item-final .icon {
+        font-size: 27px !important;
+        margin-bottom: 4px !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# باز کردن کانتینر
-st.markdown('<div class="bank-nav-container">', unsafe_allow_html=True)
+# ساخت منو با HTML
+nav_html = '<div class="final-bottom-nav">'
 
-# دکمه‌ها را در کانتینر می‌چینیم
-if st.button("📊", key="btn_dash"):
-    st.session_state.active_tab = "dashboard"
-    st.rerun()
-if st.button("🧾", key="btn_inv"):
-    st.session_state.active_tab = "invoice"
-    st.rerun()
-if st.button("👤", key="btn_prof"):
-    st.session_state.active_tab = "profile"
-    st.rerun()
+items = [
+    ("dashboard", "📊", "داشبورد"),
+    ("invoice", "🧾", "پیش‌فاکتور"),
+    ("profile", "👤", "پروفایل")
+]
 
-# بستن کانتینر
-st.markdown('</div>', unsafe_allow_html=True)
+for tab_id, icon, label in items:
+    active = "active" if st.session_state.get("active_tab") == tab_id else ""
+    nav_html += f'''
+        <a href="?nav_tab={tab_id}" class="nav-item-final {active}">
+            <div class="icon">{icon}</div>
+            <div>{label}</div>
+        </a>
+    '''
+
+nav_html += '</div>'
+
+st.html(nav_html)
+
+# مدیریت تغییر تب
+if "nav_tab" in st.query_params:
+    new_tab = st.query_params["nav_tab"]
+    if new_tab in ["dashboard", "invoice", "profile"]:
+        if st.session_state.get("active_tab") != new_tab:
+            st.session_state.active_tab = new_tab
+            st.rerun()
