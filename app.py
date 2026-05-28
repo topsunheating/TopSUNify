@@ -770,7 +770,7 @@ elif st.session_state.active_tab == "profile":
 # 1. تعریف استایل‌ها
 import streamlit as st
 
-# ===================== CSS =====================
+# ====================== CSS ======================
 st.markdown("""
 <style>
 .nav-bar-container {
@@ -796,41 +796,63 @@ st.markdown("""
     align-items: center;
     justify-content: center;
 
-    text-decoration: none !important;
     color: #64748b !important;
+    text-decoration: none !important;
+    font-size: 11px !important;
 
-    font-size: 11px;
     flex: 1;
 }
 
 .nav-button:hover {
-    color: #0f172a !important;
+    color: #2563eb !important;
+}
+
+.nav-icon {
+    font-size: 22px;
+    line-height: 1;
+}
+
+.nav-label {
+    margin-top: 4px;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# ===================== Tabs =====================
-tabs = [
-    ("dashboard", "📊", "داشبورد"),
-    ("invoice", "🧾", "پیش‌فاکتور"),
-    ("warranty", "🛡️", "گارانتی"),
-    ("services", "🛠️", "خدمات"),
-    ("info", "📚", "اطلاعات"),
-    ("profile", "👤", "پروفایل"),
-]
+# ====================== HTML ======================
+nav_html = """
+<div class="nav-bar-container">
 
-# ===================== HTML =====================
-nav_html = '<div class="nav-bar-container">'
-
-for tab_id, icon, label in tabs:
-    nav_html += f"""
-    <a href="?nav_tab={tab_id}" target="_self" class="nav-button">
-        <div style="font-size:20px;">{icon}</div>
-        <div style="margin-top:2px;">{label}</div>
+    <a href="?nav_tab=dashboard" target="_self" class="nav-button">
+        <div class="nav-icon">📊</div>
+        <div class="nav-label">داشبورد</div>
     </a>
-    """
 
-nav_html += "</div>"
+    <a href="?nav_tab=invoice" target="_self" class="nav-button">
+        <div class="nav-icon">🧾</div>
+        <div class="nav-label">پیش‌فاکتور</div>
+    </a>
 
-# ===================== Render =====================
+    <a href="?nav_tab=warranty" target="_self" class="nav-button">
+        <div class="nav-icon">🛡️</div>
+        <div class="nav-label">گارانتی</div>
+    </a>
+
+    <a href="?nav_tab=services" target="_self" class="nav-button">
+        <div class="nav-icon">🛠️</div>
+        <div class="nav-label">خدمات</div>
+    </a>
+
+    <a href="?nav_tab=info" target="_self" class="nav-button">
+        <div class="nav-icon">📚</div>
+        <div class="nav-label">اطلاعات</div>
+    </a>
+
+    <a href="?nav_tab=profile" target="_self" class="nav-button">
+        <div class="nav-icon">👤</div>
+        <div class="nav-label">پروفایل</div>
+    </a>
+
+</div>
+"""
+
 st.markdown(nav_html, unsafe_allow_html=True)
