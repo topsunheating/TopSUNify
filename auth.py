@@ -26,16 +26,24 @@ def render_auth_page():
 
     # بررسی وضعیت ورود پس از سابمیت فرم HTML
     if form_submitted:
-        st.query_params.update({"login_submit": "false"})
+        # st.query_params.update({"login_submit": "false"}) # این خط دیگر لازم نیست
+        
         if username_val == "admin" and password_val == "1234":
             st.session_state.logged_in = True
             st.success("ورود موفقیت‌آمیز بود.")
+            
+            # --- اینجاست که باید پاک‌سازی را انجام دهید ---
+            st.query_params.clear()  # پاک کردن تمام پارامترهای URL برای جلوگیری از تداخل
+            
             time.sleep(0.5)
             st.rerun()
+            
         elif username_val == "" or password_val == "":
             st.warning("⚠️ لطفاً نام کاربری و رمز عبور را وارد کنید.")
         else:
             st.error("❌ نام کاربری یا رمز ورود اشتباه است.")
+            # اختیاری: پاک کردن پارامترهای اشتباه برای جلوگیری از گیر کردن در وضعیت خطا
+            st.query_params.clear()
 
     # --- ۱. تزریق فونت ایران‌یکان و استایل‌های پایه ---
     font_path = "iranyekan.ttf"
