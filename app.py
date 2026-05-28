@@ -11,7 +11,7 @@ st.set_page_config(
 import auth
 import os
 # ... سایر ایمپورت‌ها
-
+st.sidebar.write(f"Logged in status: {st.session_state.logged_in}")
 # ۳. مدیریت نشست (Session State) - حتماً قبل از چک کردن لاگین باشد
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
