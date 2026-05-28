@@ -302,15 +302,21 @@ elif st.session_state.active_tab == "profile":
 # ناوبری نهایی: کاملاً مستقل، افقی، چسبیده به پایین و بدون کد خام
 # ==============================================================================
 
-# --- حذف تمام کدهای قبلی ناوبری و جایگزینی با این کد ---
-
-# ۱. استایل برای فیکس کردن ستون‌های استریم‌لیت در پایین صفحه
 st.markdown("""
 <style>
-    /* فیکس کردن ستون‌ها در پایین صفحه */
+    /* این بخش ستون‌ها را در موبایل هم مجبور به افقی بودن می‌کند */
     [data-testid="column"] {
-        padding: 0px !important;
+        width: 25% !important;
+        flex: 0 0 25% !important;
+        max-width: 25% !important;
     }
+    
+    /* کانتینر اصلی ستون‌ها را مجبور به حالت افقی می‌کند */
+    div[data-testid="stHorizontalBlock"] {
+        display: flex !important;
+        flex-direction: row !important;
+    }
+
     .fixed-footer {
         position: fixed;
         bottom: 0;
@@ -321,14 +327,15 @@ st.markdown("""
         z-index: 999999;
         border-top: 1px solid #e2e8f0;
     }
-    /* استایل دکمه‌های استریم‌لیت برای ظاهر یکپارچه */
+    
     div.stButton > button {
         width: 100%;
         border-radius: 10px;
-        font-size: 11px;
-        height: 60px;
+        font-size: 10px; /* کمی کوچکتر برای موبایل */
+        height: 55px;
         border: none;
         background-color: transparent;
+        white-space: nowrap; /* جلوگیری از شکستن متن */
     }
 </style>
 """, unsafe_allow_html=True)
