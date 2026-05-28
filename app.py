@@ -25,9 +25,7 @@ st.sidebar.write("تب فعال:", st.session_state.active_tab)
 # ۴. ایمپورت کردن ماژول احراز هویت
 
 # ۵. چک کردن وضعیت ورود
-if not st.session_state.logged_in:
-    auth.render_auth_page()
-    st.stop() # 
+
 # ۶. مدیریت تب‌ها (فقط اگر لاگین بود، این بخش اجرا می‌شود)
 query_params = st.query_params
 if "nav_tab" in query_params:
