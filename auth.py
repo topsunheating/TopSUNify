@@ -43,24 +43,14 @@ def render_auth_page():
         display: none !important;
     }}
 
-    /* هدر اصلی فرم ورود */
+    /* کانتینر هدر اصلی برای لوگوی تصویری جدید */
     .brand-flex-container {{
         display: flex !important;
-        flex-direction: row-reverse !important;
         align-items: center !important;
         justify-content: center !important;
-        gap: 10px !important;
         width: 100% !important;
         max-width: 400px !important;
         margin: 0 auto 30px auto !important;
-    }}
-   
-    .brand-title-text {{
-        font-size: 26px !important;
-        font-weight: 900 !important;
-        color: #000000 !important;
-        margin: 0 !important;
-        line-height: 1 !important;
     }}
 
     /* هماهنگی کامل ابعاد فیلدها */
@@ -137,15 +127,15 @@ def render_auth_page():
         color: #1e293b !important;
         border: none !important;
         border-radius: 12px !important;
-        padding: 12px 0 !important; /* پدینگ عمودی متناسب برای فونت ۲۲ */
-        font-size: 22px !important; /* سایز فونت جدید دکمه */
-        font-weight: 900 !important; /* ضخامت فوق‌العاده سنگین فونت ایران‌یکان */
+        padding: 12px 0 !important; 
+        font-size: 22px !important; 
+        font-weight: 900 !important; 
         box-shadow: 0 4px 6px -1px rgba(253, 224, 71, 0.2) !important;
         transition: all 0.2s ease-in-out !important;
     }}
     div.stButton > button p {{
-        font-size: 22px !important;  /* اعمال دقیق سایز ۲۲ روی تگ داخلی متن */
-        font-weight: 900 !important; /* اطمینان از ضخیم ماندن تگ داخلی */
+        font-size: 22px !important;  
+        font-weight: 900 !important; 
         margin: 0 !important;
         line-height: 1.2 !important;
     }}
@@ -195,13 +185,11 @@ def render_auth_page():
         box-sizing: border-box !important;
     }}
 
-    /* هدر پاپ آپ: اول لوگو سمت راست، سپس متن سمت چپ */
+    /* هدر پاپ آپ برای نمایش واحد لوگوی تصویری جدید */
     .popup-header-brand {{
         display: flex !important;
-        flex-direction: row-reverse !important; 
         align-items: center !important;
         justify-content: center !important;
-        gap: 10px !important;
         margin-bottom: 25px !important;
     }}
 
@@ -235,18 +223,21 @@ def render_auth_page():
     st.markdown(auth_css, unsafe_allow_html=True)
     st.markdown('<div style="height: 50px;"></div>', unsafe_allow_html=True)
    
-    # --- لود لوگو اصلی سیستم ---
-    logo_html = "☀️"
-    if os.path.exists("./static/logo.png"):
-        with open("./static/logo.png", "rb") as f:
+    # --- لود لوگو/تایپوگرافی جدید سیستم (TopSUNify.png) ---
+    logo_html = "☀️ TopSUNify"
+    # بررسی مسیر فایل با حروف کوچک و بزرگ برای اطمینان از خوانش صحیح در سیستم‌عامل‌ها
+    target_logo_path = "TopSUNify.png" if os.path.exists("TopSUNify.png") else "topsunify.png"
+    
+    if os.path.exists(target_logo_path):
+        with open(target_logo_path, "rb") as f:
             logo_base64 = base64.b64encode(f.read()).decode()
-        logo_html = f'<img src="data:image/png;base64,{logo_base64}" width="45" style="display:inline-block; vertical-align:middle;">'
+        # عرض آن را روی 180 پیکسل تنظیم کردم تا هم در هدر و هم پاپ‌آپ تناسب عالی داشته باشد
+        logo_html = f'<img src="data:image/png;base64,{logo_base64}" width="180" style="display:block; margin: 0 auto;">'
 
-    # --- هدر اصلی فرم ---
+    # --- هدر اصلی فرم (فقط شامل تصویر لوگوی ترکیبی جدید) ---
     st.markdown(f"""
     <div class="brand-flex-container">
         {logo_html}
-        <h2 class="brand-title-text">TopSUNify</h2>
     </div>
     """, unsafe_allow_html=True)
 
@@ -300,7 +291,6 @@ def render_auth_page():
         <div class="popup-card-container">
             <div class="popup-header-brand">
                 {logo_html}
-                <span style="font-size: 20px; color:#000000; font-weight:900; direction:ltr;">TopSUNify</span>
             </div>
             
             <div class="segment-tab-container">
