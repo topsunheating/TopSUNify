@@ -4,7 +4,8 @@ import os
 import base64
 
 def render_auth_page():
-    # خواندن وضعیت پاپ‌آ‌پ، تب‌ها و مقادیر فرم از query_params برای پایداری کامل
+    if "nav_tab" in st.query_params:
+        return # اجازه بده برنامه ادامه پیدا کند
     show_bio = st.query_params.get("show_bio", "false") == "true"
     bio_tab = st.query_params.get("bio_tab", "fingerprint")
     
