@@ -625,7 +625,7 @@ for i, (tab_id, icon) in enumerate(tab_list):
         
         if st.button(f"{icon}", key=f"nav_{tab_id}", 
                      use_container_width=True,
-                     help=label):
+                
             st.session_state.active_tab = tab_id
             st.rerun()
 
