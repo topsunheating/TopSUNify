@@ -9,12 +9,14 @@ st.set_page_config(
 
 # ====================== ۱. اصلاح پایداری احراز هویت ======================\
 import auth
-# ۱. مقداردهی اولیه سشن (اگر وجود ندارد)
+
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
-# فقط اگر لاگین نیست و در صفحه تب‌ها هم نیست، لاگین را نشان بده
+
 if not st.session_state.logged_in:
     auth.render_auth_page()
+    st.stop()
+
 # ====================== ۲. ایمپورت کتابخانه‌ها و ماژول‌های مهندسی ======================
 import Financial
 import main
