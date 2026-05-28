@@ -7,7 +7,7 @@ import tempfile
 # 🛑 دستور set_page_config حتماً باید در بالاترین خط برنامه باقی بماند
 st.set_page_config(
     page_title="TopSUNify",
-    page_icon="./TopSUN-Powered.png", 
+    page_icon="./topsunify.png",  # برگشت به آیکون اصلی طبق دستور شما
     layout="wide"
 )
 
@@ -28,7 +28,7 @@ if "thermostat_count" not in st.session_state: st.session_state.thermostat_count
 if "panel_count" not in st.session_state: st.session_state.panel_count = 1
 if "source_type" not in st.session_state: st.session_state.source_type = ""
 
-# متغیرهای بخش پروفایل کاربری (بروزرسانی شده بر اساس تصویر ارسالی شما)
+# متغیرهای بخش پروفایل کاربری
 if "user_display_name" not in st.session_state: st.session_state.user_display_name = "رضا تلچی"
 if "user_phone" not in st.session_state: st.session_state.user_phone = "۰۹۱۲۰۱۹۸۲۲۹"
 if "user_role" not in st.session_state: st.session_state.user_role = "کاربر عمومی" 
@@ -46,7 +46,7 @@ import Financial
 import main
 from Financial import calculate_tosunify_proforma
 
-# ====================== ۴. هوشمندسازی CSS با الهام از طراحی موبایلت ======================
+# ====================== ۴. تزریق CSS پیشرفته برای شبیه‌سازی دقیق «موبایلت» ======================
 def inject_custom_css():
     font_path = "iranyekan.ttf"
     font_base64 = ""
@@ -77,8 +77,8 @@ def inject_custom_css():
         margin: 0 auto !important;
         padding-left: 16px !important;
         padding-right: 16px !important;
-        padding-bottom: 140px !important; /* فضا برای نوار پایینی مینی‌مال */
-        background-color: #f4f6f9 !important;
+        padding-bottom: 130px !important; /* فضا برای نوار ناوبری موبایلت */
+        background-color: #f8fafc !important;
         min-height: 100vh;
     }}
 
@@ -92,122 +92,72 @@ def inject_custom_css():
 
     .module-card-box {{
         background: #ffffff !important;
-        padding: 22px !important;
+        padding: 20px !important;
         border-radius: 24px !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04) !important;
         margin-bottom: 20px !important;
     }}
 
-    /* استایل کارت هدر پروفایل مشابه موبایلت */
-    .profile-header-card {{
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        background: #ffffff !important;
-        padding: 20px !important;
-        border-radius: 24px !important;
-        margin-bottom: 15px !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02) !important;
-    }}
-
-    .profile-info-block {{
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: center !important;
-    }}
-
-    .profile-name {{
-        font-size: 19px !important;
-        font-weight: 800 !important;
-        color: #1e293b !important;
-        margin-bottom: 6px !important;
-    }}
-
-    .profile-phone {{
-        font-size: 14px !important;
-        color: #64748b !important;
-        letter-spacing: 0.5px;
-    }}
-
-    .profile-avatar-container {{
-        position: relative !important;
-        width: 64px !important;
-        height: 64px !important;
-    }}
-
-    .profile-avatar-img {{
-        width: 64px !important;
-        height: 64px !important;
-        border-radius: 50% !important;
-        object-fit: cover !important;
-        border: 2px solid #e2e8f0 !important;
-    }}
-
-    .profile-menu-item {{
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        padding: 18px 10px !important;
-        border-bottom: 1px solid #f1f5f9 !important;
-        color: #334155 !important;
-    }}
-
-    .profile-menu-item:last-child {{
-        border-bottom: none !important;
-    }}
-
-    .profile-menu-right {{
-        display: flex !important;
-        align-items: center !important;
-        gap: 14px !important;
-        font-size: 15px !important;
-    }}
-
-    .profile-menu-icon {{
-        font-size: 20px !important;
-    }}
-
-    .profile-menu-arrow {{
-        color: #cbd5e1 !important;
-        font-size: 13px !important;
-    }}
-
-    /* 📱 ساختار اختصاصی نوار ناوبری دکمه‌ای پایینی کاملاً فیکس و مشابه موبایلت */
-    .fixed-bottom-nav-container {{
+    /* 📱 ساختار فوق‌العاده دقیق نوار ناوبری پایینی کاملاً مشابه تصویر موبایلت */
+    .fixed-bottom-nav {{
         position: fixed !important;
         bottom: 0 !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         width: 100% !important;
         max-width: 550px !important;
+        height: 72px !important;
         background-color: #ffffff !important;
-        box-shadow: 0 -8px 25px rgba(0,0,0,0.06) !important;
+        box-shadow: 0 -8px 20px rgba(0,0,0,0.06) !important;
         z-index: 999999 !important;
+        display: flex !important;
+        justify-content: space-around !important;
+        align-items: center !important;
         border-top: 1px solid #e2e8f0 !important;
-        padding: 10px 14px 14px 14px !important;
+        padding-bottom: env(safe-area-inset-bottom) !important;
     }}
 
-    /* استایل اختصاصی برای دکمه‌های ناوبری پایینی */
-    div.stButton > button {{
-        border-radius: 16px !important;
-        font-weight: bold !important;
-        font-size: 12px !important;
-        height: 52px !important;
+    .nav-tab-item {{
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
+        text-decoration: none !important;
+        color: #94a3b8 !important;
+        font-size: 11px !important;
+        font-weight: bold !important;
+        background: none !important;
+        border: none !important;
+        cursor: pointer !important;
+        width: 100% !important;
+        height: 100% !important;
         gap: 2px !important;
-        line-height: 1.2 !important;
-        transition: all 0.2s ease !important;
+    }}
+
+    /* تب فعال دقیقا مشابه موبایلت رنگی و آیکون مرکزی متمایز می‌شود */
+    .nav-tab-item.active-tab {{
+        color: #0284c7 !important; /* رنگ آبی برند موبایلت */
+    }}
+
+    .nav-tab-icon {{
+        font-size: 22px !important;
+        transition: transform 0.2s ease;
     }}
     
-    /* متمایز کردن دکمه وسط (تاپسان / موبایلت) */
-    div.stButton > button[key*="btn_nav_dash"] {{
-        background-color: #f0fdf4 !important;
-        border: 2px solid #22c55e !important;
-        color: #166534 !important;
-        transform: scale(1.05);
+    /* متمایز کردن دکمه اصلی وسط (داشبورد / موبایلت) */
+    .nav-tab-item.center-hub-btn {{
+        color: #64748b !important;
+    }}
+    .nav-tab-item.center-hub-btn.active-tab {{
+        color: #0284c7 !important;
+    }}
+    .nav-tab-item.center-hub-btn .nav-tab-icon {{
+        font-size: 26px !important; /* کمی بزرگتر شبیه دکمه وسط موبایلت */
+    }}
+
+    /* پنهان کردن دکمه‌های پیش فرض استریم‌لیت در پایین صفحه */
+    .hidden-btn-bridge {{
+        display: none !important;
     }}
     </style>
     """
@@ -215,13 +165,13 @@ def inject_custom_css():
 
 inject_custom_css()
 
-# ====================== ۵. هدر تصویری جدید بر اساس لوگوی ارسالی شما ======================
+# ====================== ۵. هدر تصویری (لوگوی جدید تاپسان) ======================
 if os.path.exists("TopSUN-Powered.png"):
     with open("TopSUN-Powered.png", "rb") as f:
         logo_base64 = base64.b64encode(f.read()).decode()
     st.markdown(f"""
     <div class="app-main-header-container">
-        <img src="data:image/png;base64,{logo_base64}" style="max-width: 200px; height: auto; display: block; margin: 0 auto;">
+        <img src="data:image/png;base64,{logo_base64}" style="max-width: 190px; height: auto; display: block; margin: 0 auto;">
     </div>
     """, unsafe_allow_html=True)
 else:
@@ -231,11 +181,11 @@ st.divider()
 
 
 # ==============================================================================
-# رندر کردن محتوای صفحات بر اساس تب فعال
+# رندر کردن محتوای صفحات بر اساس تب فعال شما
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# ۱. محتوای تب: داشبورد (صفحه اصلی تاپسان)
+# ۱. محتوای تب: داشبورد (صفحه مرکزی برنامه)
 # ------------------------------------------------------------------------------
 if st.session_state.active_tab == "dashboard":
     st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
@@ -407,7 +357,21 @@ elif st.session_state.active_tab == "services":
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ------------------------------------------------------------------------------
-# ۴. محتوای تب: کاتالوگ و دانشنامه
+# ۴. محتوای تب: ثبت گارانتی (اضافه شده طبق درخواست شما)
+# ------------------------------------------------------------------------------
+elif st.session_state.active_tab == "warranty":
+    st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
+    st.subheader("🛡️ سامانه ثبت گارانتی هوشمند تاپسان")
+    with st.form("warranty_form_new"):
+        st.text_input("نام خریدار / کارفرما")
+        st.text_input("شماره سریال بارکد گارانتی")
+        st.file_uploader("آپلود تصویر فاکتور یا کارت نصب", type=["jpg","png"])
+        if st.form_submit_button("ثبت گارانتی"):
+            st.success("✅ گارانتی طلایی سیستم با موفقیت فعال شد.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ------------------------------------------------------------------------------
+# ۵. محتوای تب: اطلاعات فنی
 # ------------------------------------------------------------------------------
 elif st.session_state.active_tab == "info":
     st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
@@ -416,10 +380,9 @@ elif st.session_state.active_tab == "info":
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ------------------------------------------------------------------------------
-# ۵. محتوای تب اختصاصی: پروفایل کاربری
+# ۶. محتوای تب: پروفایل کاربری
 # ------------------------------------------------------------------------------
 elif st.session_state.active_tab == "profile":
-    # لود آیکون یا عکس پروفایل پیش‌فرض از تصاویر ارسالی شما
     avatar_src = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
     if st.session_state.profile_pic_base64:
         avatar_src = f"data:image/png;base64,{st.session_state.profile_pic_base64}"
@@ -437,62 +400,83 @@ elif st.session_state.active_tab == "profile":
     """
     st.markdown(user_header_html, unsafe_allow_html=True)
     
-    # منوی مینی‌مال گزینه‌ها مشابه لیست حساب کاربری موبایلت
-    st.markdown('<div class="module-card-box" style="padding: 5px 15px !important;">', unsafe_allow_html=True)
-    menu_items = [
-        {"label": "پیش‌فاکتورهای تکمیل شده", "icon": "📝"},
-        {"label": "سپرده‌های حرارتی و پروژه‌ها", "icon": "⭐"},
-        {"label": "تسهیلات و عاملیت‌ها", "icon": "🏢"},
-        {"label": "اعلام موجودی انبار کالا", "icon": "📦"},
-        {"label": "تنظیمات سیستمی", "icon": "⚙️"},
-    ]
-    for item in menu_items:
-        st.markdown(f"""
-        <div class="profile-menu-item">
-            <div class="profile-menu-right">
-                <span class="profile-menu-icon">{item['icon']}</span>
-                <span style="font-weight: 500; color:#1e293b;">{item['label']}</span>
-            </div>
-            <div class="profile-menu-arrow">◀</div>
-        </div>
-        """, unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
-    
     if st.button("🚪 خروج از حساب کاربری تاپسان", use_container_width=True):
         st.session_state.logged_in = False
         st.rerun()
 
 
 # ==============================================================================
-# 🎛️ هندسه ناوبری ۵ دکمه‌ای پایینی کاملاً منطبق با ساختار اپلیکیشن موبایلت
-# چیدمان از راست به چپ: خدمات | پیش‌فاکتور | [دکمه شاخص وسط: تاپسان] | اطلاعات | پروفایل (عکس کاربر)
+# 🎛️ بخش پل ارتباطی دکمه‌های نیتیو پنهان با فرانت‌اند HTML (تضمین عدم خرابی سشن)
 # ==============================================================================
-st.markdown('<div class="fixed-bottom-nav-container">', unsafe_allow_html=True)
-col_nav1, col_nav2, col_nav3, col_nav4, col_nav5 = st.columns(5)
-
-# ۱. منتهی‌الیه راست: خدمات
-if col_nav1.button("🛠️\nخدمات", key="btn_nav_serv", use_container_width=True, type="primary" if st.session_state.active_tab == "services" else "secondary"):
-    st.session_state.active_tab = "services"
-    st.rerun()
-
-# ۲. راست وسط: پیش‌فاکتور
-if col_nav2.button("🧾\nپیش‌فاکتور", key="btn_nav_inv", use_container_width=True, type="primary" if st.session_state.active_tab == "invoice" else "secondary"):
-    st.session_state.active_tab = "invoice"
-    st.rerun()
-
-# ۳. دکمه شاخص وسط: داشبورد اصلی (موبایلت)
-if col_nav3.button("☀️\nتاپسان", key="btn_nav_dash", use_container_width=True):
-    st.session_state.active_tab = "dashboard"
-    st.rerun()
-
-# ۴. چپ وسط: اطلاعات
-if col_nav4.button("📚\nاطلاعات", key="btn_nav_info", use_container_width=True, type="primary" if st.session_state.active_tab == "info" else "secondary"):
-    st.session_state.active_tab = "info"
-    st.rerun()
-
-# ۵. منتهی‌الیه چپ: پروفایل کاربری (دقیقا مطابق عکس موبایلت ارسالی)
-if col_nav5.button("👤\nپروفایل", key="btn_nav_prof", use_container_width=True, type="primary" if st.session_state.active_tab == "profile" else "secondary"):
-    st.session_state.active_tab = "profile"
-    st.rerun()
-
+st.markdown('<div class="hidden-btn-bridge">', unsafe_allow_html=True)
+if st.button("H_INV", key="h_btn_invoice"): st.session_state.active_tab = "invoice"; st.rerun()
+if st.button("H_SER", key="h_btn_services"): st.session_state.active_tab = "services"; st.rerun()
+if st.button("H_DAS", key="h_btn_dashboard"): st.session_state.active_tab = "dashboard"; st.rerun()
+if st.button("H_WAR", key="h_btn_warranty"): st.session_state.active_tab = "warranty"; st.rerun()
+if st.button("H_INF", key="h_btn_info"): st.session_state.active_tab = "info"; st.rerun()
+if st.button("H_PRO", key="h_btn_profile"): st.session_state.active_tab = "profile"; st.rerun()
 st.markdown('</div>', unsafe_allow_html=True)
+
+
+# ==============================================================================
+# 📱 رندر نهایی منوی پایینی موبایلت با آیکون و متن عمودی بدون بک‌گراند زشت دکمه‌ها
+# ترتیب از راست به چپ: پیش فاکتور - خدمات فنی - داشبورد - ثبت گارانتی - اطلاعات فنی - پروفایل
+# ==============================================================================
+act_inv = "active-tab" if st.session_state.active_tab == "invoice" else ""
+act_ser = "active-tab" if st.session_state.active_tab == "services" else ""
+act_dash = "active-tab" if st.session_state.active_tab == "dashboard" else ""
+act_war = "active-tab" if st.session_state.active_tab == "warranty" else ""
+act_inf = "active-tab" if st.session_state.active_tab == "info" else ""
+act_prof = "active-tab" if st.session_state.active_tab == "profile" else ""
+
+bottom_nav_html = f"""
+<div class="fixed-bottom-nav">
+    <!-- ۶. پروفایل (منتهی‌الیه چپ) -->
+    <button class="nav-tab-item {act_prof}" onclick="document.getElementById('b_pro').click();">
+        <div class="nav-tab-icon">👤</div>
+        <div>پروفایل</div>
+    </button>
+    <!-- ۵. اطلاعات فنی -->
+    <button class="nav-tab-item {act_inf}" onclick="document.getElementById('b_inf').click();">
+        <div class="nav-tab-icon">📚</div>
+        <div>اطلاعات فنی</div>
+    </button>
+    <!-- ۴. ثبت گارانتی -->
+    <button class="nav-tab-item {act_war}" onclick="document.getElementById('b_war').click();">
+        <div class="nav-tab-icon">🛡️</div>
+        <div>ثبت گارانتی</div>
+    </button>
+    <!-- ۳. داشبورد (دکمه شاخص وسط شبیه لوگوی اصلی موبایلت) -->
+    <button class="nav-tab-item center-hub-btn {act_dash}" onclick="document.getElementById('b_das').click();">
+        <div class="nav-tab-icon">📱</div>
+        <div>داشبورد</div>
+    </button>
+    <!-- ۲. خدمات فنی -->
+    <button class="nav-tab-item {act_ser}" onclick="document.getElementById('b_ser').click();">
+        <div class="nav-tab-icon">🛠️</div>
+        <div>خدمات فنی</div>
+    </button>
+    <!-- ۱. پیش فاکتور (منتهی‌الیه راست) -->
+    <button class="nav-tab-item {act_inv}" onclick="document.getElementById('b_inv').click();">
+        <div class="nav-tab-icon">🧾</div>
+        <div>پیش فاکتور</div>
+    </button>
+</div>
+
+<script>
+// متصل کردن کلیک‌های فرانت‌اند منو به دکمه‌های تحت سشن استریم‌لیت
+const parentDoc = window.parent.document;
+setTimeout(() => {{
+    const btns = parentDoc.querySelectorAll('button[kind="secondary"]');
+    btns.forEach(btn => {{
+        if(btn.innerText.includes("H_INV")) btn.id = "b_inv";
+        if(btn.innerText.includes("H_SER")) btn.id = "b_ser";
+        if(btn.innerText.includes("H_DAS")) btn.id = "b_das";
+        if(btn.innerText.includes("H_WAR")) btn.id = "b_war";
+        if(btn.innerText.includes("H_INF")) btn.id = "b_inf";
+        if(btn.innerText.includes("H_PRO")) btn.id = "b_pro";
+    }});
+}}, 250);
+</script>
+"""
+st.components.v1.html(bottom_nav_html, height=75)
