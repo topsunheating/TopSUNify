@@ -730,31 +730,38 @@ elif st.session_state.active_tab == "profile":
         
 
 # ==============================================================================
-# ناوبری نهایی: منوی یکپارچه و فیکس پایین (بدون فاصله بین تب‌ها)
+# ناوبری اختصاصی موبایل (غیرفعال در دسکتاپ)
 # ==============================================================================
 
-# حذف تداخل با استایل‌های پیش‌فرض
 st.markdown("""
 <style>
-    /* تنظیمات نوار پایین */
-    .fixed-bottom-nav-v2 {
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        height: 75px !important;
-        background-color: #ffffff !important;
-        display: flex !important;
-        flex-direction: row !important;
-        justify-content: space-evenly !important;
-        align-items: center !important;
-        border-top: 1px solid #e2e8f0 !important;
-        z-index: 999999 !important;
-        padding: 0 !important;
-        margin: 0 !important;
+    /* این استایل فقط زمانی اجرا می‌شود که عرض صفحه کمتر از 768 پیکسل (موبایل) باشد */
+    @media (max-width: 768px) {
+        .fixed-bottom-nav-v2 {
+            display: flex !important;
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 75px !important;
+            background-color: #ffffff !important;
+            flex-direction: row !important;
+            justify-content: space-evenly !important;
+            align-items: center !important;
+            border-top: 1px solid #e2e8f0 !important;
+            z-index: 999999 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
     }
     
-    /* هر تب به صورت یک دکمه لینک‌دار */
+    /* در دسکتاپ (عرض بیشتر از 768) این منو کلاً مخفی می‌شود */
+    @media (min-width: 769px) {
+        .fixed-bottom-nav-v2 {
+            display: none !important;
+        }
+    }
+
     .nav-tab-link {
         display: flex !important;
         flex-direction: column !important;
@@ -769,17 +776,14 @@ st.markdown("""
         transition: color 0.2s !important;
     }
     
-    .nav-tab-link.active-link {
-        color: #ea580c !important;
-    }
-    
-    .nav-tab-link:hover {
-        color: #ea580c !important;
-    }
+    .nav-tab-link.active-link { color: #ea580c !important; }
+    .nav-tab-link:hover { color: #ea580c !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# تعریف داده‌های تب‌ها
+# رندر کردن نوار ناوبری (این دیو فقط در موبایل نمایش داده می‌شود)
+st.markdown('<div class="fixed-bottom-nav-v2">', unsafe_allow_html=True)
+
 nav_items = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
@@ -789,13 +793,8 @@ nav_items = [
     ("profile", "👤", "پروفایل")
 ]
 
-# رندر کردن نوار ناوبری یکپارچه
-st.markdown('<div class="fixed-bottom-nav-v2">', unsafe_allow_html=True)
-
 for tab_id, icon, label in nav_items:
     active_class = "active-link" if st.session_state.active_tab == tab_id else ""
-    
-    # استفاده از لینک برای ناوبری سریع و بدون رفرش کامل
     st.markdown(f"""
         <a href="?nav_tab={tab_id}" target="_self" class="nav-tab-link {active_class}">
             <div style="font-size: 20px; margin-bottom: 2px;">{icon}</div>
