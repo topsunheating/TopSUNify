@@ -88,7 +88,7 @@ def render_auth_page():
 
     .fixed-auth-card {{
         position: fixed !important;
-        top: 38% !important; 
+        top: 36% !important; 
         left: 50% !important;
         transform: translate(-50%, -50%) !important;
         width: 100% !important;
@@ -198,33 +198,41 @@ def render_auth_page():
     }}
 
     /* =======================================================
-       اصلاحیه دیزاین اختصاصی: چپ‌نویس، فونت ظریف و تراز موبایلی
+       اصلاحیه طلایی: پوزیشن کاملاً فیکس شده بالای عکس منظره (مدل موبایلت)
        ======================================================= */
-    .powered-by-container {{
+    .powered-by-fixed-bottom {{
+        position: fixed !important;
+        bottom: 27vh !important; /* دقیقاً بالای کادر عکس پس‌زمینه قرار می‌گیرد */
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 100% !important;
+        max-width: 400px !important;
+        padding: 0 25px !important; /* هم‌تراز با لبه‌های فرم */
         display: flex !important;
         flex-direction: column !important;
-        align-items: flex-start !important; /* چپ‌چین کردن کل کانتینر لایه */
-        justify-content: center !important;
-        margin-top: 45px !important;
-        width: 100% !important;
-        padding-left: 2px !important; /* یک تراز جزیی با حاشیه فرم */
+        align-items: flex-start !important; /* چپ‌چین شدن کامل مجموعه */
+        z-index: 99980 !important;
+        pointer-events: auto !important;
     }}
+    
     .powered-text {{
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-        font-size: 11px !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+        font-size: 10px !important;
         color: #94a3b8 !important;
-        font-weight: 500 !important;
-        margin: 0 0 4px 0 !important;
-        text-transform: lowercase !important; /* استایل تماماً کوچک و مینیمال */
-        letter-spacing: 0.3px !important;
+        font-weight: 600 !important;
+        margin: 0 0 5px 0 !important;
+        text-transform: lowercase !important;
+        letter-spacing: 0.5px !important;
         direction: ltr !important;
         text-align: left !important;
+        opacity: 0.9 !important;
     }}
+    
     .powered-logo {{
-        max-width: 60px !important; 
+        max-width: 85px !important; /* بزرگتر شدن آیکون طبق درخواست شما */
         height: auto !important;
         display: block !important;
-        opacity: 0.75 !important;
+        opacity: 0.85 !important;
     }}
 
     /* =======================================================
@@ -362,12 +370,12 @@ def render_auth_page():
             <div class="forgot-link">
                 <a href="#">فعال‌سازی / فراموشی رمز</a>
             </div>
-
-            <div class="powered-by-container">
-                <p class="powered-text">powered by</p>
-                {pdf_logo_html}
-            </div>
         </form>
+    </div>
+
+    <div class="powered-by-fixed-bottom">
+        <p class="powered-text">powered by</p>
+        {pdf_logo_html}
     </div>
     """
     st.html(native_form_html)
