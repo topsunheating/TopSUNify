@@ -282,52 +282,122 @@ elif st.session_state.active_tab == "profile":
     st.markdown("</div>", unsafe_allow_html=True)
 
 # ==============================================================================
-# BOTTOM NAVIGATION
+# Bottom Navigation Native Mobile
 # ==============================================================================
 
-st.markdown('<div class="bottom-native-nav">', unsafe_allow_html=True)
+st.markdown("""
+<style>
 
-col1, col2, col3, col4 = st.columns(4)
+/* کانتینر اصلی */
+.bottom-native-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 550px;
+    height: 72px;
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.06);
+    z-index: 999999;
 
-with col1:
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 
-    if st.button(
-        "📊\nداشبورد",
-        key="nav_dashboard",
-        use_container_width=True
-    ):
-        st.session_state.active_tab = "dashboard"
-        st.rerun()
+    padding: 0;
+    margin: 0;
+}
 
-with col2:
+/* هر آیتم */
+.bottom-nav-item {
+    flex: 1;
+    height: 100%;
 
-    if st.button(
-        "🧾\nپیش‌فاکتور",
-        key="nav_invoice",
-        use_container_width=True
-    ):
-        st.session_state.active_tab = "invoice"
-        st.rerun()
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
-with col3:
+    text-decoration: none;
+    color: #94a3b8;
 
-    if st.button(
-        "📚\nاطلاعات",
-        key="nav_info",
-        use_container_width=True
-    ):
-        st.session_state.active_tab = "info"
-        st.rerun()
+    font-size: 11px;
+    font-weight: bold;
 
-with col4:
+    transition: all 0.2s ease;
+}
 
-    if st.button(
-        "👤\nپروفایل",
-        key="nav_profile",
-        use_container_width=True
-    ):
-        st.session_state.active_tab = "profile"
-        st.rerun()
+/* آیکون */
+.bottom-nav-icon {
+    font-size: 22px;
+    margin-bottom: 3px;
+}
 
-st.markdown("</div>", unsafe_allow_html=True)
+/* فعال */
+.bottom-nav-item.active {
+    color: #ea580c;
+    background: #fff7ed;
+}
 
+/* هاور */
+.bottom-nav-item:hover {
+    background: #fff7ed;
+    color: #ea580c;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# تب فعال
+active_tab = st.session_state.active_tab
+
+dashboard_active = "active" if active_tab == "dashboard" else ""
+invoice_active = "active" if active_tab == "invoice" else ""
+info_active = "active" if active_tab == "info" else ""
+profile_active = "active" if active_tab == "profile" else ""
+
+# HTML ناوبری
+nav_html = f"""
+<div class="bottom-native-nav">
+
+    <a href="?tab=dashboard"
+       target="_self"
+       class="bottom-nav-item {dashboard_active}">
+        <div class="bottom-nav-icon">📊</div>
+        <div>داشبورد</div>
+    </a>
+
+    <a href="?tab=invoice"
+       target="_self"
+       class="bottom-nav-item {invoice_active}">
+        <div class="bottom-nav-icon">🧾</div>
+        <div>پیش‌فاکتور</div>
+    </a>
+
+    <a href="?tab=info"
+       target="_self"
+       class="bottom-nav-item {info_active}">
+        <div class="bottom-nav-icon">📚</div>
+        <div>اطلاعات</div>
+    </a>
+
+    <a href="?tab=profile"
+       target="_self"
+       class="bottom-nav-item {profile_active}">
+        <div class="bottom-nav-icon">👤</div>
+        <div>پروفایل</div>
+    </a>
+
+</div>
+"""
+
+st.markdown(nav_html, unsafe_allow_html=True)
+
+# خواندن تب از URL
+query_params = st.query_params
+
+if "tab" in query_params:
+    st.session_state.active_tab = query_params["tab"]
