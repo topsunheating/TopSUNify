@@ -15,9 +15,6 @@ if "logged_in" not in st.session_state:
 # فقط اگر لاگین نیست و در صفحه تب‌ها هم نیست، لاگین را نشان بده
 if not st.session_state.logged_in:
     auth.render_auth_page()
-    # اگر بعد از صدا زدن auth هنوز لاگین نیست، توقف کن
-if not st.session_state.logged_in:
-    st.stop()
 # ====================== ۲. ایمپورت کتابخانه‌ها و ماژول‌های مهندسی ======================
 import Financial
 import main
