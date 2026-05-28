@@ -756,13 +756,13 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه کاملاً ریسپانسیو و بدون خطا
+# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation) - نسخه ۱۰۰٪ افقی و ضد شکستگی
 # ==============================================================================
 
-# تزریق استایل‌های سی‌اس‌اس برای هندل کردن ظاهر افقی منو در موبایل و دسکتاپ
+# تزریق استایل‌های سی‌اس‌اس فوق‌پایدار برای شکستن ساختار عمودی استریم‌لیت در موبایل
 st.markdown("""
 <style>
-    /* کانتینر اصلی منوی پایین */
+    /* کانتینر اصلی منوی پایین جهت ایجاد پس‌زمینه سفید منسجم */
     .fixed-bottom-nav {
         position: fixed !important;
         bottom: 0 !important;
@@ -770,67 +770,84 @@ st.markdown("""
         transform: translateX(-50%) !important;
         width: 100% !important;
         max-width: 550px !important;
-        height: 72px !important;
+        height: 75px !important;
         background-color: #ffffff !important;
-        box-shadow: 0 -4px 16px rgba(0,0,0,0.08) !important;
-        z-index: 999999 !important;
-        display: flex !important;
-        flex-direction: row !important; /* فیکس کردن منو به صورت افقی در موبایل */
-        justify-content: space-around !important;
-        align-items: center !important;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.08) !important;
+        z-index: 999998 !important;
         border-top: 1px solid #e2e8f0 !important;
-        padding-bottom: env(safe-area-inset-bottom) !important;
-        direction: rtl !important;
     }
 
-    /* استایل‌دهی به دکمه‌های پیش‌فرض استریم‌لیت برای هماهنگی با طرح طراح */
-    div[data-testid="stButton"] button {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        color: #94a3b8 !important; /* رنگ پیش‌فرض خاکستری */
-        font-size: 11px !important;
-        font-weight: 700 !important;
-        height: 65px !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        white-space: pre-line !important; /* پشتیبانی از شکستن خط (\n) برای قرارگیری متن زیر آیکون */
-        line-height: 1.4 !important;
-        transition: all 0.15s ease !important;
-    }
-
-    /* افکت هاور ظریف دکمه‌ها */
-    div[data-testid="stButton"] button:hover {
-        background: rgba(234, 88, 12, 0.05) !important;
-        border-radius: 12px !important;
-        color: #ea580c !important;
-    }
-
-    /* استایل اختصاصی برای دکمه‌ی تب فعال (نارنجی برند تاپسان) */
-    div.active-nav-container button {
-        color: #ea580c !important;
-    }
-
-    /* جلوگیری از شکستن ردیف st.columns در موبایل زیر ۷۶۸ پیکسل */
+    /* 🚨 خط زدن رفتار پیش‌فرض استریم‌لیت: اجبار کانتینر ستون‌ها به افقی ماندن در موبایل */
     div[data-testid="stHorizontalBlock"] {
         display: flex !important;
-        flex-direction: row !important;
+        flex-direction: row !important; /* جلوگیری قطعی از عمودی شدن */
+        flex-wrap: nowrap !important;   /* جلوگیری از شکستن به خط بعد */
         width: 100% !important;
         position: fixed !important;
         bottom: 0 !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         max-width: 550px !important;
-        z-index: 1000000 !important;
+        z-index: 999999 !important;
+        background-color: #ffffff !important;
+        padding: 4px 0px !important;
+        height: 72px !important;
+        align-items: center !important;
+        justify-content: space-around !important;
+    }
+
+    /* 🚨 اجبار تک‌تک ستون‌ها به داشتن عرض مساوی و قرارگیری در یک ردیف */
+    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+        width: calc(100% / 6) !important; /* تقسیم مساوی فضا بین ۶ تب */
+        min-width: calc(100% / 6) !important;
+        flex: 1 1 0% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* استایل‌دهی داخلی دکمه‌های استریم‌لیت جهت نمایش متون زیر آیکون */
+    div[data-testid="stHorizontalBlock"] button {
         background: transparent !important;
-        padding: 4px 6px !important;
+        border: none !important;
+        box-shadow: none !important;
+        color: #94a3b8 !important; /* رنگ پیش‌فرض خاکستری منو */
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        height: 65px !important;
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        white-space: pre-line !important; /* فعال‌سازی شکست خط با \n */
+        line-height: 1.5 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* استایل هاور و تغییر رنگ در صورت قرارگیری ماوس */
+    div[data-testid="stHorizontalBlock"] button:hover {
+        background: rgba(234, 88, 12, 0.04) !important;
+        color: #ea580c !important;
+    }
+
+    /* تغییر رنگ متن و آیکون دکمه به رنگ نارنجی سازمانی در صورت فعال بودن تب */
+    div.active-nav-wrapper button {
+        color: #ea580c !important;
+    }
+    
+    div.active-nav-wrapper button p {
+        color: #ea580c !important;
+    }
+
+    /* رفع تداخل و درهم‌ریختگی با محتوای اصلی برنامه */
+    .main .block-container {
+        padding-bottom: 100px !important; /* ایجاد فضای خالی کافی در انتهای صفحه تا محتوا زیر منو نرود */
     }
 </style>
 """, unsafe_allow_html=True)
 
-# تعریف مشخصات تب‌ها
+# تعریف لیست مشخصات تب‌ها
 tab_list = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
@@ -840,23 +857,20 @@ tab_list = [
     ("profile", "👤", "پروفایل")
 ]
 
-# ایجاد کانتینر پیش‌زمینه سفید منو
-st.markdown('<div class="fixed-bottom-nav"></div>', unsafe_allow_html=True)
-
-# رندر دکمه‌ها داخل گرید بدون شکستن خط در موبایل
+# ایجاد ردیف دکمه‌های افقی و ناوبری
 cols = st.columns(6)
 for i, (tab_id, icon, label) in enumerate(tab_list):
     with cols[i]:
         is_active = st.session_state.active_tab == tab_id
         
-        # با کمک یک wrapper سفارشی دکمه فعال را رنگی می‌کنیم
+        # اگر تب فعال بود، آن را درون کانتینر کاستوم جهت اعمال استایل رنگ نارنجی قرار می‌دهیم
         if is_active:
-            st.markdown('<div class="active-nav-container">', unsafe_allow_html=True)
+            st.markdown('<div class="active-nav-wrapper">', unsafe_allow_html=True)
             
-        # با کاراکتر \n آیکون بالا و متن پایین قرار می‌گیرد (کاملاً استاندارد و بدون نیاز به html=True)
+        # ترکیب آیکون و متن با کاراکتر خط جدید (\n)
         button_text = f"{icon}\n{label}"
         
-        if st.button(button_text, key=f"nav_btn_{tab_id}", use_container_width=True):
+        if st.button(button_text, key=f"nav_btn_v3_{tab_id}"):
             st.session_state.active_tab = tab_id
             st.query_params["nav_tab"] = tab_id
             st.rerun()
