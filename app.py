@@ -768,54 +768,69 @@ elif st.session_state.active_tab == "profile":
 # ==============================================================================
 
 # 1. تعریف استایل‌ها
+import streamlit as st
+
+# ===================== CSS =====================
 st.markdown("""
 <style>
-    .nav-bar-container {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 70px;
-        background-color: white;
-        border-top: 1px solid #e2e8f0;
-        display: flex !important;
-        flex-direction: row-reverse !important;
-        justify-content: space-around !important;
-        align-items: center !important;
-        z-index: 999999;
-    }
-    .nav-button {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        color: #64748b !important;
-        text-decoration: none !important;
-        font-size: 10px !important;
-        flex: 1;
-    }
+.nav-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: white;
+    border-top: 1px solid #e2e8f0;
+
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-around;
+    align-items: center;
+
+    z-index: 999999;
+}
+
+.nav-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-decoration: none !important;
+    color: #64748b !important;
+
+    font-size: 11px;
+    flex: 1;
+}
+
+.nav-button:hover {
+    color: #0f172a !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
-# 2. تولید HTML و رندر کردن آن در یک مرحله
-nav_html = '<div class="nav-bar-container">'
+# ===================== Tabs =====================
 tabs = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
     ("warranty", "🛡️", "گارانتی"),
     ("services", "🛠️", "خدمات"),
     ("info", "📚", "اطلاعات"),
-    ("profile", "👤", "پروفایل")
+    ("profile", "👤", "پروفایل"),
 ]
 
+# ===================== HTML =====================
+nav_html = '<div class="nav-bar-container">'
+
 for tab_id, icon, label in tabs:
-    nav_html += f'''
+    nav_html += f"""
     <a href="?nav_tab={tab_id}" target="_self" class="nav-button">
-        <div style="font-size: 20px;">{icon}</div>
+        <div style="font-size:20px;">{icon}</div>
         <div style="margin-top:2px;">{label}</div>
     </a>
-    '''
-nav_html += '</div>'
+    """
 
-# این دستور کلید حل مشکل شماست:
+nav_html += "</div>"
+
+# ===================== Render =====================
 st.markdown(nav_html, unsafe_allow_html=True)
