@@ -764,72 +764,80 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری نهایی: منوی افقی
+
+# ناوبری نهایی چسبیده به پایین صفحه با ۶ تب متوازن (Bottom Navigation Bar)
+
 # ==============================================================================
-st.markdown("""
-<style>
-    .fixed-bottom-nav-v2 {
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        height: 78px !important;
-        background-color: #ffffff !important;
-        display: flex !important;
-        flex-direction: row !important;
-        justify-content: space-around !important;
-        align-items: center !important;
-        border-top: 1px solid #e2e8f0 !important;
-        box-shadow: 0 -3px 10px rgba(0,0,0,0.1) !important;
-        z-index: 999999 !important;
-        direction: ltr !important;
-        padding: 0 8px !important;
-    }
-   
-    .nav-tab-link {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        text-decoration: none !important;
-        color: #94a3b8 !important;
-        font-size: 10px !important;
-        font-weight: 700 !important;
-        flex: 1 !important;
-        padding: 6px 4px !important;
-    }
-   
-    .nav-tab-link.active-link {
-        color: #ea580c !important;
-    }
-    
-    .nav-tab-link div:first-child {
-        font-size: 23px !important;
-        margin-bottom: 4px !important;
-    }
-</style>
 
-<div class="fixed-bottom-nav-v2">
-""", unsafe_allow_html=True)
+active_dashboard = "active-tab" if st.session_state.active_tab == "dashboard" else ""
 
-# اضافه کردن آیتم‌ها
-nav_items = [
-    ("dashboard", "📊", "داشبورد"),
-    ("invoice", "🧾", "پیش‌فاکتور"),
-    ("warranty", "🛡️", "گارانتی"),
-    ("services", "🛠️", "خدمات"),
-    ("info", "📚", "اطلاعات"),
-    ("profile", "👤", "پروفایل")
-]
+active_invoice = "active-tab" if st.session_state.active_tab == "invoice" else ""
 
-for tab_id, icon, label in nav_items:
-    active_class = "active-link" if st.session_state.get("active_tab", "dashboard") == tab_id else ""
-    st.markdown(f"""
-        <a href="?nav_tab={tab_id}" target="_self" class="nav-tab-link {active_class}">
-            <div>{icon}</div>
-            <div>{label}</div>
-        </a>
-    """, unsafe_allow_html=True)
+active_warranty = "active-tab" if st.session_state.active_tab == "warranty" else ""
 
-# بستن دیو
-st.markdown('</div>', unsafe_allow_html=True)
+active_services = "active-tab" if st.session_state.active_tab == "services" else ""
+
+active_info = "active-tab" if st.session_state.active_tab == "info" else ""
+
+active_profile = "active-tab" if st.session_state.active_tab == "profile" else ""
+
+
+
+bottom_navigation_html = f"""
+
+<div class="fixed-bottom-nav">
+
+    <a href="?nav_tab=profile" target="_self" class="nav-tab-item {active_profile}">
+
+        <div class="nav-tab-icon">👤</div>
+
+        <div>پروفایل</div>
+
+    </a>
+
+    <a href="?nav_tab=info" target="_self" class="nav-tab-item {active_info}">
+
+        <div class="nav-tab-icon">📚</div>
+
+        <div>اطلاعات</div>
+
+    </a>
+
+    <a href="?nav_tab=services" target="_self" class="nav-tab-item {active_services}">
+
+        <div class="nav-tab-icon">🛠️</div>
+
+        <div>خدمات</div>
+
+    </a>
+
+    <a href="?nav_tab=warranty" target="_self" class="nav-tab-item {active_warranty}">
+
+        <div class="nav-tab-icon">🛡️</div>
+
+        <div>گارانتی</div>
+
+    </a>
+
+    <a href="?nav_tab=invoice" target="_self" class="nav-tab-item {active_invoice}">
+
+        <div class="nav-tab-icon">🧾</div>
+
+        <div>پیش‌فاکتور</div>
+
+    </a>
+
+    <a href="?nav_tab=dashboard" target="_self" class="nav-tab-item {active_dashboard}">
+
+        <div class="nav-tab-icon">📊</div>
+
+        <div>داشبورد</div>
+
+    </a>
+
+</div>
+
+"""
+
+st.html(bottom_navigation_html)
+
