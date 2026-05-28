@@ -769,7 +769,6 @@ if "active_tab" not in st.session_state:
 # ---------- CSS ----------
 st.markdown("""
 <style>
-/* اعمال روی بلوک‌های افقی و عمودی (بدون :has برای سازگاری موبایل) */
 div[data-testid="stHorizontalBlock"],
 div[data-testid="stVerticalBlock"] {
     position: fixed !important;
@@ -794,7 +793,6 @@ div[data-testid="stVerticalBlock"] {
     direction: rtl !important;
 }
 
-/* تقسیم دقیق به 4 قسمت */
 div[data-testid="stHorizontalBlock"] > div[data-testid="column"],
 div[data-testid="stVerticalBlock"] > div[data-testid="column"] {
     width: 25% !important;
@@ -810,7 +808,6 @@ div[data-testid="stVerticalBlock"] > div[data-testid="column"] {
     justify-content: center !important;
 }
 
-/* دکمه‌ها و متن */
 div[data-testid="stHorizontalBlock"] div[data-testid="stButton"],
 div[data-testid="stVerticalBlock"] div[data-testid="stButton"] {
     width: 100% !important;
@@ -859,14 +856,12 @@ div[data-testid="stVerticalBlock"] button p {
     padding: 0 !important;
 }
 
-/* استایل برای ستون‌هایی که کلاس سفارشی active-nav اضافه می‌کنیم */
 .active-nav button,
 .active-nav button p {
     color: #ea580c !important;
     font-weight: 800 !important;
 }
 
-/* ایجاد پدینگ امن برای محتوای اصلی */
 .main .block-container {
     padding-bottom: 100px !important;
 }
@@ -884,5 +879,35 @@ tab_list = [
 ]
 
 for i, (tab_id, icon, label) in enumerate(tab_list):
-    # برای اضافه کردن کلاس active-n
+    with cols[i]:
+        is_active = (st.session_state.active_tab == tab_id)
 
+        # wrapper داخلی برای اعمال کلاس active-nav هنگام فعال بودن
+        if is_active:
+            st.markdown('<div class="active-nav" style="width:100%;height:100%;">', unsafe_allow_html=True)
+        else:
+            st.markdown('<div style="width:100%;height:100%;">', unsafe_allow_html=True)
+
+        button_text = f"{icon}\n{label}"
+        if st.button(button_text, key=f"saman_btn_{tab_id}", use_container_width=True):
+            st.session_state.active_tab = tab_id
+            st.experimental_set_query_params(nav_tab=tab_id)
+            # نیازی به st.rerun() نیست
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+# ---------- محتوا بر اساس تب ----------
+st.write(f"تب فعلی: {st.session_state.active_tab}")
+
+if st.session_state.active_tab == "dashboard":
+    st.header("داشبورد")
+    st.write("محتوای داشبورد اینجا نمایش داده می‌شود.")
+elif st.session_state.active_tab == "invoice":
+    st.header("پیش‌فاکتور")
+    st.write("محتوای پیش‌فاکتور اینجا نمایش داده می‌شود.")
+elif st.session_state.active_tab == "top_sunify":
+    st.header("تاپسانیفای")
+    st.write("محتوای تاپسانیفای اینجا نمایش داده می‌شود.")
+elif st.session_state.active_tab == "profile":
+    st.header("پروفایل")
+    st.write("محتوای پروفایل اینجا نمایش داده می‌شود.")
