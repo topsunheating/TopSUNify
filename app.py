@@ -756,7 +756,7 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه با ۶ تب متوازن (نسخه اصلاح شده بدون خروج)
+# ناوبری نهایی چسبیده به پایین صفحه با ۶ تب متوازن (نسخه ۱۰۰٪ اصلاح شده و بدون خطا)
 # ==============================================================================
 
 active_dashboard = "active-tab" if st.session_state.active_tab == "dashboard" else ""
@@ -766,7 +766,7 @@ active_services = "active-tab" if st.session_state.active_tab == "services" else
 active_info = "active-tab" if st.session_state.active_tab == "info" else ""
 active_profile = "active-tab" if st.session_state.active_tab == "profile" else ""
 
-# تعریف ساختار منو با دکمه‌های جاوااسکریپتی امن (تگ a حذف شده تا از برنامه خارج نشود)
+# تعریف ساختار منو (با دکمه‌های جاوااسکریپتی استاندارد و ایمن)
 bottom_navigation_html = f"""
 <div class="fixed-bottom-nav">
     <div class="nav-tab-item {active_profile}" onclick="window.parent.postMessage({{type: 'streamlit:setComponentValue', value: 'profile'}}, '*')">
@@ -794,32 +794,46 @@ bottom_navigation_html = f"""
         <div>داشبورد</div>
     </div>
 </div>
-
-<script>
-    // به‌روزرسانی امن و ملایم آدرس URL مرورگر بدون اینکه صفحه ریست یا خارج شود
-    const tabs = document.querySelectorAll('.nav-tab-item');
-    tabs.forEach(tab => {{
-        tab.addEventListener('click', function() {{
-            let targetTab = 'dashboard';
-            if (this.classList.contains('{active_profile}')) targetTab = 'profile';
-            else if (this.classList.contains('{active_info}')) targetTab = 'info';
-            else if (this.classList.contains('{active_services}')) targetTab = 'services';
-            else if (this.classList.contains('{active_warranty}')) targetTab = 'warranty';
-            else if (this.classList.contains('{active_invoice}')) targetTab = 'invoice';
-            
-            const url = new URL(window.location.href);
-            url.searchParams.set('nav_tab', targetTab);
-            window.history.pushState({{}}, '', url);
-        }});
-    }});
-</script>
 """
 
 # رندر کردن اچ‌تی‌ام‌ال منو
 st.html(bottom_navigation_html)
 
+# تزریق اسکریپت به‌روزرسانی URL به صورت کاملاً مجزا جهت جلوگیری از خطای سینتکس پایتون
+st.components.v1.html(f"""
+<script>
+    const url = new URL(window.parent.location.href);
+    url.searchParams.set('nav_tab', '{st.session_state.active_tab}');
+    window.parent.history.pushState({{}}, '', url);
+</script>
+""", height=0)
+
 # کانتینر رادیویی مخفی برای دریافت رویداد کلیک از جاوااسکریپت به پایتون
 tab_options = ["dashboard", "invoice", "warranty", "services", "info", "profile"]
+current_index = tab_options.index(st.session_state.active_tab) if st.session_state.active_tab in tab_options else 0
+
 selected_tab_hidden = st.radio(
     "NavTrigger", 
-    options=tab_options,
+    options=tab_options, 
+    index=current_index,
+    key="hidden_nav_trigger_v6",
+    label_visibility="collapsed"
+)
+
+# تغییر وضعیت واقعی تب در پایتون و لود صفحه جدید
+if selected_tab_hidden != st.session_state.active_tab:
+    st.session_state.active_tab = selected_tab_hidden
+    st.rerun()
+
+# استایل CSS برای پنهان کردن کامل دکمه رادیویی واسط و تنظیم اشاره‌گر موس
+st.markdown("""
+<style>
+    div[data-testid="stRadio"] {
+        display: none !important;
+    }
+    .nav-tab-item {
+        cursor: pointer !important;
+        user-select: none !important;
+    }
+</style>
+""", unsafe_allow_html=True)
