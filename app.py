@@ -29,7 +29,7 @@ import pandas as pd
 from PIL import Image
 from Financial import calculate_tosunify_proforma, generate_proforma_pdf
 
-# ====================== ۳. هوشمندسازی CSS برای ریسپانسیو و تب‌های آیکونی ======================
+# ====================== ۳. هوشمندسازی CSS برای ریسپانسیو و تب‌های آیکونی و منوی پایین ======================
 def inject_custom_css():
     font_path = "pinar-regular.ttf"
     font_base64 = ""
@@ -51,96 +51,115 @@ def inject_custom_css():
         text-align: right !important;
     }}
 
+    /* حذف هدر و سایدبار پیش‌فرض برای ظاهر کاملاً اپلیکیشنی */
+    [data-testid="stHeader"], [data-testid="stSidebar"] {{
+        display: none !important;
+    }}
+
     /* --- بهینه‌سازی کانتینر اصلی برای نمایش عالی در تبلت و موبایل --- */
     .main .block-container {{
-        max-width: 100% !important;
-        padding-left: 15px !important;
-        padding-right: 15px !important;
-        padding-bottom: 120px !important; /* فضا برای اینکه محتوا زیر منوی پایین نرود */
+        max-width: 550px !important; /* جمع شدن شیک و موبایلی در دسکتاپ */
+        margin: 0 auto !important;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+        padding-bottom: 110px !important; /* فضا برای اینکه محتوا زیر منوی پایین نرود */
+        background-color: #f8fafc !important;
+        min-height: 100vh;
     }}
 
-    /* --- سیستم نویگیشن چسبیده به پایین (Bottom Navigation) --- */
-    div[data-testid="stTabs"] {{
+    /* --- استایل گرید آیکون‌ها (منوی دسترسی سریع ماژول‌ها) --- */
+    .icon-grid-container {{
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 12px !important;
+        background: #ffffff !important;
+        padding: 16px 10px !important;
+        border-radius: 20px !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+        margin-bottom: 20px !important;
+    }}
+    
+    .icon-item-link {{
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-decoration: none !important;
+        cursor: pointer !important;
+    }}
+    
+    .icon-circle {{
+        width: 54px !important;
+        height: 54px !important;
+        border-radius: 18px !important;
+        background-color: #f1f5f9 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 24px !important;
+        margin-bottom: 6px !important;
+        transition: all 0.15s ease !important;
+    }}
+    
+    .icon-item-link.active-action .icon-circle {{
+        background-color: #fef3c7 !important; /* لایت زرد/نارنجی متمایز */
+        border: 2px solid #ea580c !important;
+        color: #ea580c !important;
+    }}
+    
+    .icon-label {{
+        font-size: 12px !important;
+        color: #475569 !important;
+        font-weight: bold !important;
+        text-align: center !important;
+        white-space: nowrap !important;
+    }}
+
+    /* باکس محتوای داخلی هر بخش */
+    .module-card-box {{
+        background: #ffffff !important;
+        padding: 20px !important;
+        border-radius: 24px !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04) !important;
+        margin-bottom: 20px !important;
+    }}
+
+    /* --- سیستم نویگیشن فیکس شده در پایین (Bottom Navigation) --- */
+    .fixed-bottom-nav {{
         position: fixed !important;
         bottom: 0 !important;
-        left: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
         width: 100% !important;
+        max-width: 550px !important;
+        height: 70px !important;
         background-color: #ffffff !important;
-        box-shadow: 0 -5px 15px rgba(0,0,0,0.08) !important;
+        box-shadow: 0 -5px 15px rgba(0,0,0,0.06) !important;
         z-index: 99999 !important;
-        padding: 8px 0px !important;
+        display: flex !important;
+        justify-content: space-around !important;
+        align-items: center !important;
         border-top: 1px solid #e2e8f0 !important;
-        margin: 0 !important;
-    }}
-    
-    div[data-testid="stTabs"] [data-baseweb="tab-list"] {{
-        background-color: transparent !important;
-        padding: 0 !important;
-        border-radius: 0 !important;
-        gap: 0 !important;
-        max-width: 100% !important;
-        width: 100% !important;
+        padding-bottom: env(safe-area-inset-bottom) !important;
     }}
 
-    div[data-testid="stTabs"] button {{
-        flex: 1 !important;
-        text-align: center !important;
+    .nav-tab-item {{
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-decoration: none !important;
+        color: #94a3b8 !important;
+        font-size: 11px !important;
         font-weight: bold !important;
-        color: #64748b !important;
-        background-color: transparent !important;
-        border: none !important;
-        padding: 12px 0px !important;
-        transition: all 0.2s ease;
-    }}
-    
-    div[data-testid="stTabs"] button[aria-selected="true"] {{
-        color: #ea580c !important;
-        background-color: transparent !important;
-        border-bottom: none !important;
-        transform: scale(1.05);
+        transition: all 0.2s ease !important;
     }}
 
-    /* 📱 استایل‌های اختصاصی موبایل (صفحه‌های کوچک‌تر از 768 پیکسل) */
-    @media (max-width: 768px) {{
-        /* حذف متون داخل دکمه‌های تب و بزرگ کردن آیکون‌ها/اموجی‌ها */
-        div[data-testid="stTabs"] button {{
-            font-size: 24px !important; /* سایز بزرگ برای آیکون‌ها جهت لمس راحت */
-            color: #94a3b8 !important;
-        }}
-        /* ترفند مهندسی برای پنهان کردن متن و نگه‌داشتن اموجی اول */
-        div[data-testid="stTabs"] button span {{
-            font-size: 0px !important;
-            color: transparent !important;
-        }}
-        div[data-testid="stTabs"] button span::first-letter {{
-            font-size: 26px !important;
-            color: initial !important;
-            visibility: visible !important;
-        }}
-        div[data-testid="stTabs"] button[aria-selected="true"]::after {{
-            content: "•";
-            display: block;
-            font-size: 12px;
-            color: #ea580c;
-            line-height: 5px;
-            text-align: center;
-        }}
+    .nav-tab-item.active-tab {{
+        color: #ea580c !important; /* رنگ نارنجی سازمانی برند تاپسان */
     }}
 
-    /* 💻 استایل‌های اختصاصی تبلت و دسکتاپ (بزرگ‌تر از 768 پیکسل) */
-    @media (min-width: 769px) {{
-        div[data-testid="stTabs"] button {{
-            font-size: 15px !important;
-        }}
-        div[data-testid="stTabs"] button[aria-selected="true"] {{
-            background-color: #ea580c !important;
-            color: white !important;
-            border-radius: 12px !important;
-        }}
-        .main .block-container {{
-            max-width: 1100px !important; /* جمع شدن شیک صفحه در مانیتورهای بزرگ */
-            margin: 0 auto !important;
-        }}
+    .nav-tab-icon {{
+        font-size: 22px !important;
+        margin-bottom: 3px !important;
     }}
 
     /* ================= FILE UPLOAD ================= */
@@ -149,7 +168,7 @@ def inject_custom_css():
         border: 2px dashed #ea580c !important;
         border-radius: 24px !important;
         background-color: #f8fafc !important;
-        padding: 50px 10px 40px 10px !important;
+        padding: 40px 10px !important;
     }}
     </style>
     """
@@ -158,12 +177,12 @@ def inject_custom_css():
 inject_custom_css()
 
 # ====================== ۴. هدر بالایی برنامه ======================
-col_logo, col_title = st.columns([0.9, 5])
+col_logo, col_title = st.columns()
 with col_logo:
-    try: st.image("./static/logo.png", width=80)
+    try: st.image("./static/logo.png", width=65)
     except: st.write("☀️")
 with col_title:
-    st.markdown("<h2 style='margin:0;'>TopSUNify</h2>", unsafe_allow_html=True)
+    st.markdown("<h3 style='margin:0; padding-top:5px;'>TopSUNify</h3>", unsafe_allow_html=True)
     st.markdown("<h6 style='margin:0; color:#64748b;'>سامانه هوشمند و ریسپانسیو خدمات تاپسان</h6>", unsafe_allow_html=True)
 
 st.divider()
@@ -179,19 +198,28 @@ if "thermostat_count" not in st.session_state: st.session_state.thermostat_count
 if "panel_count" not in st.session_state: st.session_state.panel_count = 1
 if "source_type" not in st.session_state: st.session_state.source_type = ""
 
-# ====================== ۶. ساخت تب‌های اصلی (با اموجی در ابتدا برای حالت موبایل) ======================
-# در موبایل متن‌ها به کمک CSS غیب می‌شوند و فقط اموجی (آیکون) می‌ماند.
-tab_info, tab_service, tab_warranty, tab_invoice = st.tabs([
-    "📚 اطلاعات فنی", 
-    "🛠️ خدمات فنی", 
-    "🛡️ ثبت گارانتی", 
-    "🧾 صدور پیش‌فاکتور"
-])
+# مدیریت تب فعال پایین و آیکون فعال گرید از روی آدرس URL (پایداری کوئری پارامترها)
+if "active_tab" not in st.session_state:
+    st.session_state.active_tab = "invoice" # تب پیش‌فرض
+if "active_sub_action" not in st.session_state:
+    st.session_state.active_sub_action = "file_plan" # ساب‌تب پیش‌فرض پیش‌فاکتور
+
+query_p = st.query_params
+if "nav_tab" in query_p:
+    st.session_state.active_tab = query_p["nav_tab"]
+if "sub_act" in query_p:
+    st.session_state.active_sub_action = query_p["sub_act"]
+
 
 # ==============================================================================
-# تب اول: صدور پیش‌فاکتور
+# رندر کردن محتوا بر اساس تب انتخاب شده در منوی پایین
 # ==============================================================================
-with tab_invoice:
+
+# ------------------------------------------------------------------------------
+# ۱. محتوای تب: صدور پیش‌فاکتور (دارای گرید آیکونی اختصاصی در بالا)
+# ------------------------------------------------------------------------------
+if st.session_state.active_tab == "invoice":
+    st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
     st.subheader("🧾 صدور پیش‌فاکتور هوشمند")
     
     product_type = st.selectbox(
@@ -199,17 +227,37 @@ with tab_invoice:
         ["گرمایش کف (سیستم هوشمند)", "زیرفرشی", "رادیاتور", "رستورانی", "عمومی"],
         key="selected_product_type"
     )
-    st.write("---")
+    st.markdown('</div>', unsafe_allow_html=True)
 
     if product_type == "گرمایش کف (سیستم هوشمند)":
-        tab_file, tab_room_manual, tab_invoice_manual = st.tabs([
-            "📂 فایل پلان", 
-            "⌨️ ورود دستی ابعاد",
-            "✍️ مقادیر مستقیم فاکتور"
-        ])
+        # رندر گرید آیکونی ۳ تایی داینامیک به جای کدهای تب قدیمی
+        act_file = "active-action" if st.session_state.active_sub_action == "file_plan" else ""
+        act_manual = "active-action" if st.session_state.active_sub_action == "manual_dim" else ""
+        act_direct = "active-action" if st.session_state.active_sub_action == "direct_val" else ""
+        
+        grid_html = f"""
+        <div class="icon-grid-container">
+            <a href="?nav_tab=invoice&sub_act=file_plan" target="_self" class="icon-item-link {act_file}">
+                <div class="icon-circle">📂</div>
+                <div class="icon-label">فایل پلان</div>
+            </a>
+            <a href="?nav_tab=invoice&sub_act=manual_dim" target="_self" class="icon-item-link {act_manual}">
+                <div class="icon-circle">⌨️</div>
+                <div class="icon-label">ورود دستی ابعاد</div>
+            </a>
+            <a href="?nav_tab=invoice&sub_act=direct_val" target="_self" class="icon-item-link {act_direct}">
+                <div class="icon-circle">✍️</div>
+                <div class="icon-label">مقادیر مستقیم</div>
+            </a>
+        </div>
+        """
+        st.markdown(grid_html, unsafe_allow_html=True)
 
-        # --- آپلود فایل اتوکد ---
-        with tab_file:
+        # نمایش ماژول اختصاصی متناسب با آیکون کلیک شده در گرید
+        st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
+
+        # الف) ماژول آپلود فایل نقشه
+        if st.session_state.active_sub_action == "file_plan":
             st.markdown("<h5 style='color:#334155; margin-bottom:15px;'>فایل نقشه اتوکد کف (DXF / DWG) را انتخاب کنید:</h5>", unsafe_allow_html=True)
             uploaded_file = st.file_uploader(label="", type=['dxf', 'dwg'], key="uploader_main", label_visibility="collapsed")
           
@@ -252,8 +300,8 @@ with tab_invoice:
                     except Exception as e:
                         st.error(f"خطا در پردازش فایل: {e}")
 
-        # --- ورود دستی ابعاد اتاق‌ها ---
-        with tab_room_manual:
+        # ب) ماژول ورود دستی ابعاد فضاهای پروژه
+        elif st.session_state.active_sub_action == "manual_dim":
             with st.expander("➕ افزودن اتاق جدید", expanded=True):
                 c_name, c_w, c_l = st.columns(3)
                 r_name = c_name.text_input("نام فضا", value="پذیرایی", key="manual_r_name")
@@ -279,8 +327,8 @@ with tab_invoice:
             else:
                 st.info("هنوز هیچ اتاقی اضافه نشده است.")
 
-        # --- ورود مستقیم اقلام فاکتور ---
-        with tab_invoice_manual:
+        # ج) ماژول ورود مستقیم مقادیر عددی فاکتور
+        elif st.session_state.active_sub_action == "direct_val":
             st.write("### 📝 ورود مستقیم مقادیر فاکتور")
             m80_dir = st.number_input("فیلم عرض 80 (متر)", min_value=0.0, key="invoice_m80")
             m40_dir = st.number_input("فیلم عرض 40 (متر)", min_value=0.0, key="invoice_m40")
@@ -296,7 +344,10 @@ with tab_invoice:
                 st.session_state.show_table = True
                 st.rerun()
 
-        # --- تنظیمات فروش و تاریخ ---
+        st.markdown('</div>', unsafe_allow_html=True) # پایان باکس ماژول فاکتور
+
+        # --- محاسبات، فیلترینگ اقلام صفر و صدور فاکتور نهایی ---
+        st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
         st.write("### ⚙️ تنظیمات فاکتور")
         col1, col2, col3 = st.columns(3)
         enable_inst = col1.checkbox("هزینه نصب")
@@ -306,7 +357,6 @@ with tab_invoice:
         enable_disc = col3.checkbox("تخفیف")
         disc = col3.number_input("درصد تخفیف", value=0) if enable_disc else 0
 
-        # خروجی نهایی مالی
         if st.session_state.get("show_table", False):
             if st.session_state.get("source_type") == "manual":
                 total_area = sum(r['w'] * r['l'] for r in st.session_state.manual_rooms)
@@ -328,46 +378,89 @@ with tab_invoice:
                 disc_val = (calculated_subtotal + inst_val) * ((disc if enable_disc else 0) / 100)
                 final_val = calculated_subtotal + inst_val - disc_val + ((calculated_subtotal + inst_val - disc_val) * ((tax_rate if enable_tax else 0) / 100))
 
+                # هوشمندسازی نمایش متریال (عدم نمایش گرید اقلام صفر تعداد)
                 table_data = []
                 if st.session_state.m80 > 0: table_data.append(["فیلم عرض ۸۰", f"{st.session_state.m80:.1f}", "متر", f"{res['m80_total']:,.0f}"])
                 if st.session_state.m40 > 0: table_data.append(["فیلم عرض ۴۰", f"{st.session_state.m40:.1f}", "متر", f"{res['m40_total']:,.0f}"])
                 if st.session_state.thermostat_count > 0: table_data.append(["ترموستات", str(st.session_state.thermostat_count), "عدد", f"{res['thermostat_total']:,.0f}"])
+                if p_count > 0: table_data.append(["تابلو فرمان مرکزی", str(p_count), "عدد", f"{res['ControlPanel_Total']:,.0f}"])
+                if st.session_state.xps > 0: table_data.append(["رول عایق تخصصی", f"{st.session_state.xps:.1f}", "مترمربع", f"{(st.session_state.xps * res.get('UnitPrice_insulation_meter', 1450000)):,.0f}"])
                 
-                st.write("### 🧾 پیش‌فاکتور محاسباتی:")
+                st.write("### 🧾 ریز پیش‌فاکتور محاسباتی پروژه:")
                 st.table(pd.DataFrame(table_data, columns=["شرح کالا", "مقدار", "واحد", "مبلغ کل (ریال)"]))
-                st.success(f"**مبلغ نهایی: {final_val:,.0f} ریال**")
+                st.success(f"**مبلغ نهایی فاکتور: {final_val:,.0f} ریال**")
             except Exception as e:
                 st.error(f"خطا در محاسبات: {e}")
+        st.markdown('</div>', unsafe_allow_html=True)
     else:
         st.info(f"بخش **{product_type}** به زودی فعال می‌شود.")
 
-# ==============================================================================
-# تب دوم: ثبت گارانتی
-# ==============================================================================
-with tab_warranty:
-    st.subheader("🛡️ فرم ثبت گارانتی محصولات")
+# ------------------------------------------------------------------------------
+# ۲. محتوای تب: ثبت گارانتی
+# ------------------------------------------------------------------------------
+elif st.session_state.active_tab == "warranty":
+    st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
+    st.subheader("🛡️ فرم ثبت گارانتی محصولات تاپسان")
     with st.form("warranty_form"):
         st.text_input("نام و نام خانوادگی خریدار")
         st.text_input("شماره سریال محصول")
         st.file_uploader("آپلود عکس یا فیلم نصب", type=["jpg", "png", "mp4"])
-        if st.form_submit_button("ثبت گارانتی"): st.success("✅ ثبت شد.")
+        if st.form_submit_button("ثبت گارانتی"): st.success("✅ مشخصات با موفقیت در بانک سامانه ثبت شد.")
+    st.markdown('</div>', unsafe_allow_html=True)
 
-# ==============================================================================
-# تب سوم: درخواست خدمات فنی
-# ==============================================================================
-with tab_service:
-    st.subheader("🛠️ ثبت درخواست خدمات فنی")
-    st.radio("نوع درخواست:", ["نصب اولیه", "اعلام خرابی", "جابجایی"])
+# ------------------------------------------------------------------------------
+# ۳. محتوای تب: درخواست خدمات فنی
+# ------------------------------------------------------------------------------
+elif st.session_state.active_tab == "services":
+    st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
+    st.subheader("🛠️ ثبت درخواست خدمات فنی و مهندسی")
+    st.radio("نوع درخواست:", ["نصب اولیه سیستم گرمایش", "اعلام خرابی/عیب‌یابی", "جابجایی پدها"])
     with st.form("service_form"):
-        st.text_area("آدرس")
-        if st.form_submit_button("ارسال درخواست"): st.success("📌 ارسال شد.")
+        st.text_area("آدرس و توضیحات کروکی پروژه")
+        if st.form_submit_button("ارسال درخواست"): st.success("📌 درخواست شما به واحد پشتیبانی ارجاع شد.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ------------------------------------------------------------------------------
+# ۴. محتوای تب: اطلاعات فنی
+# ------------------------------------------------------------------------------
+elif st.session_state.active_tab == "info":
+    st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
+    st.subheader("📚 بانک اطلاعات فنی و دانشنامه حرارتی")
+    st.write("کاتالوگ‌ها، راهنماهای چیدمان فیلم و نقشه‌های ازپیش تحلیل‌شده به زودی بارگذاری می‌شوند.")
+    st.divider()
+    if st.button("خروج از حساب کاربری", use_container_width=True):
+        st.session_state.logged_in = False
+        st.query_params.clear()
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
 
 # ==============================================================================
-# تب چهارم: اطلاعات فنی
+# ناوبری نهایی چسبیده به پایین صفحه (Bottom Navigation Bar)
 # ==============================================================================
-with tab_info:
-    st.subheader("📚 بانک اطلاعات فنی")
-    st.write("کاتالوگ‌ها به زودی آپلود می‌شوند.")
-    if st.button("خروج از حساب کاربری"):
-        st.session_state.logged_in = False
-        st.rerun()
+active_info = "active-tab" if st.session_state.active_tab == "info" else ""
+active_services = "active-tab" if st.session_state.active_tab == "services" else ""
+active_warranty = "active-tab" if st.session_state.active_tab == "warranty" else ""
+active_invoice = "active-tab" if st.session_state.active_tab == "invoice" else ""
+
+bottom_navigation_html = f"""
+<div class="fixed-bottom-nav">
+    <a href="?nav_tab=info" target="_self" class="nav-tab-item {active_info}">
+        <div class="nav-tab-icon">📚</div>
+        <div>اطلاعات فنی</div>
+    </a>
+    <a href="?nav_tab=services" target="_self" class="nav-tab-item {active_services}">
+        <div class="nav-tab-icon">🛠️</div>
+        <div>خدمات فنی</div>
+    </a>
+    <a href="?nav_tab=warranty" target="_self" class="nav-tab-item {active_warranty}">
+        <div class="nav-tab-icon">🛡️</div>
+        <div>ثبت گارانتی</div>
+    </a>
+    <a href="?nav_tab=invoice" target="_self" class="nav-tab-item {active_invoice}">
+        <div class="nav-tab-icon">🧾</div>
+        <div>پیش‌فاکتور</div>
+    </a>
+</div>
+"""
+st.html(bottom_navigation_html)
