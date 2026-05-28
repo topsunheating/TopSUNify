@@ -764,56 +764,50 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری نهایی: منوی یکپارچه و فیکس پایین (بدون فاصله بین تب‌ها)
+# ناوبری نهایی: منوی افقی، چسبیده و یکپارچه (Bottom Navigation Bar)
 # ==============================================================================
 
-# حذف تداخل با استایل‌های پیش‌فرض
 st.markdown("""
 <style>
-    /* تنظیمات نوار پایین */
+    /* ظرف اصلی منو - تضمین چیدمان افقی (row) */
     .fixed-bottom-nav-v2 {
         position: fixed !important;
         bottom: 0 !important;
         left: 0 !important;
         width: 100% !important;
-        height: 75px !important;
+        height: 70px !important;
         background-color: #ffffff !important;
         display: flex !important;
-        flex-direction: row !important;
-        justify-content: space-evenly !important;
+        flex-direction: row !important; /* این خط بسیار مهم است: چیدمان افقی */
+        justify-content: space-around !important; /* توزیع متقارن در طول عرض */
         align-items: center !important;
         border-top: 1px solid #e2e8f0 !important;
         z-index: 999999 !important;
-        padding: 0 !important;
         margin: 0 !important;
+        padding: 0 !important;
     }
     
-    /* هر تب به صورت یک دکمه لینک‌دار */
+    /* لینک‌ها به صورت ستونی داخل تب (آیکون بالا، متن پایین) */
     .nav-tab-link {
         display: flex !important;
-        flex-direction: column !important;
+        flex-direction: column !important; /* آیکون و متن عمودی روی هم */
         align-items: center !important;
         justify-content: center !important;
         text-decoration: none !important;
         color: #94a3b8 !important;
-        width: 100% !important;
-        height: 100% !important;
         font-size: 10px !important;
         font-weight: bold !important;
-        transition: color 0.2s !important;
+        flex: 1 !important; /* هر تب فضای مساوی بگیرد */
+        height: 100% !important;
     }
     
     .nav-tab-link.active-link {
         color: #ea580c !important;
     }
-    
-    .nav-tab-link:hover {
-        color: #ea580c !important;
-    }
 </style>
 """, unsafe_allow_html=True)
 
-# تعریف داده‌های تب‌ها
+# تعریف ترتیب تب‌ها برای نمایش افقی
 nav_items = [
     ("dashboard", "📊", "داشبورد"),
     ("invoice", "🧾", "پیش‌فاکتور"),
@@ -823,17 +817,15 @@ nav_items = [
     ("profile", "👤", "پروفایل")
 ]
 
-# رندر کردن نوار ناوبری یکپارچه
+# رندر کردن نوار
 st.markdown('<div class="fixed-bottom-nav-v2">', unsafe_allow_html=True)
 
 for tab_id, icon, label in nav_items:
     active_class = "active-link" if st.session_state.active_tab == tab_id else ""
-    
-    # استفاده از لینک برای ناوبری سریع و بدون رفرش کامل
     st.markdown(f"""
         <a href="?nav_tab={tab_id}" target="_self" class="nav-tab-link {active_class}">
-            <div style="font-size: 20px; margin-bottom: 2px;">{icon}</div>
-            <div>{label}</div>
+            <div style="font-size: 20px;">{icon}</div>
+            <div style="margin-top: 2px;">{label}</div>
         </a>
     """, unsafe_allow_html=True)
 
