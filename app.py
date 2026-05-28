@@ -8,8 +8,16 @@ st.set_page_config(
 )
 
 # ====================== ۱. اصلاح پایداری احراز هویت ======================\
-import auth
+import sys
+import os
 
+# این خط را چاپ کنید تا ببینید پایتون کجا را برای فایل‌ها جستجو می‌کند
+print(sys.path) 
+
+# این خط را چاپ کنید تا مطمئن شوید فایل auth.py در مسیر فعلی وجود دارد
+print("Is auth.py exists?", os.path.exists("auth.py"))
+
+import auth
 # ۱. مقداردهی اولیه سشن (اگر وجود ندارد)
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
