@@ -756,77 +756,67 @@ elif st.session_state.active_tab == "profile":
         """, unsafe_allow_html=True)
         
 # ==============================================================================
-# ناوبری پایین صفحه (پایدار و افقی)
+# ناوبری پایین صفحه - نسخه Flexbox (افقی و غیرقابل شکست)
 # ==============================================================================
 
 st.markdown("""
 <style>
-    /* قفل کردن عرض کلی در دسکتاپ و موبایل */
-    [data-testid="stAppViewContainer"], .main .block-container {
-        max-width: 550px !important;
-        margin: 0 auto !important;
-        padding-bottom: 80px !important; /* جلوگیری از پوشانده شدن محتوا */
-    }
-
     /* کانتینر اصلی ناوبری */
-    .fixed-bottom-nav {
+    .fixed-bottom-nav-flex {
         position: fixed !important;
         bottom: 0 !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         width: 100% !important;
         max-width: 550px !important;
-        height: 65px !important;
+        height: 70px !important;
         background-color: #ffffff !important;
-        box-shadow: 0 -4px 10px rgba(0,0,0,0.05) !important;
-        z-index: 99999 !important;
+        box-shadow: 0 -4px 15px rgba(0,0,0,0.1) !important;
+        z-index: 999999 !important;
         display: flex !important;
+        flex-direction: row !important; /* اجبار به چیدمان افقی */
         justify-content: space-between !important;
         align-items: center !important;
-        border-top: 1px solid #e1e1e1 !important;
-        padding: 0 15px !important;
+        border-top: 1px solid #e2e8f0 !important;
+        padding: 0 10px !important;
     }
 
-    /* استایل دکمه‌های ناوبری */
-    .nav-btn {
-        background: none !important;
-        border: none !important;
-        font-size: 22px !important;
-        cursor: pointer !important;
-        padding: 10px !important;
+    /* دکمه‌های ناوبری در کانتینر فلکس */
+    .nav-btn-wrapper {
+        flex: 1 !important;
+        display: flex !important;
+        justify-content: center !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# رندر ناوبری
-st.markdown('<div class="fixed-bottom-nav">', unsafe_allow_html=True)
+# شروع کانتینر ناوبری
+st.markdown('<div class="fixed-bottom-nav-flex">', unsafe_allow_html=True)
 
-tabs = [
-    ("dashboard", "📊"),
-    ("invoice", "🧾"),
-    ("warranty", "🛡️"),
-    ("services", "🛠️"),
-    ("info", "📚"),
-    ("profile", "👤")
+tab_list = [
+    ("dashboard", "📊", "داشبورد"),
+    ("invoice", "🧾", "پیش‌فاکتور"),
+    ("warranty", "🛡️", "گارانتی"),
+    ("services", "🛠️", "خدمات"),
+    ("info", "📚", "اطلاعات"),
+    ("profile", "👤", "پروفایل")
 ]
 
-for tab_id, icon in tabs:
-    # تعیین رنگ برای حالت فعال
-    color = "#ea580c" if st.session_state.active_tab == tab_id else "#94a3b8"
+# نمایش دکمه‌ها بدون ستون‌بندی استریم‌لیت (استفاده از HTML برای چیدمان)
+for tab_id, icon, label in tab_list:
+    active_color = "#ea580c" if st.session_state.active_tab == tab_id else "#94a3b8"
     
-    # استفاده از دکمه استریم‌لیت در یک ساختار افقی
-    if st.button(icon, key=f"nav_{tab_id}"):
-        st.session_state.active_tab = tab_id
-        st.rerun()
-    
-    # اعمال رنگ فعال با تزریق استایل به دکمه
-    st.markdown(f"""
-        <style>
-            button[kind="secondary"][key="nav_{tab_id}"] {{
-                color: {color} !important;
-                background: none !important;
-            }}
-        </style>
-    """, unsafe_allow_html=True)
+    # ساخت دکمه با استایل بسیار ساده
+    btn_html = f"""
+    <div class="nav-btn-wrapper">
+        <button onclick="window.location.href='?nav_tab={tab_id}'" 
+                style="background:none; border:none; color:{active_color}; 
+                display:flex; flex-direction:column; align-items:center; cursor:pointer; font-size:10px; font-weight:bold;">
+            <span style="font-size:22px; margin-bottom:2px;">{icon}</span>
+            {label}
+        </button>
+    </div>
+    """
+    st.markdown(btn_html, unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
