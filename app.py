@@ -331,18 +331,19 @@ st.markdown("""
 
 # ۲. ایجاد کانتینر و دکمه‌ها با استفاده از HTML خالص (برای جلوگیری از نمایش کد خام)
 # توجه: در اینجا از استریم‌لیت استفاده نمی‌کنیم تا چیدمان بهم نریزد
+# در انتهای فایل app-menu.py
 nav_html = f"""
 <div class="final-fixed-nav">
-    <a href="?nav_tab=dashboard" class="final-nav-btn {'active' if st.session_state.active_tab == 'dashboard' else ''}">
+    <a href="?nav_tab=dashboard" target="_self" class="final-nav-btn {'active' if st.session_state.active_tab == 'dashboard' else ''}">
         <span class="final-nav-icon">📊</span> داشبورد
     </a>
-    <a href="?nav_tab=invoice" class="final-nav-btn {'active' if st.session_state.active_tab == 'invoice' else ''}">
+    <a href="?nav_tab=invoice" target="_self" class="final-nav-btn {'active' if st.session_state.active_tab == 'invoice' else ''}">
         <span class="final-nav-icon">🧾</span> پیش‌فاکتور
     </a>
-    <a href="?nav_tab=info" class="final-nav-btn {'active' if st.session_state.active_tab == 'info' else ''}">
+    <a href="?nav_tab=info" target="_self" class="final-nav-btn {'active' if st.session_state.active_tab == 'info' else ''}">
         <span class="final-nav-icon">📚</span> تاپسان
     </a>
-    <a href="?nav_tab=profile" class="final-nav-btn {'active' if st.session_state.active_tab == 'profile' else ''}">
+    <a href="?nav_tab=profile" target="_self" class="final-nav-btn {'active' if st.session_state.active_tab == 'profile' else ''}">
         <span class="final-nav-icon">👤</span> پروفایل
     </a>
 </div>
