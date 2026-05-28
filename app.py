@@ -764,36 +764,50 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# اصلاح ناوبری برای جلوگیری از خروج ناخواسته
+# ناوبری نهایی چسبیده به پایین صفحه - نسخه اصلاح شده و ایمن
 # ==============================================================================
 
-# اطمینان از اینکه لاگین فعال است (فقط برای نمایش ناوبری)
-if st.session_state.get("logged_in", False):
-    
-    # تعیین کلاس‌های فعال برای تب‌ها
-    active_tab = st.session_state.get("active_tab", "dashboard")
-    
-    # تعریف منو با استفاده از دکمه‌های استریم‌لیت (بجای لینک مستقیم HTML برای پایداری بیشتر)
-    # این روش باعث می‌شود استریم‌لیت خودش وضعیت را مدیریت کند
-    cols = st.columns(6)
-    
-    tabs = [
-        {"id": "profile", "icon": "👤", "label": "پروفایل"},
-        {"id": "info", "icon": "📚", "label": "اطلاعات"},
-        {"id": "services", "icon": "🛠️", "label": "خدمات"},
-        {"id": "warranty", "icon": "🛡️", "label": "گارانتی"},
-        {"id": "invoice", "icon": "🧾", "label": "پیش‌فاکتور"},
-        {"id": "dashboard", "icon": "📊", "label": "داشبورد"},
-    ]
+# ایجاد لیست تب‌ها
+tabs = [
+    {"id": "profile", "icon": "👤", "label": "پروفایل"},
+    {"id": "info", "icon": "📚", "label": "اطلاعات"},
+    {"id": "services", "icon": "🛠️", "label": "خدمات"},
+    {"id": "warranty", "icon": "🛡️", "label": "گارانتی"},
+    {"id": "invoice", "icon": "🧾", "label": "پیش‌فاکتور"},
+    {"id": "dashboard", "icon": "📊", "label": "داشبورد"},
+]
 
-    # رندر کردن دکمه‌ها در پایین صفحه
+# ایجاد کانتینر برای ناوبری
+nav_container = st.container()
+
+with nav_container:
+    # استفاده از استایل اختصاصی برای چسبیدن به پایین
+    st.markdown("""
+    <style>
+    .fixed-footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: white;
+        border-top: 1px solid #e2e8f0;
+        padding: 10px 0;
+        z-index: 9999;
+        display: flex;
+        justify-content: space-around;
+    }
+    </style>
+    <div class="fixed-footer">
+    """, unsafe_allow_html=True)
+
+    # ایجاد ستون‌ها داخل کانتینر
+    cols = st.columns(6)
     for i, tab in enumerate(tabs):
         with cols[i]:
-            # استفاده از دکمه برای جلوگیری از رفرش ناخواسته
-            if st.button(f"{tab['icon']}\n{tab['label']}", key=f"nav_{tab['id']}", use_container_width=True):
+            # استفاده از دکمه برای تغییر وضعیت
+            if st.button(f"{tab['icon']}\n{tab['label']}", key=f"btn_{tab['id']}", use_container_width=True):
                 st.session_state.active_tab = tab['id']
                 st.rerun()
 
-# حذف بخش قدیمی HTML ناوبری که باعث بروز مشکل می‌شد
-"""
+    st.markdown("</div>", unsafe_allow_html=True)
 st.html(bottom_navigation_html)
