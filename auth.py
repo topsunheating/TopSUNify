@@ -4,7 +4,6 @@ import os
 import base64
 
 def render_auth_page():
-    def render_auth_page():
     # اگر کاربر قبلاً لاگین کرده، اصلاً نیازی به بررسی query_params نیست
     if st.session_state.get("logged_in", False):
         return 
