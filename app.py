@@ -764,53 +764,46 @@ elif st.session_state.active_tab == "profile":
         st.rerun()
 
 # ==============================================================================
-# ناوبری نهایی چسبیده به پایین صفحه (جایگزین تمام کدهای قبلی در انتهای فایل)
+# ناوبری نهایی: منوی یکپارچه و فشرده (Bottom Navigation)
 # ==============================================================================
 
-# حذف هرگونه کدی که به متغیر bottom_navigation_html اشاره دارد.
-# از این بلوک برای نمایش منوی پایین استفاده کنید:
-
-st.markdown("""
-<style>
-    /* این استایل برای چسباندن منو به پایین و ایجاد فضای امن برای آیفون/اندروید */
-    .fixed-nav-container {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background: #ffffff;
-        display: flex;
-        justify-content: space-around;
-        padding: 10px 0;
-        border-top: 1px solid #e2e8f0;
-        z-index: 9999;
+# حذف کدهای قبلی و جایگزینی با این ساختار یکپارچه
+with st.container():
+    # استایل اختصاصی برای حذف فاصله بین دکمه‌ها و فیکس کردن در پایین
+    st.markdown("""
+    <style>
+    div[data-testid="column"] {
+        padding: 0 !important;
+        margin: 0 !important;
     }
-    .nav-btn {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-decoration: none;
-        color: #64748b;
-        font-size: 11px;
-        font-weight: bold;
+    .stButton > button {
+        border: none !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        height: 60px !important;
+        width: 100% !important;
+        font-size: 12px !important;
+        padding: 0 !important;
     }
-</style>
-""", unsafe_allow_html=True)
+    </style>
+    """, unsafe_allow_html=True)
 
-# تعریف تب‌ها
-nav_tabs = [
-    ("profile", "👤", "پروفایل"),
-    ("info", "📚", "اطلاعات"),
-    ("services", "🛠️", "خدمات"),
-    ("warranty", "🛡️", "گارانتی"),
-    ("invoice", "🧾", "پیش‌فاکتور"),
-    ("dashboard", "📊", "داشبورد")
-]
+    # ایجاد ستون‌ها برای تب‌ها
+    cols = st.columns(6)
+    
+    # تعریف آیکون و نام تب‌ها
+    nav_items = [
+        ("profile", "👤", "پروفایل"),
+        ("info", "📚", "اطلاعات"),
+        ("services", "🛠️", "خدمات"),
+        ("warranty", "🛡️", "گارانتی"),
+        ("invoice", "🧾", "پیش‌فاکتور"),
+        ("dashboard", "📊", "داشبورد")
+    ]
 
-# ایجاد دکمه‌های ناوبری
-cols = st.columns(6)
-for i, (tab_id, icon, label) in enumerate(nav_tabs):
-    with cols[i]:
-        if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}", use_container_width=True):
-            st.session_state.active_tab = tab_id
-            st.rerun()
+    # نمایش دکمه‌ها به صورت یکپارچه
+    for i, (tab_id, icon, label) in enumerate(nav_items):
+        with cols[i]:
+            if st.button(f"{icon}\n{label}", key=f"nav_{tab_id}"):
+                st.session_state.active_tab = tab_id
+                st.rerun()
