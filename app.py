@@ -16,7 +16,9 @@ if "logged_in" not in st.session_state:
 if not st.session_state.logged_in:
     auth.render_auth_page()
     st.stop()
-
+if st.session_state.logged_in:
+    # ادامه اجرای برنامه اصلی
+    pass
 # ====================== ۲. ایمپورت کتابخانه‌ها و ماژول‌های مهندسی ======================
 import Financial
 import main
