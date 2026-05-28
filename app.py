@@ -2,8 +2,8 @@ import streamlit as st
 
 # 🛑 دستور set_page_config حتماً باید در بالاترین خط برنامه باقی بماند
 st.set_page_config(
-    page_title="TopSUNify | سامانه ریسپانسیو تاپسان",
-    page_icon="./static/logo.png",
+    page_title="TopSUNify",
+    page_icon="./topsunify.png",  # استفاده از لوگوی اصلی تاپسان
     layout="wide"  # این گزینه به همراه CSS باعث ریسپانسیو شدن کامل در تبلت و دسکتاپ می‌شود
 )
 
@@ -133,6 +133,104 @@ def inject_custom_css():
         margin-bottom: 20px !important;
     }}
 
+    /* --- استایل‌های اختصاصی بخش پروفایل کاربری --- */
+    .profile-header-card {{
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        background: #ffffff !important;
+        padding: 15px !important;
+        border-radius: 24px !important;
+        margin-bottom: 15px !important;
+    }}
+
+    .profile-info-block {{
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+    }}
+
+    .profile-name {{
+        font-size: 18px !important;
+        font-weight: 800 !important;
+        color: #1e293b !important;
+        margin-bottom: 4px !important;
+    }}
+
+    .profile-phone {{
+        font-size: 13px !important;
+        color: #64748b !important;
+    }}
+
+    .profile-avatar-container {{
+        position: relative !important;
+        width: 68px !important;
+        height: 68px !important;
+    }}
+
+    .profile-avatar-img {{
+        width: 68px !important;
+        height: 68px !important;
+        border-radius: 50% !important;
+        object-fit: cover !important;
+        border: 2px solid #e2e8f0 !important;
+    }}
+
+    .profile-role-badge-box {{
+        background: #f1f5f9 !important;
+        padding: 12px 16px !important;
+        border-radius: 16px !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        margin-bottom: 25px !important;
+    }}
+
+    .profile-role-title {{
+        font-size: 14px !important;
+        color: #475569 !important;
+        font-weight: bold !important;
+    }}
+
+    .profile-role-value {{
+        font-size: 14px !important;
+        color: #0f172a !important;
+        font-weight: 800 !important;
+    }}
+
+    /* منوهای خطی لیست ملو */
+    .profile-menu-item {{
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 16px 8px !important;
+        border-bottom: 1px solid #f1f5f9 !important;
+        text-decoration: none !important;
+        color: #334155 !important;
+        transition: background 0.2s !important;
+    }}
+
+    .profile-menu-item:last-child {{
+        border-bottom: none !important;
+    }}
+
+    .profile-menu-right {{
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        font-size: 15px !important;
+        font-weight: bold !important;
+    }}
+
+    .profile-menu-icon {{
+        font-size: 20px !important;
+    }}
+
+    .profile-menu-arrow {{
+        color: #cbd5e1 !important;
+        font-size: 14px !important;
+    }}
+
     /* --- سیستم نویگیشن فیکس شده در پایین (Bottom Navigation) --- */
     .fixed-bottom-nav {{
         position: fixed !important;
@@ -186,16 +284,20 @@ def inject_custom_css():
 
 inject_custom_css()
 
-# ====================== ۴. هدر بالایی با تصویر متمرکز topsunify.png ======================
-header_logo_html = '<div class="app-main-header-container">☀️ TopSUNify</div>'
+# ====================== ۴. هدر بالایی اختصاصی (فقط لوگوی تصویری بدون متن) ======================
+header_logo_html = ""
 if os.path.exists("topsunify.png"):
     with open("topsunify.png", "rb") as f:
         logo_base64 = base64.b64encode(f.read()).decode()
     header_logo_html = f"""
     <div class="app-main-header-container">
-        <img src="data:image/png;base64,{logo_base64}" style="max-width: 170px; height: auto; display: block; margin: 0 auto;">
+        <img src="data:image/png;base64,{logo_base64}" style="max-width: 140px; height: auto; display: block; margin: 0 auto;">
     </div>
     """
+else:
+    # فال‌بک در صورتی که فایل موقتاً وجود نداشته باشد
+    header_logo_html = '<div class="app-main-header-container" style="font-size:24px;">☀️</div>'
+
 st.markdown(header_logo_html, unsafe_allow_html=True)
 st.divider()
 
@@ -210,11 +312,17 @@ if "thermostat_count" not in st.session_state: st.session_state.thermostat_count
 if "panel_count" not in st.session_state: st.session_state.panel_count = 1
 if "source_type" not in st.session_state: st.session_state.source_type = ""
 
+# متغیرهای پیش‌فرض بخش پروفایل کاربری
+if "user_display_name" not in st.session_state: st.session_state.user_display_name = "رضا تلچی"
+if "user_phone" not in st.session_state: st.session_state.user_phone = "۰۹۱۲۰۱۹۸۲۲۹"
+if "user_role" not in st.session_state: st.session_state.user_role = "کاربر عمومی" 
+if "profile_pic_base64" not in st.session_state: st.session_state.profile_pic_base64 = ""
+
 # مدیریت تب فعال پایین و آیکون فعال گرید از روی آدرس URL (پایداری کوئری پارامترها)
 if "active_tab" not in st.session_state:
-    st.session_state.active_tab = "dashboard" # تب پیش‌فرض جدید تغییر به داشبورد
+    st.session_state.active_tab = "dashboard" 
 if "active_sub_action" not in st.session_state:
-    st.session_state.active_sub_action = "file_plan" # ساب‌تب پیش‌فرض پیش‌فاکتور
+    st.session_state.active_sub_action = "file_plan" 
 
 query_p = st.query_params
 if "nav_tab" in query_p:
@@ -228,14 +336,13 @@ if "sub_act" in query_p:
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# ۱. محتوای تب جدید: داشبورد (صفحه خانگی یا خلاصه پروژه)
+# ۱. محتوای تب: داشبورد (صفحه خانگی یا خلاصه پروژه)
 # ------------------------------------------------------------------------------
 if st.session_state.active_tab == "dashboard":
     st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
     st.subheader("📊 داشبورد مدیریتی پروژه")
-    st.write("به سامانه هوشمند تاپسان خوش آمدید.")
+    st.write(f"جناب **{st.session_state.user_display_name}**، به سامانه هوشمند تاپسان خوش آمدید.")
     
-    # نمایش یک خلاصه فشرده و شیک
     c1, c2 = st.columns(2)
     with c1:
         st.metric(label="متراژ کل فیلم عرض ۸۰ (محاسباتی)", value=f"{st.session_state.m80:.1f} م")
@@ -457,18 +564,88 @@ elif st.session_state.active_tab == "info":
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ------------------------------------------------------------------------------
-# ۶. محتوای تب جدید: پروفایل کاربری
+# ۶. محتوای تب اختصاصی: پروفایل کاربری (مشابه فایل تصویری ارسالی شما)
 # ------------------------------------------------------------------------------
 elif st.session_state.active_tab == "profile":
-    st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
-    st.subheader("👤 پروفایل کاربری")
-    st.write("تنظیمات و اطلاعات حساب کاربری شما در این بخش قرار دارد.")
-    st.divider()
-    if st.button("خروج از حساب کاربری", use_container_width=True):
+    
+    # تنظیم آواتار تصویر کاربری پیش‌فرض (در صورت نبود فایل، از تصویر پایه استفاده می‌شود)
+    avatar_src = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+    if st.session_state.profile_pic_base64:
+        avatar_src = f"data:image/png;base64,{st.session_state.profile_pic_base64}"
+        
+    # هدر کارت کاربری (مشابه بالای تصویر ارسالی WhatsApp Image 2026-05-27 at 12.15.11 (1).jpeg)
+    user_header_html = f"""
+    <div class="profile-header-card">
+        <div class="profile-info-block">
+            <div class="profile-name">{st.session_state.user_display_name}</div>
+            <div class="profile-phone">{st.session_state.user_phone}</div>
+        </div>
+        <div class="profile-avatar-container">
+            <img class="profile-avatar-img" src="{avatar_src}">
+        </div>
+    </div>
+    """
+    st.markdown(user_header_html, unsafe_allow_html=True)
+    
+    # باکس شبیه‌سازی سطح دسترسی (مشابه باکس خاکستری تصویر شما)
+    role_badge_html = f"""
+    <div class="profile-role-badge-box">
+        <div class="profile-role-title">سطح دسترسی حساب:</div>
+        <div class="profile-role-value">{st.session_state.user_role}</div>
+    </div>
+    """
+    st.markdown(role_badge_html, unsafe_allow_html=True)
+    
+    # --- المان‌های بازشوی پنهان برای مدیریت شیک پروفایل (تغییر عکس و سطح) ---
+    with st.expander("⚙️ پنل مدیریت پروفایل و سطح دسترسی (تست مدیر)"):
+        # آپلودر تصویر آواتار
+        uploaded_avatar = st.file_uploader("انتخاب یا تغییر عکس پروفایل:", type=["jpg", "png", "jpeg"], key="avatar_uploader_input")
+        if uploaded_avatar is not None:
+            st.session_state.profile_pic_base64 = base64.b64encode(uploaded_avatar.getvalue()).decode()
+            st.toast("📷 عکس پروفایل با موفقیت تغییر یافت.")
+            st.rerun()
+            
+        # انتخاب سطح دسترسی (طبق بیزنس پلن درخواستی شما)
+        selected_role_test = st.selectbox(
+            "تعیین سطح دسترسی کاربر (توسط مدیر):",
+            ["کاربر عمومی", "مدیر", "مدیر فروش", "مدیر فنی", "مدیر خدمات", "کارشناس فروش", "نمایندگی", "عاملیت"],
+            index=["کاربر عمومی", "مدیر", "مدیر فروش", "مدیر فنی", "مدیر خدمات", "کارشناس فروش", "نمایندگی", "عاملیت"].index(st.session_state.user_role)
+        )
+        if selected_role_test != st.session_state.user_role:
+            st.session_state.user_role = selected_role_test
+            st.rerun()
+
+    # باکس لیست گزینه‌ها همراه با آیکون و شبیه‌سازی پیکان خطی (مشابه لیست عکس ارسالی)
+    st.markdown('<div class="module-card-box" style="padding: 10px 15px !important;">', unsafe_allow_html=True)
+    
+    menu_items = [
+        {"label": "فاکتورهای تکمیل شده", "icon": "✅"},
+        {"label": "فاکتورهای باز", "icon": "⏳"},
+        {"label": "پیش فاکتورها", "icon": "🧾"},
+        {"label": "مشتریان منتخب", "icon": "⭐"},
+        {"label": "اعلام موجودی انبار", "icon": "📦"},
+        {"label": "تنظیمات", "icon": "⚙️"},
+    ]
+    
+    for item in menu_items:
+        item_html = f"""
+        <div class="profile-menu-item">
+            <div class="profile-menu-right">
+                <span class="profile-menu-icon">{item['icon']}</span>
+                <span>{item['label']}</span>
+            </div>
+            <div class="profile-menu-arrow">◀</div>
+        </div>
+        """
+        st.markdown(item_html, unsafe_allow_html=True)
+        
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # دکمه خروج نهایی در پایین صفحه پروفایل
+    if st.button("🚪 خروج از حساب کاربری تاپسان", use_container_width=True):
         st.session_state.logged_in = False
         st.query_params.clear()
         st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
 
 
 # ==============================================================================
