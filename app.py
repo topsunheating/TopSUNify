@@ -44,7 +44,7 @@ def main(page: ft.Page):
         if not page.session.logged_in:
             page.add(
                 ft.Column([
-                    ft.Image(src="topsunify.png", width=350, height=350),
+                    ft.Image(src="topsunify.png", width=200, height=200),
                     username,
                     ft.Row([
                         password,
