@@ -54,16 +54,20 @@ def main(page: ft.Page):
                     ft.Text("فعال سازی / فراموشی رمز عبور", size=12, color="blue"),
                     
                     # بخش landscape با افکت محو شدگی
+                    # جایگزین کردن بخش Stack قبلی با این کد
                     ft.Stack([
                         # تصویر اصلی
                         ft.Container(ft.Image(src="landscape.jpg"), width=400, height=200),
-                        # لایه محو کننده که از پایین به بالا سنگین‌تر می‌شود
-                        ft.Column([
-                            ft.Container(height=50, bgcolor="#30FFFFFF"), # شفافیت کم
-                            ft.Container(height=50, bgcolor="#70FFFFFF"), # شفافیت متوسط
-                            ft.Container(height=50, bgcolor="#B0FFFFFF"), # شفافیت زیاد
-                            ft.Container(height=50, bgcolor="#FFFFFF"),   # کاملاً سفید
-                        ], width=400, height=200)
+                        
+                        # این کانتینر فقط نیمه پایین عکس را با یک گرادیانت مصنوعی می‌پوشاند
+                        ft.Container(
+                            width=400,
+                            height=200,
+                            content=ft.Column([
+                                ft.Container(height=100), # نیمه بالا کاملا شفاف
+                                ft.Container(height=100, bgcolor="#CCFFFFFF") # نیمه پایین کدرتر
+                            ])
+                        )
                     ], width=400, height=200)
                     
                 ], horizontal_alignment="center", expand=True)
