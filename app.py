@@ -15,19 +15,6 @@ st.set_page_config(
 
 # کمی تاخیر برای بازیابی سشن
 time.sleep(0.01)
-
-# ۲. پاکسازی پارامترهای اضافه (اصلاح حیاتی برای جلوگیری از تداخل URL)
-query_params = st.query_params
-if "nav_tab" in query_params:
-    selected_tab = query_params["nav_tab"]
-    st.query_params.clear()
-    st.query_params["nav_tab"] = selected_tab
-    # مقدار اولیه تب فعال در سشن آپدیت می‌شود
-    if "active_tab" not in st.session_state:
-        st.session_state.active_tab = selected_tab
-    else:
-        st.session_state.active_tab = selected_tab
-
 # ۳. مقداردهی اولیه سشن
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = True
@@ -44,6 +31,19 @@ st.sidebar.write("تب فعال:", st.session_state.active_tab)
 if not st.session_state.logged_in:
     auth.render_auth_page()
     st.stop()
+# ۲. پاکسازی پارامترهای اضافه (اصلاح حیاتی برای جلوگیری از تداخل URL)
+query_params = st.query_params
+if "nav_tab" in query_params:
+    selected_tab = query_params["nav_tab"]
+    st.query_params.clear()
+    st.query_params["nav_tab"] = selected_tab
+    # مقدار اولیه تب فعال در سشن آپدیت می‌شود
+    if "active_tab" not in st.session_state:
+        st.session_state.active_tab = selected_tab
+    else:
+        st.session_state.active_tab = selected_tab
+
+
 
 # ==============================================================================
 # بخش اصلی برنامه (بعد از تایید لاگین)
