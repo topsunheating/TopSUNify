@@ -61,11 +61,13 @@ def main(page: ft.Page):
             ], alignment="center")
 
             page.add(
-                ft.Text("پنل مدیریت تاپسانیفای", size=25, weight="bold"),
-                contents[tab_index], # محتوا حالا خودش فضاش رو فیکس می‌کنه
-                nav_buttons
-            )
-        page.update()
+                ft.Text("TopSUNify", size=30, weight="bold"),
+                ft.Divider(),
+                contents[tab_index],
+                ft.Container(expand=True),
+                nav_buttons
+            )
+        page.update()
     render()
 
 if __name__ == "__main__":
