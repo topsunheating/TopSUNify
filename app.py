@@ -6,12 +6,14 @@ def main(page: ft.Page):
     page.theme_mode = ft.ThemeMode.LIGHT
     page.rtl = True
     
-    # متغیرهای لاگین
+    # متغیر سشن برای لاگین
     page.session.logged_in = False
     
+    # فیلدها
     username = ft.TextField(label="نام کاربری")
     password = ft.TextField(label="رمز عبور", password=True)
 
+    # تابع لاگین
     def login(e):
         if username.value == "admin" and password.value == "1234":
             page.session.logged_in = True
@@ -20,36 +22,32 @@ def main(page: ft.Page):
             page.show_snack_bar(ft.SnackBar(content=ft.Text("اطلاعات اشتباه است!")))
             page.update()
 
+    # تابع اصلی رندر
     def render(tab_index=0):
         page.controls.clear()
         
+        # بخش ورود
         if not page.session.logged_in:
             page.add(
                 ft.Text("ورود به تاپسانیفای", size=25),
-                username, password,
+                username,
+                password,
                 ft.ElevatedButton("ورود", on_click=login)
             )
         else:
-            # تعریف محتوا برای هر تب
+            # محتوای تب‌ها
             contents = [
                 ft.Text("خوش آمدید! اینجا داشبورد اصلی است.", size=20),
-                ft.Text("لیست فاکتورها: (اطلاعات اینجا قرار می‌گیرد)", size=20),
-                ft.Text("اطلاعات فنی تاپسان (در حال ساخت)", size=20)
+                ft.Text("لیست فاکتورها: (اطلاعات در حال بارگذاری...)", size=20),
+                ft.Text("اطلاعات فنی تاپسان", size=20)
             ]
 
+            # تابع تغییر تب
             def change_tab(e):
                 render(e.control.selected_index)
 
-            # افزودن المان‌ها
-            page.add(
-                ft.Text("پنل مدیریت", size=30, weight="bold"),
-                ft.Divider(),
-                contents[tab_index],
-                # مدیریت بهتر نوار پایین برای جلوگیری از فضای طوسی خالی
-            )
-            
-            # افزودن نوار پایین به صورت مستقل
-            page.navigation_bar = ft.NavigationBar(
+            # ایجاد نوار پایین
+            nav = ft.NavigationBar(
                 selected_index=tab_index,
                 on_change=change_tab,
                 destinations=[
@@ -58,7 +56,15 @@ def main(page: ft.Page):
                     ft.NavigationBarDestination(icon="info", label="اطلاعات"),
                 ]
             )
-            
+
+            # افزودن به صفحه
+            page.add(
+                ft.Text("پنل مدیریت", size=30, weight="bold"),
+                ft.Divider(),
+                contents[tab_index],
+                ft.Container(expand=True), # ایجاد فضای خالی برای راندن نوار به پایین
+                nav
+            )
         page.update()
 
     render()
