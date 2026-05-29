@@ -2,16 +2,20 @@ import flet as ft
 import os
 
 def main(page: ft.Page):
-    # تنظیمات ساده صفحه
+    # ۱. معرفی فونت به فلت
+    page.fonts = {
+        "iranyekan": "iranyekan.ttf"  # نام فونت در برنامه : نام فایل در فولدر
+    }
+    
+    # ۲. اعمال فونت به کل تم برنامه
+    page.theme = ft.Theme(font_family="iranyekan")
+    
     page.title = "TopSUNify"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.rtl = True
     
     page.session.logged_in = False
     
-    username = ft.TextField(label="نام کاربری")
-    password = ft.TextField(label="رمز عبور", password=True)
-
     def login(e):
         if username.value == "admin" and password.value == "1234":
             page.session.logged_in = True
@@ -20,22 +24,23 @@ def main(page: ft.Page):
             page.show_snack_bar(ft.SnackBar(content=ft.Text("اطلاعات اشتباه است!")))
             page.update()
 
+    username = ft.TextField(label="نام کاربری")
+    password = ft.TextField(label="رمز عبور", password=True)
+
     def render(tab_index=0):
         page.controls.clear()
         
         if not page.session.logged_in:
             page.add(
-                ft.Text("ورود به تاپسانیفای", size=25),
+                ft.Text("ورود به تاپسانیفای", size=25, weight="bold"),
                 username, password,
                 ft.ElevatedButton("ورود", on_click=login)
             )
         else:
-            # اینجا به جای آیکونِ SUN که خطا می‌داد، از متنی ساده استفاده می‌کنیم
-            # تا مطمئن شویم برنامه بدون خطا رندر می‌شود
             contents = [
                 ft.Text("داشبورد مدیریتی", size=20),
                 ft.Text("بخش پیش‌فاکتورها", size=20),
-                ft.Text("نمایش لوگو در اینجا", size=20, color="orange"), # فعلا جای لوگو
+                ft.Image(src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/TopSUNify-1.png", width=300),
                 ft.Text("اطلاعات فنی سیستم", size=20),
                 ft.Text("پروفایل کاربری", size=20)
             ]
@@ -60,5 +65,6 @@ def main(page: ft.Page):
     render()
 
 if __name__ == "__main__":
+    # دقت کنید: assets_dir="." باعث می‌شود فایل فونت شناسایی شود
     port = int(os.environ.get("PORT", 8080))
-    ft.app(target=main, port=port, host="0.0.0.0")
+    ft.app(target=main, port=port, host="0.0.0.0", assets_dir=".")
