@@ -5,7 +5,7 @@ import base64
 import pandas as pd
 from PIL import Image
 import auth 
-
+st.sidebar.write(f"وضعیت لاگین: {st.session_state.get('logged_in', False)}")
 # ۱. تنظیمات صفحه
 st.set_page_config(
     page_title="TopSUNify",
