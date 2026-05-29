@@ -7,29 +7,24 @@ def main(page: ft.Page):
     page.rtl = True
     page.padding = 0
 
-    # مقداردهی اولیه سشن
     page.session.logged_in = False
     page.session.active_tab = 0
 
-    # فیلدها
     username = ft.TextField(label="نام کاربری", width=300)
     password = ft.TextField(label="رمز عبور", password=True, width=300)
 
-    # تابع ورود
     def login(e):
         if username.value == "admin" and password.value == "1234":
             page.session.logged_in = True
             update_ui()
         else:
-            page.show_snack_bar(ft.SnackBar(content=ft.Text("نام کاربری یا رمز عبور اشتباه است!")))
+            page.show_snack_bar(ft.SnackBar(content=ft.Text("اطلاعات اشتباه است!")))
             page.update()
 
-    # تابع تغییر تب‌ها
     def on_nav_change(e):
         page.session.active_tab = e.control.selected_index
         update_ui()
 
-    # تابع تولید محتوای هر تب
     def get_tab_content(index):
         if index == 0:
             return ft.Column([
@@ -39,16 +34,15 @@ def main(page: ft.Page):
         elif index == 1:
             return ft.Text("لیست فاکتورها")
         elif index == 2:
-            return ft.Text("اطلاعات فنی تاپسان")
+            return ft.Text("اطلاعات فنی")
         else:
             return ft.Text("پروفایل کاربری")
 
-    # تابع اصلی رندر
     def update_ui():
         page.controls.clear()
         
         if not page.session.logged_in:
-            # استفاده از expand=True برای پر کردن کل صفحه و قرارگیری در مرکز
+            # استفاده از رشته "center" به جای ft.alignment.center
             page.add(
                 ft.Container(
                     content=ft.Column(
@@ -58,16 +52,16 @@ def main(page: ft.Page):
                             password,
                             ft.ElevatedButton("ورود", on_click=login)
                         ], 
-                        horizontal_alignment="center",
-                        alignment="center"
+                        horizontal_alignment="center"
                     ),
-                    expand=True,
-                    alignment=ft.alignment.center
+                    padding=20,
+                    alignment=ft.alignment.center, # گاهی اوقات این در برخی نسخه‌ها هست، اگر خطا داد، کلا حذفش کنید
+                    expand=True
                 )
             )
         else:
             page.add(
-                ft.AppBar(title=ft.Text("پنل مدیریت تاپسانیفای"), bgcolor="blue_grey_50"),
+                ft.AppBar(title=ft.Text("پنل مدیریت")),
                 ft.Container(
                     content=get_tab_content(page.session.active_tab),
                     padding=20
