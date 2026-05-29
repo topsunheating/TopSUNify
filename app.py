@@ -38,19 +38,19 @@ def main(page: ft.Page):
             contents = [
                 ft.Text("داشبورد مدیریتی", size=20),
                 ft.Text("بخش پیش‌فاکتورها", size=20),
-                # استفاده از لینک مستقیمِ Raw که استخراج کردیم
                 ft.Image(src="TopSUNify-1.png", width=300, height=300),
                 ft.Text("اطلاعات فنی سیستم", size=20),
                 ft.Text("پروفایل کاربری", size=20)
             ]
 
+            # استفاده از آیکون به جای متن برای دکمه‌های ناوبری
             nav_buttons = ft.Row([
-                ft.ElevatedButton("داشبورد", on_click=lambda _: render(0)),
-                ft.ElevatedButton("پیش فاکتور", on_click=lambda _: render(1)),
-                ft.ElevatedButton("TopSUNify", on_click=lambda _: render(2)),
-                ft.ElevatedButton("اطلاعات فنی", on_click=lambda _: render(3)),
-                ft.ElevatedButton("پروفایل", on_click=lambda _: render(4)),
-            ], alignment="center", wrap=True)
+                ft.IconButton(icon=ft.icons.DASHBOARD, icon_size=30, on_click=lambda _: render(0), tooltip="داشبورد"),
+                ft.IconButton(icon=ft.icons.DESCRIPTION, icon_size=30, on_click=lambda _: render(1), tooltip="پیش فاکتور"),
+                ft.IconButton(icon=ft.icons.HOME, icon_size=30, on_click=lambda _: render(2), tooltip="صفحه اصلی"),
+                ft.IconButton(icon=ft.icons.ENGINEERING, icon_size=30, on_click=lambda _: render(3), tooltip="اطلاعات فنی"),
+                ft.IconButton(icon=ft.icons.PERSON, icon_size=30, on_click=lambda _: render(4), tooltip="پروفایل"),
+            ], alignment="center")
 
             page.add(
                 ft.Text("پنل مدیریت تاپسانیفای", size=30, weight="bold"),
@@ -64,6 +64,6 @@ def main(page: ft.Page):
     render()
 
 if __name__ == "__main__":
-    # آدرس دهی به فولدر assets
     port = int(os.environ.get("PORT", 8080))
+    # دقت کنید که assets_dir روی پوشه اصلی یا assets تنظیم شده باشد
     ft.app(target=main, port=port, host="0.0.0.0", assets_dir="assets")
