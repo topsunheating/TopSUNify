@@ -5,7 +5,6 @@ import os
 GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbygH2yHhw44Lk5Hv8okJDnRBgGw2UzoF1wsZvMGGGr7ZzhSS0Ro6WhSeVFTPM2TpsMv/exec"
 
 def main(page: ft.Page):
-    # تنظیمات پایه
     page.padding = 0
     page.rtl = True
     page.theme_mode = "light"
@@ -42,7 +41,6 @@ def main(page: ft.Page):
             tooltip=tooltip
         )
 
-    # تابع اصلی رندر که فقط یک بار تعریف می‌شود
     def render(tab_index=0):
         page.controls.clear()
         
@@ -51,26 +49,28 @@ def main(page: ft.Page):
                 ft.Column([
                     ft.Container(height=40),
                     ft.Image(src="TopSUNify.png", width=150),
+                    
                     ft.Container(height=20),
                     username,
+                    
                     ft.Row([
                         password, 
                         ft.Container(content=ft.Image(src="biometric.png", width=30, height=30), on_click=lambda e: None, padding=5)
                     ], alignment="center"),
+                    
                     ft.Container(height=10),
                     ft.ElevatedButton("ورود به TopSUNify", on_click=lambda e: (setattr(page.session, 'logged_in', True), render()), width=300),
                     ft.TextButton("فعال سازی / فراموشی رمز عبور", on_click=show_registration_dialog),
                     
-                    # لوگو (عدد right را برای جابجایی دقیق تغییر دهید)
+                    # روش ایمن و جدید برای مارجین (جلوگیری از خطای ماژول)
                     ft.Container(
                         content=ft.Image(src="TopSUN-Powered.png", width=120),
-                        margin=ft.margin.only(right=80), 
-                        padding=ft.padding.only(top=20)
+                        # فرمت: (left, top, right, bottom)
+                        margin=ft.Margin(0, 20, 80, 0), 
                     ),
                     
                     ft.Container(expand=True),
                     
-                    # عکس پایین با افکت سایه روشن
                     ft.Stack([
                         ft.Image(src="landscape.jpg", width=400, height=200, fit="cover"),
                         ft.Container(
@@ -85,7 +85,6 @@ def main(page: ft.Page):
                 ], horizontal_alignment="center", expand=True)
             )
         else:
-            # صفحات داخلی
             contents = [
                 ft.Text("داشبورد مدیریتی", size=25),
                 ft.Text("بخش پیش‌فاکتورها", size=25),
