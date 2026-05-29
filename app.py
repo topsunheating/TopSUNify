@@ -350,7 +350,7 @@ nav_html = f"""
         <img src="data:image/png;base64,{icon_inv}" style="width:20px; height:20px; margin-bottom:2px;"> فاکتور
     </a>
     <a href="?nav_tab=info" target="_self" class="my-link">
-        <img src="data:image/png;base64,{icon_top}" style="width:20px; height:20px; margin-bottom:2px;"> تاپسان
+        <img src="data:image/png;base64,{icon_top}" style="width:20px; height:20px; margin-bottom:2px;"> تاپساینفای
     </a>
     <a href="?nav_tab=profile" target="_self" class="my-link">
         <span style="font-size:20px; margin-bottom:2px;">👤</span> پروفایل
