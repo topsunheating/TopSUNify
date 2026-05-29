@@ -7,7 +7,9 @@ def main(page: ft.Page):
     page.rtl = True
     page.padding = 0
 
+    # مقداردهی اولیه سشن
     page.session.logged_in = False
+    page.session.active_tab = 0
 
     # فیلدها
     username = ft.TextField(label="نام کاربری", width=300)
@@ -19,13 +21,27 @@ def main(page: ft.Page):
             page.session.logged_in = True
             update_ui()
         else:
-            page.show_snack_bar(ft.SnackBar(content=ft.Text("اطلاعات اشتباه است!")))
+            page.show_snack_bar(ft.SnackBar(content=ft.Text("نام کاربری یا رمز عبور اشتباه است!")))
             page.update()
 
     # تابع تغییر تب‌ها
     def on_nav_change(e):
         page.session.active_tab = e.control.selected_index
         update_ui()
+
+    # تابع تولید محتوای هر تب
+    def get_tab_content(index):
+        if index == 0:  # داشبورد
+            return ft.Column([
+                ft.Card(content=ft.Container(ft.Text("آمار فروش: ۲۰٪ رشد"), padding=20)),
+                ft.Card(content=ft.Container(ft.Text("تعداد فاکتورهای جدید: ۵"), padding=20)),
+            ])
+        elif index == 1:  # فاکتور
+            return ft.Text("در اینجا لیست فاکتورها نمایش داده می‌شود.")
+        elif index == 2:  # تاپسان
+            return ft.Text("اطلاعات فنی تاپسان در این بخش قرار می‌گیرد.")
+        else:  # پروفایل
+            return ft.Text("تنظیمات پروفایل کاربری.")
 
     # تابع اصلی رندر
     def update_ui():
@@ -35,26 +51,22 @@ def main(page: ft.Page):
             page.add(
                 ft.Container(
                     ft.Column([
-                        ft.Text("ورود به تاپسانیفای", size=25),
+                        ft.Text("ورود به تاپسانیفای", size=25, weight="bold"),
                         username, password,
                         ft.ElevatedButton("ورود", on_click=login)
                     ], horizontal_alignment="center"),
-                    padding=20
+                    padding=20, alignment=ft.alignment.center
                 )
             )
         else:
-            # اینجا داشبورد رو با المان‌های ساده می‌سازیم
             page.add(
-                ft.AppBar(title=ft.Text("داشبورد مدیریتی")),
+                ft.AppBar(title=ft.Text("پنل مدیریت تاپسانیفای"), bgcolor="blue_grey_50"),
                 ft.Container(
-                    ft.Column([
-                        ft.Card(content=ft.Container(ft.Text("آمار فروش: ۲۰٪ رشد"), padding=20)),
-                        ft.Card(content=ft.Container(ft.Text("تعداد فاکتورهای جدید: ۵"), padding=20)),
-                    ]),
+                    content=get_tab_content(page.session.active_tab),
                     padding=20
                 ),
                 ft.NavigationBar(
-                    selected_index=getattr(page.session, "active_tab", 0),
+                    selected_index=page.session.active_tab,
                     on_change=on_nav_change,
                     destinations=[
                         ft.NavigationBarDestination(icon="dashboard", label="داشبورد"),
