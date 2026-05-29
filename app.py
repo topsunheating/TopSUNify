@@ -50,7 +50,7 @@ def main(page: ft.Page):
                         password,
                         ft.Container(ft.Image(src="biometric.png", width=30, height=30), on_click=show_biometric_dialog, padding=5)
                     ], alignment="center"),
-                    ft.ElevatedButton("ورود به TopSUNify", on_click=login, width=300),
+                    ft.ElevatedButton("ورود به TopSUNify", on_click=login, width=500),
                     ft.Text("فعال سازی / فراموشی رمز عبور", size=12, color="blue"),
                     
                     # بخش landscape با افکت محو شدگی
