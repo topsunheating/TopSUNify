@@ -74,10 +74,10 @@ def main(page: ft.Page):
                     ft.Stack([
                         ft.Image(src="landscape.jpg", width=400, height=200, fit="cover"),
                         ft.Container(
-                            width=400, height=200,
+                            width=400, height=300,
                             gradient=ft.LinearGradient(
-                                begin=ft.alignment.Alignment(0, -1),
-                                end=ft.alignment.Alignment(0, 1),
+                                begin=ft.alignment.Alignment(0, 1),
+                                end=ft.alignment.Alignment(0, -1),
                                 colors=["transparent", "white"]
                             )
                         )
