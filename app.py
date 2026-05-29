@@ -46,14 +46,15 @@ def main(page: ft.Page):
             page.add(
                 ft.Stack([
                     # لایه 1: عکس پس‌زمینه (landscape)
+                    # حذف window_width و استفاده از expand برای پر کردن صفحه
                     ft.Container(
-                        content=ft.Image(src="landscape.jpg", width=page.window_width, height=page.window_height),
+                        content=ft.Image(src="landscape.jpg"),
                         expand=True
                     ),
                     # لایه 2: محتوای فرم روی عکس
                     ft.Container(
                         content=ft.Column([
-                            ft.Container(height=50), # فاصله از بالا
+                            ft.Container(height=50), 
                             ft.Image(src="TopSUNify.png", width=120),
                             username,
                             ft.Row([
