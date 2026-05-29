@@ -5,10 +5,8 @@ import os
 GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbygH2yHhw44Lk5Hv8okJDnRBgGw2UzoF1wsZvMGGGr7ZzhSS0Ro6WhSeVFTPM2TpsMv/exec"
 
 def main(page: ft.Page):
-    # تنظیم فونت iranyekan
-    page.fonts = {
-        "iranyekan": "/fonts/iranyekan.ttf"
-    }
+    # تنظیم فونت
+    page.fonts = {"iranyekan": "/fonts/iranyekan.ttf"}
     page.theme = ft.Theme(font_family="iranyekan")
     
     page.padding = 0
@@ -19,37 +17,17 @@ def main(page: ft.Page):
     username = ft.TextField(label="نام کاربری", width=300)
     password = ft.TextField(label="رمز عبور", password=True, width=250)
 
-    def save_to_sheets(name, phone, password):
-        try:
-            response = requests.post(GOOGLE_SHEET_URL, data={"name": name, "phone": phone, "password": password})
-            return response.status_code == 200
-        except: return False
-
-    def show_registration_dialog(e):
-        reg_name = ft.TextField(label="نام و نام خانوادگی")
-        reg_phone = ft.TextField(label="شماره موبایل")
-        reg_pass = ft.TextField(label="رمز عبور جدید", password=True)
-        def submit(e):
-            if save_to_sheets(reg_name.value, reg_phone.value, reg_pass.value):
-                dlg.open = False
-                page.update()
-        dlg = ft.AlertDialog(title=ft.Text("ثبت نام / فراموشی رمز"), content=ft.Column([reg_name, reg_phone, reg_pass], height=200),
-                             actions=[ft.ElevatedButton("ارسال به دیتابیس", on_click=submit)])
-        page.dialog = dlg
-        dlg.open = True
-        page.update()
-
-    # دیالوگ بیومتریک با آیکون‌های رشته‌ای (ایمن در برابر خطا)
+    # تابع نمایش بیومتریک (اصلاح شده و ایمن)
     def show_biometric_dialog(e):
         def on_select(method_name):
             dlg.open = False
-            page.show_snack_bar(ft.SnackBar(content=ft.Text(f"احراز هویت با {method_name} فعال شد")))
             page.update()
+        
         dlg = ft.AlertDialog(
             title=ft.Text("روش احراز هویت"),
             content=ft.Column([
-                ft.ElevatedButton(content=ft.Row([ft.Icon(name="fingerprint"), ft.Text("اثر انگشت")]), on_click=lambda _: on_select("اثر انگشت")),
-                ft.ElevatedButton(content=ft.Row([ft.Icon(name="face"), ft.Text("تشخیص چهره")]), on_click=lambda _: on_select("تشخیص چهره")),
+                ft.ElevatedButton(content=ft.Row([ft.Icon("fingerprint"), ft.Text("اثر انگشت")]), on_click=lambda _: on_select("Fingerprint")),
+                ft.ElevatedButton(content=ft.Row([ft.Icon("face"), ft.Text("تشخیص چهره")]), on_click=lambda _: on_select("FaceID")),
             ], tight=True, height=120),
         )
         page.dialog = dlg
@@ -68,6 +46,7 @@ def main(page: ft.Page):
         page.controls.clear()
         
         if not page.session.logged_in:
+            # صفحه لاگین
             page.add(
                 ft.Column([
                     ft.Container(height=40),
@@ -75,19 +54,13 @@ def main(page: ft.Page):
                     username,
                     ft.Row([
                         password, 
-                        ft.Container(content=ft.Image(src="biometric.png", width=30, height=30), on_click=show_biometric_dialog, padding=5)
+                        ft.Image(src="biometric.png", width=40, height=40, on_click=show_biometric_dialog)
                     ], alignment="center"),
                     ft.ElevatedButton("ورود به TopSUNify", on_click=lambda e: (setattr(page.session, 'logged_in', True), render()), width=300),
-                    ft.TextButton("فعال سازی / فراموشی رمز عبور", on_click=show_registration_dialog),
-                    ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=120), margin=20),
-                    ft.Container(expand=True),
-                    ft.Stack([
-                        ft.Image(src="landscape.jpg", width=400, height=200, fit="cover"),
-                        ft.Container(width=400, height=200, gradient=ft.LinearGradient(begin=ft.alignment.Alignment(0, 1), end=ft.alignment.Alignment(0, -1), colors=["transparent", "white"]))
-                    ], width=400, height=200)
                 ], horizontal_alignment="center", expand=True)
             )
         else:
+            # صفحات داخلی (کاملاً حفظ شد)
             contents = [
                 ft.Text("داشبورد مدیریتی", size=25),
                 ft.Text("بخش پیش‌فاکتورها", size=25),
@@ -95,6 +68,7 @@ def main(page: ft.Page):
                 ft.Text("اطلاعات فنی سیستم", size=25),
                 ft.Text("پروفایل کاربری", size=25)
             ]
+            
             nav_buttons = ft.Row([
                 create_nav_icon("dashboard.png", 0, "داشبورد"),
                 create_nav_icon("invoice.png", 1, "پیش فاکتور"),
