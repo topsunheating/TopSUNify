@@ -4,7 +4,7 @@ import os
 def main(page: ft.Page):
     # ۱. معرفی فونت به فلت
     page.fonts = {
-        "iranyekan": "iranyekan.ttf"  # نام فونت در برنامه : نام فایل در فولدر
+        "iranyekan": "iranyekan.ttf"
     }
     
     # ۲. اعمال فونت به کل تم برنامه
@@ -16,6 +16,9 @@ def main(page: ft.Page):
     
     page.session.logged_in = False
     
+    username = ft.TextField(label="نام کاربری")
+    password = ft.TextField(label="رمز عبور", password=True)
+
     def login(e):
         if username.value == "admin" and password.value == "1234":
             page.session.logged_in = True
@@ -23,9 +26,6 @@ def main(page: ft.Page):
         else:
             page.show_snack_bar(ft.SnackBar(content=ft.Text("اطلاعات اشتباه است!")))
             page.update()
-
-    username = ft.TextField(label="نام کاربری")
-    password = ft.TextField(label="رمز عبور", password=True)
 
     def render(tab_index=0):
         page.controls.clear()
@@ -40,7 +40,11 @@ def main(page: ft.Page):
             contents = [
                 ft.Text("داشبورد مدیریتی", size=20),
                 ft.Text("بخش پیش‌فاکتورها", size=20),
-                ft.Image(src="TopSUNify-1.png", width=300, height=300),
+                # اصلاح ساختار Container
+                ft.Container(
+                    content=ft.Image(src="TopSUNify-1.png", width=300, height=300), 
+                    border=ft.border.all(2, "red")
+                ),
                 ft.Text("اطلاعات فنی سیستم", size=20),
                 ft.Text("پروفایل کاربری", size=20)
             ]
@@ -65,6 +69,6 @@ def main(page: ft.Page):
     render()
 
 if __name__ == "__main__":
-    # دقت کنید: assets_dir="." باعث می‌شود فایل فونت شناسایی شود
     port = int(os.environ.get("PORT", 8080))
+    # اگر فایل‌ها در پوشه assets هستند، این را به assets_dir="assets" تغییر دهید
     ft.app(target=main, port=port, host="0.0.0.0", assets_dir=".")
