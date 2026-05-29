@@ -48,17 +48,17 @@ def main(page: ft.Page):
                     ], alignment="center"),
                     ft.ElevatedButton("ورود به TopSUNify", on_click=lambda e: (setattr(page.session, 'logged_in', True), render()), width=300),
                     
-                    # روش ایمن برای لوگوی سمت راست بدون استفاده از center_right
+                    # لوگوی سمت راست (بدون استفاده از اتریبیوت‌های حساس)
                     ft.Row([ft.Container(expand=True), ft.Image(src="TopSUN-Powered.png", width=120)], alignment="end", rtl=False),
                     
                     ft.Container(expand=True),
                     
-                    # عکس با افکت گرادیانت
+                    # عکس با افکت گرادیانت (استفاده از رشته برای fit و حذف وابستگی به کلاس‌هایِ متغیر)
                     ft.Container(
-                        content=ft.Image(src="landscape.jpg", width=400, height=200, fit=ft.ImageFit.COVER),
+                        content=ft.Image(src="landscape.jpg", width=400, height=200, fit="cover"),
                         gradient=ft.LinearGradient(
-                            begin=ft.alignment.Alignment(0, -1), # بالا
-                            end=ft.alignment.Alignment(0, 1),   # پایین
+                            begin=ft.alignment.Alignment(0, -1),
+                            end=ft.alignment.Alignment(0, 1),
                             colors=[ft.colors.TRANSPARENT, ft.colors.WHITE]
                         )
                     )
