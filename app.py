@@ -1,7 +1,9 @@
 import flet as ft
+import requests
 import os
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
+
+# لینک وب‌اپلیکیشنِ گوگل‌شیت که با هم ساختیم:
+GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbygH2yHhw44Lk5Hv8okJDnRBgGw2UzoF1wsZvMGGGr7ZzhSS0Ro6WhSeVFTPM2TpsMv/exec"
 
 def main(page: ft.Page):
     # تنظیمات پایه
@@ -15,15 +17,15 @@ def main(page: ft.Page):
     username = ft.TextField(label="نام کاربری", width=300)
     password = ft.TextField(label="رمز عبور", password=True, width=250)
 
-    # تابع ثبت در گوگل شیت
+    # تابع ثبت ایمن در گوگل شیت (بدون کرش)
     def save_to_sheets(name, phone, password):
         try:
-            scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets']
-            creds = ServiceAccountCredentials.from_json_keyfile_name('credentials.json', scope)
-            client = gspread.authorize(creds)
-            sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1Vt-vKivm7I2Yi79gJarLVtSR2KowDGCQiW54UIgW6ls/edit").sheet1
-            sheet.append_row([name, phone, password])
-            return True
+            response = requests.post(GOOGLE_SHEET_URL, data={
+                "name": name,
+                "phone": phone,
+                "password": password
+            })
+            return response.status_code == 200
         except Exception as e:
             print(f"Error: {e}")
             return False
@@ -38,6 +40,8 @@ def main(page: ft.Page):
                 dlg.open = False
                 page.show_snack_bar(ft.SnackBar(content=ft.Text("اطلاعات با موفقیت ثبت شد")))
                 page.update()
+            else:
+                page.show_snack_bar(ft.SnackBar(content=ft.Text("خطا در ارسال!")))
         
         dlg = ft.AlertDialog(
             title=ft.Text("ثبت نام / فراموشی رمز"),
@@ -87,7 +91,7 @@ def main(page: ft.Page):
                     ft.ElevatedButton("ورود به TopSUNify", on_click=login, width=300),
                     ft.TextButton("فعال سازی / فراموشی رمز عبور", on_click=show_registration_dialog),
                     
-                    # لوگو در سمت راست (استفاده از رشته برای تراز کردن بدون خطا)
+                    # لوگو در سمت راست
                     ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=120), alignment="center_right", padding=10),
                     
                     ft.Container(expand=True),
@@ -95,7 +99,7 @@ def main(page: ft.Page):
                 ], horizontal_alignment="center", expand=True)
             )
         else:
-            # صفحات داخلی که درخواست کرده بودید
+            # صفحات داخلی
             contents = [
                 ft.Column([ft.Text("داشبورد مدیریتی", size=25)], horizontal_alignment="center"),
                 ft.Column([ft.Text("بخش پیش‌فاکتورها", size=25)], horizontal_alignment="center"),
