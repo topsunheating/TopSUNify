@@ -47,22 +47,31 @@ def main(page: ft.Page):
         
         if not page.session.logged_in:
             page.add(
+                # ستون اصلی که همه چیز را در وسط نگه می‌دارد
                 ft.Column([
                     ft.Container(height=40),
                     ft.Image(src="TopSUNify.png", width=150),
+                    
+                    # فواصل بین المان‌ها را با Container مشخص می‌کنیم
+                    ft.Container(height=20),
                     username,
+                    
                     ft.Row([
                         password, 
                         ft.Container(content=ft.Image(src="biometric.png", width=30, height=30), on_click=lambda e: None, padding=5)
                     ], alignment="center"),
-                    ft.ElevatedButton("ورود به TopSUNify", on_click=lambda e: (setattr(page.session, 'logged_in', True), render()), width=300),
                     
-                    # لوگوی سمت راست (با Row برای پایداری کامل)
-                    ft.Row([ft.Container(expand=True), ft.Image(src="TopSUN-Powered.png", width=120)], alignment="end"),
+                    ft.Container(height=10),
+                    ft.ElevatedButton("ورود به TopSUNify", on_click=lambda e: (setattr(page.session, 'logged_in', True), render()), width=300),
+                    ft.TextButton("فعال سازی / فراموشی رمز عبور", on_click=show_registration_dialog),
+                    
+                    # لوگو در اینجا دقیقاً زیر دکمه‌ها و در همان عرض قرار می‌گیرد
+                    ft.Container(height=20),
+                    ft.Image(src="TopSUN-Powered.png", width=120),
                     
                     ft.Container(expand=True),
                     
-                    # عکس با افکت گرادیانت ایمن
+                    # عکس پایین
                     ft.Container(
                         content=ft.Image(src="landscape.jpg", width=400, height=200, fit="cover"),
                         gradient=ft.LinearGradient(
