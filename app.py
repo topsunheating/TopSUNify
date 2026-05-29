@@ -40,16 +40,16 @@ def main(page: ft.Page):
                     username,
                     password,
                     ft.ElevatedButton("ورود به برنامه", on_click=login, width=300)
-                ], horizontal_alignment="center") # استفاده از رشته بجای کلاس برای اطمینان
+                ], horizontal_alignment="center")
             )
         else:
-            # محتوای تب‌ها را داخل کانتینر با height ثابت یا expand می‌گذاریم
+            # حذف کامل ft.alignment برای جلوگیری از کرش
             contents = [
-                ft.Container(content=ft.Text("داشبورد مدیریتی", size=20), expand=True, alignment=ft.alignment.top_center),
-                ft.Container(content=ft.Text("بخش پیش‌فاکتورها", size=20), expand=True, alignment=ft.alignment.top_center),
-                ft.Container(content=ft.Image(src="TopSUNify-1.png", width=300, height=300), expand=True, alignment=ft.alignment.top_center),
-                ft.Container(content=ft.Text("اطلاعات فنی سیستم", size=20), expand=True, alignment=ft.alignment.top_center),
-                ft.Container(content=ft.Text("پروفایل کاربری", size=20), expand=True, alignment=ft.alignment.top_center)
+                ft.Text("داشبورد مدیریتی", size=20),
+                ft.Text("بخش پیش‌فاکتورها", size=20),
+                ft.Image(src="TopSUNify-1.png", width=300, height=300),
+                ft.Text("اطلاعات فنی سیستم", size=20),
+                ft.Text("پروفایل کاربری", size=20)
             ]
 
             nav_buttons = ft.Row([
@@ -60,14 +60,17 @@ def main(page: ft.Page):
                 create_nav_icon("profile.png", 4, "پروفایل"),
             ], alignment="center")
 
+            # استفاده از Column برای مدیریت فضا و ثابت نگه داشتن تب‌ها
             page.add(
-                ft.Text("TopSUNify", size=30, weight="bold"),
-                ft.Divider(),
-                contents[tab_index],
-                ft.Container(expand=True),
-                nav_buttons
-            )
-        page.update()
+                ft.Column([
+                    ft.Text("TopSUNify", size=30, weight="bold"),
+                    ft.Divider(),
+                    contents[tab_index],
+                    ft.Container(expand=True), # ایجاد فضای خالی برای راندن دکمه‌ها به پایین
+                    nav_buttons
+                ], horizontal_alignment="center", expand=True)
+            )
+        page.update()
     render()
 
 if __name__ == "__main__":
