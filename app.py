@@ -197,15 +197,11 @@ if "user_role" not in st.session_state:
 # DASHBOARD
 # ==============================================================================
 
-if st.session_state.active_tab == "dashboard":
+elif st.session_state.active_tab == "dashboard":
 
     st.markdown('<div class="module-card-box">', unsafe_allow_html=True)
 
     st.subheader("📊 داشبورد")
-
-    st.success("سامانه با موفقیت اجرا شد.")
-
-    st.write("این نسخه بدون خطای syntax و indentation است.")
 
     st.markdown("</div>", unsafe_allow_html=True)
 
