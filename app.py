@@ -12,7 +12,7 @@ def main(page: ft.Page):
     page.session.logged_in = False
     
     username = ft.TextField(label="نام کاربری", width=300)
-    password = ft.TextField(label="رمز عبور", password=True, width=300)
+    password = ft.TextField(label="رمز عبور", password=True, width=250) # عرض را کمتر کردیم تا جا برای آیکون باشد
 
     def login(e):
         if username.value == "admin" and password.value == "1234":
@@ -36,24 +36,16 @@ def main(page: ft.Page):
         if not page.session.logged_in:
             page.add(
                 ft.Column([
-                    # لوگوی اختصاصی در بالای صفحه ورود
                     ft.Image(src="TopSUNify.png", width=150, height=150),
-                    
                     username,
-                    
-                    # فیلد رمز عبور به همراه آیکون بیومتریک
+                    # استفاده از Row بدون پارامترهای پیچیده
                     ft.Row([
                         password,
-                        ft.IconButton(
-                            content=ft.Image(src="biometric.png", width=30, height=30),
-                            tooltip="ورود با اثر انگشت/چهره"
-                        )
+                        # استفاده از Image به جای IconButton برای جلوگیری از هرگونه خطای نسخه‌ای
+                        ft.Container(ft.Image(src="biometric.png", width=30, height=30), on_click=lambda e: print("Biometric Clicked"))
                     ], alignment="center"),
                     
-                    # دکمه ورود تغییر یافته
                     ft.ElevatedButton("ورود به TopSUNify", on_click=login, width=300),
-                    
-                    # لینک فراموشی رمز
                     ft.Text("فعال سازی / فراموشی رمز عبور", size=12, color="blue")
                     
                 ], horizontal_alignment="center")
