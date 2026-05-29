@@ -338,18 +338,5 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-if st.button("📊\nداشبورد"): st.session_state.active_tab = "dashboard"; st.rerun()
-
-st.markdown('</div><div class="nav-btn-wrapper">', unsafe_allow_html=True)
-
-if st.button("🧾\nفاکتور"): st.session_state.active_tab = "invoice"; st.rerun()
-
-st.markdown('</div><div class="nav-btn-wrapper">', unsafe_allow_html=True)
-
-if st.button("📚\nتاپسان"): st.session_state.active_tab = "info"; st.rerun()
-
-st.markdown('</div><div class="nav-btn-wrapper">', unsafe_allow_html=True)
-
-if st.button("👤\nپروفایل"): st.session_state.active_tab = "profile"; st.rerun()
 
 st.markdown('</div></div>', unsafe_allow_html=True)
