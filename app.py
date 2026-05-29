@@ -35,19 +35,7 @@ def run_app():
 if __name__ == "__main__":
     main() 
 
-# ۲. پاکسازی پارامترهای اضافه (اصلاح حیاتی برای جلوگیری از تداخل URL)
-query_params = st.query_params
-if "nav_tab" in query_params:
-    selected_tab = query_params["nav_tab"]
-    st.query_params.clear()
-    st.query_params["nav_tab"] = selected_tab
-    # مقدار اولیه تب فعال در سشن آپدیت می‌شود
-    if "active_tab" not in st.session_state:
-        st.session_state.active_tab = selected_tab
-    else:
-        st.session_state.active_tab = selected_tab
 
-# اینجا کدهای داشبورد، فاکتور و سایر موارد خود را قرار دهید...
 
 # ==============================================================================
 # CUSTOM CSS
