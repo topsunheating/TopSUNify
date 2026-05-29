@@ -2,28 +2,30 @@ import flet as ft
 import os
 
 def main(page: ft.Page):
-    page.fonts = {"iranyekan": "iranyekan.ttf"}
+    # تنظیمات کلی صفحه
+    page.padding = 0
+    page.rtl = True
     page.theme = ft.Theme(font_family="iranyekan")
-    page.padding = 0 # حذف حاشیه صفحه برای تمام‌صفحه شدن
-    
+    page.fonts = {"iranyekan": "iranyekan.ttf"}
+
     def show_biometric_dialog(e):
         dlg = ft.AlertDialog(title=ft.Text("احراز هویت"), content=ft.Text("در حال اسکن..."))
         page.dialog = dlg
         dlg.open = True
         page.update()
 
-    def render(tab_index=0):
+    def render():
         page.controls.clear()
         
         # لایه اصلی برای چیدمان روی عکس
         page.add(
             ft.Stack([
-                # لایه اول: عکس پس‌زمینه که کل صفحه را می‌پوشاند
+                # لایه پس‌زمینه (عکس landscape)
                 ft.Container(
-                    content=ft.Image(src="landscape.jpg", fit=ft.ImageFit.COVER),
+                    content=ft.Image(src="landscape.jpg"),
                     expand=True
                 ),
-                # لایه دوم: فرم ورود که روی عکس قرار می‌گیرد
+                # لایه فرم ورود
                 ft.Container(
                     content=ft.Column([
                         ft.Image(src="topsunify.png", width=220),
@@ -41,7 +43,9 @@ def main(page: ft.Page):
             ])
         )
         page.update()
+    
     render()
 
 if __name__ == "__main__":
-    ft.app(target=main, port=8080, host="0.0.0.0", assets_dir="assets")
+    port = int(os.environ.get("PORT", 8080))
+    ft.app(target=main, port=port, host="0.0.0.0", assets_dir="assets")
