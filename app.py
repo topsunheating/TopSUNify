@@ -315,7 +315,7 @@ st.markdown("""
         background-color: white;
         z-index: 999999;
         border-top: 1px solid #e2e8f0;
-        padding: 5px 0;
+        padding: 2px 0;
     }
     .nav-btn-wrapper {
         flex: 1;
@@ -327,7 +327,7 @@ st.markdown("""
     }
     .footer-nav-container button {
         width: 100% !important;
-        font-size: 9px !important;
+        font-size: 8px !important;
         height: 50px !important;
         border: none !important;
         background: none !important;
