@@ -20,20 +20,6 @@ def main(page: ft.Page):
         except:
             return False
 
-    def show_registration_dialog(e):
-        reg_name = ft.TextField(label="نام و نام خانوادگی")
-        reg_phone = ft.TextField(label="شماره موبایل")
-        reg_pass = ft.TextField(label="رمز عبور جدید", password=True)
-        def submit(e):
-            if save_to_sheets(reg_name.value, reg_phone.value, reg_pass.value):
-                dlg.open = False
-                page.update()
-        dlg = ft.AlertDialog(title=ft.Text("ثبت نام"), content=ft.Column([reg_name, reg_phone, reg_pass], height=200),
-                             actions=[ft.ElevatedButton("ارسال", on_click=submit)])
-        page.dialog = dlg
-        dlg.open = True
-        page.update()
-
     def render(tab_index=0):
         page.controls.clear()
         if not page.session.logged_in:
@@ -48,24 +34,24 @@ def main(page: ft.Page):
                     ], alignment="center"),
                     ft.ElevatedButton("ورود به TopSUNify", on_click=lambda e: (setattr(page.session, 'logged_in', True), render()), width=300),
                     
-                    # لوگوی سمت راست (بدون استفاده از اتریبیوت‌های حساس)
-                    ft.Row([ft.Container(expand=True), ft.Image(src="TopSUN-Powered.png", width=120)], alignment="end", rtl=False),
+                    # لوگوی سمت راست بدون استفاده از ماژول‌هایِ حساسِ تراز
+                    ft.Row([ft.Container(expand=True), ft.Image(src="TopSUN-Powered.png", width=120)], alignment="end"),
                     
                     ft.Container(expand=True),
                     
-                    # عکس با افکت گرادیانت (استفاده از رشته برای fit و حذف وابستگی به کلاس‌هایِ متغیر)
+                    # عکس با گرادیانتِ ایمن (استفاده از رشته برای رنگ‌ها)
                     ft.Container(
-                        content=ft.Image(src="landscape.jpg", width=400, height=200, fit="cover"),
+                        content=ft.Image(src="landscape.jpg", width=400, height=200, fit=ft.ImageFit.COVER),
                         gradient=ft.LinearGradient(
                             begin=ft.alignment.Alignment(0, -1),
                             end=ft.alignment.Alignment(0, 1),
-                            colors=[ft.colors.TRANSPARENT, ft.colors.WHITE]
+                            colors=["transparent", "white"] # استفاده از رشته به جای ft.colors
                         )
                     )
                 ], horizontal_alignment="center", expand=True)
             )
         else:
-            page.add(ft.Column([ft.Text("پنل کاربری", size=30), ft.Divider()], horizontal_alignment="center", expand=True))
+            page.add(ft.Column([ft.Text("پنل کاربری", size=30)], horizontal_alignment="center", expand=True))
         page.update()
 
     render()
