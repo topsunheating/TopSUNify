@@ -5,6 +5,12 @@ import os
 GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbygH2yHhw44Lk5Hv8okJDnRBgGw2UzoF1wsZvMGGGr7ZzhSS0Ro6WhSeVFTPM2TpsMv/exec"
 
 def main(page: ft.Page):
+    # تنظیم فونت iranyekan
+    page.fonts = {
+        "iranyekan": "/fonts/iranyekan.ttf"
+    }
+    page.theme = ft.Theme(font_family="iranyekan")
+    
     page.padding = 0
     page.rtl = True
     page.theme_mode = "light"
@@ -33,15 +39,17 @@ def main(page: ft.Page):
         dlg.open = True
         page.update()
 
+    # دیالوگ بیومتریک با آیکون‌های رشته‌ای (ایمن در برابر خطا)
     def show_biometric_dialog(e):
         def on_select(method_name):
             dlg.open = False
+            page.show_snack_bar(ft.SnackBar(content=ft.Text(f"احراز هویت با {method_name} فعال شد")))
             page.update()
         dlg = ft.AlertDialog(
             title=ft.Text("روش احراز هویت"),
             content=ft.Column([
-                ft.ElevatedButton("اثر انگشت", on_click=lambda _: on_select("Fingerprint")),
-                ft.ElevatedButton("تشخیص چهره", on_click=lambda _: on_select("FaceID")),
+                ft.ElevatedButton(content=ft.Row([ft.Icon(name="fingerprint"), ft.Text("اثر انگشت")]), on_click=lambda _: on_select("اثر انگشت")),
+                ft.ElevatedButton(content=ft.Row([ft.Icon(name="face"), ft.Text("تشخیص چهره")]), on_click=lambda _: on_select("تشخیص چهره")),
             ], tight=True, height=120),
         )
         page.dialog = dlg
@@ -65,10 +73,12 @@ def main(page: ft.Page):
                     ft.Container(height=40),
                     ft.Image(src="TopSUNify.png", width=150),
                     username,
-                    ft.Row([password, ft.Container(content=ft.Image(src="biometric.png", width=30, height=30), on_click=show_biometric_dialog, padding=5)], alignment="center"),
+                    ft.Row([
+                        password, 
+                        ft.Container(content=ft.Image(src="biometric.png", width=30, height=30), on_click=show_biometric_dialog, padding=5)
+                    ], alignment="center"),
                     ft.ElevatedButton("ورود به TopSUNify", on_click=lambda e: (setattr(page.session, 'logged_in', True), render()), width=300),
                     ft.TextButton("فعال سازی / فراموشی رمز عبور", on_click=show_registration_dialog),
-                    # تغییر مهم: استفاده از لیست به جای ft.margin.only
                     ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=120), margin=20),
                     ft.Container(expand=True),
                     ft.Stack([
@@ -78,7 +88,6 @@ def main(page: ft.Page):
                 ], horizontal_alignment="center", expand=True)
             )
         else:
-            # صفحات داخلی دقیق
             contents = [
                 ft.Text("داشبورد مدیریتی", size=25),
                 ft.Text("بخش پیش‌فاکتورها", size=25),
