@@ -44,13 +44,13 @@ def main(page: ft.Page):
         if not page.session.logged_in:
             page.add(
                 ft.Column([
-                    ft.Image(src="topsunify.png", width=150, height=150),
+                    ft.Image(src="topsunify.png", width=350, height=350),
                     username,
                     ft.Row([
                         password,
                         ft.Container(ft.Image(src="biometric.png", width=30, height=30), on_click=show_biometric_dialog, padding=5)
                     ], alignment="center"),
-                    ft.ElevatedButton("ورود به TopSUNify", on_click=login, width=500),
+                    ft.ElevatedButton("ورود به TopSUNify", on_click=login, width=300),
                     ft.Text("فعال سازی / فراموشی رمز عبور", size=12, color="blue"),
                     
                     # بخش landscape با افکت محو شدگی
