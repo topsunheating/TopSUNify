@@ -21,6 +21,7 @@ def main(page: ft.Page):
         else:
             return ft.Text("👤 پروفایل کاربری")
 
+    # استفاده از Container برای محتوا
     content_area = ft.Container(content=get_content(0), padding=20, expand=True)
 
     def nav_change(e):
@@ -28,8 +29,12 @@ def main(page: ft.Page):
         content_area.content = get_content(page.session.active_tab)
         page.update()
 
+    # اصلاح: استفاده از نام رنگ‌ها به صورت رشته (String) برای سازگاری کامل
     page.add(
-        ft.AppBar(title=ft.Text("TopSUNify"), bgcolor=ft.colors.SURFACE_VARIANT),
+        ft.AppBar(
+            title=ft.Text("TopSUNify"), 
+            bgcolor="blue_grey_100" # جایگزین ft.colors.SURFACE_VARIANT
+        ),
         content_area,
         ft.NavigationBar(
             selected_index=page.session.active_tab,
