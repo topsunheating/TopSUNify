@@ -6,7 +6,6 @@ def main(page: ft.Page):
     page.theme_mode = ft.ThemeMode.LIGHT
     page.rtl = True
     
-    # متغیرهای سشن
     page.session.logged_in = False
     
     # فیلدها
@@ -18,22 +17,43 @@ def main(page: ft.Page):
             page.session.logged_in = True
             render()
         else:
-            page.add(ft.Text("خطا در ورود"))
+            page.show_snack_bar(ft.SnackBar(content=ft.Text("نام کاربری یا رمز عبور اشتباه است!")))
             page.update()
 
-    def render():
+    def render(tab_index=0):
         page.controls.clear()
+        
         if not page.session.logged_in:
             page.add(
-                ft.Text("ورود به سیستم", size=20),
+                ft.Text("ورود به تاپسانیفای", size=25),
                 username,
                 password,
                 ft.ElevatedButton("ورود", on_click=login)
             )
         else:
+            # ایجاد منو برای جابجایی بین بخش‌ها
+            def change_tab(e):
+                render(e.control.selected_index)
+
+            # محتوای هر بخش
+            content = ft.Text("خوش آمدید!")
+            if tab_index == 1:
+                content = ft.Text("لیست فاکتورها: (در حال ساخت)")
+            elif tab_index == 2:
+                content = ft.Text("اطلاعات تاپسان: (در حال ساخت)")
+
             page.add(
-                ft.Text("خوش آمدید به داشبورد", size=20),
-                ft.ElevatedButton("خروج", on_click=lambda _: (setattr(page.session, "logged_in", False), render()))
+                ft.Text("پنل مدیریت", size=20),
+                content,
+                ft.NavigationBar(
+                    selected_index=tab_index,
+                    on_change=change_tab,
+                    destinations=[
+                        ft.NavigationBarDestination(icon="dashboard", label="داشبورد"),
+                        ft.NavigationBarDestination(icon="receipt", label="فاکتور"),
+                        ft.NavigationBarDestination(icon="info", label="اطلاعات"),
+                    ]
+                )
             )
         page.update()
 
