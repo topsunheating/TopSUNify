@@ -311,7 +311,7 @@ def get_image_base64(path):
 
 # ۱. تبدیل تصاویر به Base64 (حتماً این کار را قبل از نمایش انجام دهید)
 icon_dash = get_image_base64("dashboard.png")
-icon_inv = get_image_base64("invoce.png")
+icon_inv = get_image_base64("invoice.png")
 icon_top = get_image_base64("TopSUNify-1.png")
 
 # ۲. تزریق استایل CSS و نمایش نوار ناوبری
