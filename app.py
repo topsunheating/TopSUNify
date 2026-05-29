@@ -9,12 +9,10 @@ def main(page: ft.Page):
     page.title = "TopSUNify"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.rtl = True
-    page.vertical_alignment = ft.MainAxisAlignment.CENTER
-    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.session.logged_in = False
     
-    username = ft.TextField(label="نام کاربری", border_radius=10, width=300)
-    password = ft.TextField(label="رمز عبور", password=True, border_radius=10, width=300)
+    username = ft.TextField(label="نام کاربری", width=300)
+    password = ft.TextField(label="رمز عبور", password=True, width=300)
 
     def login(e):
         if username.value == "admin" and password.value == "1234":
@@ -29,8 +27,7 @@ def main(page: ft.Page):
             content=ft.Image(src=icon_path, width=30, height=30),
             padding=10,
             on_click=lambda _: render(index),
-            tooltip=tooltip,
-            border_radius=10,
+            tooltip=tooltip
         )
 
     def render(tab_index=0):
@@ -38,31 +35,12 @@ def main(page: ft.Page):
         
         if not page.session.logged_in:
             page.add(
-                ft.Container(
-                    content=ft.Column([
-                        ft.Text("ورود به تاپسانیفای", size=24, weight="bold", color="#005b96"),
-                        ft.Container(height=10),
-                        username,
-                        password,
-                        ft.Container(height=20),
-                        ft.ElevatedButton(
-                            "ورود به برنامه",
-                            on_click=login,
-                            width=300
-                        ),
-                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, tight=True),
-                    padding=30,
-                    border=ft.Border(
-                        left=ft.BorderSide(1, "#e0e0e0"),
-                        top=ft.BorderSide(1, "#e0e0e0"),
-                        right=ft.BorderSide(1, "#e0e0e0"),
-                        bottom=ft.BorderSide(1, "#e0e0e0")
-                    ),
-                    border_radius=20,
-                    bgcolor="#FFFFFF", # سفید خالص
-                    width=350,
-                    alignment=ft.alignment.center
-                )
+                ft.Column([
+                    ft.Text("ورود به تاپسانیفای", size=24, weight="bold"),
+                    username,
+                    password,
+                    ft.ElevatedButton("ورود به برنامه", on_click=login, width=300)
+                ], horizontal_alignment="center") # استفاده از رشته بجای کلاس برای اطمینان
             )
         else:
             contents = [
@@ -83,7 +61,7 @@ def main(page: ft.Page):
 
             page.add(
                 ft.Text("پنل مدیریت تاپسانیفای", size=25, weight="bold"),
-                ft.Container(content=contents[tab_index], expand=True, alignment=ft.alignment.center),
+                contents[tab_index],
                 nav_buttons
             )
         page.update()
