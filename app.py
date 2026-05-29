@@ -2,16 +2,17 @@ import flet as ft
 import os
 
 def main(page: ft.Page):
-    # تنظیمات اولیه که در همه نسخه‌ها جواب می‌دهد
-    page.padding = 0
-    page.rtl = True
     page.fonts = {"iranyekan": "iranyekan.ttf"}
     page.theme = ft.Theme(font_family="iranyekan")
+    page.title = "TopSUNify"
+    page.theme_mode = ft.ThemeMode.LIGHT
+    page.rtl = True
     page.session.logged_in = False
-
+    
     username = ft.TextField(label="نام کاربری", width=300)
     password = ft.TextField(label="رمز عبور", password=True, width=250)
 
+    # تابع نمایش Popup - به روش کاملاً سازگار
     def show_biometric_dialog(e):
         dlg = ft.AlertDialog(
             title=ft.Text("احراز هویت"),
@@ -42,35 +43,37 @@ def main(page: ft.Page):
         page.controls.clear()
         
         if not page.session.logged_in:
-            # استفاده از Stack برای قرار دادن فرم روی عکس (حالت سازگار)
             page.add(
-                ft.Stack([
-                    # لایه پس‌زمینه: عکس بدون نیاز به تنظیماتِ کلاسِ ImageFit
-                    ft.Container(content=ft.Image(src="landscape.jpg"), expand=True),
+                ft.Column([
+                    ft.Image(src="TopSUNify.png", width=150, height=150),
+                    username,
+                    ft.Row([
+                        password,
+                        ft.Container(
+                            ft.Image(src="biometric.png", width=30, height=30),
+                            on_click=show_biometric_dialog,
+                            padding=5
+                        )
+                    ], alignment="center"),
                     
-                    # لایه فرم ورود: استفاده از رشته برای تراز کردن که خطا نمی‌دهد
+                    ft.ElevatedButton("ورود به TopSUNify", on_click=login, width=300),
+                    ft.Text("فعال سازی / فراموشی رمز عبور", size=12, color="blue"),
+                    
+                    # حذف ft.ImageFit که باعث خطا می‌شد
                     ft.Container(
-                        content=ft.Column([
-                            ft.Container(height=50),
-                            ft.Image(src="TopSUNify.png", width=150),
-                            username,
-                            ft.Row([
-                                password,
-                                ft.Container(ft.Image(src="biometric.png", width=30), on_click=show_biometric_dialog, padding=5)
-                            ], alignment="center"),
-                            ft.ElevatedButton("ورود به TopSUNify", on_click=login, width=300),
-                            ft.Text("فعال سازی / فراموشی رمز عبور", size=12, color="blue")
-                        ], horizontal_alignment="center"),
-                        alignment="center", 
-                        padding=20
+                        content=ft.Image(src="landscape.jpg"),
+                        width=400,
+                        height=200
                     )
-                ])
+                ], horizontal_alignment="center", expand=True)
             )
         else:
             contents = [
-                ft.Text("داشبورد مدیریتی", size=20), ft.Text("بخش پیش‌فاکتورها", size=20),
+                ft.Text("داشبورد مدیریتی", size=20),
+                ft.Text("بخش پیش‌فاکتورها", size=20),
                 ft.Image(src="TopSUNify-1.png", width=300, height=300),
-                ft.Text("اطلاعات فنی سیستم", size=20), ft.Text("پروفایل کاربری", size=20)
+                ft.Text("اطلاعات فنی سیستم", size=20),
+                ft.Text("پروفایل کاربری", size=20)
             ]
             nav_buttons = ft.Row([
                 create_nav_icon("dashboard.png", 0, "داشبورد"),
@@ -90,7 +93,6 @@ def main(page: ft.Page):
                 ], horizontal_alignment="center", expand=True)
             )
         page.update()
-
     render()
 
 if __name__ == "__main__":
