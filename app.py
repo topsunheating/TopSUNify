@@ -1,4 +1,5 @@
 import flet as ft
+import os
 
 def main(page: ft.Page):
     # تنظیمات اولیه برای ظاهر اپلیکیشن
@@ -6,13 +7,14 @@ def main(page: ft.Page):
     page.theme_mode = ft.ThemeMode.LIGHT
     page.rtl = True
     page.padding = 0
+    # در محیط وب، ابعاد ویندوز را به صورت درصد یا خودکار تنظیم می‌کنیم
     page.window_width = 400
     page.window_height = 800
 
     # متغیرهای وضعیت برنامه
     page.session.logged_in = False
 
-    # --- تابع رندر صفحه لاگین با طراحی اختصاصی شما ---
+    # --- تابع رندر صفحه لاگین ---
     def build_login_page():
         logo = ft.Image(src="TopSUNify.png", width=220)
         username = ft.TextField(label="نام کاربری", border=ft.InputBorder.UNDERLINE, prefix_icon=ft.icons.PERSON)
@@ -27,7 +29,7 @@ def main(page: ft.Page):
 
         return ft.View("/", [
             ft.Stack([
-                # بک‌گراند منظره (معادل landscape.jpg)
+                # بک‌گراند منظره
                 ft.Container(
                     content=ft.Image(src="landscape.jpg", fit=ft.ImageFit.COVER),
                     height=250, bottom=0, width=400
@@ -52,7 +54,6 @@ def main(page: ft.Page):
         return ft.View("/app", [
             ft.AppBar(title=ft.Text("داشبورد تاپسانیفای")),
             ft.Container(content=ft.Text("محتوای اصلی برنامه"), expand=True),
-            # نوار ناوبری پایین (بدون پرش)
             ft.NavigationBar(
                 destinations=[
                     ft.NavigationBarDestination(icon=ft.icons.DASHBOARD, label="داشبورد"),
@@ -63,7 +64,7 @@ def main(page: ft.Page):
             )
         ])
 
-    # مدیریت مسیرها (بدون هیچ رفرشی در مرورگر یا اپ)
+    # مدیریت مسیرها
     def route_change(route):
         page.views.clear()
         if page.session.logged_in:
@@ -75,4 +76,15 @@ def main(page: ft.Page):
     page.on_route_change = route_change
     page.go("/")
 
-ft.app(target=main)
+# --- اجرای برنامه با تنظیمات اختصاصی سرور Railway ---
+if __name__ == "__main__":
+    # خواندن پورت از متغیر محیطی Railway، در صورت عدم وجود، استفاده از پورت 8080
+    port = int(os.environ.get("PORT", 8080))
+    
+    # اجرای اپلیکیشن در حالت وب با هاست آزاد برای دسترسی سرور
+    ft.app(
+        target=main,
+        port=port,
+        view=ft.AppView.WEB_BROWSER,
+        host="0.0.0.0"
+    )
