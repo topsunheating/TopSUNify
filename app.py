@@ -2,6 +2,12 @@ import flet as ft
 import os
 
 def main(page: ft.Page):
+    # تنظیمات فونت
+    page.fonts = {
+        "iranyekan": "/fonts/iranyekan.ttf", # آدرس دهی بر اساس فایل‌های assets
+    }
+    page.theme = ft.Theme(font_family="iranyekan")
+    
     page.title = "TopSUNify"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.rtl = True
@@ -25,17 +31,15 @@ def main(page: ft.Page):
         if not page.session.logged_in:
             page.add(
                 ft.Text("ورود به تاپسانیفای", size=25),
-                username,
-                password,
+                username, password,
                 ft.ElevatedButton("ورود", on_click=login)
             )
         else:
-            # به جای آدرس محلی، لینک مستقیم تصویر را در src قرار دهید
-            # مثال: "https://example.com/your-image.png"
             contents = [
                 ft.Text("داشبورد مدیریتی", size=20),
                 ft.Text("بخش پیش‌فاکتورها", size=20),
-                ft.Image(src="https://github.com/topsunheating/TopSUNify/edit/main/assets/TopSUNify-1.png", width=300, height=300),
+                # اگر عکس هم در assets است، از مسیر آن استفاده کنید
+                ft.Image(src="TopSUNify-1.png", width=300, height=300),
                 ft.Text("اطلاعات فنی سیستم", size=20),
                 ft.Text("پروفایل کاربری", size=20)
             ]
@@ -60,5 +64,6 @@ def main(page: ft.Page):
     render()
 
 if __name__ == "__main__":
+    # دقت کنید: assets_dir را "." قرار می‌دهیم تا پوشه assets شناسایی شود
     port = int(os.environ.get("PORT", 8080))
-    ft.app(target=main, port=port, host="0.0.0.0")
+    ft.app(target=main, port=port, host="0.0.0.0", assets_dir=".")
