@@ -1,9 +1,4 @@
 import streamlit as st
-import time
-import os
-import base64
-import pandas as pd
-from PIL import Image
 import auth 
 st.sidebar.write(f"وضعیت لاگین: {st.session_state.get('logged_in', False)}")
 # ۱. تنظیمات صفحه
@@ -35,7 +30,10 @@ def run_app():
 if __name__ == "__main__":
     main() 
 
-
+import os
+import base64
+import pandas as pd
+from PIL import Image
 
 # ==============================================================================
 # CUSTOM CSS
