@@ -36,14 +36,29 @@ def main(page: ft.Page):
         if not page.session.logged_in:
             page.add(
                 ft.Column([
-                    ft.Text("ورود به تاپسانیفای", size=24, weight="bold"),
+                    # لوگوی اختصاصی در بالای صفحه ورود
+                    ft.Image(src="TopSUNify.png", width=150, height=150),
+                    
                     username,
-                    password,
-                    ft.ElevatedButton("ورود به برنامه", on_click=login, width=300)
+                    
+                    # فیلد رمز عبور به همراه آیکون بیومتریک
+                    ft.Row([
+                        password,
+                        ft.IconButton(
+                            content=ft.Image(src="biometric.png", width=30, height=30),
+                            tooltip="ورود با اثر انگشت/چهره"
+                        )
+                    ], alignment="center"),
+                    
+                    # دکمه ورود تغییر یافته
+                    ft.ElevatedButton("ورود به TopSUNify", on_click=login, width=300),
+                    
+                    # لینک فراموشی رمز
+                    ft.Text("فعال سازی / فراموشی رمز عبور", size=12, color="blue")
+                    
                 ], horizontal_alignment="center")
             )
         else:
-            # حذف کامل ft.alignment برای جلوگیری از کرش
             contents = [
                 ft.Text("داشبورد مدیریتی", size=20),
                 ft.Text("بخش پیش‌فاکتورها", size=20),
@@ -60,13 +75,12 @@ def main(page: ft.Page):
                 create_nav_icon("profile.png", 4, "پروفایل"),
             ], alignment="center")
 
-            # استفاده از Column برای مدیریت فضا و ثابت نگه داشتن تب‌ها
             page.add(
                 ft.Column([
                     ft.Text("TopSUNify", size=30, weight="bold"),
                     ft.Divider(),
                     contents[tab_index],
-                    ft.Container(expand=True), # ایجاد فضای خالی برای راندن دکمه‌ها به پایین
+                    ft.Container(expand=True),
                     nav_buttons
                 ], horizontal_alignment="center", expand=True)
             )
