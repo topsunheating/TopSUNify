@@ -12,11 +12,10 @@ def main(page: ft.Page):
     username = ft.TextField(label="نام کاربری", width=300)
     password = ft.TextField(label="رمز عبور", password=True, width=250)
 
-    # تابع نمایش Popup - به روش کاملاً سازگار
     def show_biometric_dialog(e):
         dlg = ft.AlertDialog(
             title=ft.Text("احراز هویت"),
-            content=ft.Text("در حال اسکن اثر انگشت..."),
+            content=ft.Text("در حال اسکن اثر انگشت یا چهره..."),
             actions=[ft.TextButton("انصراف", on_click=lambda e: setattr(dlg, 'open', False) or page.update())],
         )
         page.dialog = dlg
@@ -45,35 +44,28 @@ def main(page: ft.Page):
         if not page.session.logged_in:
             page.add(
                 ft.Column([
-                    ft.Image(src="TopSUNify.png", width=150, height=150),
+                    ft.Image(src="topsunify.png", width=150, height=150),
                     username,
                     ft.Row([
                         password,
-                        ft.Container(
-                            ft.Image(src="biometric.png", width=30, height=30),
-                            on_click=show_biometric_dialog,
-                            padding=5
-                        )
+                        ft.Container(ft.Image(src="biometric.png", width=30, height=30), on_click=show_biometric_dialog, padding=5)
                     ], alignment="center"),
-                    
                     ft.ElevatedButton("ورود به TopSUNify", on_click=login, width=300),
                     ft.Text("فعال سازی / فراموشی رمز عبور", size=12, color="blue"),
                     
-                    # حذف ft.ImageFit که باعث خطا می‌شد
-                    ft.Container(
-                        content=ft.Image(src="landscape.jpg"),
-                        width=400,
-                        height=200
-                    )
+                    # بخش landscape با افکت محو شدگی
+                    ft.Stack([
+                        ft.Container(ft.Image(src="landscape.jpg"), width=400, height=200),
+                        ft.Container(width=400, height=200, bgcolor="#80FFFFFF") 
+                    ], width=400, height=200)
+                    
                 ], horizontal_alignment="center", expand=True)
             )
         else:
             contents = [
-                ft.Text("داشبورد مدیریتی", size=20),
-                ft.Text("بخش پیش‌فاکتورها", size=20),
+                ft.Text("داشبورد مدیریتی", size=20), ft.Text("بخش پیش‌فاکتورها", size=20),
                 ft.Image(src="TopSUNify-1.png", width=300, height=300),
-                ft.Text("اطلاعات فنی سیستم", size=20),
-                ft.Text("پروفایل کاربری", size=20)
+                ft.Text("اطلاعات فنی سیستم", size=20), ft.Text("پروفایل کاربری", size=20)
             ]
             nav_buttons = ft.Row([
                 create_nav_icon("dashboard.png", 0, "داشبورد"),
