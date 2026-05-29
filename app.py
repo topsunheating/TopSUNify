@@ -2,17 +2,17 @@ import flet as ft
 import os
 
 def main(page: ft.Page):
+    # تنظیمات کلی صفحه
+    page.padding = 0
+    page.rtl = True
     page.fonts = {"iranyekan": "iranyekan.ttf"}
     page.theme = ft.Theme(font_family="iranyekan")
-    page.title = "TopSUNify"
     page.theme_mode = ft.ThemeMode.LIGHT
-    page.rtl = True
     page.session.logged_in = False
-    
+
     username = ft.TextField(label="نام کاربری", width=300)
     password = ft.TextField(label="رمز عبور", password=True, width=250)
 
-    # تابع نمایش Popup - به روش کاملاً سازگار
     def show_biometric_dialog(e):
         dlg = ft.AlertDialog(
             title=ft.Text("احراز هویت"),
@@ -45,6 +45,8 @@ def main(page: ft.Page):
         if not page.session.logged_in:
             page.add(
                 ft.Column([
+                    # بخش 1: فرم ورود
+                    ft.Container(height=40),
                     ft.Image(src="TopSUNify.png", width=150, height=150),
                     username,
                     ft.Row([
@@ -59,15 +61,18 @@ def main(page: ft.Page):
                     ft.ElevatedButton("ورود به TopSUNify", on_click=login, width=300),
                     ft.Text("فعال سازی / فراموشی رمز عبور", size=12, color="blue"),
                     
-                    # حذف ft.ImageFit که باعث خطا می‌شد
-                    ft.Container(
-                        content=ft.Image(src="landscape.jpg"),
-                        width=400,
-                        height=200
-                    )
+                    # بخش 2: لوگوی جدید در وسط
+                    ft.Container(height=30),
+                    ft.Image(src="TopSUN-Powered.png", width=120),
+                    
+                    # بخش 3: عکس پس‌زمینه در پایین صفحه
+                    ft.Container(expand=True), # ایجاد فضای خالی برای انتقال عکس به پایین
+                    ft.Image(src="landscape.jpg", width=400, height=200)
+                    
                 ], horizontal_alignment="center", expand=True)
             )
         else:
+            # بخش بعد از ورود
             contents = [
                 ft.Text("داشبورد مدیریتی", size=20),
                 ft.Text("بخش پیش‌فاکتورها", size=20),
@@ -93,6 +98,7 @@ def main(page: ft.Page):
                 ], horizontal_alignment="center", expand=True)
             )
         page.update()
+
     render()
 
 if __name__ == "__main__":
