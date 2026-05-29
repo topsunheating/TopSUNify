@@ -2,7 +2,7 @@ import flet as ft
 import os
 
 def main(page: ft.Page):
-    # تنظیمات پایه
+    # تنظیمات اولیه که در همه نسخه‌ها جواب می‌دهد
     page.padding = 0
     page.rtl = True
     page.fonts = {"iranyekan": "iranyekan.ttf"}
@@ -42,33 +42,17 @@ def main(page: ft.Page):
         page.controls.clear()
         
         if not page.session.logged_in:
+            # استفاده از Stack برای قرار دادن فرم روی عکس (حالت سازگار)
             page.add(
                 ft.Stack([
-                    # لایه زیرین: یک کانتینر سفید ساده برای پس‌زمینه کل صفحه
-                    ft.Container(bgcolor="white", expand=True),
+                    # لایه پس‌زمینه: عکس بدون نیاز به تنظیماتِ کلاسِ ImageFit
+                    ft.Container(content=ft.Image(src="landscape.jpg"), expand=True),
                     
-                    # لایه تصویر در پایین صفحه
-                    ft.Column([
-                        ft.Container(expand=True), # فضای خالی در بالا
-                        
-                        # اینجا افکت گرادیانت دستی ساخته می‌شود
-                        ft.Stack([
-                            # تصویر اصلی که در پایین قرار می‌گیرد
-                            ft.Image(src="landscape.jpg", width=400, height=300),
-                            # لایه محو‌کننده (Gradient مصنوعی)
-                            ft.Column([
-                                ft.Container(height=50, bgcolor="#30FFFFFF"), # شفافیت کم
-                                ft.Container(height=50, bgcolor="#70FFFFFF"), # شفافیت متوسط
-                                ft.Container(height=50, bgcolor="#B0FFFFFF"), # شفافیت زیاد
-                                ft.Container(height=150, bgcolor="white"),    # تهِ صفحه کاملا سفید
-                            ])
-                        ])
-                    ]),
-
-                    # لایه فرم ورود (روی همه چیز)
+                    # لایه فرم ورود: استفاده از رشته برای تراز کردن که خطا نمی‌دهد
                     ft.Container(
                         content=ft.Column([
-                            ft.Image(src="TopSUNify.png", width=120),
+                            ft.Container(height=50),
+                            ft.Image(src="TopSUNify.png", width=150),
                             username,
                             ft.Row([
                                 password,
@@ -77,7 +61,7 @@ def main(page: ft.Page):
                             ft.ElevatedButton("ورود به TopSUNify", on_click=login, width=300),
                             ft.Text("فعال سازی / فراموشی رمز عبور", size=12, color="blue")
                         ], horizontal_alignment="center"),
-                        alignment="center",
+                        alignment="center", 
                         padding=20
                     )
                 ])
