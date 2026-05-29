@@ -2,12 +2,8 @@ import flet as ft
 import os
 
 def main(page: ft.Page):
-    # تنظیمات فونت
-    page.fonts = {
-        "iranyekan": "/fonts/iranyekan.ttf", # آدرس دهی بر اساس فایل‌های assets
-    }
-    page.theme = ft.Theme(font_family="iranyekan")
-    
+    # استفاده از فونتِ گوگل که بدون هیچ فایلی، فارسی را عالی نشان می‌دهد
+    page.theme = ft.Theme(font_family="Vazirmatn")
     page.title = "TopSUNify"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.rtl = True
@@ -38,8 +34,8 @@ def main(page: ft.Page):
             contents = [
                 ft.Text("داشبورد مدیریتی", size=20),
                 ft.Text("بخش پیش‌فاکتورها", size=20),
-                # اگر عکس هم در assets است، از مسیر آن استفاده کنید
-                ft.Image(src="TopSUNify-1.png", width=300, height=300),
+                # برای تست، از یک آیکونِ داخلیِ فلت استفاده می‌کنیم تا ببینیم بالاخره چیزی نمایش داده می‌شود؟
+                ft.Icon(name=ft.icons.SOLAR_POWER, size=100, color="orange"),
                 ft.Text("اطلاعات فنی سیستم", size=20),
                 ft.Text("پروفایل کاربری", size=20)
             ]
@@ -64,6 +60,5 @@ def main(page: ft.Page):
     render()
 
 if __name__ == "__main__":
-    # دقت کنید: assets_dir را "." قرار می‌دهیم تا پوشه assets شناسایی شود
     port = int(os.environ.get("PORT", 8080))
-    ft.app(target=main, port=port, host="0.0.0.0", assets_dir=".")
+    ft.app(target=main, port=port, host="0.0.0.0")
