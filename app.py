@@ -2,20 +2,20 @@ import flet as ft
 import os
 
 def main(page: ft.Page):
-    # تنظیمات اولیه صفحه
+    # تنظیمات پایه
     page.padding = 0
     page.rtl = True
     page.fonts = {"iranyekan": "iranyekan.ttf"}
     page.theme = ft.Theme(font_family="iranyekan")
     page.session.logged_in = False
 
-    username = ft.TextField(label="نام کاربری", width=300, bgcolor="white")
-    password = ft.TextField(label="رمز عبور", password=True, width=250, bgcolor="white")
+    username = ft.TextField(label="نام کاربری", width=300)
+    password = ft.TextField(label="رمز عبور", password=True, width=250)
 
     def show_biometric_dialog(e):
         dlg = ft.AlertDialog(
             title=ft.Text("احراز هویت"),
-            content=ft.Text("در حال اسکن اثر انگشت یا چهره..."),
+            content=ft.Text("در حال اسکن اثر انگشت..."),
             actions=[ft.TextButton("انصراف", on_click=lambda e: setattr(dlg, 'open', False) or page.update())],
         )
         page.dialog = dlg
@@ -42,19 +42,13 @@ def main(page: ft.Page):
         page.controls.clear()
         
         if not page.session.logged_in:
-            # استفاده از Stack برای قرار دادن فرم روی عکس
+            # استفاده از Stack و مقادیر رشته‌ای برای تراز کردن
             page.add(
                 ft.Stack([
-                    # لایه 1: عکس پس‌زمینه (landscape)
-                    # حذف window_width و استفاده از expand برای پر کردن صفحه
-                    ft.Container(
-                        content=ft.Image(src="landscape.jpg"),
-                        expand=True
-                    ),
-                    # لایه 2: محتوای فرم روی عکس
+                    ft.Container(content=ft.Image(src="landscape.jpg"), expand=True),
                     ft.Container(
                         content=ft.Column([
-                            ft.Container(height=50), 
+                            ft.Container(height=50),
                             ft.Image(src="TopSUNify.png", width=120),
                             username,
                             ft.Row([
@@ -64,13 +58,12 @@ def main(page: ft.Page):
                             ft.ElevatedButton("ورود به TopSUNify", on_click=login, width=300),
                             ft.Text("فعال سازی / فراموشی رمز عبور", size=12, color="blue")
                         ], horizontal_alignment="center"),
-                        alignment=ft.alignment.center,
+                        alignment="center", # استفاده از رشته به جای کلاس
                         padding=20
                     )
                 ])
             )
         else:
-            # بخش بعد از ورود
             contents = [
                 ft.Text("داشبورد مدیریتی", size=20), ft.Text("بخش پیش‌فاکتورها", size=20),
                 ft.Image(src="TopSUNify-1.png", width=300, height=300),
