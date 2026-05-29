@@ -31,23 +31,24 @@ def main(page: ft.Page):
 
     # تابع تولید محتوای هر تب
     def get_tab_content(index):
-        if index == 0:  # داشبورد
+        if index == 0:
             return ft.Column([
                 ft.Card(content=ft.Container(ft.Text("آمار فروش: ۲۰٪ رشد"), padding=20)),
                 ft.Card(content=ft.Container(ft.Text("تعداد فاکتورهای جدید: ۵"), padding=20)),
             ])
-        elif index == 1:  # فاکتور
-            return ft.Text("در اینجا لیست فاکتورها نمایش داده می‌شود.")
-        elif index == 2:  # تاپسان
-            return ft.Text("اطلاعات فنی تاپسان در این بخش قرار می‌گیرد.")
-        else:  # پروفایل
-            return ft.Text("تنظیمات پروفایل کاربری.")
+        elif index == 1:
+            return ft.Text("لیست فاکتورها")
+        elif index == 2:
+            return ft.Text("اطلاعات فنی تاپسان")
+        else:
+            return ft.Text("پروفایل کاربری")
 
     # تابع اصلی رندر
     def update_ui():
         page.controls.clear()
         
         if not page.session.logged_in:
+            # استفاده از expand=True برای پر کردن کل صفحه و قرارگیری در مرکز
             page.add(
                 ft.Container(
                     content=ft.Column(
@@ -57,10 +58,11 @@ def main(page: ft.Page):
                             password,
                             ft.ElevatedButton("ورود", on_click=login)
                         ], 
-                        horizontal_alignment="center" # استفاده از متن به جای ماژول
+                        horizontal_alignment="center",
+                        alignment="center"
                     ),
-                    padding=20, 
-                    alignment="center" # استفاده از متن به جای ماژول
+                    expand=True,
+                    alignment=ft.alignment.center
                 )
             )
         else:
