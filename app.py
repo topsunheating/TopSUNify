@@ -2,8 +2,8 @@ import flet as ft
 import os
 
 def main(page: ft.Page):
-    # استفاده از فونتِ گوگل که بدون هیچ فایلی، فارسی را عالی نشان می‌دهد
-    page.theme = ft.Theme(font_family="Vazirmatn")
+    # تنظیم فونت استاندارد گوگل
+    page.theme = ft.Theme(font_family="Arial") 
     page.title = "TopSUNify"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.rtl = True
@@ -31,11 +31,11 @@ def main(page: ft.Page):
                 ft.ElevatedButton("ورود", on_click=login)
             )
         else:
+            # استفاده از آیکونِ عمومیِ 'SUN' که در همه نسخه‌ها هست
             contents = [
                 ft.Text("داشبورد مدیریتی", size=20),
                 ft.Text("بخش پیش‌فاکتورها", size=20),
-                # برای تست، از یک آیکونِ داخلیِ فلت استفاده می‌کنیم تا ببینیم بالاخره چیزی نمایش داده می‌شود؟
-                ft.Icon(name=ft.icons.SOLAR_POWER, size=100, color="orange"),
+                ft.Icon(name=ft.icons.SUN, size=100, color="orange"),
                 ft.Text("اطلاعات فنی سیستم", size=20),
                 ft.Text("پروفایل کاربری", size=20)
             ]
