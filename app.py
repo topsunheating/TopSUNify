@@ -4,100 +4,44 @@ import os
 def main(page: ft.Page):
     page.fonts = {"iranyekan": "iranyekan.ttf"}
     page.theme = ft.Theme(font_family="iranyekan")
-    page.title = "TopSUNify"
-    page.theme_mode = ft.ThemeMode.LIGHT
-    page.rtl = True
-    page.session.logged_in = False
+    page.padding = 0 # حذف حاشیه صفحه برای تمام‌صفحه شدن
     
-    username = ft.TextField(label="نام کاربری", width=300)
-    password = ft.TextField(label="رمز عبور", password=True, width=250)
-
     def show_biometric_dialog(e):
-        dlg = ft.AlertDialog(
-            title=ft.Text("احراز هویت"),
-            content=ft.Text("در حال اسکن اثر انگشت یا چهره..."),
-            actions=[ft.TextButton("انصراف", on_click=lambda e: setattr(dlg, 'open', False) or page.update())],
-        )
+        dlg = ft.AlertDialog(title=ft.Text("احراز هویت"), content=ft.Text("در حال اسکن..."))
         page.dialog = dlg
         dlg.open = True
         page.update()
 
-    def login(e):
-        if username.value == "admin" and password.value == "1234":
-            page.session.logged_in = True
-            render()
-        else:
-            page.show_snack_bar(ft.SnackBar(content=ft.Text("اطلاعات اشتباه است!")))
-            page.update()
-
-    def create_nav_icon(icon_path, index, tooltip):
-        return ft.Container(
-            content=ft.Image(src=icon_path, width=30, height=30),
-            padding=10,
-            on_click=lambda _: render(index),
-            tooltip=tooltip
-        )
-
     def render(tab_index=0):
         page.controls.clear()
         
-        if not page.session.logged_in:
-            page.add(
-                ft.Column([
-                    ft.Image(src="topsunify.png", width=200, height=200),
-                    username,
-                    ft.Row([
-                        password,
-                        ft.Container(ft.Image(src="biometric.png", width=30, height=30), on_click=show_biometric_dialog, padding=5)
-                    ], alignment="center"),
-                    ft.ElevatedButton("ورود به TopSUNify", on_click=login, width=300),
-                    ft.Text("فعال سازی / فراموشی رمز عبور", size=12, color="blue"),
-                    
-                    # بخش landscape با افکت محو شدگی
-                    # جایگزین کردن بخش Stack قبلی با این کد
-                    ft.Stack([
-                        # تصویر اصلی
-                        ft.Container(ft.Image(src="landscape.jpg"), width=400, height=200),
-                        
-                        # این کانتینر فقط نیمه پایین عکس را با یک گرادیانت مصنوعی می‌پوشاند
-                        ft.Container(
-                            width=400,
-                            height=200,
-                            content=ft.Column([
-                                ft.Container(height=100), # نیمه بالا کاملا شفاف
-                                ft.Container(height=100, bgcolor="#CCFFFFFF") # نیمه پایین کدرتر
-                            ])
-                        )
-                    ], width=400, height=200)
-                    
-                ], horizontal_alignment="center", expand=True)
-            )
-        else:
-            contents = [
-                ft.Text("داشبورد مدیریتی", size=20), ft.Text("بخش پیش‌فاکتورها", size=20),
-                ft.Image(src="TopSUNify-1.png", width=300, height=300),
-                ft.Text("اطلاعات فنی سیستم", size=20), ft.Text("پروفایل کاربری", size=20)
-            ]
-            nav_buttons = ft.Row([
-                create_nav_icon("dashboard.png", 0, "داشبورد"),
-                create_nav_icon("invoice.png", 1, "پیش فاکتور"),
-                create_nav_icon("TopSUNify-1.png", 2, "خانه"),
-                create_nav_icon("technical.png", 3, "اطلاعات فنی"),
-                create_nav_icon("profile.png", 4, "پروفایل"),
-            ], alignment="center")
-
-            page.add(
-                ft.Column([
-                    ft.Text("TopSUNify", size=30, weight="bold"),
-                    ft.Divider(),
-                    contents[tab_index],
-                    ft.Container(expand=True),
-                    nav_buttons
-                ], horizontal_alignment="center", expand=True)
-            )
+        # لایه اصلی برای چیدمان روی عکس
+        page.add(
+            ft.Stack([
+                # لایه اول: عکس پس‌زمینه که کل صفحه را می‌پوشاند
+                ft.Container(
+                    content=ft.Image(src="landscape.jpg", fit=ft.ImageFit.COVER),
+                    expand=True
+                ),
+                # لایه دوم: فرم ورود که روی عکس قرار می‌گیرد
+                ft.Container(
+                    content=ft.Column([
+                        ft.Image(src="topsunify.png", width=220),
+                        ft.TextField(label="نام کاربری", bgcolor="white"),
+                        ft.Row([
+                            ft.TextField(label="رمز ورود", bgcolor="white", expand=True),
+                            ft.IconButton(icon=ft.icons.FINGERPRINT, on_click=show_biometric_dialog)
+                        ]),
+                        ft.ElevatedButton("ورود به TopSUNify", width=300),
+                        ft.Text("فعال سازی / فراموشی رمز عبور", color="blue")
+                    ], horizontal_alignment="center"),
+                    padding=20,
+                    alignment=ft.alignment.center
+                )
+            ])
+        )
         page.update()
     render()
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))
-    ft.app(target=main, port=port, host="0.0.0.0", assets_dir="assets")
+    ft.app(target=main, port=8080, host="0.0.0.0", assets_dir="assets")
