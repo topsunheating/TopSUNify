@@ -45,14 +45,15 @@ def main(page: ft.Page):
     def render(tab_index=0):
         page.controls.clear()
         
+        def render(tab_index=0):
+        page.controls.clear()
+        
         if not page.session.logged_in:
             page.add(
-                # ستون اصلی که همه چیز را در وسط نگه می‌دارد
                 ft.Column([
                     ft.Container(height=40),
                     ft.Image(src="TopSUNify.png", width=150),
                     
-                    # فواصل بین المان‌ها را با Container مشخص می‌کنیم
                     ft.Container(height=20),
                     username,
                     
@@ -65,23 +66,59 @@ def main(page: ft.Page):
                     ft.ElevatedButton("ورود به TopSUNify", on_click=lambda e: (setattr(page.session, 'logged_in', True), render()), width=300),
                     ft.TextButton("فعال سازی / فراموشی رمز عبور", on_click=show_registration_dialog),
                     
-                    # لوگو در اینجا دقیقاً زیر دکمه‌ها و در همان عرض قرار می‌گیرد
-                    ft.Container(height=20),
-                    ft.Image(src="TopSUN-Powered.png", width=120),
+                    # لوگو با قابلیت جابجایی دقیق (مارجین right را کم و زیاد کنید)
+                    ft.Container(
+                        content=ft.Image(src="TopSUN-Powered.png", width=120),
+                        margin=ft.margin.only(right=80), 
+                        padding=ft.padding.only(top=20)
+                    ),
                     
                     ft.Container(expand=True),
                     
-                    # عکس پایین
-                    ft.Container(
-                        content=ft.Image(src="landscape.jpg", width=400, height=200, fit="cover"),
-                        gradient=ft.LinearGradient(
-                            begin=ft.alignment.Alignment(0, -1),
-                            end=ft.alignment.Alignment(0, 1),
-                            colors=["transparent", "white"]
+                    # روش اصلاح شده برای گرادیانتِ قوی (Stack)
+                    ft.Stack([
+                        # لایه اول: عکس
+                        ft.Image(src="landscape.jpg", width=400, height=200, fit="cover"),
+                        # لایه دوم: گرادیانت برای ایجاد سایه روشن
+                        ft.Container(
+                            width=400,
+                            height=200,
+                            gradient=ft.LinearGradient(
+                                begin=ft.alignment.Alignment(0, -1),
+                                end=ft.alignment.Alignment(0, 1),
+                                colors=["transparent", "white"]
+                            )
                         )
-                    )
+                    ], width=400, height=200)
                 ], horizontal_alignment="center", expand=True)
             )
+        else:
+            # صفحات داخلی (همان‌طور که قبلا نوشتیم)
+            contents = [
+                ft.Text("داشبورد مدیریتی", size=25),
+                ft.Text("بخش پیش‌فاکتورها", size=25),
+                ft.Column([ft.Image(src="TopSUNify-1.png", width=200), ft.Text("خانه اصلی", size=25)], horizontal_alignment="center"),
+                ft.Text("اطلاعات فنی سیستم", size=25),
+                ft.Text("پروفایل کاربری", size=25)
+            ]
+            
+            nav_buttons = ft.Row([
+                create_nav_icon("dashboard.png", 0, "داشبورد"),
+                create_nav_icon("invoice.png", 1, "پیش فاکتور"),
+                create_nav_icon("TopSUNify-1.png", 2, "خانه"),
+                create_nav_icon("technical.png", 3, "اطلاعات فنی"),
+                create_nav_icon("profile.png", 4, "پروفایل"),
+            ], alignment="center")
+
+            page.add(
+                ft.Column([
+                    ft.Text("پنل TopSUNify", size=30, weight="bold"),
+                    ft.Divider(),
+                    ft.Container(content=contents[tab_index], expand=True, alignment=ft.alignment.center),
+                    nav_buttons
+                ], horizontal_alignment="center", expand=True)
+            )
+        page.update()
         else:
             # صفحات داخلی
             contents = [
