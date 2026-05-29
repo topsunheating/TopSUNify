@@ -14,7 +14,7 @@ st.set_page_config(
 )
 
 # کمی تاخیر برای بازیابی سشن
-time.sleep(0.1)
+time.sleep(0.01)
 
 # ۲. پاکسازی پارامترهای اضافه (اصلاح حیاتی برای جلوگیری از تداخل URL)
 query_params = st.query_params
@@ -30,10 +30,10 @@ if "nav_tab" in query_params:
 
 # ۳. مقداردهی اولیه سشن
 if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
+    st.session_state.logged_in = True
 
 if "active_tab" not in st.session_state:
-    st.session_state.active_tab = "dashboard"
+    st.session_state.active_tab = "invoice"
 
 # ۴. دیباگ وضعیت (می‌توانید بعد از اطمینان کامل آن را کامنت کنید)
 st.sidebar.title("دیباگ وضعیت")
@@ -200,7 +200,7 @@ st.markdown(header_logo_html, unsafe_allow_html=True)
 # ==============================================================================
 
 if "active_tab" not in st.session_state:
-    st.session_state.active_tab = "dashboard"
+    st.session_state.active_tab = "invoice"
 
 if "user_display_name" not in st.session_state:
     st.session_state.user_display_name = "رضا تلچی"
