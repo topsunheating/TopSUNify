@@ -16,7 +16,7 @@ st.set_page_config(
 
 # ۳. مقداردهی اولیه سشن
 if "logged_in" not in st.session_state:
-    st.session_state.logged_in = True
+    st.session_state.logged_in = False
     
 if not st.session_state.logged_in:
     import auth # یا هر فایلی که صفحه لاگین شما در آن است
