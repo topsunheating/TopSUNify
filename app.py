@@ -2,21 +2,45 @@ import flet as ft
 import os
 
 def main(page: ft.Page):
-    # تنظیمات ساده و امن برای وب
     page.title = "TopSUNify"
     page.theme_mode = ft.ThemeMode.LIGHT
-    
-    # یک تابع برای تغییر صفحه
-    def button_click(e):
-        page.add(ft.Text("دکمه کار کرد، برنامه زنده است!", color="red"))
+    page.rtl = True
+    page.padding = 0
+
+    # متغیر برای کنترل تب‌ها
+    page.session.active_tab = 0
+
+    # تابعی برای ساخت محتوای تب‌ها
+    def get_content(index):
+        if index == 0:
+            return ft.Column([ft.Text("📊 داشبورد اصلی", size=20), ft.Text("خوش آمدید!")])
+        elif index == 1:
+            return ft.Text("🧾 بخش پیش‌فاکتورها")
+        elif index == 2:
+            return ft.Text("📚 اطلاعات فنی")
+        else:
+            return ft.Text("👤 پروفایل کاربری")
+
+    content_area = ft.Container(content=get_content(0), padding=20, expand=True)
+
+    def nav_change(e):
+        page.session.active_tab = e.control.selected_index
+        content_area.content = get_content(page.session.active_tab)
         page.update()
 
-    # محتوای اصلی
     page.add(
-        ft.Column([
-            ft.Text("سیستم فعال شد!", size=30),
-            ft.ElevatedButton("تست دکمه", on_click=button_click)
-        ])
+        ft.AppBar(title=ft.Text("TopSUNify"), bgcolor=ft.colors.SURFACE_VARIANT),
+        content_area,
+        ft.NavigationBar(
+            selected_index=page.session.active_tab,
+            on_change=nav_change,
+            destinations=[
+                ft.NavigationBarDestination(icon=ft.icons.DASHBOARD, label="داشبورد"),
+                ft.NavigationBarDestination(icon=ft.icons.RECEIPT, label="فاکتور"),
+                ft.NavigationBarDestination(icon=ft.icons.INFO, label="تاپسان"),
+                ft.NavigationBarDestination(icon=ft.icons.PERSON, label="پروفایل"),
+            ]
+        )
     )
 
 if __name__ == "__main__":
