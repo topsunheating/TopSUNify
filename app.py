@@ -30,11 +30,11 @@ def main(page: ft.Page):
                 ft.ElevatedButton("ورود", on_click=login)
             )
         else:
-            # حذف fit=ft.ImageFit.CONTAIN برای رفع خطا
+            # استفاده از آدرسِ صحیحِ assets برای وب
             contents = [
                 ft.Text("داشبورد مدیریتی", size=20),
                 ft.Text("بخش پیش‌فاکتورها", size=20),
-                ft.Image(src="TopSUNify-1.png", width=300, height=300), 
+                ft.Image(src="assets/TopSUNify-1.png", width=300, height=300),
                 ft.Text("اطلاعات فنی سیستم", size=20),
                 ft.Text("پروفایل کاربری", size=20)
             ]
@@ -59,5 +59,6 @@ def main(page: ft.Page):
     render()
 
 if __name__ == "__main__":
+    # در تنظیماتِ ft.app، پوشه assets را معرفی می‌کنیم تا سرور آن را شناسایی کند
     port = int(os.environ.get("PORT", 8080))
-    ft.app(target=main, port=port, host="0.0.0.0")
+    ft.app(target=main, port=port, host="0.0.0.0", assets_dir="assets")
