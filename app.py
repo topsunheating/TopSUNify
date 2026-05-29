@@ -13,7 +13,6 @@ st.set_page_config(
     layout="wide"
 )
 
-
 # ۳. مقداردهی اولیه سشن
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
@@ -34,12 +33,7 @@ def run_app():
     ...
 
 if __name__ == "__main__":
-    main()
-    
-if not st.session_state.logged_in:
-    import auth # یا هر فایلی که صفحه لاگین شما در آن است
-    auth.render_auth_page() # فراخوانی تابع صفحه ورود
-    st.stop()    
+    main() 
 
 if "active_tab" not in st.session_state:
     st.session_state.active_tab = "invoice"
