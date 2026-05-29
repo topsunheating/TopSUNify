@@ -50,12 +50,17 @@ def main(page: ft.Page):
         if not page.session.logged_in:
             page.add(
                 ft.Container(
-                    ft.Column([
-                        ft.Text("ورود به تاپسانیفای", size=25, weight="bold"),
-                        username, password,
-                        ft.ElevatedButton("ورود", on_click=login)
-                    ], horizontal_alignment="center"),
-                    padding=20, alignment=ft.alignment.center
+                    content=ft.Column(
+                        [
+                            ft.Text("ورود به تاپسانیفای", size=25, weight="bold"),
+                            username, 
+                            password,
+                            ft.ElevatedButton("ورود", on_click=login)
+                        ], 
+                        horizontal_alignment="center" # استفاده از متن به جای ماژول
+                    ),
+                    padding=20, 
+                    alignment="center" # استفاده از متن به جای ماژول
                 )
             )
         else:
