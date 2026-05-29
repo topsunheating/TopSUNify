@@ -42,15 +42,25 @@ def main(page: ft.Page):
                     ft.Container(height=40),
                     ft.Image(src="TopSUNify.png", width=150),
                     username,
-                    ft.Row([password, ft.Container(content=ft.Image(src="biometric.png", width=30, height=30), on_click=lambda _: None, padding=5)], alignment="center"),
+                    ft.Row([
+                        password, 
+                        ft.Container(content=ft.Image(src="biometric.png", width=30, height=30), on_click=lambda _: None, padding=5)
+                    ], alignment="center"),
                     ft.ElevatedButton("ورود به TopSUNify", on_click=lambda e: (setattr(page.session, 'logged_in', True), render()), width=300),
-                    # لوگوی سمت راست
-                    ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=120), alignment=ft.alignment.center_right, padding=10),
+                    
+                    # روش ایمن برای لوگوی سمت راست بدون استفاده از center_right
+                    ft.Row([ft.Container(expand=True), ft.Image(src="TopSUN-Powered.png", width=120)], alignment="end", rtl=False),
+                    
                     ft.Container(expand=True),
+                    
                     # عکس با افکت گرادیانت
                     ft.Container(
                         content=ft.Image(src="landscape.jpg", width=400, height=200, fit=ft.ImageFit.COVER),
-                        gradient=ft.LinearGradient(begin=ft.alignment.top_center, end=ft.alignment.bottom_center, colors=[ft.colors.TRANSPARENT, ft.colors.WHITE])
+                        gradient=ft.LinearGradient(
+                            begin=ft.alignment.Alignment(0, -1), # بالا
+                            end=ft.alignment.Alignment(0, 1),   # پایین
+                            colors=[ft.colors.TRANSPARENT, ft.colors.WHITE]
+                        )
                     )
                 ], horizontal_alignment="center", expand=True)
             )
