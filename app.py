@@ -1,6 +1,11 @@
 import streamlit as st
+import time
+import os
+import base64
+import pandas as pd
+from PIL import Image
 import auth 
-st.sidebar.write(f"وضعیت لاگین: {st.session_state.get('logged_in', False)}")
+
 # ۱. تنظیمات صفحه
 st.set_page_config(
     page_title="TopSUNify",
@@ -8,32 +13,45 @@ st.set_page_config(
     layout="wide"
 )
 
+# کمی تاخیر برای بازیابی سشن
+time.sleep(0.01)
+
+# ۲. پاکسازی پارامترهای اضافه (اصلاح حیاتی برای جلوگیری از تداخل URL)
+query_params = st.query_params
+if "nav_tab" in query_params:
+    selected_tab = query_params["nav_tab"]
+    st.query_params.clear()
+    st.query_params["nav_tab"] = selected_tab
+    # مقدار اولیه تب فعال در سشن آپدیت می‌شود
+    if "active_tab" not in st.session_state:
+        st.session_state.active_tab = selected_tab
+    else:
+        st.session_state.active_tab = selected_tab
+
 # ۳. مقداردهی اولیه سشن
 if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
+    st.session_state.logged_in = True
 
-# منطقِ ورود
-def main():
-    # اگر کاربر لاگین نیست، فقط صفحه لاگین را نشان بده
-    if not st.session_state.logged_in:
-        auth.render_auth_page()
-        st.stop() # توقف اجرای بقیه کدها
+if "active_tab" not in st.session_state:
+    st.session_state.active_tab = "invoice"
 
-    # اگر کاربر لاگین است، بقیه برنامه اجرا می‌شود
-    run_app()
+# ۴. دیباگ وضعیت (می‌توانید بعد از اطمینان کامل آن را کامنت کنید)
+st.sidebar.title("دیباگ وضعیت")
+st.sidebar.write("وضعیت لاگین:", st.session_state.logged_in)
+st.sidebar.write("تب فعال:", st.session_state.active_tab)
 
-def run_app():
-    # اینجا کل کدهای داشبورد، تب‌ها و... را قرار دهید
-    # (همان کدهایی که بعد از لاگین می‌خواهید اجرا شود)
-    ...
+# ۵. چک کردن وضعیت ورود
+if not st.session_state.logged_in:
+    auth.render_auth_page()
+    st.stop()
 
-if __name__ == "__main__":
-    main() 
+# ==============================================================================
+# بخش اصلی برنامه (بعد از تایید لاگین)
+# ==============================================================================
 
-import os
-import base64
-import pandas as pd
-from PIL import Image
+st.write(f"شما در تب {st.session_state.active_tab} هستید.")
+
+# اینجا کدهای داشبورد، فاکتور و سایر موارد خود را قرار دهید...
 
 # ==============================================================================
 # CUSTOM CSS
