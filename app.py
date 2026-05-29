@@ -5,10 +5,9 @@ def main(page: ft.Page):
     page.title = "TopSUNify"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.rtl = True
-    
+
     page.session.logged_in = False
     
-    # فیلدها
     username = ft.TextField(label="نام کاربری")
     password = ft.TextField(label="رمز عبور", password=True)
 
@@ -17,7 +16,7 @@ def main(page: ft.Page):
             page.session.logged_in = True
             render()
         else:
-            page.show_snack_bar(ft.SnackBar(content=ft.Text("نام کاربری یا رمز عبور اشتباه است!")))
+            page.show_snack_bar(ft.SnackBar(content=ft.Text("اطلاعات اشتباه است!")))
             page.update()
 
     def render(tab_index=0):
@@ -26,25 +25,25 @@ def main(page: ft.Page):
         if not page.session.logged_in:
             page.add(
                 ft.Text("ورود به تاپسانیفای", size=25),
-                username,
-                password,
+                username, password,
                 ft.ElevatedButton("ورود", on_click=login)
             )
         else:
-            # ایجاد منو برای جابجایی بین بخش‌ها
+            # محتوای تب‌ها
+            contents = [
+                ft.Text("خوش آمدید! اینجا داشبورد اصلی است.", size=20),
+                ft.Text("لیست فاکتورها (به‌زودی...)", size=20),
+                ft.Text("اطلاعات فنی تاپسان (به‌زودی...)", size=20)
+            ]
+
             def change_tab(e):
                 render(e.control.selected_index)
 
-            # محتوای هر بخش
-            content = ft.Text("خوش آمدید!")
-            if tab_index == 1:
-                content = ft.Text("لیست فاکتورها: (در حال ساخت)")
-            elif tab_index == 2:
-                content = ft.Text("اطلاعات تاپسان: (در حال ساخت)")
-
             page.add(
-                ft.Text("پنل مدیریت", size=20),
-                content,
+                ft.Text("پنل مدیریت", size=30, weight="bold"),
+                ft.Divider(),
+                contents[tab_index],
+                ft.Container(height=20), # ایجاد فاصله
                 ft.NavigationBar(
                     selected_index=tab_index,
                     on_change=change_tab,
