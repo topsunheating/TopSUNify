@@ -43,12 +43,13 @@ def main(page: ft.Page):
                 ], horizontal_alignment="center") # استفاده از رشته بجای کلاس برای اطمینان
             )
         else:
+            # محتوای تب‌ها را داخل کانتینر با height ثابت یا expand می‌گذاریم
             contents = [
-                ft.Text("داشبورد مدیریتی", size=20),
-                ft.Text("بخش پیش‌فاکتورها", size=20),
-                ft.Image(src="TopSUNify-1.png", width=300, height=300),
-                ft.Text("اطلاعات فنی سیستم", size=20),
-                ft.Text("پروفایل کاربری", size=20)
+                ft.Container(content=ft.Text("داشبورد مدیریتی", size=20), expand=True, alignment=ft.alignment.top_center),
+                ft.Container(content=ft.Text("بخش پیش‌فاکتورها", size=20), expand=True, alignment=ft.alignment.top_center),
+                ft.Container(content=ft.Image(src="TopSUNify-1.png", width=300, height=300), expand=True, alignment=ft.alignment.top_center),
+                ft.Container(content=ft.Text("اطلاعات فنی سیستم", size=20), expand=True, alignment=ft.alignment.top_center),
+                ft.Container(content=ft.Text("پروفایل کاربری", size=20), expand=True, alignment=ft.alignment.top_center)
             ]
 
             nav_buttons = ft.Row([
@@ -59,17 +60,12 @@ def main(page: ft.Page):
                 create_nav_icon("profile.png", 4, "پروفایل"),
             ], alignment="center")
 
-            # این ساختار تضمین می‌کند دکمه‌ها پایین بمانند بدون استفاده از کلاس alignment
             page.add(
-                ft.Column([
-                    ft.Text("پنل مدیریت تاپسانیفای", size=25, weight="bold"),
-                    contents[tab_index],
-                    ft.Container(expand=True), # این کانتینر فضای خالی را پر می‌کند و دکمه‌ها را به پایین می‌راند
-                    nav_buttons
-                ], horizontal_alignment="center")
+                ft.Text("پنل مدیریت تاپسانیفای", size=25, weight="bold"),
+                contents[tab_index], # محتوا حالا خودش فضاش رو فیکس می‌کنه
+                nav_buttons
             )
         page.update()
-
     render()
 
 if __name__ == "__main__":
