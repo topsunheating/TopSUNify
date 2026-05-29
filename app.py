@@ -2,12 +2,10 @@ import flet as ft
 import os
 
 def main(page: ft.Page):
-    # ۱. معرفی فونت به فلت
+    # تنظیم فونت - فلت از پوشه assets به صورت خودکار می‌خواند
     page.fonts = {
         "iranyekan": "iranyekan.ttf"
     }
-    
-    # ۲. اعمال فونت به کل تم برنامه
     page.theme = ft.Theme(font_family="iranyekan")
     
     page.title = "TopSUNify"
@@ -32,7 +30,7 @@ def main(page: ft.Page):
         
         if not page.session.logged_in:
             page.add(
-                ft.Text("ورود به تاپسانیفای", size=25, weight="bold"),
+                ft.Text("ورود به تاپسانیفای", size=25),
                 username, password,
                 ft.ElevatedButton("ورود", on_click=login)
             )
@@ -40,11 +38,8 @@ def main(page: ft.Page):
             contents = [
                 ft.Text("داشبورد مدیریتی", size=20),
                 ft.Text("بخش پیش‌فاکتورها", size=20),
-                # اصلاح ساختار Container
-                ft.Container(
-                    content=ft.Image(src="TopSUNify-1.png", width=300, height=300), 
-                    border=ft.border.all(2, "red")
-                ),
+                # استفاده از لینک مستقیمِ Raw که استخراج کردیم
+                ft.Image(src="TopSUNify-1.png", width=300, height=300),
                 ft.Text("اطلاعات فنی سیستم", size=20),
                 ft.Text("پروفایل کاربری", size=20)
             ]
@@ -69,6 +64,6 @@ def main(page: ft.Page):
     render()
 
 if __name__ == "__main__":
+    # آدرس دهی به فولدر assets
     port = int(os.environ.get("PORT", 8080))
-    # اگر فایل‌ها در پوشه assets هستند، این را به assets_dir="assets" تغییر دهید
-    ft.app(target=main, port=port, host="0.0.0.0", assets_dir=".")
+    ft.app(target=main, port=port, host="0.0.0.0", assets_dir="assets")
