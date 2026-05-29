@@ -52,7 +52,7 @@ def main(page: ft.Page):
             nav_buttons = ft.Row([
                 create_nav_icon("📊", 0, "داشبورد"),
                 create_nav_icon("📝", 1, "پیش فاکتور"),
-                create_nav_icon("https://raw.githubusercontent.com/topsunheating/TopSUNify/main/assets/TopSUNify-1.png", 2, "خانه"),
+                create_nav_icon("🏠", 2, "خانه"),
                 create_nav_icon("⚙️", 3, "اطلاعات فنی"),
                 create_nav_icon("👤", 4, "پروفایل"),
             ], alignment="center")
