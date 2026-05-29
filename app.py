@@ -60,8 +60,8 @@ def main(page: ft.Page):
             ], alignment="center")
 
             page.add(
-                ft.Text("پنل مدیریت تاپسانیفای", size=25, weight="bold"),
-                contents[tab_index],
+                ft.Text("TopSUNify", size=25, weight="bold"),
+                ft.Container(content=contents[tab_index], expand=True, alignment=ft.alignment.top_center),
                 nav_buttons
             )
         page.update()
