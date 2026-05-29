@@ -17,6 +17,24 @@ st.set_page_config(
 # ۳. مقداردهی اولیه سشن
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
+
+# منطقِ ورود
+def main():
+    # اگر کاربر لاگین نیست، فقط صفحه لاگین را نشان بده
+    if not st.session_state.logged_in:
+        auth.render_auth_page()
+        st.stop() # توقف اجرای بقیه کدها
+
+    # اگر کاربر لاگین است، بقیه برنامه اجرا می‌شود
+    run_app()
+
+def run_app():
+    # اینجا کل کدهای داشبورد، تب‌ها و... را قرار دهید
+    # (همان کدهایی که بعد از لاگین می‌خواهید اجرا شود)
+    ...
+
+if __name__ == "__main__":
+    main()
     
 if not st.session_state.logged_in:
     import auth # یا هر فایلی که صفحه لاگین شما در آن است
