@@ -85,10 +85,14 @@ def main(page: ft.Page):
                     ft.Container(height=40),
                     ft.Image(src="TopSUNify.png", width=150),
                     username,
+                    # اصلاح دکمه اثر انگشت برای رفع خطای قرمز
                     ft.Row([
                         password, 
-                        # استفاده از رشته برای آیکون به جای ft.icons
-                        ft.IconButton(icon="fingerprint", on_click=show_biometric_dialog)
+                        ft.Container(
+                            content=ft.Image(src="biometric.png", width=30, height=30),
+                            on_click=show_biometric_dialog,
+                            padding=5
+                        )
                     ], alignment="center"),
                     ft.ElevatedButton("ورود به TopSUNify", on_click=login, width=300),
                     ft.TextButton("فعال سازی / فراموشی رمز عبور", on_click=show_registration_dialog),
