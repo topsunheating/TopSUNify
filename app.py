@@ -7,7 +7,6 @@ def main(page: ft.Page):
     page.rtl = True
     page.padding = 0
 
-    # متغیرهای سشن
     page.session.logged_in = False
 
     # فیلدها
@@ -23,26 +22,40 @@ def main(page: ft.Page):
             page.show_snack_bar(ft.SnackBar(content=ft.Text("اطلاعات اشتباه است!")))
             page.update()
 
-    # تابع رندر (اصلاح شده برای عدم استفاده از ft.alignment)
+    # تابع تغییر تب‌ها
+    def on_nav_change(e):
+        page.session.active_tab = e.control.selected_index
+        update_ui()
+
+    # تابع اصلی رندر
     def update_ui():
         page.controls.clear()
+        
         if not page.session.logged_in:
             page.add(
                 ft.Container(
-                    content=ft.Column([
+                    ft.Column([
                         ft.Text("ورود به تاپسانیفای", size=25),
-                        username, 
-                        password,
+                        username, password,
                         ft.ElevatedButton("ورود", on_click=login)
-                    ], horizontal_alignment="center"), # اصلاح شده
+                    ], horizontal_alignment="center"),
                     padding=20
                 )
             )
         else:
+            # اینجا داشبورد رو با المان‌های ساده می‌سازیم
             page.add(
-                ft.AppBar(title=ft.Text("داشبورد")),
-                ft.Text("خوش آمدید، شما وارد شدید!", size=20),
+                ft.AppBar(title=ft.Text("داشبورد مدیریتی")),
+                ft.Container(
+                    ft.Column([
+                        ft.Card(content=ft.Container(ft.Text("آمار فروش: ۲۰٪ رشد"), padding=20)),
+                        ft.Card(content=ft.Container(ft.Text("تعداد فاکتورهای جدید: ۵"), padding=20)),
+                    ]),
+                    padding=20
+                ),
                 ft.NavigationBar(
+                    selected_index=getattr(page.session, "active_tab", 0),
+                    on_change=on_nav_change,
                     destinations=[
                         ft.NavigationBarDestination(icon="dashboard", label="داشبورد"),
                         ft.NavigationBarDestination(icon="receipt", label="فاکتور"),
