@@ -2,14 +2,13 @@ import flet as ft
 import os
 
 def main(page: ft.Page):
-    # تنظیمات کلی صفحه
-    page.padding = 0
-    page.rtl = True
     page.fonts = {"iranyekan": "iranyekan.ttf"}
     page.theme = ft.Theme(font_family="iranyekan")
+    page.title = "TopSUNify"
     page.theme_mode = ft.ThemeMode.LIGHT
+    page.rtl = True
     page.session.logged_in = False
-
+    
     username = ft.TextField(label="نام کاربری", width=300)
     password = ft.TextField(label="رمز عبور", password=True, width=250)
 
@@ -45,41 +44,34 @@ def main(page: ft.Page):
         if not page.session.logged_in:
             page.add(
                 ft.Column([
-                    # بخش 1: فرم ورود
                     ft.Container(height=40),
                     ft.Image(src="TopSUNify.png", width=150, height=150),
                     username,
                     ft.Row([
                         password,
-                        ft.Container(
-                            ft.Image(src="biometric.png", width=30, height=30),
-                            on_click=show_biometric_dialog,
-                            padding=5
-                        )
+                        ft.Container(ft.Image(src="biometric.png", width=30, height=30), on_click=show_biometric_dialog, padding=5)
                     ], alignment="center"),
-                    
                     ft.ElevatedButton("ورود به TopSUNify", on_click=login, width=300),
                     ft.Text("فعال سازی / فراموشی رمز عبور", size=12, color="blue"),
                     
-                    # بخش 2: لوگوی جدید در وسط
                     ft.Container(height=30),
-                    ft.Image(src="TopSUN-Powered.png", width=120),
+                    # لوگوی جدید با تراز راست
+                    ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=120), alignment=ft.alignment.center_right, padding=10),
                     
-                    # بخش 3: عکس پس‌زمینه در پایین صفحه
-                    ft.Container(expand=True), # ایجاد فضای خالی برای انتقال عکس به پایین
+                    ft.Container(expand=True),
                     ft.Image(src="landscape.jpg", width=400, height=200)
-                    
                 ], horizontal_alignment="center", expand=True)
             )
         else:
-            # بخش بعد از ورود
+            # صفحات داخلی کامل
             contents = [
-                ft.Text("داشبورد مدیریتی", size=20),
-                ft.Text("بخش پیش‌فاکتورها", size=20),
-                ft.Image(src="TopSUNify-1.png", width=300, height=300),
-                ft.Text("اطلاعات فنی سیستم", size=20),
-                ft.Text("پروفایل کاربری", size=20)
+                ft.Column([ft.Text("داشبورد مدیریتی", size=25), ft.Text("خوش آمدید!")], horizontal_alignment="center"),
+                ft.Column([ft.Text("بخش پیش‌فاکتورها", size=25), ft.Text("لیست فاکتورهای شما")], horizontal_alignment="center"),
+                ft.Column([ft.Image(src="TopSUNify-1.png", width=200), ft.Text("خانه اصلی")], horizontal_alignment="center"),
+                ft.Column([ft.Text("اطلاعات فنی سیستم", size=25), ft.Text("پارامترهای فنی...")], horizontal_alignment="center"),
+                ft.Column([ft.Text("پروفایل کاربری", size=25), ft.Text("تنظیمات حساب")], horizontal_alignment="center")
             ]
+            
             nav_buttons = ft.Row([
                 create_nav_icon("dashboard.png", 0, "داشبورد"),
                 create_nav_icon("invoice.png", 1, "پیش فاکتور"),
@@ -90,10 +82,9 @@ def main(page: ft.Page):
 
             page.add(
                 ft.Column([
-                    ft.Text("TopSUNify", size=30, weight="bold"),
+                    ft.Text("پنل TopSUNify", size=30, weight="bold"),
                     ft.Divider(),
-                    contents[tab_index],
-                    ft.Container(expand=True),
+                    ft.Container(content=contents[tab_index], expand=True, alignment=ft.alignment.center),
                     nav_buttons
                 ], horizontal_alignment="center", expand=True)
             )
