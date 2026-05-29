@@ -2,7 +2,7 @@ import flet as ft
 import requests
 import os
 
-# لینک وب‌اپلیکیشنِ گوگل‌شیت که با هم ساختیم:
+# لینک وب‌اپلیکیشنِ گوگل‌شیت شما
 GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbygH2yHhw44Lk5Hv8okJDnRBgGw2UzoF1wsZvMGGGr7ZzhSS0Ro6WhSeVFTPM2TpsMv/exec"
 
 def main(page: ft.Page):
@@ -17,7 +17,7 @@ def main(page: ft.Page):
     username = ft.TextField(label="نام کاربری", width=300)
     password = ft.TextField(label="رمز عبور", password=True, width=250)
 
-    # تابع ثبت ایمن در گوگل شیت (بدون کرش)
+    # تابع ثبت در گوگل شیت
     def save_to_sheets(name, phone, password):
         try:
             response = requests.post(GOOGLE_SHEET_URL, data={
@@ -40,8 +40,6 @@ def main(page: ft.Page):
                 dlg.open = False
                 page.show_snack_bar(ft.SnackBar(content=ft.Text("اطلاعات با موفقیت ثبت شد")))
                 page.update()
-            else:
-                page.show_snack_bar(ft.SnackBar(content=ft.Text("خطا در ارسال!")))
         
         dlg = ft.AlertDialog(
             title=ft.Text("ثبت نام / فراموشی رمز"),
@@ -70,9 +68,9 @@ def main(page: ft.Page):
             page.show_snack_bar(ft.SnackBar(content=ft.Text("اطلاعات اشتباه است!")))
             page.update()
 
-    def create_nav_icon(icon_path, index, tooltip):
+    def create_nav_icon(icon_name, index, tooltip):
         return ft.Container(
-            content=ft.Image(src=icon_path, width=30, height=30),
+            content=ft.Image(src=icon_name, width=30, height=30) if "." in icon_name else ft.Icon(name=icon_name, size=30),
             padding=10,
             on_click=lambda _: render(index),
             tooltip=tooltip
@@ -87,11 +85,14 @@ def main(page: ft.Page):
                     ft.Container(height=40),
                     ft.Image(src="TopSUNify.png", width=150),
                     username,
-                    ft.Row([password, ft.IconButton(icon=ft.icons.FINGERPRINT, on_click=show_biometric_dialog)], alignment="center"),
+                    ft.Row([
+                        password, 
+                        # استفاده از رشته برای آیکون به جای ft.icons
+                        ft.IconButton(icon="fingerprint", on_click=show_biometric_dialog)
+                    ], alignment="center"),
                     ft.ElevatedButton("ورود به TopSUNify", on_click=login, width=300),
                     ft.TextButton("فعال سازی / فراموشی رمز عبور", on_click=show_registration_dialog),
                     
-                    # لوگو در سمت راست
                     ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=120), alignment="center_right", padding=10),
                     
                     ft.Container(expand=True),
@@ -99,7 +100,6 @@ def main(page: ft.Page):
                 ], horizontal_alignment="center", expand=True)
             )
         else:
-            # صفحات داخلی
             contents = [
                 ft.Column([ft.Text("داشبورد مدیریتی", size=25)], horizontal_alignment="center"),
                 ft.Column([ft.Text("بخش پیش‌فاکتورها", size=25)], horizontal_alignment="center"),
