@@ -52,7 +52,6 @@ def main(page: ft.Page):
                         ),
                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, tight=True),
                     padding=30,
-                    # اصلاح روش تعریف border برای جلوگیری از خطا
                     border=ft.Border(
                         left=ft.BorderSide(1, "#e0e0e0"),
                         top=ft.BorderSide(1, "#e0e0e0"),
@@ -60,7 +59,7 @@ def main(page: ft.Page):
                         bottom=ft.BorderSide(1, "#e0e0e0")
                     ),
                     border_radius=20,
-                    bgcolor=ft.colors.WHITE,
+                    bgcolor="#FFFFFF", # سفید خالص
                     width=350,
                     alignment=ft.alignment.center
                 )
