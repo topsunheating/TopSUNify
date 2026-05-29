@@ -60,7 +60,6 @@ def main(page: ft.Page):
         page.controls.clear()
         
         if not page.session.logged_in:
-            # صفحه لاگین
             page.add(
                 ft.Column([
                     ft.Container(height=40),
@@ -69,7 +68,8 @@ def main(page: ft.Page):
                     ft.Row([password, ft.Container(content=ft.Image(src="biometric.png", width=30, height=30), on_click=show_biometric_dialog, padding=5)], alignment="center"),
                     ft.ElevatedButton("ورود به TopSUNify", on_click=lambda e: (setattr(page.session, 'logged_in', True), render()), width=300),
                     ft.TextButton("فعال سازی / فراموشی رمز عبور", on_click=show_registration_dialog),
-                    ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=120), margin=ft.margin.only(top=20, right=80)),
+                    # تغییر مهم: استفاده از لیست به جای ft.margin.only
+                    ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=120), margin=20),
                     ft.Container(expand=True),
                     ft.Stack([
                         ft.Image(src="landscape.jpg", width=400, height=200, fit="cover"),
@@ -78,7 +78,7 @@ def main(page: ft.Page):
                 ], horizontal_alignment="center", expand=True)
             )
         else:
-            # صفحات داخلی - کامل و دقیق
+            # صفحات داخلی دقیق
             contents = [
                 ft.Text("داشبورد مدیریتی", size=25),
                 ft.Text("بخش پیش‌فاکتورها", size=25),
@@ -86,7 +86,6 @@ def main(page: ft.Page):
                 ft.Text("اطلاعات فنی سیستم", size=25),
                 ft.Text("پروفایل کاربری", size=25)
             ]
-            
             nav_buttons = ft.Row([
                 create_nav_icon("dashboard.png", 0, "داشبورد"),
                 create_nav_icon("invoice.png", 1, "پیش فاکتور"),
