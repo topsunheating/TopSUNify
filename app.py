@@ -12,15 +12,12 @@ def main(page: ft.Page):
     username = ft.TextField(label="نام کاربری", width=300)
     password = ft.TextField(label="رمز عبور", password=True, width=250)
 
-    # تابع نمایش Popup اثر انگشت
+    # تابع نمایش Popup - به روش کاملاً سازگار
     def show_biometric_dialog(e):
         dlg = ft.AlertDialog(
-            title=ft.Text("احراز هویت بیومتریک"),
-            content=ft.Column([
-                ft.Icon(ft.icons.FINGERPRINT, size=60, color="blue"),
-                ft.Text("در حال اسکن اثر انگشت یا چهره...")
-            ], tight=True, horizontal_alignment="center"),
-            actions=[ft.TextButton("انصراف", on_click=lambda e: page.close(dlg))],
+            title=ft.Text("احراز هویت"),
+            content=ft.Text("در حال اسکن اثر انگشت..."),
+            actions=[ft.TextButton("انصراف", on_click=lambda e: setattr(dlg, 'open', False) or page.update())],
         )
         page.dialog = dlg
         dlg.open = True
@@ -48,7 +45,7 @@ def main(page: ft.Page):
         if not page.session.logged_in:
             page.add(
                 ft.Column([
-                    ft.Image(src="topsunify.png", width=150, height=150),
+                    ft.Image(src="TopSUNify.png", width=150, height=150),
                     username,
                     ft.Row([
                         password,
@@ -62,17 +59,15 @@ def main(page: ft.Page):
                     ft.ElevatedButton("ورود به TopSUNify", on_click=login, width=300),
                     ft.Text("فعال سازی / فراموشی رمز عبور", size=12, color="blue"),
                     
-                    # اضافه کردن تصویر Landscape در پایین صفحه
+                    # حذف ft.ImageFit که باعث خطا می‌شد
                     ft.Container(
-                        content=ft.Image(src="landscape.jpg", fit=ft.ImageFit.COVER),
-                        width=page.window_width,
-                        height=200, 
-                        border_radius=ft.border_radius.only(top_left=30, top_right=30)
+                        content=ft.Image(src="landscape.jpg"),
+                        width=400,
+                        height=200
                     )
-                ], horizontal_alignment="center", expand=True, alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
+                ], horizontal_alignment="center", expand=True)
             )
         else:
-            # بخش بعد از ورود (بدون تغییر)
             contents = [
                 ft.Text("داشبورد مدیریتی", size=20),
                 ft.Text("بخش پیش‌فاکتورها", size=20),
