@@ -325,7 +325,7 @@ st.markdown("""
         justify-content: center !important;
         text-decoration: none !important;
         color: #64748b !important;
-        font-size: 9px !important;
+        font-size: 10px !important;
         font-weight: bold !important;
     }
 </style>
