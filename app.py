@@ -18,6 +18,11 @@ time.sleep(0.01)
 # ۳. مقداردهی اولیه سشن
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = True
+    
+if not st.session_state.logged_in:
+    import auth # یا هر فایلی که صفحه لاگین شما در آن است
+    auth.render_auth_page() # فراخوانی تابع صفحه ورود
+    st.stop()    
 
 if "active_tab" not in st.session_state:
     st.session_state.active_tab = "invoice"
