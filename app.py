@@ -2,24 +2,36 @@ import flet as ft
 import os
 
 def main(page: ft.Page):
-    # تنظیم فونت
     page.fonts = {"iranyekan": "iranyekan.ttf"}
     page.theme = ft.Theme(font_family="iranyekan")
-    
     page.title = "TopSUNify"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.rtl = True
     page.session.logged_in = False
     
     username = ft.TextField(label="نام کاربری", width=300)
-    password = ft.TextField(label="رمز عبور", password=True, width=250) # عرض را کمتر کردیم تا جا برای آیکون باشد
+    password = ft.TextField(label="رمز عبور", password=True, width=250)
+
+    # تابع نمایش Popup اثر انگشت
+    def show_biometric_dialog(e):
+        dlg = ft.AlertDialog(
+            title=ft.Text("احراز هویت بیومتریک"),
+            content=ft.Column([
+                ft.Icon(ft.icons.FINGERPRINT, size=60, color="blue"),
+                ft.Text("در حال اسکن اثر انگشت یا چهره...")
+            ], tight=True, horizontal_alignment="center"),
+            actions=[ft.TextButton("انصراف", on_click=lambda e: page.close(dlg))],
+        )
+        page.dialog = dlg
+        dlg.open = True
+        page.update()
 
     def login(e):
         if username.value == "admin" and password.value == "1234":
             page.session.logged_in = True
             render()
         else:
-            page.show_snack_bar(ft.SnackBar(content=ft.Text("نام کاربری یا رمز عبور اشتباه است!")))
+            page.show_snack_bar(ft.SnackBar(content=ft.Text("اطلاعات اشتباه است!")))
             page.update()
 
     def create_nav_icon(icon_path, index, tooltip):
@@ -36,21 +48,31 @@ def main(page: ft.Page):
         if not page.session.logged_in:
             page.add(
                 ft.Column([
-                    ft.Image(src="TopSUNify.png", width=150, height=150),
+                    ft.Image(src="topsunify.png", width=150, height=150),
                     username,
-                    # استفاده از Row بدون پارامترهای پیچیده
                     ft.Row([
                         password,
-                        # استفاده از Image به جای IconButton برای جلوگیری از هرگونه خطای نسخه‌ای
-                        ft.Container(ft.Image(src="biometric.png", width=30, height=30), on_click=lambda e: print("Biometric Clicked"))
+                        ft.Container(
+                            ft.Image(src="biometric.png", width=30, height=30),
+                            on_click=show_biometric_dialog,
+                            padding=5
+                        )
                     ], alignment="center"),
                     
                     ft.ElevatedButton("ورود به TopSUNify", on_click=login, width=300),
-                    ft.Text("فعال سازی / فراموشی رمز عبور", size=12, color="blue")
+                    ft.Text("فعال سازی / فراموشی رمز عبور", size=12, color="blue"),
                     
-                ], horizontal_alignment="center")
+                    # اضافه کردن تصویر Landscape در پایین صفحه
+                    ft.Container(
+                        content=ft.Image(src="landscape.jpg", fit=ft.ImageFit.COVER),
+                        width=page.window_width,
+                        height=200, 
+                        border_radius=ft.border_radius.only(top_left=30, top_right=30)
+                    )
+                ], horizontal_alignment="center", expand=True, alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
             )
         else:
+            # بخش بعد از ورود (بدون تغییر)
             contents = [
                 ft.Text("داشبورد مدیریتی", size=20),
                 ft.Text("بخش پیش‌فاکتورها", size=20),
@@ -58,7 +80,6 @@ def main(page: ft.Page):
                 ft.Text("اطلاعات فنی سیستم", size=20),
                 ft.Text("پروفایل کاربری", size=20)
             ]
-
             nav_buttons = ft.Row([
                 create_nav_icon("dashboard.png", 0, "داشبورد"),
                 create_nav_icon("invoice.png", 1, "پیش فاکتور"),
