@@ -36,14 +36,12 @@ def main(page: ft.Page):
     def show_biometric_dialog(e):
         def on_select(method_name):
             dlg.open = False
-            page.show_snack_bar(ft.SnackBar(content=ft.Text(f"احراز هویت با {method_name} فعال شد")))
             page.update()
-        # اصلاح آیکون‌ها به صورت رشته‌ای برای جلوگیری از خطا
         dlg = ft.AlertDialog(
             title=ft.Text("روش احراز هویت"),
             content=ft.Column([
-                ft.ElevatedButton(content=ft.Row([ft.Icon("fingerprint"), ft.Text("اثر انگشت")]), on_click=lambda _: on_select("اثر انگشت")),
-                ft.ElevatedButton(content=ft.Row([ft.Icon("face"), ft.Text("تشخیص چهره")]), on_click=lambda _: on_select("تشخیص چهره")),
+                ft.ElevatedButton("اثر انگشت", on_click=lambda _: on_select("Fingerprint")),
+                ft.ElevatedButton("تشخیص چهره", on_click=lambda _: on_select("FaceID")),
             ], tight=True, height=120),
         )
         page.dialog = dlg
@@ -62,31 +60,33 @@ def main(page: ft.Page):
         page.controls.clear()
         
         if not page.session.logged_in:
+            # صفحه لاگین
             page.add(
                 ft.Column([
                     ft.Container(height=40),
                     ft.Image(src="TopSUNify.png", width=150),
                     username,
-                    # اصلاح تراز به صورت رشته
                     ft.Row([password, ft.Container(content=ft.Image(src="biometric.png", width=30, height=30), on_click=show_biometric_dialog, padding=5)], alignment="center"),
                     ft.ElevatedButton("ورود به TopSUNify", on_click=lambda e: (setattr(page.session, 'logged_in', True), render()), width=300),
                     ft.TextButton("فعال سازی / فراموشی رمز عبور", on_click=show_registration_dialog),
-                    ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=120), margin=ft.Margin(0, 20, 80, 0)),
+                    ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=120), margin=ft.margin.only(top=20, right=80)),
                     ft.Container(expand=True),
                     ft.Stack([
                         ft.Image(src="landscape.jpg", width=400, height=200, fit="cover"),
-                        ft.Container(width=400, height=200, gradient=ft.LinearGradient(begin=ft.alignment.top_center, end=ft.alignment.bottom_center, colors=["transparent", "white"]))
+                        ft.Container(width=400, height=200, gradient=ft.LinearGradient(begin=ft.alignment.Alignment(0, 1), end=ft.alignment.Alignment(0, -1), colors=["transparent", "white"]))
                     ], width=400, height=200)
                 ], horizontal_alignment="center", expand=True)
             )
         else:
+            # صفحات داخلی - کامل و دقیق
             contents = [
-                ft.Column([ft.Text("داشبورد مدیریتی", size=25)], horizontal_alignment="center"),
-                ft.Column([ft.Text("بخش پیش‌فاکتورها", size=25)], horizontal_alignment="center"),
+                ft.Text("داشبورد مدیریتی", size=25),
+                ft.Text("بخش پیش‌فاکتورها", size=25),
                 ft.Column([ft.Image(src="TopSUNify-1.png", width=200), ft.Text("خانه اصلی", size=25)], horizontal_alignment="center"),
-                ft.Column([ft.Text("اطلاعات فنی سیستم", size=25)], horizontal_alignment="center"),
-                ft.Column([ft.Text("پروفایل کاربری", size=25)], horizontal_alignment="center")
+                ft.Text("اطلاعات فنی سیستم", size=25),
+                ft.Text("پروفایل کاربری", size=25)
             ]
+            
             nav_buttons = ft.Row([
                 create_nav_icon("dashboard.png", 0, "داشبورد"),
                 create_nav_icon("invoice.png", 1, "پیش فاکتور"),
