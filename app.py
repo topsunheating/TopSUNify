@@ -8,7 +8,7 @@ def main(page: ft.Page):
     # تنظیمات پایه
     page.padding = 0
     page.rtl = True
-    page.theme_mode = "light"  # استفاده از رشته برای پایداری
+    page.theme_mode = "light"
     page.session.logged_in = False
 
     username = ft.TextField(label="نام کاربری", width=300)
@@ -42,10 +42,8 @@ def main(page: ft.Page):
             tooltip=tooltip
         )
 
+    # تابع اصلی رندر که فقط یک بار تعریف می‌شود
     def render(tab_index=0):
-        page.controls.clear()
-        
-        def render(tab_index=0):
         page.controls.clear()
         
         if not page.session.logged_in:
@@ -53,20 +51,17 @@ def main(page: ft.Page):
                 ft.Column([
                     ft.Container(height=40),
                     ft.Image(src="TopSUNify.png", width=150),
-                    
                     ft.Container(height=20),
                     username,
-                    
                     ft.Row([
                         password, 
                         ft.Container(content=ft.Image(src="biometric.png", width=30, height=30), on_click=lambda e: None, padding=5)
                     ], alignment="center"),
-                    
                     ft.Container(height=10),
                     ft.ElevatedButton("ورود به TopSUNify", on_click=lambda e: (setattr(page.session, 'logged_in', True), render()), width=300),
                     ft.TextButton("فعال سازی / فراموشی رمز عبور", on_click=show_registration_dialog),
                     
-                    # لوگو با قابلیت جابجایی دقیق (مارجین right را کم و زیاد کنید)
+                    # لوگو (عدد right را برای جابجایی دقیق تغییر دهید)
                     ft.Container(
                         content=ft.Image(src="TopSUN-Powered.png", width=120),
                         margin=ft.margin.only(right=80), 
@@ -75,14 +70,11 @@ def main(page: ft.Page):
                     
                     ft.Container(expand=True),
                     
-                    # روش اصلاح شده برای گرادیانتِ قوی (Stack)
+                    # عکس پایین با افکت سایه روشن
                     ft.Stack([
-                        # لایه اول: عکس
                         ft.Image(src="landscape.jpg", width=400, height=200, fit="cover"),
-                        # لایه دوم: گرادیانت برای ایجاد سایه روشن
                         ft.Container(
-                            width=400,
-                            height=200,
+                            width=400, height=200,
                             gradient=ft.LinearGradient(
                                 begin=ft.alignment.Alignment(0, -1),
                                 end=ft.alignment.Alignment(0, 1),
@@ -92,33 +84,6 @@ def main(page: ft.Page):
                     ], width=400, height=200)
                 ], horizontal_alignment="center", expand=True)
             )
-        else:
-            # صفحات داخلی (همان‌طور که قبلا نوشتیم)
-            contents = [
-                ft.Text("داشبورد مدیریتی", size=25),
-                ft.Text("بخش پیش‌فاکتورها", size=25),
-                ft.Column([ft.Image(src="TopSUNify-1.png", width=200), ft.Text("خانه اصلی", size=25)], horizontal_alignment="center"),
-                ft.Text("اطلاعات فنی سیستم", size=25),
-                ft.Text("پروفایل کاربری", size=25)
-            ]
-            
-            nav_buttons = ft.Row([
-                create_nav_icon("dashboard.png", 0, "داشبورد"),
-                create_nav_icon("invoice.png", 1, "پیش فاکتور"),
-                create_nav_icon("TopSUNify-1.png", 2, "خانه"),
-                create_nav_icon("technical.png", 3, "اطلاعات فنی"),
-                create_nav_icon("profile.png", 4, "پروفایل"),
-            ], alignment="center")
-
-            page.add(
-                ft.Column([
-                    ft.Text("پنل TopSUNify", size=30, weight="bold"),
-                    ft.Divider(),
-                    ft.Container(content=contents[tab_index], expand=True, alignment=ft.alignment.center),
-                    nav_buttons
-                ], horizontal_alignment="center", expand=True)
-            )
-        page.update()
         else:
             # صفحات داخلی
             contents = [
