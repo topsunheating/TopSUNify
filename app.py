@@ -20,6 +20,16 @@ def main(page: ft.Page):
             page.show_snack_bar(ft.SnackBar(content=ft.Text("اطلاعات اشتباه است!")))
             page.update()
 
+    # تابعی برای ساخت دکمه‌های آیکونی بدون خطا
+    def create_nav_icon(emoji, index, tooltip):
+        return ft.Container(
+            content=ft.Text(emoji, size=24),
+            padding=10,
+            on_click=lambda _: render(index),
+            tooltip=tooltip,
+            border_radius=10,
+        )
+
     def render(tab_index=0):
         page.controls.clear()
         
@@ -38,13 +48,13 @@ def main(page: ft.Page):
                 ft.Text("پروفایل کاربری", size=20)
             ]
 
-            # استفاده از متن ساده به جای آیکون برای دور زدن خطای ماژول
+            # استفاده از کانتینرهای کلیک‌خور به جای IconButton
             nav_buttons = ft.Row([
-                ft.IconButton(content=ft.Text("📊"), on_click=lambda _: render(0), tooltip="داشبورد"),
-                ft.IconButton(content=ft.Text("📝"), on_click=lambda _: render(1), tooltip="پیش فاکتور"),
-                ft.IconButton(content=ft.Text("🏠"), on_click=lambda _: render(2), tooltip="خانه"),
-                ft.IconButton(content=ft.Text("⚙️"), on_click=lambda _: render(3), tooltip="اطلاعات فنی"),
-                ft.IconButton(content=ft.Text("👤"), on_click=lambda _: render(4), tooltip="پروفایل"),
+                create_nav_icon("📊", 0, "داشبورد"),
+                create_nav_icon("📝", 1, "پیش فاکتور"),
+                create_nav_icon("TopSUNify-1.png", 2, "خانه"),
+                create_nav_icon("⚙️", 3, "اطلاعات فنی"),
+                create_nav_icon("👤", 4, "پروفایل"),
             ], alignment="center")
 
             page.add(
