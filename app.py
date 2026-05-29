@@ -55,8 +55,15 @@ def main(page: ft.Page):
                     
                     # بخش landscape با افکت محو شدگی
                     ft.Stack([
+                        # تصویر اصلی
                         ft.Container(ft.Image(src="landscape.jpg"), width=400, height=200),
-                        ft.Container(width=400, height=200, bgcolor="#80FFFFFF") 
+                        # لایه محو کننده که از پایین به بالا سنگین‌تر می‌شود
+                        ft.Column([
+                            ft.Container(height=50, bgcolor="#30FFFFFF"), # شفافیت کم
+                            ft.Container(height=50, bgcolor="#70FFFFFF"), # شفافیت متوسط
+                            ft.Container(height=50, bgcolor="#B0FFFFFF"), # شفافیت زیاد
+                            ft.Container(height=50, bgcolor="#FFFFFF"),   # کاملاً سفید
+                        ], width=400, height=200)
                     ], width=400, height=200)
                     
                 ], horizontal_alignment="center", expand=True)
