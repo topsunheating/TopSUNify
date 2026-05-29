@@ -1,21 +1,56 @@
 import flet as ft
 import os
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 
 def main(page: ft.Page):
+    # تنظیمات پایه
+    page.padding = 0
+    page.rtl = True
     page.fonts = {"iranyekan": "iranyekan.ttf"}
     page.theme = ft.Theme(font_family="iranyekan")
-    page.title = "TopSUNify"
     page.theme_mode = ft.ThemeMode.LIGHT
-    page.rtl = True
     page.session.logged_in = False
-    
+
     username = ft.TextField(label="نام کاربری", width=300)
     password = ft.TextField(label="رمز عبور", password=True, width=250)
+
+    # تابع ثبت در گوگل شیت
+    def save_to_sheets(name, phone, password):
+        try:
+            scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets']
+            creds = ServiceAccountCredentials.from_json_keyfile_name('credentials.json', scope)
+            client = gspread.authorize(creds)
+            sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1Vt-vKivm7I2Yi79gJarLVtSR2KowDGCQiW54UIgW6ls/edit").sheet1
+            sheet.append_row([name, phone, password])
+            return True
+        except:
+            return False
+
+    def show_registration_dialog(e):
+        reg_name = ft.TextField(label="نام و نام خانوادگی")
+        reg_phone = ft.TextField(label="شماره موبایل")
+        reg_pass = ft.TextField(label="رمز عبور جدید", password=True)
+        
+        def submit(e):
+            if save_to_sheets(reg_name.value, reg_phone.value, reg_pass.value):
+                dlg.open = False
+                page.show_snack_bar(ft.SnackBar(content=ft.Text("با موفقیت ثبت شد")))
+                page.update()
+        
+        dlg = ft.AlertDialog(
+            title=ft.Text("ثبت نام / فراموشی رمز"),
+            content=ft.Column([reg_name, reg_phone, reg_pass], height=200),
+            actions=[ft.ElevatedButton("ارسال", on_click=submit)]
+        )
+        page.dialog = dlg
+        dlg.open = True
+        page.update()
 
     def show_biometric_dialog(e):
         dlg = ft.AlertDialog(
             title=ft.Text("احراز هویت"),
-            content=ft.Text("در حال اسکن اثر انگشت..."),
+            content=ft.Text("حسگر را لمس کنید..."),
             actions=[ft.TextButton("انصراف", on_click=lambda e: setattr(dlg, 'open', False) or page.update())],
         )
         page.dialog = dlg
@@ -30,64 +65,32 @@ def main(page: ft.Page):
             page.show_snack_bar(ft.SnackBar(content=ft.Text("اطلاعات اشتباه است!")))
             page.update()
 
-    def create_nav_icon(icon_path, index, tooltip):
-        return ft.Container(
-            content=ft.Image(src=icon_path, width=30, height=30),
-            padding=10,
-            on_click=lambda _: render(index),
-            tooltip=tooltip
-        )
-
     def render(tab_index=0):
         page.controls.clear()
-        
         if not page.session.logged_in:
             page.add(
                 ft.Column([
                     ft.Container(height=40),
-                    ft.Image(src="TopSUNify.png", width=150, height=150),
+                    ft.Image(src="TopSUNify.png", width=150),
                     username,
-                    ft.Row([
-                        password,
-                        ft.Container(ft.Image(src="biometric.png", width=30, height=30), on_click=show_biometric_dialog, padding=5)
-                    ], alignment="center"),
+                    ft.Row([password, ft.IconButton(icon=ft.icons.FINGERPRINT, on_click=show_biometric_dialog)], alignment="center"),
                     ft.ElevatedButton("ورود به TopSUNify", on_click=login, width=300),
-                    ft.Text("فعال سازی / فراموشی رمز عبور", size=12, color="blue"),
-                    
-                    ft.Container(height=30),
-                    # لوگوی جدید با تراز راست
-                    ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=120), alignment=ft.alignment.center_right, padding=10),
-                    
+                    ft.TextButton("فعال سازی / فراموشی رمز عبور", on_click=show_registration_dialog),
+                    # لوگو در سمت راست (استفاده از رشته برای تراز کردن)
+                    ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=120), alignment="center_right", padding=10),
                     ft.Container(expand=True),
                     ft.Image(src="landscape.jpg", width=400, height=200)
                 ], horizontal_alignment="center", expand=True)
             )
         else:
-            # صفحات داخلی کامل
-            contents = [
-                ft.Column([ft.Text("داشبورد مدیریتی", size=25), ft.Text("خوش آمدید!")], horizontal_alignment="center"),
-                ft.Column([ft.Text("بخش پیش‌فاکتورها", size=25), ft.Text("لیست فاکتورهای شما")], horizontal_alignment="center"),
-                ft.Column([ft.Image(src="TopSUNify-1.png", width=200), ft.Text("خانه اصلی")], horizontal_alignment="center"),
-                ft.Column([ft.Text("اطلاعات فنی سیستم", size=25), ft.Text("پارامترهای فنی...")], horizontal_alignment="center"),
-                ft.Column([ft.Text("پروفایل کاربری", size=25), ft.Text("تنظیمات حساب")], horizontal_alignment="center")
-            ]
-            
+            # صفحات داخلی
             nav_buttons = ft.Row([
-                create_nav_icon("dashboard.png", 0, "داشبورد"),
-                create_nav_icon("invoice.png", 1, "پیش فاکتور"),
-                create_nav_icon("TopSUNify-1.png", 2, "خانه"),
-                create_nav_icon("technical.png", 3, "اطلاعات فنی"),
-                create_nav_icon("profile.png", 4, "پروفایل"),
+                ft.IconButton(ft.icons.HOME, on_click=lambda _: render(0)),
+                ft.IconButton(ft.icons.LIST, on_click=lambda _: render(1)),
+                ft.IconButton(ft.icons.PERSON, on_click=lambda _: render(2))
             ], alignment="center")
-
-            page.add(
-                ft.Column([
-                    ft.Text("پنل TopSUNify", size=30, weight="bold"),
-                    ft.Divider(),
-                    ft.Container(content=contents[tab_index], expand=True, alignment=ft.alignment.center),
-                    nav_buttons
-                ], horizontal_alignment="center", expand=True)
-            )
+            
+            page.add(ft.Column([ft.Text("پنل کاربری"), ft.Divider(), ft.Container(expand=True), nav_buttons], horizontal_alignment="center", expand=True))
         page.update()
 
     render()
