@@ -40,7 +40,7 @@ def main(page: ft.Page):
             contents = [
                 ft.Text("داشبورد مدیریتی", size=20),
                 ft.Text("بخش پیش‌فاکتورها", size=20),
-                ft.Image(src="https://raw.githubusercontent.com/topsunheating/TopSUNify/main/assets/TopSUNify-1.png", width=300),
+                ft.Image(src="TopSUNify-1.png", width=300, height=300),
                 ft.Text("اطلاعات فنی سیستم", size=20),
                 ft.Text("پروفایل کاربری", size=20)
             ]
