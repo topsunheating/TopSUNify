@@ -13,8 +13,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# کمی تاخیر برای بازیابی سشن
-time.sleep(0.01)
+
 # ۳. مقداردهی اولیه سشن
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = True
@@ -31,7 +30,8 @@ if "active_tab" not in st.session_state:
 st.sidebar.title("دیباگ وضعیت")
 st.sidebar.write("وضعیت لاگین:", st.session_state.logged_in)
 st.sidebar.write("تب فعال:", st.session_state.active_tab)
-
+# کمی تاخیر برای بازیابی سشن
+time.sleep(0.01)
 # ۵. چک کردن وضعیت ورود
 if not st.session_state.logged_in:
     auth.render_auth_page()
