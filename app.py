@@ -35,19 +35,6 @@ def run_app():
 if __name__ == "__main__":
     main() 
 
-if "active_tab" not in st.session_state:
-    st.session_state.active_tab = "invoice"
-
-# ۴. دیباگ وضعیت (می‌توانید بعد از اطمینان کامل آن را کامنت کنید)
-st.sidebar.title("دیباگ وضعیت")
-st.sidebar.write("وضعیت لاگین:", st.session_state.logged_in)
-st.sidebar.write("تب فعال:", st.session_state.active_tab)
-# کمی تاخیر برای بازیابی سشن
-time.sleep(0.01)
-# ۵. چک کردن وضعیت ورود
-if not st.session_state.logged_in:
-    auth.render_auth_page()
-    st.stop()
 # ۲. پاکسازی پارامترهای اضافه (اصلاح حیاتی برای جلوگیری از تداخل URL)
 query_params = st.query_params
 if "nav_tab" in query_params:
