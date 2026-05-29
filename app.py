@@ -2,48 +2,98 @@ import flet as ft
 import os
 
 def main(page: ft.Page):
-    # تنظیمات کلی صفحه
+    # تنظیمات اولیه صفحه
     page.padding = 0
     page.rtl = True
-    page.theme = ft.Theme(font_family="iranyekan")
     page.fonts = {"iranyekan": "iranyekan.ttf"}
+    page.theme = ft.Theme(font_family="iranyekan")
+    page.session.logged_in = False
+
+    username = ft.TextField(label="نام کاربری", width=300, bgcolor="white")
+    password = ft.TextField(label="رمز عبور", password=True, width=250, bgcolor="white")
 
     def show_biometric_dialog(e):
-        dlg = ft.AlertDialog(title=ft.Text("احراز هویت"), content=ft.Text("در حال اسکن..."))
+        dlg = ft.AlertDialog(
+            title=ft.Text("احراز هویت"),
+            content=ft.Text("در حال اسکن اثر انگشت یا چهره..."),
+            actions=[ft.TextButton("انصراف", on_click=lambda e: setattr(dlg, 'open', False) or page.update())],
+        )
         page.dialog = dlg
         dlg.open = True
         page.update()
 
-    def render():
+    def login(e):
+        if username.value == "admin" and password.value == "1234":
+            page.session.logged_in = True
+            render()
+        else:
+            page.show_snack_bar(ft.SnackBar(content=ft.Text("اطلاعات اشتباه است!")))
+            page.update()
+
+    def create_nav_icon(icon_path, index, tooltip):
+        return ft.Container(
+            content=ft.Image(src=icon_path, width=30, height=30),
+            padding=10,
+            on_click=lambda _: render(index),
+            tooltip=tooltip
+        )
+
+    def render(tab_index=0):
         page.controls.clear()
         
-        # لایه اصلی برای چیدمان روی عکس
-        page.add(
-            ft.Stack([
-                # لایه پس‌زمینه (عکس landscape)
-                ft.Container(
-                    content=ft.Image(src="landscape.jpg"),
-                    expand=True
-                ),
-                # لایه فرم ورود
-                ft.Container(
-                    content=ft.Column([
-                        ft.Image(src="topsunify.png", width=220),
-                        ft.TextField(label="نام کاربری", bgcolor="white"),
-                        ft.Row([
-                            ft.TextField(label="رمز ورود", bgcolor="white", expand=True),
-                            ft.IconButton(icon=ft.icons.FINGERPRINT, on_click=show_biometric_dialog)
-                        ]),
-                        ft.ElevatedButton("ورود به TopSUNify", width=300),
-                        ft.Text("فعال سازی / فراموشی رمز عبور", color="blue")
-                    ], horizontal_alignment="center"),
-                    padding=20,
-                    alignment=ft.alignment.center
-                )
-            ])
-        )
+        if not page.session.logged_in:
+            # استفاده از Stack برای قرار دادن فرم روی عکس
+            page.add(
+                ft.Stack([
+                    # لایه 1: عکس پس‌زمینه (landscape)
+                    ft.Container(
+                        content=ft.Image(src="landscape.jpg", width=page.window_width, height=page.window_height),
+                        expand=True
+                    ),
+                    # لایه 2: محتوای فرم روی عکس
+                    ft.Container(
+                        content=ft.Column([
+                            ft.Container(height=50), # فاصله از بالا
+                            ft.Image(src="TopSUNify.png", width=120),
+                            username,
+                            ft.Row([
+                                password,
+                                ft.Container(ft.Image(src="biometric.png", width=30), on_click=show_biometric_dialog, padding=5)
+                            ], alignment="center"),
+                            ft.ElevatedButton("ورود به TopSUNify", on_click=login, width=300),
+                            ft.Text("فعال سازی / فراموشی رمز عبور", size=12, color="blue")
+                        ], horizontal_alignment="center"),
+                        alignment=ft.alignment.center,
+                        padding=20
+                    )
+                ])
+            )
+        else:
+            # بخش بعد از ورود
+            contents = [
+                ft.Text("داشبورد مدیریتی", size=20), ft.Text("بخش پیش‌فاکتورها", size=20),
+                ft.Image(src="TopSUNify-1.png", width=300, height=300),
+                ft.Text("اطلاعات فنی سیستم", size=20), ft.Text("پروفایل کاربری", size=20)
+            ]
+            nav_buttons = ft.Row([
+                create_nav_icon("dashboard.png", 0, "داشبورد"),
+                create_nav_icon("invoice.png", 1, "پیش فاکتور"),
+                create_nav_icon("TopSUNify-1.png", 2, "خانه"),
+                create_nav_icon("technical.png", 3, "اطلاعات فنی"),
+                create_nav_icon("profile.png", 4, "پروفایل"),
+            ], alignment="center")
+
+            page.add(
+                ft.Column([
+                    ft.Text("TopSUNify", size=30, weight="bold"),
+                    ft.Divider(),
+                    contents[tab_index],
+                    ft.Container(expand=True),
+                    nav_buttons
+                ], horizontal_alignment="center", expand=True)
+            )
         page.update()
-    
+
     render()
 
 if __name__ == "__main__":
