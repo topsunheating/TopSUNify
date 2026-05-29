@@ -30,13 +30,12 @@ def main(page: ft.Page):
                 ft.ElevatedButton("ورود", on_click=login)
             )
         else:
-            # محتوای تب‌ها
-            # استفاده از آدرس مستقیم که در اکثر سرورها کار می‌کند
+            # به جای آدرس محلی، لینک مستقیم تصویر را در src قرار دهید
+            # مثال: "https://example.com/your-image.png"
             contents = [
                 ft.Text("داشبورد مدیریتی", size=20),
                 ft.Text("بخش پیش‌فاکتورها", size=20),
-                # اگر عکس کنار app.py است، همین نام کافیست
-                ft.Image(src="TopSUNify-1.png", width=300, height=300),
+                ft.Image(src="https://github.com/topsunheating/TopSUNify/edit/main/assets/TopSUNify-1.png", width=300, height=300),
                 ft.Text("اطلاعات فنی سیستم", size=20),
                 ft.Text("پروفایل کاربری", size=20)
             ]
@@ -62,5 +61,4 @@ def main(page: ft.Page):
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
-    # نکته کلیدی: assets_dir را "." قرار می‌دهیم تا پوشه جاری (جایی که app.py هست) در دسترس باشد
-    ft.app(target=main, port=port, host="0.0.0.0", assets_dir=".")
+    ft.app(target=main, port=port, host="0.0.0.0")
