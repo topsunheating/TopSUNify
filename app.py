@@ -2,8 +2,7 @@ import flet as ft
 import os
 
 def main(page: ft.Page):
-    # تنظیم فونت استاندارد گوگل
-    page.theme = ft.Theme(font_family="Arial") 
+    # تنظیمات ساده صفحه
     page.title = "TopSUNify"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.rtl = True
@@ -31,11 +30,12 @@ def main(page: ft.Page):
                 ft.ElevatedButton("ورود", on_click=login)
             )
         else:
-            # استفاده از آیکونِ عمومیِ 'SUN' که در همه نسخه‌ها هست
+            # اینجا به جای آیکونِ SUN که خطا می‌داد، از متنی ساده استفاده می‌کنیم
+            # تا مطمئن شویم برنامه بدون خطا رندر می‌شود
             contents = [
                 ft.Text("داشبورد مدیریتی", size=20),
                 ft.Text("بخش پیش‌فاکتورها", size=20),
-                ft.Icon(name=ft.icons.SUN, size=100, color="orange"),
+                ft.Text("نمایش لوگو در اینجا", size=20, color="orange"), # فعلا جای لوگو
                 ft.Text("اطلاعات فنی سیستم", size=20),
                 ft.Text("پروفایل کاربری", size=20)
             ]
