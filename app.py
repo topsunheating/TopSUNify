@@ -2,16 +2,11 @@ import flet as ft
 import os
 
 def main(page: ft.Page):
-    # تنظیم فونت - فلت از پوشه assets به صورت خودکار می‌خواند
-    page.fonts = {
-        "iranyekan": "iranyekan.ttf"
-    }
+    page.fonts = {"iranyekan": "iranyekan.ttf"}
     page.theme = ft.Theme(font_family="iranyekan")
-    
     page.title = "TopSUNify"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.rtl = True
-    
     page.session.logged_in = False
     
     username = ft.TextField(label="نام کاربری")
@@ -43,13 +38,13 @@ def main(page: ft.Page):
                 ft.Text("پروفایل کاربری", size=20)
             ]
 
-            # استفاده از آیکون به جای متن برای دکمه‌های ناوبری
+            # استفاده از متن ساده به جای آیکون برای دور زدن خطای ماژول
             nav_buttons = ft.Row([
-                ft.IconButton(icon=ft.icons.DASHBOARD, icon_size=30, on_click=lambda _: render(0), tooltip="داشبورد"),
-                ft.IconButton(icon=ft.icons.DESCRIPTION, icon_size=30, on_click=lambda _: render(1), tooltip="پیش فاکتور"),
-                ft.IconButton(icon=ft.icons.HOME, icon_size=30, on_click=lambda _: render(2), tooltip="صفحه اصلی"),
-                ft.IconButton(icon=ft.icons.ENGINEERING, icon_size=30, on_click=lambda _: render(3), tooltip="اطلاعات فنی"),
-                ft.IconButton(icon=ft.icons.PERSON, icon_size=30, on_click=lambda _: render(4), tooltip="پروفایل"),
+                ft.IconButton(content=ft.Text("📊"), on_click=lambda _: render(0), tooltip="داشبورد"),
+                ft.IconButton(content=ft.Text("📝"), on_click=lambda _: render(1), tooltip="پیش فاکتور"),
+                ft.IconButton(content=ft.Text("🏠"), on_click=lambda _: render(2), tooltip="خانه"),
+                ft.IconButton(content=ft.Text("⚙️"), on_click=lambda _: render(3), tooltip="اطلاعات فنی"),
+                ft.IconButton(content=ft.Text("👤"), on_click=lambda _: render(4), tooltip="پروفایل"),
             ], alignment="center")
 
             page.add(
@@ -65,5 +60,4 @@ def main(page: ft.Page):
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
-    # دقت کنید که assets_dir روی پوشه اصلی یا assets تنظیم شده باشد
     ft.app(target=main, port=port, host="0.0.0.0", assets_dir="assets")
