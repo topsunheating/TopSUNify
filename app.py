@@ -5,6 +5,7 @@ import os
 GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbygH2yHhw44Lk5Hv8okJDnRBgGw2UzoF1wsZvMGGGr7ZzhSS0Ro6WhSeVFTPM2TpsMv/exec"
 
 def main(page: ft.Page):
+    # تنظیمات پایه
     page.padding = 0
     page.rtl = True
     page.theme_mode = "light"
@@ -18,6 +19,33 @@ def main(page: ft.Page):
             response = requests.post(GOOGLE_SHEET_URL, data={"name": name, "phone": phone, "password": password})
             return response.status_code == 200
         except: return False
+
+    # 1. تابع جدید برای دیالوگ انتخاب بیومتریک
+    def show_biometric_dialog(e):
+        def on_select(method_name):
+            print(f"انتخاب شد: {method_name}")
+            dlg.open = False
+            page.update()
+
+        dlg = ft.AlertDialog(
+            title=ft.Text("روش احراز هویت را انتخاب کنید"),
+            content=ft.Column([
+                ft.ElevatedButton(
+                    content=ft.Row([ft.Icon(ft.icons.FINGERPRINT), ft.Text("اثر انگشت")], alignment="center"),
+                    on_click=lambda _: on_select("Fingerprint"),
+                    width=250
+                ),
+                ft.ElevatedButton(
+                    content=ft.Row([ft.Icon(ft.icons.FACE), ft.Text("تشخیص چهره")], alignment="center"),
+                    on_click=lambda _: on_select("FaceID"),
+                    width=250
+                ),
+            ], height=150, tight=True),
+            actions=[ft.TextButton("انصراف", on_click=lambda e: (setattr(dlg, 'open', False), page.update()))],
+        )
+        page.dialog = dlg
+        dlg.open = True
+        page.update()
 
     def show_registration_dialog(e):
         reg_name = ft.TextField(label="نام و نام خانوادگی")
@@ -49,32 +77,29 @@ def main(page: ft.Page):
                 ft.Column([
                     ft.Container(height=40),
                     ft.Image(src="TopSUNify.png", width=150),
-                    
                     ft.Container(height=20),
                     username,
-                    
+                    # 2. اتصال تابع به دکمه
                     ft.Row([
                         password, 
-                        ft.Container(content=ft.Image(src="biometric.png", width=30, height=30), on_click=lambda e: None, padding=5)
+                        ft.Container(
+                            content=ft.Image(src="biometric.png", width=30, height=30), 
+                            on_click=show_biometric_dialog, # <--- اینجا متصل شد
+                            padding=5
+                        )
                     ], alignment="center"),
-                    
                     ft.Container(height=10),
                     ft.ElevatedButton("ورود به TopSUNify", on_click=lambda e: (setattr(page.session, 'logged_in', True), render()), width=300),
                     ft.TextButton("فعال سازی / فراموشی رمز عبور", on_click=show_registration_dialog),
-                    
-                    # روش ایمن و جدید برای مارجین (جلوگیری از خطای ماژول)
                     ft.Container(
                         content=ft.Image(src="TopSUN-Powered.png", width=120),
-                        # فرمت: (left, top, right, bottom)
                         margin=ft.Margin(0, 20, 80, 0), 
                     ),
-                    
                     ft.Container(expand=True),
-                    
                     ft.Stack([
                         ft.Image(src="landscape.jpg", width=400, height=200, fit="cover"),
                         ft.Container(
-                            width=400, height=300,
+                            width=400, height=200,
                             gradient=ft.LinearGradient(
                                 begin=ft.alignment.Alignment(0, 1),
                                 end=ft.alignment.Alignment(0, -1),
@@ -85,30 +110,10 @@ def main(page: ft.Page):
                 ], horizontal_alignment="center", expand=True)
             )
         else:
-            contents = [
-                ft.Text("داشبورد مدیریتی", size=25),
-                ft.Text("بخش پیش‌فاکتورها", size=25),
-                ft.Column([ft.Image(src="TopSUNify-1.png", width=200), ft.Text("خانه اصلی", size=25)], horizontal_alignment="center"),
-                ft.Text("اطلاعات فنی سیستم", size=25),
-                ft.Text("پروفایل کاربری", size=25)
-            ]
-            
-            nav_buttons = ft.Row([
-                create_nav_icon("dashboard.png", 0, "داشبورد"),
-                create_nav_icon("invoice.png", 1, "پیش فاکتور"),
-                create_nav_icon("TopSUNify-1.png", 2, "خانه"),
-                create_nav_icon("technical.png", 3, "اطلاعات فنی"),
-                create_nav_icon("profile.png", 4, "پروفایل"),
-            ], alignment="center")
-
-            page.add(
-                ft.Column([
-                    ft.Text("پنل TopSUNify", size=30, weight="bold"),
-                    ft.Divider(),
-                    ft.Container(content=contents[tab_index], expand=True, alignment=ft.alignment.center),
-                    nav_buttons
-                ], horizontal_alignment="center", expand=True)
-            )
+            # (کد صفحات داخلی ثابت است)
+            contents = [ft.Text("داشبورد مدیریتی", size=25), ft.Text("بخش پیش‌فاکتورها", size=25), ft.Column([ft.Image(src="TopSUNify-1.png", width=200), ft.Text("خانه اصلی", size=25)], horizontal_alignment="center"), ft.Text("اطلاعات فنی سیستم", size=25), ft.Text("پروفایل کاربری", size=25)]
+            nav_buttons = ft.Row([create_nav_icon("dashboard.png", 0, "داشبورد"), create_nav_icon("invoice.png", 1, "پیش فاکتور"), create_nav_icon("TopSUNify-1.png", 2, "خانه"), create_nav_icon("technical.png", 3, "اطلاعات فنی"), create_nav_icon("profile.png", 4, "پروفایل")], alignment="center")
+            page.add(ft.Column([ft.Text("پنل TopSUNify", size=30, weight="bold"), ft.Divider(), ft.Container(content=contents[tab_index], expand=True, alignment=ft.alignment.center), nav_buttons], horizontal_alignment="center", expand=True))
         page.update()
 
     render()
