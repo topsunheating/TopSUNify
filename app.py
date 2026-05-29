@@ -21,19 +21,21 @@ def main(page: ft.Page):
             update_ui()
         else:
             page.show_snack_bar(ft.SnackBar(content=ft.Text("اطلاعات اشتباه است!")))
+            page.update()
 
-    # تابع اصلی رندر (بدون پیچیدگی View)
+    # تابع رندر (اصلاح شده برای عدم استفاده از ft.alignment)
     def update_ui():
         page.controls.clear()
         if not page.session.logged_in:
             page.add(
                 ft.Container(
-                    ft.Column([
+                    content=ft.Column([
                         ft.Text("ورود به تاپسانیفای", size=25),
-                        username, password,
+                        username, 
+                        password,
                         ft.ElevatedButton("ورود", on_click=login)
-                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-                    alignment=ft.alignment.center, expand=True
+                    ], horizontal_alignment="center"), # اصلاح شده
+                    padding=20
                 )
             )
         else:
