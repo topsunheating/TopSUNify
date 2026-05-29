@@ -14,7 +14,7 @@ def main(page: ft.Page):
     page.session.logged_in = False
     
     username = ft.TextField(label="نام کاربری", border_radius=10, width=300)
-    password = ft.TextField(label="رمز عبور", password=True, can_reveal_password=True, border_radius=10, width=300)
+    password = ft.TextField(label="رمز عبور", password=True, border_radius=10, width=300)
 
     def login(e):
         if username.value == "admin" and password.value == "1234":
@@ -24,7 +24,6 @@ def main(page: ft.Page):
             page.show_snack_bar(ft.SnackBar(content=ft.Text("نام کاربری یا رمز عبور اشتباه است!")))
             page.update()
 
-    # تابع ساخت دکمه با آیکون سفارشی
     def create_nav_icon(icon_path, index, tooltip):
         return ft.Container(
             content=ft.Image(src=icon_path, width=30, height=30),
@@ -38,7 +37,6 @@ def main(page: ft.Page):
         page.controls.clear()
         
         if not page.session.logged_in:
-            # صفحه ورود به سبک موبایلت
             page.add(
                 ft.Container(
                     content=ft.Column([
@@ -50,24 +48,24 @@ def main(page: ft.Page):
                         ft.ElevatedButton(
                             "ورود به برنامه",
                             on_click=login,
-                            style=ft.ButtonStyle(
-                                shape=ft.RoundedRectangleBorder(radius=10),
-                                padding=15,
-                            ),
                             width=300
                         ),
                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, tight=True),
                     padding=30,
-                    border=ft.border.all(1, "#e0e0e0"),
+                    # اصلاح روش تعریف border برای جلوگیری از خطا
+                    border=ft.Border(
+                        left=ft.BorderSide(1, "#e0e0e0"),
+                        top=ft.BorderSide(1, "#e0e0e0"),
+                        right=ft.BorderSide(1, "#e0e0e0"),
+                        bottom=ft.BorderSide(1, "#e0e0e0")
+                    ),
                     border_radius=20,
                     bgcolor=ft.colors.WHITE,
-                    shadow=ft.BoxShadow(blur_radius=20, color=ft.colors.GREY_300),
                     width=350,
                     alignment=ft.alignment.center
                 )
             )
         else:
-            # چیدمان اصلی بعد از ورود
             contents = [
                 ft.Text("داشبورد مدیریتی", size=20),
                 ft.Text("بخش پیش‌فاکتورها", size=20),
@@ -86,9 +84,7 @@ def main(page: ft.Page):
 
             page.add(
                 ft.Text("پنل مدیریت تاپسانیفای", size=25, weight="bold"),
-                ft.Divider(),
                 ft.Container(content=contents[tab_index], expand=True, alignment=ft.alignment.center),
-                ft.Divider(),
                 nav_buttons
             )
         page.update()
