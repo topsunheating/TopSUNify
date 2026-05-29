@@ -24,7 +24,8 @@ def main(page: ft.Page):
             sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1Vt-vKivm7I2Yi79gJarLVtSR2KowDGCQiW54UIgW6ls/edit").sheet1
             sheet.append_row([name, phone, password])
             return True
-        except:
+        except Exception as e:
+            print(f"Error: {e}")
             return False
 
     def show_registration_dialog(e):
@@ -35,13 +36,13 @@ def main(page: ft.Page):
         def submit(e):
             if save_to_sheets(reg_name.value, reg_phone.value, reg_pass.value):
                 dlg.open = False
-                page.show_snack_bar(ft.SnackBar(content=ft.Text("با موفقیت ثبت شد")))
+                page.show_snack_bar(ft.SnackBar(content=ft.Text("اطلاعات با موفقیت ثبت شد")))
                 page.update()
         
         dlg = ft.AlertDialog(
             title=ft.Text("ثبت نام / فراموشی رمز"),
             content=ft.Column([reg_name, reg_phone, reg_pass], height=200),
-            actions=[ft.ElevatedButton("ارسال", on_click=submit)]
+            actions=[ft.ElevatedButton("ارسال به دیتابیس", on_click=submit)]
         )
         page.dialog = dlg
         dlg.open = True
@@ -65,8 +66,17 @@ def main(page: ft.Page):
             page.show_snack_bar(ft.SnackBar(content=ft.Text("اطلاعات اشتباه است!")))
             page.update()
 
+    def create_nav_icon(icon_path, index, tooltip):
+        return ft.Container(
+            content=ft.Image(src=icon_path, width=30, height=30),
+            padding=10,
+            on_click=lambda _: render(index),
+            tooltip=tooltip
+        )
+
     def render(tab_index=0):
         page.controls.clear()
+        
         if not page.session.logged_in:
             page.add(
                 ft.Column([
@@ -76,21 +86,40 @@ def main(page: ft.Page):
                     ft.Row([password, ft.IconButton(icon=ft.icons.FINGERPRINT, on_click=show_biometric_dialog)], alignment="center"),
                     ft.ElevatedButton("ورود به TopSUNify", on_click=login, width=300),
                     ft.TextButton("فعال سازی / فراموشی رمز عبور", on_click=show_registration_dialog),
-                    # لوگو در سمت راست (استفاده از رشته برای تراز کردن)
+                    
+                    # لوگو در سمت راست (استفاده از رشته برای تراز کردن بدون خطا)
                     ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=120), alignment="center_right", padding=10),
+                    
                     ft.Container(expand=True),
                     ft.Image(src="landscape.jpg", width=400, height=200)
                 ], horizontal_alignment="center", expand=True)
             )
         else:
-            # صفحات داخلی
-            nav_buttons = ft.Row([
-                ft.IconButton(ft.icons.HOME, on_click=lambda _: render(0)),
-                ft.IconButton(ft.icons.LIST, on_click=lambda _: render(1)),
-                ft.IconButton(ft.icons.PERSON, on_click=lambda _: render(2))
-            ], alignment="center")
+            # صفحات داخلی که درخواست کرده بودید
+            contents = [
+                ft.Column([ft.Text("داشبورد مدیریتی", size=25)], horizontal_alignment="center"),
+                ft.Column([ft.Text("بخش پیش‌فاکتورها", size=25)], horizontal_alignment="center"),
+                ft.Column([ft.Image(src="TopSUNify-1.png", width=200), ft.Text("خانه اصلی", size=25)], horizontal_alignment="center"),
+                ft.Column([ft.Text("اطلاعات فنی سیستم", size=25)], horizontal_alignment="center"),
+                ft.Column([ft.Text("پروفایل کاربری", size=25)], horizontal_alignment="center")
+            ]
             
-            page.add(ft.Column([ft.Text("پنل کاربری"), ft.Divider(), ft.Container(expand=True), nav_buttons], horizontal_alignment="center", expand=True))
+            nav_buttons = ft.Row([
+                create_nav_icon("dashboard.png", 0, "داشبورد"),
+                create_nav_icon("invoice.png", 1, "پیش فاکتور"),
+                create_nav_icon("TopSUNify-1.png", 2, "خانه"),
+                create_nav_icon("technical.png", 3, "اطلاعات فنی"),
+                create_nav_icon("profile.png", 4, "پروفایل"),
+            ], alignment="center")
+
+            page.add(
+                ft.Column([
+                    ft.Text("پنل TopSUNify", size=30, weight="bold"),
+                    ft.Divider(),
+                    ft.Container(content=contents[tab_index], expand=True, alignment=ft.alignment.center),
+                    nav_buttons
+                ], horizontal_alignment="center", expand=True)
+            )
         page.update()
 
     render()
