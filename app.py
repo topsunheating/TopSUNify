@@ -17,7 +17,7 @@ def main(page: ft.Page):
     username = ft.TextField(label="نام کاربری", width=300)
     password = ft.TextField(label="رمز عبور", password=True, width=250)
 
-    # تابع نمایش بیومتریک (اصلاح شده و ایمن)
+    # تابع نمایش بیومتریک
     def show_biometric_dialog(e):
         def on_select(method_name):
             dlg.open = False
@@ -46,7 +46,7 @@ def main(page: ft.Page):
         page.controls.clear()
         
         if not page.session.logged_in:
-            # صفحه لاگین
+            # صفحه لاگین با استفاده از GestureDetector برای کلیک روی عکس
             page.add(
                 ft.Column([
                     ft.Container(height=40),
@@ -54,13 +54,17 @@ def main(page: ft.Page):
                     username,
                     ft.Row([
                         password, 
-                        ft.Image(src="biometric.png", width=40, height=40, on_click=show_biometric_dialog)
+                        # استفاده از GestureDetector برای رفع خطای on_click در Image
+                        ft.GestureDetector(
+                            content=ft.Image(src="biometric.png", width=40, height=40),
+                            on_tap=show_biometric_dialog
+                        )
                     ], alignment="center"),
                     ft.ElevatedButton("ورود به TopSUNify", on_click=lambda e: (setattr(page.session, 'logged_in', True), render()), width=300),
                 ], horizontal_alignment="center", expand=True)
             )
         else:
-            # صفحات داخلی (کاملاً حفظ شد)
+            # صفحات داخلی حفظ شده
             contents = [
                 ft.Text("داشبورد مدیریتی", size=25),
                 ft.Text("بخش پیش‌فاکتورها", size=25),
