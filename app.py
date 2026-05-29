@@ -302,40 +302,41 @@ elif st.session_state.active_tab == "profile":
 # ناوبری نهایی: کاملاً مستقل، افقی، چسبیده به پایین و بدون کد خام
 # ==============================================================================
 
-# این کد را جایگزین کل بخش دکمه‌های پایین کنید
 st.markdown("""
 <style>
-    .footer-nav-container {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
+    /* این بخش کلاً جلوی رفتار پیش‌فرض استریم‌لیت را می‌گیرد */
+    .my-custom-footer {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 65px !important;
         display: flex !important;
         flex-direction: row !important;
-        background-color: white;
-        z-index: 999999;
-        border-top: 1px solid #e2e8f0;
-        padding: 2px 0;
+        background-color: #ffffff !important;
+        border-top: 1px solid #e2e8f0 !important;
+        z-index: 9999999 !important;
     }
-    .nav-btn-wrapper {
-        flex: 1;
-        text-align: center;
-    }
-    /* استایل دکمه‌های استریم‌لیت را اینجا دستکاری می‌کنیم */
-    .footer-nav-container div[data-testid="stButton"] {
-        width: 100%;
-    }
-    .footer-nav-container button {
-        width: 100% !important;
-        font-size: 8px !important;
-        height: 50px !important;
-        border: none !important;
-        background: none !important;
+    .my-link {
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-decoration: none !important;
+        color: #64748b !important;
+        font-size: 9px !important;
+        font-weight: bold !important;
     }
 </style>
 
-<div class="footer-nav-container">
-    <div class="nav-btn-wrapper">""", unsafe_allow_html=True)
+<div class="my-custom-footer">
+    <a href="?nav_tab=dashboard" target="_self" class="my-link">📊<br>داشبورد</a>
+    <a href="?nav_tab=invoice" target="_self" class="my-link">🧾<br>فاکتور</a>
+    <a href="?nav_tab=info" target="_self" class="my-link">📚<br>تاپسان</a>
+    <a href="?nav_tab=profile" target="_self" class="my-link">👤<br>پروفایل</a>
+</div>
+""", unsafe_allow_html=True)
 
 if st.button("📊\nداشبورد"): st.session_state.active_tab = "dashboard"; st.rerun()
 
