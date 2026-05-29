@@ -59,10 +59,14 @@ def main(page: ft.Page):
                 create_nav_icon("profile.png", 4, "پروفایل"),
             ], alignment="center")
 
+            # این ساختار تضمین می‌کند دکمه‌ها پایین بمانند بدون استفاده از کلاس alignment
             page.add(
-                ft.Text("TopSUNify", size=25, weight="bold"),
-                ft.Container(content=contents[tab_index], expand=True, alignment=ft.alignment.top_center),
-                nav_buttons
+                ft.Column([
+                    ft.Text("پنل مدیریت تاپسانیفای", size=25, weight="bold"),
+                    contents[tab_index],
+                    ft.Container(expand=True), # این کانتینر فضای خالی را پر می‌کند و دکمه‌ها را به پایین می‌راند
+                    nav_buttons
+                ], horizontal_alignment="center")
             )
         page.update()
 
