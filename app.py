@@ -358,4 +358,3 @@ nav_html = f"""
 </div>
 """
 st.markdown(nav_html, unsafe_allow_html=True)
-""", unsafe_allow_html=True)
