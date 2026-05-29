@@ -6,14 +6,11 @@ def main(page: ft.Page):
     page.theme_mode = ft.ThemeMode.LIGHT
     page.rtl = True
     
-    # متغیر سشن برای لاگین
     page.session.logged_in = False
     
-    # فیلدها
     username = ft.TextField(label="نام کاربری")
     password = ft.TextField(label="رمز عبور", password=True)
 
-    # تابع لاگین
     def login(e):
         if username.value == "admin" and password.value == "1234":
             page.session.logged_in = True
@@ -22,11 +19,9 @@ def main(page: ft.Page):
             page.show_snack_bar(ft.SnackBar(content=ft.Text("اطلاعات اشتباه است!")))
             page.update()
 
-    # تابع اصلی رندر
     def render(tab_index=0):
         page.controls.clear()
         
-        # بخش ورود
         if not page.session.logged_in:
             page.add(
                 ft.Text("ورود به تاپسانیفای", size=25),
@@ -37,33 +32,24 @@ def main(page: ft.Page):
         else:
             # محتوای تب‌ها
             contents = [
-                ft.Text("خوش آمدید! اینجا داشبورد اصلی است.", size=20),
-                ft.Text("لیست فاکتورها: (اطلاعات در حال بارگذاری...)", size=20),
-                ft.Text("اطلاعات فنی تاپسان", size=20)
+                ft.Text("داشبورد اصلی", size=20),
+                ft.Text("لیست فاکتورها", size=20),
+                ft.Text("اطلاعات فنی", size=20)
             ]
 
-            # تابع تغییر تب
-            def change_tab(e):
-                render(e.control.selected_index)
+            # دکمه‌های ناوبری جایگزین
+            nav_buttons = ft.Row([
+                ft.ElevatedButton("داشبورد", on_click=lambda _: render(0)),
+                ft.ElevatedButton("فاکتور", on_click=lambda _: render(1)),
+                ft.ElevatedButton("اطلاعات", on_click=lambda _: render(2)),
+            ], alignment="center")
 
-            # ایجاد نوار پایین
-            nav = ft.NavigationBar(
-                selected_index=tab_index,
-                on_change=change_tab,
-                destinations=[
-                    ft.NavigationBarDestination(icon="dashboard", label="داشبورد"),
-                    ft.NavigationBarDestination(icon="receipt", label="فاکتور"),
-                    ft.NavigationBarDestination(icon="info", label="اطلاعات"),
-                ]
-            )
-
-            # افزودن به صفحه
             page.add(
                 ft.Text("پنل مدیریت", size=30, weight="bold"),
                 ft.Divider(),
                 contents[tab_index],
-                ft.Container(expand=True), # ایجاد فضای خالی برای راندن نوار به پایین
-                nav
+                ft.Container(expand=True),
+                nav_buttons
             )
         page.update()
 
