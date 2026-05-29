@@ -42,7 +42,7 @@ def main(page: ft.Page):
         page.controls.clear()
         
         if not page.session.logged_in:
-            # استفاده از رشته "center" به جای ft.alignment.center
+            # اینجا حذف کردم و فقط از رشته "center" استفاده کردم
             page.add(
                 ft.Container(
                     content=ft.Column(
@@ -55,7 +55,7 @@ def main(page: ft.Page):
                         horizontal_alignment="center"
                     ),
                     padding=20,
-                    alignment=ft.alignment.center, # گاهی اوقات این در برخی نسخه‌ها هست، اگر خطا داد، کلا حذفش کنید
+                    alignment="center", # تغییر از ft.alignment.center به رشته متنی
                     expand=True
                 )
             )
