@@ -3,7 +3,7 @@ import os
 
 def main(page: ft.Page):
     # تنظیم فونت
-    page.fonts = {"iranyekan": "iranyekan.ttf"}
+    page.fonts = {"iranyekan": "fonts/iranyekan.ttf"}
     page.theme = ft.Theme(font_family="iranyekan")
     
     page.padding = 0
