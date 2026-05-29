@@ -6,6 +6,7 @@ def main(page: ft.Page):
     page.theme_mode = ft.ThemeMode.LIGHT
     page.rtl = True
     
+    # متغیر سشن برای لاگین
     page.session.logged_in = False
     
     username = ft.TextField(label="نام کاربری")
@@ -16,7 +17,7 @@ def main(page: ft.Page):
             page.session.logged_in = True
             render()
         else:
-            page.show_snack_bar(ft.SnackBar(content=ft.Text("اطلاعات اشتباه است!")))
+            page.show_snack_bar(ft.SnackBar(content=ft.Text("نام کاربری یا رمز عبور اشتباه است!")))
             page.update()
 
     def render(tab_index=0):
@@ -30,22 +31,26 @@ def main(page: ft.Page):
                 ft.ElevatedButton("ورود", on_click=login)
             )
         else:
-            # محتوای تب‌ها
+            # تعریف محتوای ۵ تب جدید
             contents = [
-                ft.Text("داشبورد اصلی", size=20),
-                ft.Text("لیست فاکتورها", size=20),
-                ft.Text("اطلاعات فنی", size=20)
+                ft.Text("داشبورد مدیریتی", size=20),
+                ft.Text("بخش پیش‌فاکتورها", size=20),
+                ft.Text("بخش TopSUNify", size=20),
+                ft.Text("اطلاعات فنی سیستم", size=20),
+                ft.Text("پروفایل کاربری", size=20)
             ]
 
-            # دکمه‌های ناوبری جایگزین
+            # لیست دکمه‌های ناوبری (۵ مورد)
             nav_buttons = ft.Row([
                 ft.ElevatedButton("داشبورد", on_click=lambda _: render(0)),
-                ft.ElevatedButton("فاکتور", on_click=lambda _: render(1)),
-                ft.ElevatedButton("اطلاعات", on_click=lambda _: render(2)),
-            ], alignment="center")
+                ft.ElevatedButton("پیش فاکتور", on_click=lambda _: render(1)),
+                ft.ElevatedButton("TopSUNify", on_click=lambda _: render(2)),
+                ft.ElevatedButton("اطلاعات فنی", on_click=lambda _: render(3)),
+                ft.ElevatedButton("پروفایل", on_click=lambda _: render(4)),
+            ], alignment="center", wrap=True) # wrap=True باعث می‌شود در صفحه موبایل دکمه‌ها به سطر بعدی بروند
 
             page.add(
-                ft.Text("پنل مدیریت", size=30, weight="bold"),
+                ft.Text("پنل مدیریت تاپسانیفای", size=30, weight="bold"),
                 ft.Divider(),
                 contents[tab_index],
                 ft.Container(expand=True),
