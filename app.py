@@ -1,22 +1,7 @@
 import flet as ft
 import os
 import time
-import uuid
-from webauthn import (
-    generate_registration_options,
-    verify_registration_response,
-    generate_authentication_options,
-    verify_authentication_response,
-    options_to_json,
-)
-from webauthn.helpers import bytes_to_base64url
-from webauthn.helpers.structs import (
-    PublicKeyCredentialCreationOptions,
-    PublicKeyCredentialRequestOptions,
-)
-
-# ذخیره‌سازی ساده (در RAM) — برای تست
-users = {}  # username -> {"id": bytes, "credentials": list}
+import requests
 
 def main(page: ft.Page):
     page.fonts = {"iranyekan": "fonts/iranyekan.ttf"}
@@ -27,78 +12,105 @@ def main(page: ft.Page):
     
     if not hasattr(page.session, "logged_in"):
         page.session.logged_in = False
-        page.session.username = None
 
-    # ==================== WebAuthn Helper Functions ====================
-    def get_user(username: str):
-        return users.get(username)
+    GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbygH2yHhw44Lk5Hv8okJDnRBgGw2UzoF1wsZvMGGGr7ZzhSS0Ro6WhSeVFTPM2TpsMv/exec"
 
-    def create_user(username: str):
-        user_id = uuid.uuid4().bytes
-        users[username] = {"id": user_id, "credentials": []}
-        return user_id
+    # ==================== ارسال به گوگل شیت ====================
+    def send_to_google_sheet(data: dict):
+        try:
+            response = requests.post(GOOGLE_SCRIPT_URL, json=data, timeout=10)
+            if response.status_code == 200:
+                return True
+            else:
+                print("Google Sheet Error:", response.text)
+                return False
+        except Exception as ex:
+            print("Request Error:", ex)
+            return False
 
-    # ==================== ثبت‌نام بیومتریک ====================
-    def register_biometric(e):
-        username = page.session.get("temp_username")
-        if not username:
-            return
-
-        user = get_user(username)
-        if not user:
-            user_id = create_user(username)
-        else:
-            user_id = user["id"]
-
-        registration_options = generate_registration_options(
-            rp_id=page.request.host.split(":")[0] if page.request else "localhost",
-            rp_name="TopSUNify",
-            user_id=user_id,
-            user_name=username,
-            user_display_name=username,
-        )
-
-        page.session.registration_options = registration_options
-        page.run_js(f"""
-            window.registrationOptions = {options_to_json(registration_options)};
-            navigator.credentials.create({{publicKey: window.registrationOptions}})
-                .then(cred => {{
-                    window.pywebview.onRegistrationSuccess(JSON.stringify({{
-                        id: cred.id,
-                        rawId: Array.from(new Uint8Array(cred.rawId)),
-                        response: {{
-                            attestationObject: Array.from(new Uint8Array(cred.response.attestationObject)),
-                            clientDataJSON: Array.from(new Uint8Array(cred.response.clientDataJSON))
-                        }},
-                        type: cred.type
-                    }}));
-                }})
-                .catch(err => console.error(err));
-        """)
-
-    # ==================== لاگین بیومتریک ====================
+    # ==================== دیالوگ بیومتریک ====================
     def show_biometric_dialog(e):
         dlg = ft.AlertDialog(
             title=ft.Text("احراز هویت بیومتریک", size=18, weight="bold"),
             content=ft.Column([
-                ft.ProgressRing(width=65, height=65),
-                ft.Text("لطفاً اثر انگشت یا چهره خود را تأیید کنید...", text_align="center")
-            ], horizontal_alignment="center", spacing=20),
+                ft.Text("از اثر انگشت یا تشخیص چهره دستگاه استفاده کنید", text_align="center"),
+                ft.ProgressRing(width=70, height=70, stroke_width=8),
+                ft.Text("در حال اتصال به حسگر...", size=14, color="grey", text_align="center")
+            ], horizontal_alignment="center", spacing=25, height=220),
             actions=[ft.TextButton("انصراف", on_click=lambda _: (setattr(dlg, 'open', False), page.update()))]
         )
         page.dialog = dlg
         dlg.open = True
         page.update()
 
-        # اینجا Authentication Options تولید و به JS ارسال می‌شود
-        # (برای سادگی فعلاً شبیه‌سازی + تابع واقعی)
-        time.sleep(1.5)
+        time.sleep(2.2)  # شبیه‌سازی
         dlg.open = False
         page.session.logged_in = True
         page.update()
         render()
 
-    # ==================== صفحه لاگین ====================
+    # ==================== دیالوگ ثبت‌نام / فراموشی رمز ====================
+    def show_register_dialog(e):
+        name = ft.TextField(label="نام و نام خانوادگی", width=340, border_radius=10)
+        phone = ft.TextField(label="شماره موبایل", width=340, border_radius=10, prefix_text="+98 ", keyboard_type=ft.KeyboardType.NUMBER)
+        username = ft.TextField(label="نام کاربری", width=340, border_radius=10)
+        password = ft.TextField(label="رمز عبور", password=True, width=340, border_radius=10)
+        confirm_password = ft.TextField(label="تأیید رمز عبور", password=True, width=340, border_radius=10)
+        verification_code = ft.TextField(label="کد تأیید", width=340, border_radius=10, visible=False)
+
+        def send_verification(e):
+            if not phone.value or len(phone.value) < 9:
+                page.show_snack_bar(ft.SnackBar(ft.Text("شماره موبایل معتبر وارد کنید"), open=True))
+                return
+            
+            # اینجا بعداً API ارسال SMS (کاوه‌نگار، ملی‌پرداخت و ...) اضافه می‌شود
+            page.show_snack_bar(ft.SnackBar(ft.Text("✅ کد تأیید به شماره موبایل ارسال شد"), open=True, bgcolor="green"))
+            verification_code.visible = True
+            page.update()
+
+        def register_user(e):
+            if password.value != confirm_password.value:
+                page.show_snack_bar(ft.SnackBar(ft.Text("رمز عبور و تأیید آن مطابقت ندارد"), open=True))
+                return
+            
+            if not verification_code.value:
+                page.show_snack_bar(ft.SnackBar(ft.Text("ابتدا کد تأیید را وارد کنید"), open=True))
+                return
+
+            data = {
+                "نام_نام_خانوادگی": name.value,
+                "شماره_موبایل": phone.value,
+                "نام_کاربری": username.value,
+                "رمز_عبور": password.value,
+                "تاریخ": time.strftime("%Y-%m-%d %H:%M:%S")
+            }
+
+            if send_to_google_sheet(data):
+                page.show_snack_bar(ft.SnackBar(ft.Text("✅ ثبت‌نام با موفقیت انجام شد"), open=True, bgcolor="green"))
+                dlg.open = False
+                page.update()
+            else:
+                page.show_snack_bar(ft.SnackBar(ft.Text("خطا در ثبت اطلاعات"), open=True))
+
+        dlg = ft.AlertDialog(
+            title=ft.Text("ثبت‌نام / بازیابی رمز", size=18, weight="bold"),
+            content=ft.Column([
+                name, phone, username, password, confirm_password,
+                ft.ElevatedButton("ارسال کد تأیید", bgcolor="blue", color="white", on_click=send_verification),
+                verification_code,
+            ], spacing=15, scroll=ft.ScrollMode.AUTO, height=420),
+            actions=[
+                ft.TextButton("انصراف", on_click=lambda _: (setattr(dlg, 'open', False), page.update())),
+                ft.ElevatedButton("تأیید نهایی", bgcolor="#FFCC00", color="black", on_click=register_user)
+            ],
+            actions_alignment=ft.MainAxisAlignment.END
+        )
+
+        page.dialog = dlg
+        dlg.open = True
+        page.update()
+
+    # ==================== صفحه اصلی ====================
     def render(tab_index=0):
         page.controls.clear()
 
@@ -107,11 +119,13 @@ def main(page: ft.Page):
                 ft.Column([
                     ft.Container(content=ft.Image(src="TopSUNify.png", width=190), margin=ft.margin.Margin(top=40, bottom=40)),
 
+                    # نام کاربری
                     ft.Container(
                         content=ft.TextField(label="نام کاربری", width=340, border_radius=12, prefix_icon=ft.Icons.PERSON, text_align=ft.TextAlign.RIGHT),
                         margin=ft.margin.Margin(bottom=20)
                     ),
 
+                    # رمز عبور + بیومتریک
                     ft.Container(
                         content=ft.Row([
                             ft.Container(
@@ -119,18 +133,39 @@ def main(page: ft.Page):
                                 on_click=show_biometric_dialog,
                                 padding=10,
                                 border_radius=12,
-                                ink=True
+                                ink=True,
+                                ink_color="#FFCC00"
                             ),
-                            ft.TextField(label="رمز عبور", password=True, width=270, border_radius=12, prefix_icon=ft.Icons.LOCK, text_align=ft.TextAlign.RIGHT)
-                        ], alignment="center", spacing=12),
+                            ft.TextField(
+                                label="رمز عبور",
+                                password=True,
+                                width=270,
+                                border_radius=12,
+                                prefix_icon=ft.Icons.LOCK,
+                                text_align=ft.TextAlign.RIGHT
+                            )
+                        ], alignment="center", spacing=12, vertical_alignment="center"),
                         margin=ft.margin.Margin(bottom=30)
                     ),
 
-                    ft.ElevatedButton("ورود به TopSUNify", width=340, bgcolor="#FFCC00", color="black",
-                                    style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)),
-                                    on_click=lambda e: (setattr(page.session, 'logged_in', True), render())),
+                    # دکمه ورود
+                    ft.ElevatedButton(
+                        "ورود به TopSUNify",
+                        width=340,
+                        bgcolor="#FFCC00",
+                        color="black",
+                        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)),
+                        on_click=lambda e: (setattr(page.session, 'logged_in', True), render())
+                    ),
 
-                    ft.Text("فعال‌سازی / فراموشی رمز", size=14, color="blue", text_align="center"),
+                    # لینک فعال‌سازی / فراموشی رمز
+                    ft.Text(
+                        "فعال‌سازی / فراموشی رمز",
+                        size=14,
+                        color="blue",
+                        text_align="center",
+                        on_click=show_register_dialog  # ← کلیک‌پذیر شد
+                    ),
 
                     ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=160), margin=ft.margin.Margin(top=50, bottom=30)),
 
@@ -143,7 +178,7 @@ def main(page: ft.Page):
                 ft.Column([
                     ft.Text("پنل TopSUNify", size=30, weight="bold"),
                     ft.Divider(),
-                    ft.Text("خوش آمدید!", size=25),
+                    ft.Text("خوش آمدید!", size=24),
                     ft.ElevatedButton("خروج", on_click=lambda e: (setattr(page.session, 'logged_in', False), render()))
                 ], horizontal_alignment="center", expand=True)
             )
