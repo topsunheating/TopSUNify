@@ -28,7 +28,7 @@ def main(page: ft.Page):
         dlg.open = True
         page.update()
 
-        # شبیه‌سازی موفقیت (بعداً WebAuthn واقعی اضافه می‌کنیم)
+        # شبیه‌سازی موفقیت بیومتریک
         import time
         time.sleep(1.8)
         dlg.open = False
@@ -46,7 +46,7 @@ def main(page: ft.Page):
                     # لوگو
                     ft.Container(
                         content=ft.Image(src="TopSUNify.png", width=180),
-                        margin=ft.margin.Margin(top=50, bottom=30)   # اصلاح شده
+                        margin=ft.margin.Margin(top=50, bottom=30)
                     ),
 
                     # نام کاربری
@@ -57,7 +57,7 @@ def main(page: ft.Page):
                             border_radius=12,
                             prefix_icon=ft.Icons.PERSON,
                         ),
-                        margin=ft.margin.Margin(bottom=15)   # اصلاح شده
+                        margin=ft.margin.Margin(bottom=15)
                     ),
 
                     # رمز عبور + بیومتریک
@@ -76,7 +76,7 @@ def main(page: ft.Page):
                                 padding=8,
                             )
                         ], alignment="center"),
-                        margin=ft.margin.Margin(bottom=30)   # اصلاح شده
+                        margin=ft.margin.Margin(bottom=30)
                     ),
 
                     # دکمه ورود زرد
@@ -97,17 +97,20 @@ def main(page: ft.Page):
                     # Powered by
                     ft.Container(
                         content=ft.Image(src="TopSUN-Powered.png", width=140),
-                        margin=ft.margin.Margin(top=40, bottom=20)   # اصلاح شده
+                        margin=ft.margin.Margin(top=40, bottom=20)
                     ),
 
-                    # پس‌زمینه پایین
+                    # پس‌زمینه پایین (اصلاح شده)
                     ft.Container(
                         expand=True,
                         content=ft.Stack([
                             ft.Image(src="landscape.jpg", width=400, height=220, fit="cover"),
-                            ft.Container(expand=True, bgcolor=ft.colors.with_opacity(0.35, "white"))
+                            ft.Container(
+                                expand=True, 
+                                bgcolor="#FFFFFF"   # سفید ساده با شفافیت از طریق opacity در تصویر
+                            )
                         ]),
-                        margin=ft.margin.Margin(top=20)   # اصلاح شده
+                        margin=ft.margin.Margin(top=20)
                     )
                 ], 
                 horizontal_alignment="center", 
