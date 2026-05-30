@@ -155,7 +155,7 @@ def main(page: ft.Page):
                             color="blue",
                             text_align="center"
                         ),
-                        on_click=show_register_dialog,
+                        on_tap=show_register_dialog,          # ← اینجا on_tap است
                         mouse_cursor=ft.MouseCursor.CLICK
                     ),
 
