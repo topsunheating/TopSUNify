@@ -1,9 +1,8 @@
 import flet as ft
-import requests
 import os
 
 def main(page: ft.Page):
-    # تنظیمات فونت و ظاهر
+    # تنظیمات فونت
     page.fonts = {"iranyekan": "fonts/iranyekan.ttf"}
     page.theme = ft.Theme(font_family="iranyekan")
     page.padding = 0
@@ -11,27 +10,25 @@ def main(page: ft.Page):
     page.theme_mode = "light"
     page.session.logged_in = False
 
-    # 1. دیالوگ سفارشی (Overlay) برای حل مشکل Popup
-    dlg = ft.Container(
+    # دیالوگ سفارشی (Overlay) - کاملاً ایمن
+    biometric_overlay = ft.Container(
         content=ft.Column([
             ft.Text("احراز هویت بیومتریک", size=20, weight="bold"),
-            ft.ElevatedButton("اثر انگشت", on_click=lambda e: (setattr(dlg, 'visible', False), page.update())),
-            ft.ElevatedButton("تشخیص چهره", on_click=lambda e: (setattr(dlg, 'visible', False), page.update())),
+            ft.ElevatedButton("اثر انگشت", on_click=lambda e: (setattr(biometric_overlay, 'visible', False), page.update())),
+            ft.ElevatedButton("تشخیص چهره", on_click=lambda e: (setattr(biometric_overlay, 'visible', False), page.update())),
         ], alignment="center", horizontal_alignment="center"),
         width=300, height=200, bgcolor="white", border_radius=20,
         padding=20, visible=False, shadow=ft.BoxShadow(blur_radius=10)
     )
 
     def show_biometric(e):
-        dlg.visible = True
+        biometric_overlay.visible = True
         page.update()
 
-    # تابع اصلی رندر صفحات
     def render(tab_index=0):
         page.controls.clear()
         
         if not page.session.logged_in:
-            # صفحه لاگین + استک برای نمایش دیالوگ روی صفحه
             page.add(
                 ft.Stack([
                     ft.Column([
@@ -47,14 +44,13 @@ def main(page: ft.Page):
                         ft.Container(expand=True),
                         ft.Stack([
                             ft.Image(src="landscape.jpg", width=400, height=200, fit="cover"),
-                            ft.Container(width=400, height=200, gradient=ft.LinearGradient(begin=ft.alignment.Alignment(0, 1), end=ft.alignment.Alignment(0, -1), colors=["transparent", "white"]))
+                            ft.Container(width=400, height=200, bgcolor=ft.colors.with_opacity(0.5, "white"))
                         ], width=400, height=200)
                     ], horizontal_alignment="center", expand=True),
-                    ft.Container(content=dlg, alignment=ft.alignment.Alignment(0, 0)) # دیالوگ در استک
+                    ft.Container(content=biometric_overlay, alignment=ft.alignment.center)
                 ], expand=True)
             )
         else:
-            # صفحات داخلی
             contents = [
                 ft.Text("داشبورد مدیریتی", size=25),
                 ft.Text("بخش پیش‌فاکتورها", size=25),
@@ -62,7 +58,6 @@ def main(page: ft.Page):
                 ft.Text("اطلاعات فنی سیستم", size=25),
                 ft.Text("پروفایل کاربری", size=25)
             ]
-            
             nav_buttons = ft.Row([
                 ft.IconButton(icon="dashboard", on_click=lambda _: render(0)),
                 ft.IconButton(icon="edit_document", on_click=lambda _: render(1)),
@@ -84,6 +79,4 @@ def main(page: ft.Page):
     render()
 
 if __name__ == "__main__":
-    # اگر روی سرور هستید از پورت محیطی و اگر نیستید از پورت پیش‌فرض استفاده کنید
-    port = int(os.environ.get("PORT", 8080))
-    ft.app(target=main, port=port, host="0.0.0.0", assets_dir="assets")
+    ft.app(target=main, port=int(os.environ.get("PORT", 8080)), host="0.0.0.0", assets_dir="assets")
