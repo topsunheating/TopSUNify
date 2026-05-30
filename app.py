@@ -26,7 +26,7 @@ def main(page: ft.Page):
     def profile_page():
         return ft.Container(
             content=ft.Column([
-                # هدر
+                # هدر پروفایل
                 ft.Container(
                     content=ft.Column([
                         ft.CircleAvatar(foreground_image_src="https://i.pravatar.cc/150?u=reza", radius=48),
@@ -40,7 +40,7 @@ def main(page: ft.Page):
                     padding=20, bgcolor="#f8f9fa", border_radius=20, margin=ft.margin.Margin(bottom=20)
                 ),
 
-                # منوها
+                # منوهای پروفایل
                 ft.ListTile(leading=ft.Icon(ft.Icons.PERSON_ADD, color="blue"), title=ft.Text("درخواست ایجاد حساب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=create_account_request),
                 ft.ListTile(leading=ft.Icon(ft.Icons.STAR, color="orange"), title=ft.Text("مشتریان منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
                 ft.ListTile(leading=ft.Icon(ft.Icons.WAREHOUSE, color="green"), title=ft.Text("اعلام موجودی انبار"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
@@ -79,7 +79,6 @@ def main(page: ft.Page):
         page.controls.clear()
 
         if not page.session.logged_in:
-            # صفحه لاگین
             page.add(
                 ft.Container(
                     content=ft.Column([
@@ -119,7 +118,7 @@ def main(page: ft.Page):
                 margin=ft.margin.Margin(left=15, right=15)
             )
 
-            # ناوبری ثابت در پایین
+            # ناوبری ثابت در پایین (بدون border.only)
             nav_bar = ft.Container(
                 content=ft.Row([
                     ft.Container(content=ft.Image(src="dashboard.png", width=32, height=32), on_click=lambda _: render(0), padding=8),
@@ -130,7 +129,7 @@ def main(page: ft.Page):
                 ], alignment="center", spacing=15),
                 bgcolor="white",
                 padding=12,
-                border=ft.border.only(top=ft.border.BorderSide(1, "#e0e0e0"))   # اصلاح شده
+                border=ft.border.all(1, "#e0e0e0")   # روش ساده و ایمن
             )
 
             page.add(
