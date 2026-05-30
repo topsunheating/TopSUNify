@@ -99,7 +99,7 @@ def main(page: ft.Page):
                     width=400,
                     margin=ft.margin.Margin(left=15, right=15),
                     expand=True,
-                    alignment= "center"
+                    alignment="center"
                 )
             )
         else:
@@ -116,7 +116,7 @@ def main(page: ft.Page):
                 expand=True,
                 width=400,
                 margin=ft.margin.Margin(left=15, right=15),
-                alignment= "center"
+                alignment="center"
             )
 
             nav_bar = ft.Container(
@@ -137,7 +137,6 @@ def main(page: ft.Page):
                 )
             )
 
-            # اضافه کردن به صفحه در حالت لاگین
             page.add(
                 ft.Column([
                     ft.Text("پنل TopSUNify", size=30, weight="bold"),
