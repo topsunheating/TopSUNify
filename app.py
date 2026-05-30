@@ -15,7 +15,6 @@ def main(page: ft.Page):
 
     GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbygH2yHhw44Lk5Hv8okJDnRBgGw2UzoF1wsZvMGGGr7ZzhSS0Ro6WhSeVFTPM2TpsMv/exec"
 
-    # ==================== ارسال به گوگل شیت ====================
     def send_to_google_sheet(data: dict):
         try:
             response = requests.post(GOOGLE_SCRIPT_URL, json=data, timeout=10)
@@ -47,7 +46,13 @@ def main(page: ft.Page):
     # ==================== دیالوگ ثبت‌نام / فراموشی رمز ====================
     def show_register_dialog(e):
         name = ft.TextField(label="نام و نام خانوادگی", width=340, border_radius=10)
-        phone = ft.TextField(label="شماره موبایل", width=340, border_radius=10, prefix_text="+98 ", keyboard_type=ft.KeyboardType.NUMBER)
+        phone = ft.TextField(
+            label="شماره موبایل", 
+            width=340, 
+            border_radius=10, 
+            prefix=ft.Text("+98 ", size=16),   # ← اصلاح شده
+            keyboard_type=ft.KeyboardType.NUMBER
+        )
         username = ft.TextField(label="نام کاربری", width=340, border_radius=10)
         password = ft.TextField(label="رمز عبور", password=True, width=340, border_radius=10)
         confirm_password = ft.TextField(label="تأیید رمز عبور", password=True, width=340, border_radius=10)
@@ -65,13 +70,13 @@ def main(page: ft.Page):
             if password.value != confirm_password.value:
                 page.show_snack_bar(ft.SnackBar(ft.Text("رمز عبور مطابقت ندارد"), open=True))
                 return
-            if not verification_code.value:
+            if not verification_code.value or len(verification_code.value) < 4:
                 page.show_snack_bar(ft.SnackBar(ft.Text("کد تأیید را وارد کنید"), open=True))
                 return
 
             data = {
                 "نام_نام_خانوادگی": name.value,
-                "شماره_موبایل": phone.value,
+                "شماره_موبایل": "+98" + phone.value,
                 "نام_کاربری": username.value,
                 "رمز_عبور": password.value,
                 "تاریخ": time.strftime("%Y-%m-%d %H:%M:%S")
@@ -147,7 +152,6 @@ def main(page: ft.Page):
                         on_click=lambda e: (setattr(page.session, 'logged_in', True), render())
                     ),
 
-                    # لینک فعال‌سازی / فراموشی رمز (اصلاح شده)
                     ft.GestureDetector(
                         content=ft.Text(
                             "فعال‌سازی / فراموشی رمز",
@@ -155,7 +159,7 @@ def main(page: ft.Page):
                             color="blue",
                             text_align="center"
                         ),
-                        on_tap=show_register_dialog,          # ← اینجا on_tap است
+                        on_tap=show_register_dialog,
                         mouse_cursor=ft.MouseCursor.CLICK
                     ),
 
