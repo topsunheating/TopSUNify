@@ -29,53 +29,82 @@ def main(page: ft.Page):
         page.update()
         show_message(f"تم تغییر کرد به: {page.theme_mode}", "blue")
 
+    # ==================== صفحه اطلاعات فنی ====================
+    def technical_page():
+        return ft.Container(
+            content=ft.Column([
+                # هدر
+                ft.Container(
+                    content=ft.Text("اطلاعات فنی سیستم", size=26, weight="bold", text_align=ft.TextAlign.CENTER),
+                    padding=20,
+                    margin=ft.margin.Margin(bottom=15)
+                ),
+
+                # لیست گزینه‌ها
+                ft.Container(
+                    content=ft.Column([
+                        ft.ListTile(
+                            leading=ft.Icon(ft.Icons.CATALOG, color="blue"),
+                            title=ft.Text("کاتالوگ محصولات"),
+                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
+                            on_click=lambda e: show_message("کاتالوگ محصولات در حال بارگذاری...")
+                        ),
+                        ft.ListTile(
+                            leading=ft.Icon(ft.Icons.PRICE_CHANGE, color="green"),
+                            title=ft.Text("لیست قیمت"),
+                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
+                            on_click=lambda e: show_message("لیست قیمت باز شد")
+                        ),
+                        ft.ListTile(
+                            leading=ft.Icon(ft.Icons.WORK_HISTORY, color="purple"),
+                            title=ft.Text("رزومه شرکت"),
+                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                        ),
+                        ft.ListTile(
+                            leading=ft.Icon(ft.Icons.DESCRIPTION, color="orange"),
+                            title=ft.Text("پروپوزال و گزارش فنی"),
+                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                        ),
+                        ft.ListTile(
+                            leading=ft.Icon(ft.Icons.IMAGE, color="pink"),
+                            title=ft.Text("تصاویر و فیلم پروژه‌ها"),
+                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                        ),
+                        ft.ListTile(
+                            leading=ft.Icon(ft.Icons.VIDEO_LIBRARY, color="red"),
+                            title=ft.Text("فیلم‌های تبلیغاتی"),
+                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                        ),
+                    ], spacing=2, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+                    width=380
+                )
+            ], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            width=400,
+            margin=ft.margin.Margin(left=15, right=15),
+            expand=True
+        )
+
     # ==================== صفحه تنظیمات ====================
     def settings_page():
         return ft.Container(
             content=ft.Column([
-                # هدر تنظیمات
                 ft.Container(
                     content=ft.Row([
-                        ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)),  # بازگشت به پروفایل
+                        ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)),
                         ft.Text("تنظیمات", size=24, weight="bold")
-                    ], alignment=ft.MainAxisAlignment.START),
+                    ]),
                     padding=15,
                     bgcolor="#f8f9fa",
                     border_radius=20,
                     margin=ft.margin.Margin(bottom=20)
                 ),
-
                 ft.Column([
-                    ft.ListTile(
-                        leading=ft.Icon(ft.Icons.PERSON),
-                        title=ft.Text("تغییر نام کاربری"),
-                        trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
-                    ),
-                    ft.ListTile(
-                        leading=ft.Icon(ft.Icons.SAVE),
-                        title=ft.Text("ذخیره نام کاربری"),
-                        trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
-                    ),
-                    ft.ListTile(
-                        leading=ft.Icon(ft.Icons.FINGERPRINT),
-                        title=ft.Text("ورود با اثر انگشت"),
-                        trailing=ft.Switch(value=False, on_change=lambda e: show_message("ورود با اثر انگشت فعال شد"))
-                    ),
-                    ft.ListTile(
-                        leading=ft.Icon(ft.Icons.LOCK),
-                        title=ft.Text("تغییر رمز ورود"),
-                        trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
-                    ),
-                    ft.ListTile(
-                        leading=ft.Icon(ft.Icons.PHONE),
-                        title=ft.Text("تغییر شماره تلفن همراه"),
-                        trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
-                    ),
-                    ft.ListTile(
-                        leading=ft.Icon(ft.Icons.DEVICES),
-                        title=ft.Text("دستگاه‌های فعال"),
-                        trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
-                    ),
+                    ft.ListTile(leading=ft.Icon(ft.Icons.PERSON), title=ft.Text("تغییر نام کاربری"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                    ft.ListTile(leading=ft.Icon(ft.Icons.SAVE), title=ft.Text("ذخیره نام کاربری"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                    ft.ListTile(leading=ft.Icon(ft.Icons.FINGERPRINT), title=ft.Text("ورود با اثر انگشت"), trailing=ft.Switch(value=False)),
+                    ft.ListTile(leading=ft.Icon(ft.Icons.LOCK), title=ft.Text("تغییر رمز ورود"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                    ft.ListTile(leading=ft.Icon(ft.Icons.PHONE), title=ft.Text("تغییر شماره تلفن همراه"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                    ft.ListTile(leading=ft.Icon(ft.Icons.DEVICES), title=ft.Text("دستگاه‌های فعال"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
                     ft.Divider(height=20),
                     ft.ListTile(
                         leading=ft.Icon(ft.Icons.DELETE_FOREVER, color="red"),
@@ -93,7 +122,6 @@ def main(page: ft.Page):
     def profile_page():
         return ft.Container(
             content=ft.Column([
-                # هدر پروفایل
                 ft.Container(
                     content=ft.Column([
                         ft.CircleAvatar(foreground_image_src="https://i.pravatar.cc/150?u=reza", radius=48),
@@ -104,14 +132,9 @@ def main(page: ft.Page):
                             bgcolor="#f0f0f0", padding=12, border_radius=12, margin=ft.margin.Margin(top=12, bottom=8)
                         )
                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-                    padding=20, 
-                    bgcolor="#f8f9fa", 
-                    border_radius=20, 
-                    margin=ft.margin.Margin(bottom=20),
-                    width=380
+                    padding=20, bgcolor="#f8f9fa", border_radius=20, margin=ft.margin.Margin(bottom=20), width=380
                 ),
 
-                # لیست منوها
                 ft.Container(
                     content=ft.Column([
                         ft.ListTile(leading=ft.Icon(ft.Icons.PERSON_ADD, color="blue"), title=ft.Text("درخواست ایجاد حساب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=create_account_request),
@@ -132,12 +155,7 @@ def main(page: ft.Page):
 
                         ft.Divider(height=25),
 
-                        ft.ListTile(
-                            leading=ft.Icon(ft.Icons.SETTINGS, color="grey"),
-                            title=ft.Text("تنظیمات"),
-                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
-                            on_click=lambda e: render(5)   # رفتن به صفحه تنظیمات
-                        ),
+                        ft.ListTile(leading=ft.Icon(ft.Icons.SETTINGS, color="grey"), title=ft.Text("تنظیمات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=lambda e: render(5)),
                         ft.ListTile(leading=ft.Icon(ft.Icons.LOGOUT, color="red"), title=ft.Text("خروج", color="red"), on_click=lambda e: (setattr(page.session, 'logged_in', False), render())),
                         ft.Text("نسخه ۱.۴.۳", size=12, color="grey", text_align=ft.TextAlign.CENTER)
                     ], spacing=2, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
@@ -181,14 +199,13 @@ def main(page: ft.Page):
                 )
             )
         else:
-            # صفحات اصلی
             contents = [
                 ft.Text("داشبورد مدیریتی", size=25, weight="bold"),
                 ft.Text("بخش پیش‌فاکتورها", size=25, weight="bold"),
                 ft.Column([ft.Image(src="TopSUNify-1.png", width=200), ft.Text("خانه اصلی", size=25, weight="bold")], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-                ft.Text("اطلاعات فنی سیستم", size=25, weight="bold"),
-                profile_page(),
-                settings_page()          # تب جدید برای تنظیمات (اندیس 5)
+                technical_page(),      # تب 3
+                profile_page(),        # تب 4
+                settings_page()        # تب 5
             ]
 
             main_content = ft.Container(
