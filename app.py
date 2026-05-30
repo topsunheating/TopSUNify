@@ -44,7 +44,7 @@ def main(page: ft.Page):
                         ft.Container(expand=True),
                         ft.Stack([
                             ft.Image(src="landscape.jpg", width=400, height=200, fit="cover"),
-                            ft.Container(width=400, height=200, bgcolor=ft.colors.with_opacity(0.5, "white"))
+                            ft.Container(width=400, height=200, bgcolor=ft.Colors.with_opacity(0.5, "white"))
                         ], width=400, height=200)
                     ], horizontal_alignment="center", expand=True),
                     ft.Container(content=biometric_overlay, alignment=ft.alignment.center)
