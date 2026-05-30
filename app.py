@@ -66,7 +66,7 @@ def main(page: ft.Page):
                     width=380
                 ),
 
-                # لیست منوها (وسط چین)
+                # لیست منوها - وسط چین قوی
                 ft.Container(
                     content=ft.Column([
                         ft.ListTile(
@@ -121,14 +121,16 @@ def main(page: ft.Page):
                     ], 
                     spacing=2, 
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-                    width=380
+                    width=360,                    # عرض کمتر برای وسط‌چین بهتر
+                    alignment=ft.alignment.center  # وسط‌چین Container
                 )
             ], 
             scroll=ft.ScrollMode.AUTO, 
             horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400,
             margin=ft.margin.Margin(left=15, right=15),
-            expand=True
+            expand=True,
+            alignment=ft.alignment.center
         )
 
     def create_account_request(e):
@@ -142,6 +144,7 @@ def main(page: ft.Page):
         page.controls.clear()
 
         if not page.session.logged_in:
+            # ... (بخش لاگین بدون تغییر)
             page.add(
                 ft.Container(
                     content=ft.Column([
@@ -177,7 +180,8 @@ def main(page: ft.Page):
                 content=contents[tab_index], 
                 expand=True, 
                 width=400, 
-                margin=ft.margin.Margin(left=15, right=15)
+                margin=ft.margin.Margin(left=15, right=15),
+                alignment=ft.alignment.center
             )
 
             nav_bar = ft.Container(
