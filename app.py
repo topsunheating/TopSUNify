@@ -3,7 +3,10 @@ import os
 import time
 import requests
 
+GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbygH2yHhw44Lk5Hv8okJDnRBgGw2UzoF1wsZvMGGGr7ZzhSS0Ro6WhSeVFTPM2TpsMv/exec"
+
 def main(page: ft.Page):
+    # تنظیمات صفحه
     page.fonts = {"iranyekan": "fonts/iranyekan.ttf"}
     page.theme = ft.Theme(font_family="iranyekan")
     page.padding = 0
@@ -13,11 +16,10 @@ def main(page: ft.Page):
     if not hasattr(page.session, "logged_in"):
         page.session.logged_in = False
 
-    GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbygH2yHhw44Lk5Hv8okJDnRBgGw2UzoF1wsZvMGGGr7ZzhSS0Ro6WhSeVFTPM2TpsMv/exec"
-
+    # ==================== ارسال به گوگل شیت ====================
     def send_to_google_sheet(data: dict):
         try:
-            response = requests.post(GOOGLE_SCRIPT_URL, json=data, timeout=10)
+            response = requests.post(GOOGLE_SHEET_URL, json=data, timeout=10)
             return response.status_code == 200
         except:
             return False
@@ -46,13 +48,7 @@ def main(page: ft.Page):
     # ==================== دیالوگ ثبت‌نام / فراموشی رمز ====================
     def show_register_dialog(e):
         name = ft.TextField(label="نام و نام خانوادگی", width=340, border_radius=10)
-        phone = ft.TextField(
-            label="شماره موبایل", 
-            width=340, 
-            border_radius=10, 
-            prefix=ft.Text("+98 ", size=16),
-            keyboard_type=ft.KeyboardType.NUMBER
-        )
+        phone = ft.TextField(label="شماره موبایل", width=340, border_radius=10, prefix=ft.Text("+98 ", size=16), keyboard_type=ft.KeyboardType.NUMBER)
         username = ft.TextField(label="نام کاربری", width=340, border_radius=10)
         password = ft.TextField(label="رمز عبور", password=True, width=340, border_radius=10)
         confirm_password = ft.TextField(label="تأیید رمز عبور", password=True, width=340, border_radius=10)
@@ -107,11 +103,12 @@ def main(page: ft.Page):
         dlg.open = True
         page.update()
 
-    # ==================== صفحه لاگین ====================
+    # ==================== صفحات داخلی ====================
     def render(tab_index=0):
         page.controls.clear()
 
         if not page.session.logged_in:
+            # === صفحه لاگین ===
             page.add(
                 ft.Column([
                     ft.Container(content=ft.Image(src="TopSUNify.png", width=190), margin=ft.margin.Margin(top=40, bottom=40)),
@@ -152,29 +149,45 @@ def main(page: ft.Page):
                         on_click=lambda e: (setattr(page.session, 'logged_in', True), render())
                     ),
 
-                    # لینک فعال‌سازی / فراموشی رمز
                     ft.TextButton(
                         "فعال‌سازی / فراموشی رمز",
-                        style=ft.ButtonStyle(color={"": "blue"}),   # اصلاح شده
+                        style=ft.ButtonStyle(color={"": "blue"}),
                         on_click=show_register_dialog
                     ),
 
                     ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=160), margin=ft.margin.Margin(top=50, bottom=30)),
 
                     ft.Container(expand=True, content=ft.Image(src="landscape.jpg", width=400, height=220, fit="cover"))
-                ], 
-                horizontal_alignment="center", 
-                expand=True,
-                scroll=ft.ScrollMode.AUTO
-                )
+                ], horizontal_alignment="center", expand=True, scroll=ft.ScrollMode.AUTO)
             )
         else:
+            # === صفحات داخلی ===
+            contents = [
+                ft.Text("داشبورد مدیریتی", size=25),
+                ft.Text("بخش پیش‌فاکتورها", size=25),
+                ft.Column([ft.Image(src="TopSUNify-1.png", width=200), ft.Text("خانه اصلی", size=25)], horizontal_alignment="center"),
+                ft.Text("اطلاعات فنی سیستم", size=25),
+                ft.Text("پروفایل کاربری", size=25)
+            ]
+
+            nav_buttons = ft.Row([
+                ft.Container(content=ft.Image(src="dashboard.png", width=32, height=32), on_click=lambda _: render(0), padding=8),
+                ft.Container(content=ft.Image(src="invoice.png", width=32, height=32), on_click=lambda _: render(1), padding=8),
+                ft.Container(content=ft.Image(src="TopSUNify-1.png", width=32, height=32), on_click=lambda _: render(2), padding=8),
+                ft.Container(content=ft.Image(src="technical.png", width=32, height=32), on_click=lambda _: render(3), padding=8),
+                ft.Container(content=ft.Image(src="profile.png", width=32, height=32), on_click=lambda _: render(4), padding=8),
+            ], alignment="center", spacing=15)
+
             page.add(
                 ft.Column([
                     ft.Text("پنل TopSUNify", size=30, weight="bold"),
                     ft.Divider(),
-                    ft.Text("خوش آمدید!", size=24),
-                    ft.ElevatedButton("خروج", on_click=lambda e: (setattr(page.session, 'logged_in', False), render()))
+                    ft.Container(
+                        content=contents[tab_index], 
+                        expand=True, 
+                        alignment=ft.Alignment(0, 0)
+                    ),
+                    nav_buttons
                 ], horizontal_alignment="center", expand=True)
             )
 
