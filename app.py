@@ -30,35 +30,64 @@ def main(page: ft.Page):
         show_message(f"تم تغییر کرد به: {page.theme_mode}", "blue")
 
     # ==================== صفحه تنظیمات ====================
-    def open_settings(e):
-        settings_dialog = ft.AlertDialog(
-            title=ft.Text("تنظیمات", size=20, weight="bold"),
+    def settings_page():
+        return ft.Container(
             content=ft.Column([
-                ft.ListTile(title=ft.Text("تغییر نام کاربری"), leading=ft.Icon(ft.Icons.PERSON)),
-                ft.ListTile(title=ft.Text("ذخیره نام کاربری"), leading=ft.Icon(ft.Icons.SAVE)),
-                ft.ListTile(
-                    title=ft.Text("ورود با اثر انگشت"),
-                    leading=ft.Icon(ft.Icons.FINGERPRINT),
-                    on_click=lambda e: show_message("احراز هویت بیومتریک فعال شد")
+                # هدر تنظیمات
+                ft.Container(
+                    content=ft.Row([
+                        ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)),  # بازگشت به پروفایل
+                        ft.Text("تنظیمات", size=24, weight="bold")
+                    ], alignment=ft.MainAxisAlignment.START),
+                    padding=15,
+                    bgcolor="#f8f9fa",
+                    border_radius=20,
+                    margin=ft.margin.Margin(bottom=20)
                 ),
-                ft.ListTile(title=ft.Text("تغییر رمز ورود"), leading=ft.Icon(ft.Icons.LOCK)),
-                ft.ListTile(title=ft.Text("تغییر شماره تلفن همراه"), leading=ft.Icon(ft.Icons.PHONE)),
-                ft.ListTile(title=ft.Text("دستگاه‌های فعال"), leading=ft.Icon(ft.Icons.DEVICES)),
-                ft.Divider(),
-                ft.ListTile(
-                    title=ft.Text("حذف تنظیمات و خروج از نرم‌افزار", color="red"),
-                    leading=ft.Icon(ft.Icons.DELETE_FOREVER, color="red"),
-                    on_click=lambda e: (setattr(page.session, 'logged_in', False), page.close_dialog(), render())
-                ),
-            ], scroll=ft.ScrollMode.AUTO, spacing=2, width=400),
-            actions=[
-                ft.TextButton("بستن", on_click=lambda e: page.close_dialog())
-            ],
-            actions_alignment=ft.MainAxisAlignment.END
+
+                ft.Column([
+                    ft.ListTile(
+                        leading=ft.Icon(ft.Icons.PERSON),
+                        title=ft.Text("تغییر نام کاربری"),
+                        trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                    ),
+                    ft.ListTile(
+                        leading=ft.Icon(ft.Icons.SAVE),
+                        title=ft.Text("ذخیره نام کاربری"),
+                        trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                    ),
+                    ft.ListTile(
+                        leading=ft.Icon(ft.Icons.FINGERPRINT),
+                        title=ft.Text("ورود با اثر انگشت"),
+                        trailing=ft.Switch(value=False, on_change=lambda e: show_message("ورود با اثر انگشت فعال شد"))
+                    ),
+                    ft.ListTile(
+                        leading=ft.Icon(ft.Icons.LOCK),
+                        title=ft.Text("تغییر رمز ورود"),
+                        trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                    ),
+                    ft.ListTile(
+                        leading=ft.Icon(ft.Icons.PHONE),
+                        title=ft.Text("تغییر شماره تلفن همراه"),
+                        trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                    ),
+                    ft.ListTile(
+                        leading=ft.Icon(ft.Icons.DEVICES),
+                        title=ft.Text("دستگاه‌های فعال"),
+                        trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                    ),
+                    ft.Divider(height=20),
+                    ft.ListTile(
+                        leading=ft.Icon(ft.Icons.DELETE_FOREVER, color="red"),
+                        title=ft.Text("حذف تنظیمات و خروج از نرم‌افزار", color="red"),
+                        on_click=lambda e: (setattr(page.session, 'logged_in', False), render())
+                    ),
+                ], spacing=2, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
+            ], scroll=ft.ScrollMode.AUTO),
+            width=400,
+            margin=ft.margin.Margin(left=15, right=15),
+            expand=True
         )
-        page.dialog = settings_dialog
-        settings_dialog.open = True
-        page.update()
 
     # ==================== صفحه پروفایل ====================
     def profile_page():
@@ -95,33 +124,11 @@ def main(page: ft.Page):
 
                         ft.Divider(height=25),
 
-                        # موارد جدید اضافه شده
-                        ft.ListTile(
-                            leading=ft.Icon(ft.Icons.PALETTE, color="purple"),
-                            title=ft.Text("نمایش (تم روشن/تیره)"),
-                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
-                            on_click=toggle_theme
-                        ),
-                        ft.ListTile(
-                            leading=ft.Icon(ft.Icons.UPDATE, color="blue"),
-                            title=ft.Text("بروزرسانی"),
-                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
-                        ),
-                        ft.ListTile(
-                            leading=ft.Icon(ft.Icons.MAP, color="green"),
-                            title=ft.Text("شبکه فروش و خدمات"),
-                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
-                        ),
-                        ft.ListTile(
-                            leading=ft.Icon(ft.Icons.GAVEL, color="amber"),
-                            title=ft.Text("قوانین"),
-                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
-                        ),
-                        ft.ListTile(
-                            leading=ft.Icon(ft.Icons.INFO, color="blue"),
-                            title=ft.Text("درباره ما"),
-                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
-                        ),
+                        ft.ListTile(leading=ft.Icon(ft.Icons.PALETTE, color="purple"), title=ft.Text("نمایش (تم روشن/تیره)"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=toggle_theme),
+                        ft.ListTile(leading=ft.Icon(ft.Icons.UPDATE, color="blue"), title=ft.Text("بروزرسانی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                        ft.ListTile(leading=ft.Icon(ft.Icons.MAP, color="green"), title=ft.Text("شبکه فروش و خدمات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                        ft.ListTile(leading=ft.Icon(ft.Icons.GAVEL, color="amber"), title=ft.Text("قوانین"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                        ft.ListTile(leading=ft.Icon(ft.Icons.INFO, color="blue"), title=ft.Text("درباره ما"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
 
                         ft.Divider(height=25),
 
@@ -129,22 +136,14 @@ def main(page: ft.Page):
                             leading=ft.Icon(ft.Icons.SETTINGS, color="grey"),
                             title=ft.Text("تنظیمات"),
                             trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
-                            on_click=open_settings
+                            on_click=lambda e: render(5)   # رفتن به صفحه تنظیمات
                         ),
-                        ft.ListTile(
-                            leading=ft.Icon(ft.Icons.LOGOUT, color="red"),
-                            title=ft.Text("خروج", color="red"),
-                            on_click=lambda e: (setattr(page.session, 'logged_in', False), render())
-                        ),
+                        ft.ListTile(leading=ft.Icon(ft.Icons.LOGOUT, color="red"), title=ft.Text("خروج", color="red"), on_click=lambda e: (setattr(page.session, 'logged_in', False), render())),
                         ft.Text("نسخه ۱.۴.۳", size=12, color="grey", text_align=ft.TextAlign.CENTER)
-                    ], 
-                    spacing=2, 
-                    horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+                    ], spacing=2, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
                     width=360
                 )
-            ], 
-            scroll=ft.ScrollMode.AUTO, 
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            ], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400,
             margin=ft.margin.Margin(left=15, right=15),
             expand=True
@@ -158,7 +157,7 @@ def main(page: ft.Page):
         page.controls.clear()
 
         if not page.session.logged_in:
-            # صفحه ورود (بدون تغییر)
+            # صفحه ورود
             page.add(
                 ft.Container(
                     content=ft.Column([
@@ -182,15 +181,22 @@ def main(page: ft.Page):
                 )
             )
         else:
+            # صفحات اصلی
             contents = [
                 ft.Text("داشبورد مدیریتی", size=25, weight="bold"),
                 ft.Text("بخش پیش‌فاکتورها", size=25, weight="bold"),
                 ft.Column([ft.Image(src="TopSUNify-1.png", width=200), ft.Text("خانه اصلی", size=25, weight="bold")], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
                 ft.Text("اطلاعات فنی سیستم", size=25, weight="bold"),
-                profile_page()
+                profile_page(),
+                settings_page()          # تب جدید برای تنظیمات (اندیس 5)
             ]
 
-            main_content = ft.Container(content=contents[tab_index], expand=True, width=400, margin=ft.margin.Margin(left=15, right=15))
+            main_content = ft.Container(
+                content=contents[tab_index], 
+                expand=True, 
+                width=400, 
+                margin=ft.margin.Margin(left=15, right=15)
+            )
 
             nav_bar = ft.Container(
                 content=ft.Row([
