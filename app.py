@@ -40,31 +40,31 @@ def main(page: ft.Page):
                     padding=20, bgcolor="#f8f9fa", border_radius=20, margin=ft.margin.Margin(bottom=20)
                 ),
 
-                # منوهای پروفایل - کانتینرها برای وسط‌چین کردن ListTile ها
-                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.PERSON_ADD, color="blue"), title=ft.Text("درخواست ایجاد حساب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=create_account_request), alignment=ft.alignment.center),
-                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.STAR, color="orange"), title=ft.Text("مشتریان منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), alignment=ft.alignment.center),
-                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.WAREHOUSE, color="green"), title=ft.Text("اعلام موجودی انبار"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), alignment=ft.alignment.center),
-                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.SHOPPING_CART), title=ft.Text("ثبت درخواست خرید"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), alignment=ft.alignment.center),
-                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.GROUP), title=ft.Text("همکاران منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), alignment=ft.alignment.center),
-                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.PERCENT), title=ft.Text("محاسبه درصد همکاری"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), alignment=ft.alignment.center),
-                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.ACCOUNT_BALANCE_WALLET), title=ft.Text("مبلغ اعتبار"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), alignment=ft.alignment.center),
+                # منوهای پروفایل
+                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.PERSON_ADD, color="blue"), title=ft.Text("درخواست ایجاد حساب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=create_account_request), alignment="center"),
+                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.STAR, color="orange"), title=ft.Text("مشتریان منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), alignment="center"),
+                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.WAREHOUSE, color="green"), title=ft.Text("اعلام موجودی انبار"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), alignment="center"),
+                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.SHOPPING_CART), title=ft.Text("ثبت درخواست خرید"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), alignment="center"),
+                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.GROUP), title=ft.Text("همکاران منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), alignment="center"),
+                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.PERCENT), title=ft.Text("محاسبه درصد همکاری"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), alignment="center"),
+                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.ACCOUNT_BALANCE_WALLET), title=ft.Text("مبلغ اعتبار"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), alignment="center"),
 
                 ft.Divider(height=25),
 
-                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.PALETTE), title=ft.Text("نمایش (تم روشن/تیره)"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), alignment=ft.alignment.center),
-                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.UPDATE), title=ft.Text("بروزرسانی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), alignment=ft.alignment.center),
-                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.MAP), title=ft.Text("شبکه فروش و خدمات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), alignment=ft.alignment.center),
-                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.GAVEL), title=ft.Text("قوانین"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), alignment=ft.alignment.center),
-                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.INFO), title=ft.Text("درباره ما"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), alignment=ft.alignment.center),
+                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.PALETTE), title=ft.Text("نمایش (تم روشن/تیره)"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), alignment="center"),
+                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.UPDATE), title=ft.Text("بروزرسانی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), alignment="center"),
+                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.MAP), title=ft.Text("شبکه فروش و خدمات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), alignment="center"),
+                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.GAVEL), title=ft.Text("قوانین"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), alignment="center"),
+                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.INFO), title=ft.Text("درباره ما"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), alignment="center"),
 
                 ft.Divider(height=25),
 
-                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.SETTINGS), title=ft.Text("تنظیمات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=open_settings), alignment=ft.alignment.center),
-                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.LOGOUT, color="red"), title=ft.Text("خروج", color="red"), on_click=lambda e: (setattr(page.session, 'logged_in', False), render())), alignment=ft.alignment.center),
+                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.SETTINGS), title=ft.Text("تنظیمات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=open_settings), alignment="center"),
+                ft.Container(content=ft.ListTile(leading=ft.Icon(ft.Icons.LOGOUT, color="red"), title=ft.Text("خروج", color="red"), on_click=lambda e: (setattr(page.session, 'logged_in', False), render())), alignment="center"),
                 ft.Text("نسخه ۱.۴.۳", size=12, color="grey", text_align="center")
             ], scroll=ft.ScrollMode.AUTO, spacing=2, horizontal_alignment="center"),
             width=400,
-            alignment=ft.alignment.center,
+            alignment="center",
             margin=ft.margin.Margin(left=15, right=15),
             expand=True
         )
@@ -100,7 +100,7 @@ def main(page: ft.Page):
                     width=400,
                     margin=ft.margin.Margin(left=15, right=15),
                     expand=True,
-                    alignment=ft.alignment.center
+                    alignment="center"
                 )
             )
         else:
@@ -116,7 +116,7 @@ def main(page: ft.Page):
                 content=contents[tab_index],
                 expand=True,
                 width=400,
-                alignment=ft.alignment.center,
+                alignment="center",
                 margin=ft.margin.Margin(left=15, right=15)
             )
 
