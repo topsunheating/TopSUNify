@@ -2,7 +2,7 @@ import flet as ft
 import os
 
 def main(page: ft.Page):
-    # تنظیمات فونت
+    # تنظیمات عمومی - این‌ها در تمام نسخه‌ها کار می‌کنند
     page.fonts = {"iranyekan": "fonts/iranyekan.ttf"}
     page.theme = ft.Theme(font_family="iranyekan")
     page.padding = 0
@@ -10,7 +10,7 @@ def main(page: ft.Page):
     page.theme_mode = "light"
     page.session.logged_in = False
 
-    # دیالوگ سفارشی (Overlay) - کاملاً ایمن
+    # دیالوگ بیومتریک با استفاده از کانتینر (بسیار ایمن‌تر از AlertDialog)
     biometric_overlay = ft.Container(
         content=ft.Column([
             ft.Text("احراز هویت بیومتریک", size=20, weight="bold"),
@@ -29,6 +29,7 @@ def main(page: ft.Page):
         page.controls.clear()
         
         if not page.session.logged_in:
+            # صفحه لاگین
             page.add(
                 ft.Stack([
                     ft.Column([
@@ -37,20 +38,19 @@ def main(page: ft.Page):
                         ft.TextField(label="نام کاربری", width=300),
                         ft.Row([
                             ft.TextField(label="رمز عبور", password=True, width=250),
+                            # IconButton همیشه در هر نسخه کار می‌کند
                             ft.IconButton(icon="fingerprint", on_click=show_biometric)
                         ], alignment="center"),
                         ft.ElevatedButton("ورود به TopSUNify", on_click=lambda e: (setattr(page.session, 'logged_in', True), render()), width=300),
                         ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=120), margin=20),
                         ft.Container(expand=True),
-                        ft.Stack([
-                            ft.Image(src="landscape.jpg", width=400, height=200, fit="cover"),
-                            ft.Container(width=400, height=200, bgcolor=ft.Colors.with_opacity(0.5, "white"))
-                        ], width=400, height=200)
+                        ft.Image(src="landscape.jpg", width=400, height=200, fit="cover")
                     ], horizontal_alignment="center", expand=True),
                     ft.Container(content=biometric_overlay, alignment=ft.alignment.center)
                 ], expand=True)
             )
         else:
+            # صفحات داخلی
             contents = [
                 ft.Text("داشبورد مدیریتی", size=25),
                 ft.Text("بخش پیش‌فاکتورها", size=25),
@@ -58,6 +58,7 @@ def main(page: ft.Page):
                 ft.Text("اطلاعات فنی سیستم", size=25),
                 ft.Text("پروفایل کاربری", size=25)
             ]
+            
             nav_buttons = ft.Row([
                 ft.IconButton(icon="dashboard", on_click=lambda _: render(0)),
                 ft.IconButton(icon="edit_document", on_click=lambda _: render(1)),
@@ -70,7 +71,7 @@ def main(page: ft.Page):
                 ft.Column([
                     ft.Text("پنل TopSUNify", size=30, weight="bold"),
                     ft.Divider(),
-                    ft.Container(content=contents[tab_index], expand=True, alignment=ft.alignment.center),
+                    ft.Container(content=contents[tab_index], expand=True, alignment="center"),
                     nav_buttons
                 ], horizontal_alignment="center", expand=True)
             )
@@ -79,4 +80,6 @@ def main(page: ft.Page):
     render()
 
 if __name__ == "__main__":
-    ft.app(target=main, port=int(os.environ.get("PORT", 8080)), host="0.0.0.0", assets_dir="assets")
+    # اگر روی سرور هستید از پورت متغیر، اگر لوکال هستید از 8080 استفاده کنید
+    port = int(os.environ.get("PORT", 8080))
+    ft.app(target=main, port=port, host="0.0.0.0", assets_dir="assets")
