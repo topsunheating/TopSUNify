@@ -53,6 +53,7 @@ def main(page: ft.Page):
     # ==================== صفحه پروفایل ====================
     def profile_page():
         return ft.Column([
+            # هدر پروفایل
             ft.Container(
                 content=ft.Column([
                     ft.CircleAvatar(
@@ -75,10 +76,11 @@ def main(page: ft.Page):
                 margin=ft.margin.Margin(bottom=20)
             ),
 
+            # لیست منوها
             ft.ListTile(leading=ft.Icon(ft.Icons.ACCOUNT_BALANCE, color="blue"), title=ft.Text("افتتاح سپرده"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
             ft.ListTile(leading=ft.Icon(ft.Icons.STAR, color="orange"), title=ft.Text("سپرده‌های منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
             ft.ListTile(leading=ft.Icon(ft.Icons.MONEY, color="green"), title=ft.Text("تسهیلات بانکی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-            ft.ListTile(leading=ft.Icon(ft.Icons.SIGNATURE), title=ft.Text("امضای دیجیتال"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+            ft.ListTile(leading=ft.Icon(ft.Icons.EDIT_NOTE), title=ft.Text("امضای دیجیتال"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),  # اصلاح شده
             ft.ListTile(leading=ft.Icon(ft.Icons.SHOP), title=ft.Text("پایانه‌های فروشگاهی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
             ft.ListTile(leading=ft.Icon(ft.Icons.CALCULATE), title=ft.Text("محاسبه شبا"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
             ft.ListTile(leading=ft.Icon(ft.Icons.SAVINGS), title=ft.Text("سپرده بلو"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
