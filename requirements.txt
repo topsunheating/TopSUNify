@@ -1,6 +1,6 @@
-flet==0.28.3
+flet>=0.25.0
+requests
 webauthn
-requests==2.32.3
 altair==6.1.0
 altgraph==0.17.5
 anyio==4.13.0
