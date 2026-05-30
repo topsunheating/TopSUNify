@@ -23,7 +23,7 @@ def main(page: ft.Page):
         snack.open = True
         page.update()
 
-            # ==================== صفحه پروفایل ====================
+    # ==================== صفحه پروفایل ====================
     def profile_page():
         return ft.Container(
             content=ft.Column([
@@ -66,7 +66,7 @@ def main(page: ft.Page):
                     width=380
                 ),
 
-                # لیست منوها - وسط چین
+                # لیست منوها (وسط چین)
                 ft.Container(
                     content=ft.Column([
                         ft.ListTile(
@@ -121,8 +121,7 @@ def main(page: ft.Page):
                     ], 
                     spacing=2, 
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-                    width=380,
-                    alignment=ft.alignment.center
+                    width=380
                 )
             ], 
             scroll=ft.ScrollMode.AUTO, 
@@ -152,14 +151,14 @@ def main(page: ft.Page):
                             content=ft.Row([
                                 ft.Container(content=ft.Icon(ft.Icons.FINGERPRINT, size=42, color="#FFCC00"), on_click=lambda e: show_message("احراز هویت بیومتریک", "orange"), padding=10, border_radius=12),
                                 ft.TextField(label="رمز عبور", password=True, width=270, border_radius=12, prefix_icon=ft.Icons.LOCK, text_align=ft.TextAlign.RIGHT)
-                            ], alignment="center", spacing=12),
+                            ], alignment=ft.MainAxisAlignment.CENTER, spacing=12),
                             margin=ft.margin.Margin(bottom=30)
                         ),
                         ft.ElevatedButton("ورود به TopSUNify", width=340, bgcolor="#FFCC00", color="black", style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)), on_click=lambda e: (setattr(page.session, 'logged_in', True), render())),
                         ft.TextButton("فعال‌سازی / فراموشی رمز", style=ft.ButtonStyle(color={"": "blue"})),
                         ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=160), margin=ft.margin.Margin(top=50, bottom=30)),
                         ft.Container(content=ft.Image(src="landscape.jpg", width=400, height=220, fit="cover"), expand=True)
-                    ], horizontal_alignment="center", scroll=ft.ScrollMode.AUTO),
+                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, scroll=ft.ScrollMode.AUTO),
                     width=400,
                     margin=ft.margin.Margin(left=15, right=15),
                     expand=True
@@ -169,12 +168,17 @@ def main(page: ft.Page):
             contents = [
                 ft.Text("داشبورد مدیریتی", size=25, weight="bold"),
                 ft.Text("بخش پیش‌فاکتورها", size=25, weight="bold"),
-                ft.Column([ft.Image(src="TopSUNify-1.png", width=200), ft.Text("خانه اصلی", size=25, weight="bold")], horizontal_alignment="center"),
+                ft.Column([ft.Image(src="TopSUNify-1.png", width=200), ft.Text("خانه اصلی", size=25, weight="bold")], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
                 ft.Text("اطلاعات فنی سیستم", size=25, weight="bold"),
                 profile_page()
             ]
 
-            main_content = ft.Container(content=contents[tab_index], expand=True, width=400, margin=ft.margin.Margin(left=15, right=15))
+            main_content = ft.Container(
+                content=contents[tab_index], 
+                expand=True, 
+                width=400, 
+                margin=ft.margin.Margin(left=15, right=15)
+            )
 
             nav_bar = ft.Container(
                 content=ft.Row([
@@ -183,7 +187,7 @@ def main(page: ft.Page):
                     ft.Container(content=ft.Image(src="TopSUNify-1.png", width=32, height=32), on_click=lambda _: render(2), padding=8),
                     ft.Container(content=ft.Image(src="technical.png", width=32, height=32), on_click=lambda _: render(3), padding=8),
                     ft.Container(content=ft.Image(src="profile.png", width=32, height=32), on_click=lambda _: render(4), padding=8),
-                ], alignment="center", spacing=15),
+                ], alignment=ft.MainAxisAlignment.CENTER, spacing=15),
                 bgcolor="white",
                 padding=12,
                 border=ft.Border(top=ft.BorderSide(1, "#e0e0e0"), bottom=ft.BorderSide(1, "#e0e0e0"))
