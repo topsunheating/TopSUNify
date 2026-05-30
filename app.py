@@ -119,6 +119,7 @@ def main(page: ft.Page):
             )
 
             # ناوبری ثابت در پایین (بدون border.only)
+            # روش استاندارد و بدون خطا برای تعریف بوردر
             nav_bar = ft.Container(
                 content=ft.Row([
                     ft.Container(content=ft.Image(src="dashboard.png", width=32, height=32), on_click=lambda _: render(0), padding=8),
@@ -129,7 +130,13 @@ def main(page: ft.Page):
                 ], alignment="center", spacing=15),
                 bgcolor="white",
                 padding=12,
-                border=ft.border.all(1, "#e0e0e0")   # روش ساده و ایمن
+                # اصلاحیه: استفاده از BorderSide به جای border.all که در برخی نسخه‌ها حذف شده
+                border=ft.Border(
+                    top=ft.BorderSide(1, "#e0e0e0"),
+                    bottom=ft.BorderSide(1, "#e0e0e0"),
+                    left=ft.BorderSide(1, "#e0e0e0"),
+                    right=ft.BorderSide(1, "#e0e0e0")
+                )
             )
 
             page.add(
