@@ -14,13 +14,24 @@ def main(page: ft.Page):
     
     if not hasattr(page.session, "logged_in"):
         page.session.logged_in = False
-        page.session.user_role = "general"  # مدیر، مدیرفروش، مدیرفنی، نماینده، کارشناس، عمومی
+        page.session.user_role = "عمومی"
 
-    # ==================== صفحه پروفایل پیشرفته ====================
+    # ==================== نمایش پیام ====================
+    def show_message(text: str, color="green"):
+        snack = ft.SnackBar(
+            content=ft.Text(text),
+            bgcolor=color,
+            action="بستن",
+            duration=3000
+        )
+        page.snack_bar = snack
+        snack.open = True
+        page.update()
+
+    # ==================== صفحه پروفایل ====================
     def profile_page():
         role = page.session.user_role
         
-        # هدر پروفایل
         header = ft.Container(
             content=ft.Column([
                 ft.CircleAvatar(foreground_image_src="https://i.pravatar.cc/150?u=reza", radius=48),
@@ -40,39 +51,16 @@ def main(page: ft.Page):
             margin=ft.margin.Margin(bottom=20)
         )
 
-        # لیست منوها
         menu_items = [
-            ft.ListTile(leading=ft.Icon(ft.Icons.PERSON_ADD, color="blue"), 
-                       title=ft.Text("درخواست ایجاد حساب"), 
-                       trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
-                       on_click=lambda e: create_account_request()),
-
-            ft.ListTile(leading=ft.Icon(ft.Icons.STAR, color="orange"), 
-                       title=ft.Text("مشتریان منتخب"), 
-                       trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-
-            ft.ListTile(leading=ft.Icon(ft.Icons.WAREHOUSE, color="green"), 
-                       title=ft.Text("اعلام موجودی انبار"), 
-                       trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-
-            ft.ListTile(leading=ft.Icon(ft.Icons.SHOPPING_CART), 
-                       title=ft.Text("ثبت درخواست خرید"), 
-                       trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-
-            ft.ListTile(leading=ft.Icon(ft.Icons.GROUP), 
-                       title=ft.Text("همکاران منتخب"), 
-                       trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-
-            ft.ListTile(leading=ft.Icon(ft.Icons.PERCENT), 
-                       title=ft.Text("محاسبه درصد همکاری"), 
-                       trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-
-            ft.ListTile(leading=ft.Icon(ft.Icons.ACCOUNT_BALANCE_WALLET), 
-                       title=ft.Text("مبلغ اعتبار"), 
-                       trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+            ft.ListTile(leading=ft.Icon(ft.Icons.PERSON_ADD, color="blue"), title=ft.Text("درخواست ایجاد حساب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=create_account_request),
+            ft.ListTile(leading=ft.Icon(ft.Icons.STAR, color="orange"), title=ft.Text("مشتریان منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+            ft.ListTile(leading=ft.Icon(ft.Icons.WAREHOUSE, color="green"), title=ft.Text("اعلام موجودی انبار"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+            ft.ListTile(leading=ft.Icon(ft.Icons.SHOPPING_CART), title=ft.Text("ثبت درخواست خرید"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+            ft.ListTile(leading=ft.Icon(ft.Icons.GROUP), title=ft.Text("همکاران منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+            ft.ListTile(leading=ft.Icon(ft.Icons.PERCENT), title=ft.Text("محاسبه درصد همکاری"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+            ft.ListTile(leading=ft.Icon(ft.Icons.ACCOUNT_BALANCE_WALLET), title=ft.Text("مبلغ اعتبار"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
         ]
 
-        # منوهای مشترک
         common_items = [
             ft.ListTile(leading=ft.Icon(ft.Icons.PALETTE), title=ft.Text("نمایش (تم روشن/تیره)"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
             ft.ListTile(leading=ft.Icon(ft.Icons.UPDATE), title=ft.Text("بروزرسانی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
@@ -88,38 +76,29 @@ def main(page: ft.Page):
             *common_items,
             ft.Divider(height=20),
             ft.ListTile(leading=ft.Icon(ft.Icons.SETTINGS), title=ft.Text("تنظیمات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=open_settings),
-            ft.ListTile(
-                leading=ft.Icon(ft.Icons.LOGOUT, color="red"),
-                title=ft.Text("خروج", color="red"),
-                on_click=lambda e: (setattr(page.session, 'logged_in', False), render())
-            ),
+            ft.ListTile(leading=ft.Icon(ft.Icons.LOGOUT, color="red"), title=ft.Text("خروج", color="red"), on_click=lambda e: (setattr(page.session, 'logged_in', False), render())),
             ft.Text("نسخه ۱.۴.۳", size=12, color="grey", text_align="center")
         ], scroll=ft.ScrollMode.AUTO, spacing=2)
 
     # ==================== درخواست ایجاد حساب ====================
-    def create_account_request(e=None):
-        # فرم درخواست ایجاد حساب
+    def create_account_request(e):
         dlg = ft.AlertDialog(
             title=ft.Text("درخواست ایجاد حساب جدید"),
             content=ft.Column([
                 ft.TextField(label="نام و نام خانوادگی / نام شرکت", width=340),
                 ft.TextField(label="شماره موبایل", width=340, keyboard_type=ft.KeyboardType.NUMBER),
                 ft.TextField(label="نام کاربری", width=340),
-                ft.Dropdown(
-                    label="سطح دسترسی",
-                    options=[
-                        ft.dropdown.Option("نمایندگی"),
-                        ft.dropdown.Option("عامل فروش"),
-                        ft.dropdown.Option("کارشناس فروش"),
-                        ft.dropdown.Option("کارشناس فنی"),
-                    ],
-                    width=340
-                ),
-                ft.TextField(label="توضیحات / دلیل درخواست", width=340, multiline=True, min_lines=2),
-            ], scroll=ft.ScrollMode.AUTO, height=420, spacing=15),
+                ft.Dropdown(label="سطح دسترسی", options=[
+                    ft.dropdown.Option("نمایندگی"),
+                    ft.dropdown.Option("عامل فروش"),
+                    ft.dropdown.Option("کارشناس فروش"),
+                    ft.dropdown.Option("کارشناس فنی"),
+                ], width=340),
+                ft.TextField(label="توضیحات / دلیل درخواست", width=340, multiline=True, min_lines=3),
+            ], scroll=ft.ScrollMode.AUTO, height=380, spacing=15),
             actions=[
                 ft.TextButton("انصراف", on_click=lambda _: (setattr(dlg, 'open', False), page.update())),
-                ft.ElevatedButton("ارسال درخواست به مدیر", bgcolor="#FFCC00", color="black", on_click=lambda _: (page.show_snack_bar(ft.SnackBar(ft.Text("درخواست ارسال شد"), open=True)), setattr(dlg, 'open', False), page.update()))
+                ft.ElevatedButton("ارسال درخواست", bgcolor="#FFCC00", color="black", on_click=lambda _: (show_message("درخواست با موفقیت ارسال شد", "green"), setattr(dlg, 'open', False), page.update()))
             ]
         )
         page.dialog = dlg
@@ -150,23 +129,40 @@ def main(page: ft.Page):
         page.controls.clear()
 
         if not page.session.logged_in:
-            # صفحه لاگین (بدون تغییر)
+            # صفحه لاگین
             page.add(
                 ft.Column([
                     ft.Container(content=ft.Image(src="TopSUNify.png", width=190), margin=ft.margin.Margin(top=40, bottom=40)),
 
-                    ft.Container(content=ft.TextField(label="نام کاربری", width=340, border_radius=12, prefix_icon=ft.Icons.PERSON, text_align=ft.TextAlign.RIGHT), margin=ft.margin.Margin(bottom=20)),
+                    ft.Container(
+                        content=ft.TextField(label="نام کاربری", width=340, border_radius=12, prefix_icon=ft.Icons.PERSON, text_align=ft.TextAlign.RIGHT),
+                        margin=ft.margin.Margin(bottom=20)
+                    ),
 
                     ft.Container(
                         content=ft.Row([
-                            ft.Container(content=ft.Icon(ft.Icons.FINGERPRINT, size=42, color="#FFCC00"), on_click=show_biometric_dialog, padding=10, border_radius=12, ink=True),
+                            ft.Container(
+                                content=ft.Icon(ft.Icons.FINGERPRINT, size=42, color="#FFCC00"),
+                                on_click=lambda e: show_message("احراز هویت بیومتریک فعال شد"),
+                                padding=10,
+                                border_radius=12,
+                                ink=True
+                            ),
                             ft.TextField(label="رمز عبور", password=True, width=270, border_radius=12, prefix_icon=ft.Icons.LOCK, text_align=ft.TextAlign.RIGHT)
                         ], alignment="center", spacing=12),
                         margin=ft.margin.Margin(bottom=30)
                     ),
 
-                    ft.ElevatedButton("ورود به TopSUNify", width=340, bgcolor="#FFCC00", color="black", style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)), on_click=lambda e: (setattr(page.session, 'logged_in', True), render())),
-                    ft.TextButton("فعال‌سازی / فراموشی رمز", style=ft.ButtonStyle(color={"": "blue"}), on_click=show_register_dialog),
+                    ft.ElevatedButton(
+                        "ورود به TopSUNify",
+                        width=340,
+                        bgcolor="#FFCC00",
+                        color="black",
+                        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)),
+                        on_click=lambda e: (setattr(page.session, 'logged_in', True), render())
+                    ),
+
+                    ft.TextButton("فعال‌سازی / فراموشی رمز", style=ft.ButtonStyle(color={"": "blue"}), on_click=lambda e: show_message("بخش ثبت‌نام در حال توسعه است")),
 
                     ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=160), margin=ft.margin.Margin(top=50, bottom=30)),
                     ft.Container(expand=True, content=ft.Image(src="landscape.jpg", width=400, height=220, fit="cover"))
@@ -199,15 +195,6 @@ def main(page: ft.Page):
             )
 
         page.update()
-
-    # توابع کمکی (برای جلوگیری از خطا)
-    def show_biometric_dialog(e):
-        page.show_snack_bar(ft.SnackBar(ft.Text("احراز هویت بیومتریک فعال شد"), open=True))
-        page.session.logged_in = True
-        render()
-
-    def show_register_dialog(e):
-        page.show_snack_bar(ft.SnackBar(ft.Text("بخش ثبت‌نام / فراموشی رمز"), open=True))
 
     render()
 
