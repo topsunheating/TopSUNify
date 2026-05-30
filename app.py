@@ -44,7 +44,7 @@ def main(page: ft.Page):
                 ft.Container(
                     content=ft.Column([
                         ft.ListTile(
-                            leading=ft.Icon(ft.Icons.CATALOG, color="blue"),
+                            leading=ft.Icon(ft.Icons.BOOK, color="blue"),
                             title=ft.Text("کاتالوگ محصولات"),
                             trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
                             on_click=lambda e: show_message("کاتالوگ محصولات در حال بارگذاری...")
@@ -175,7 +175,6 @@ def main(page: ft.Page):
         page.controls.clear()
 
         if not page.session.logged_in:
-            # صفحه ورود
             page.add(
                 ft.Container(
                     content=ft.Column([
@@ -203,9 +202,9 @@ def main(page: ft.Page):
                 ft.Text("داشبورد مدیریتی", size=25, weight="bold"),
                 ft.Text("بخش پیش‌فاکتورها", size=25, weight="bold"),
                 ft.Column([ft.Image(src="TopSUNify-1.png", width=200), ft.Text("خانه اصلی", size=25, weight="bold")], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-                technical_page(),      # تب 3
-                profile_page(),        # تب 4
-                settings_page()        # تب 5
+                technical_page(),      # تب 3 - اطلاعات فنی
+                profile_page(),        # تب 4 - پروفایل
+                settings_page()        # تب 5 - تنظیمات
             ]
 
             main_content = ft.Container(
