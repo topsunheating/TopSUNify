@@ -30,33 +30,12 @@ def main(page: ft.Page):
                 # هدر پروفایل
                 ft.Container(
                     content=ft.Column([
-                        ft.CircleAvatar(
-                            foreground_image_src="https://i.pravatar.cc/150?u=reza", 
-                            radius=48
-                        ),
-                        ft.Text(
-                            "نام و نام خانوادگی | نام کاربری", 
-                            size=20, 
-                            weight="bold", 
-                            text_align=ft.TextAlign.CENTER
-                        ),
-                        ft.Text(
-                            "شماره موبایل", 
-                            size=16, 
-                            color="grey", 
-                            text_align=ft.TextAlign.CENTER
-                        ),
+                        ft.CircleAvatar(foreground_image_src="https://i.pravatar.cc/150?u=reza", radius=48),
+                        ft.Text("نام و نام خانوادگی | نام کاربری", size=20, weight="bold", text_align=ft.TextAlign.CENTER),
+                        ft.Text("شماره موبایل", size=16, color="grey", text_align=ft.TextAlign.CENTER),
                         ft.Container(
-                            content=ft.Text(
-                                f"سطح دسترسی: {page.session.user_role}", 
-                                size=15, 
-                                color="blue", 
-                                text_align=ft.TextAlign.CENTER
-                            ),
-                            bgcolor="#f0f0f0", 
-                            padding=12, 
-                            border_radius=12, 
-                            margin=ft.margin.Margin(top=12, bottom=8)
+                            content=ft.Text(f"سطح دسترسی: {page.session.user_role}", size=15, color="blue", text_align=ft.TextAlign.CENTER),
+                            bgcolor="#f0f0f0", padding=12, border_radius=12, margin=ft.margin.Margin(top=12, bottom=8)
                         )
                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
                     padding=20, 
@@ -66,71 +45,31 @@ def main(page: ft.Page):
                     width=380
                 ),
 
-                # لیست منوها - وسط چین قوی
+                # لیست منوها - وسط چین
                 ft.Container(
                     content=ft.Column([
-                        ft.ListTile(
-                            leading=ft.Icon(ft.Icons.PERSON_ADD, color="blue"),
-                            title=ft.Text("درخواست ایجاد حساب"),
-                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
-                            on_click=create_account_request
-                        ),
-                        ft.ListTile(
-                            leading=ft.Icon(ft.Icons.STAR, color="orange"),
-                            title=ft.Text("مشتریان منتخب"),
-                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
-                        ),
-                        ft.ListTile(
-                            leading=ft.Icon(ft.Icons.WAREHOUSE, color="green"),
-                            title=ft.Text("اعلام موجودی انبار"),
-                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
-                        ),
-                        ft.ListTile(
-                            leading=ft.Icon(ft.Icons.SHOPPING_CART),
-                            title=ft.Text("ثبت درخواست خرید"),
-                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
-                        ),
-                        ft.ListTile(
-                            leading=ft.Icon(ft.Icons.GROUP),
-                            title=ft.Text("همکاران منتخب"),
-                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
-                        ),
-                        ft.ListTile(
-                            leading=ft.Icon(ft.Icons.PERCENT),
-                            title=ft.Text("محاسبه درصد همکاری"),
-                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
-                        ),
-                        ft.ListTile(
-                            leading=ft.Icon(ft.Icons.ACCOUNT_BALANCE_WALLET),
-                            title=ft.Text("مبلغ اعتبار"),
-                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
-                        ),
+                        ft.ListTile(leading=ft.Icon(ft.Icons.PERSON_ADD, color="blue"), title=ft.Text("درخواست ایجاد حساب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=create_account_request),
+                        ft.ListTile(leading=ft.Icon(ft.Icons.STAR, color="orange"), title=ft.Text("مشتریان منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                        ft.ListTile(leading=ft.Icon(ft.Icons.WAREHOUSE, color="green"), title=ft.Text("اعلام موجودی انبار"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                        ft.ListTile(leading=ft.Icon(ft.Icons.SHOPPING_CART), title=ft.Text("ثبت درخواست خرید"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                        ft.ListTile(leading=ft.Icon(ft.Icons.GROUP), title=ft.Text("همکاران منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                        ft.ListTile(leading=ft.Icon(ft.Icons.PERCENT), title=ft.Text("محاسبه درصد همکاری"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                        ft.ListTile(leading=ft.Icon(ft.Icons.ACCOUNT_BALANCE_WALLET), title=ft.Text("مبلغ اعتبار"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
                         ft.Divider(height=25),
-                        ft.ListTile(
-                            leading=ft.Icon(ft.Icons.SETTINGS),
-                            title=ft.Text("تنظیمات"),
-                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
-                            on_click=open_settings
-                        ),
-                        ft.ListTile(
-                            leading=ft.Icon(ft.Icons.LOGOUT, color="red"),
-                            title=ft.Text("خروج", color="red"),
-                            on_click=lambda e: (setattr(page.session, 'logged_in', False), render())
-                        ),
+                        ft.ListTile(leading=ft.Icon(ft.Icons.SETTINGS), title=ft.Text("تنظیمات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=open_settings),
+                        ft.ListTile(leading=ft.Icon(ft.Icons.LOGOUT, color="red"), title=ft.Text("خروج", color="red"), on_click=lambda e: (setattr(page.session, 'logged_in', False), render())),
                         ft.Text("نسخه ۱.۴.۳", size=12, color="grey", text_align=ft.TextAlign.CENTER)
                     ], 
                     spacing=2, 
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-                    width=360,                    # عرض کمتر برای وسط‌چین بهتر
-                    alignment=ft.alignment.center  # وسط‌چین Container
+                    width=360
                 )
             ], 
             scroll=ft.ScrollMode.AUTO, 
             horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400,
             margin=ft.margin.Margin(left=15, right=15),
-            expand=True,
-            alignment=ft.alignment.center
+            expand=True
         )
 
     def create_account_request(e):
@@ -144,7 +83,6 @@ def main(page: ft.Page):
         page.controls.clear()
 
         if not page.session.logged_in:
-            # ... (بخش لاگین بدون تغییر)
             page.add(
                 ft.Container(
                     content=ft.Column([
@@ -180,8 +118,7 @@ def main(page: ft.Page):
                 content=contents[tab_index], 
                 expand=True, 
                 width=400, 
-                margin=ft.margin.Margin(left=15, right=15),
-                alignment=ft.alignment.center
+                margin=ft.margin.Margin(left=15, right=15)
             )
 
             nav_bar = ft.Container(
@@ -203,7 +140,7 @@ def main(page: ft.Page):
                     ft.Divider(),
                     main_content,
                     nav_bar
-                ], expand=True)
+                ], expand=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
             )
 
         page.update()
