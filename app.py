@@ -138,7 +138,6 @@ def main(page: ft.Page):
                     right=ft.BorderSide(1, "#e0e0e0")
                 )
             )
-
         page.update()
 
     render()
