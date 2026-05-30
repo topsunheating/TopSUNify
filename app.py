@@ -19,13 +19,8 @@ def main(page: ft.Page):
     def send_to_google_sheet(data: dict):
         try:
             response = requests.post(GOOGLE_SCRIPT_URL, json=data, timeout=10)
-            if response.status_code == 200:
-                return True
-            else:
-                print("Google Sheet Error:", response.text)
-                return False
-        except Exception as ex:
-            print("Request Error:", ex)
+            return response.status_code == 200
+        except:
             return False
 
     # ==================== دیالوگ بیومتریک ====================
@@ -43,7 +38,7 @@ def main(page: ft.Page):
         dlg.open = True
         page.update()
 
-        time.sleep(2.2)  # شبیه‌سازی
+        time.sleep(2.2)
         dlg.open = False
         page.session.logged_in = True
         page.update()
@@ -59,22 +54,19 @@ def main(page: ft.Page):
         verification_code = ft.TextField(label="کد تأیید", width=340, border_radius=10, visible=False)
 
         def send_verification(e):
-            if not phone.value or len(phone.value) < 9:
+            if not phone.value or len(phone.value) < 10:
                 page.show_snack_bar(ft.SnackBar(ft.Text("شماره موبایل معتبر وارد کنید"), open=True))
                 return
-            
-            # اینجا بعداً API ارسال SMS (کاوه‌نگار، ملی‌پرداخت و ...) اضافه می‌شود
-            page.show_snack_bar(ft.SnackBar(ft.Text("✅ کد تأیید به شماره موبایل ارسال شد"), open=True, bgcolor="green"))
+            page.show_snack_bar(ft.SnackBar(ft.Text("✅ کد تأیید ارسال شد"), open=True, bgcolor="green"))
             verification_code.visible = True
             page.update()
 
         def register_user(e):
             if password.value != confirm_password.value:
-                page.show_snack_bar(ft.SnackBar(ft.Text("رمز عبور و تأیید آن مطابقت ندارد"), open=True))
+                page.show_snack_bar(ft.SnackBar(ft.Text("رمز عبور مطابقت ندارد"), open=True))
                 return
-            
             if not verification_code.value:
-                page.show_snack_bar(ft.SnackBar(ft.Text("ابتدا کد تأیید را وارد کنید"), open=True))
+                page.show_snack_bar(ft.SnackBar(ft.Text("کد تأیید را وارد کنید"), open=True))
                 return
 
             data = {
@@ -86,19 +78,19 @@ def main(page: ft.Page):
             }
 
             if send_to_google_sheet(data):
-                page.show_snack_bar(ft.SnackBar(ft.Text("✅ ثبت‌نام با موفقیت انجام شد"), open=True, bgcolor="green"))
+                page.show_snack_bar(ft.SnackBar(ft.Text("✅ ثبت‌نام موفق بود"), open=True, bgcolor="green"))
                 dlg.open = False
-                page.update()
             else:
                 page.show_snack_bar(ft.SnackBar(ft.Text("خطا در ثبت اطلاعات"), open=True))
+            page.update()
 
         dlg = ft.AlertDialog(
-            title=ft.Text("ثبت‌نام / بازیابی رمز", size=18, weight="bold"),
+            title=ft.Text("ثبت‌نام / بازیابی حساب", size=18, weight="bold"),
             content=ft.Column([
                 name, phone, username, password, confirm_password,
                 ft.ElevatedButton("ارسال کد تأیید", bgcolor="blue", color="white", on_click=send_verification),
                 verification_code,
-            ], spacing=15, scroll=ft.ScrollMode.AUTO, height=420),
+            ], spacing=15, scroll=ft.ScrollMode.AUTO, height=450),
             actions=[
                 ft.TextButton("انصراف", on_click=lambda _: (setattr(dlg, 'open', False), page.update())),
                 ft.ElevatedButton("تأیید نهایی", bgcolor="#FFCC00", color="black", on_click=register_user)
@@ -110,7 +102,7 @@ def main(page: ft.Page):
         dlg.open = True
         page.update()
 
-    # ==================== صفحه اصلی ====================
+    # ==================== صفحه لاگین ====================
     def render(tab_index=0):
         page.controls.clear()
 
@@ -119,13 +111,11 @@ def main(page: ft.Page):
                 ft.Column([
                     ft.Container(content=ft.Image(src="TopSUNify.png", width=190), margin=ft.margin.Margin(top=40, bottom=40)),
 
-                    # نام کاربری
                     ft.Container(
                         content=ft.TextField(label="نام کاربری", width=340, border_radius=12, prefix_icon=ft.Icons.PERSON, text_align=ft.TextAlign.RIGHT),
                         margin=ft.margin.Margin(bottom=20)
                     ),
 
-                    # رمز عبور + بیومتریک
                     ft.Container(
                         content=ft.Row([
                             ft.Container(
@@ -148,7 +138,6 @@ def main(page: ft.Page):
                         margin=ft.margin.Margin(bottom=30)
                     ),
 
-                    # دکمه ورود
                     ft.ElevatedButton(
                         "ورود به TopSUNify",
                         width=340,
@@ -158,22 +147,28 @@ def main(page: ft.Page):
                         on_click=lambda e: (setattr(page.session, 'logged_in', True), render())
                     ),
 
-                    # لینک فعال‌سازی / فراموشی رمز
-                    ft.Text(
-                        "فعال‌سازی / فراموشی رمز",
-                        size=14,
-                        color="blue",
-                        text_align="center",
-                        on_click=show_register_dialog  # ← کلیک‌پذیر شد
+                    # لینک فعال‌سازی / فراموشی رمز (اصلاح شده)
+                    ft.GestureDetector(
+                        content=ft.Text(
+                            "فعال‌سازی / فراموشی رمز",
+                            size=14,
+                            color="blue",
+                            text_align="center"
+                        ),
+                        on_click=show_register_dialog,
+                        mouse_cursor=ft.MouseCursor.CLICK
                     ),
 
                     ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=160), margin=ft.margin.Margin(top=50, bottom=30)),
 
                     ft.Container(expand=True, content=ft.Image(src="landscape.jpg", width=400, height=220, fit="cover"))
-                ], horizontal_alignment="center", expand=True, scroll=ft.ScrollMode.AUTO)
+                ], 
+                horizontal_alignment="center", 
+                expand=True,
+                scroll=ft.ScrollMode.AUTO
+                )
             )
         else:
-            # داشبورد
             page.add(
                 ft.Column([
                     ft.Text("پنل TopSUNify", size=30, weight="bold"),
