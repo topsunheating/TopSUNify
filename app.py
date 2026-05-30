@@ -1,5 +1,6 @@
 import flet as ft
 import os
+import time
 
 def main(page: ft.Page):
     page.fonts = {"iranyekan": "fonts/iranyekan.ttf"}
@@ -11,106 +12,109 @@ def main(page: ft.Page):
     if not hasattr(page.session, "logged_in"):
         page.session.logged_in = False
 
-    # ==================== دیالوگ بیومتریک ====================
+    # ==================== دیالوگ بیومتریک (Popup) ====================
     def show_biometric_dialog(e):
         dlg = ft.AlertDialog(
-            title=ft.Text("احراز هویت بیومتریک", weight="bold"),
+            title=ft.Text("احراز هویت بیومتریک", size=18, weight="bold"),
             content=ft.Column([
-                ft.Text("از اثر انگشت یا تشخیص چهره دستگاه خود استفاده کنید"),
-                ft.ProgressRing(),
-                ft.Text("در حال اتصال به حسگر...", size=14, color="grey")
-            ], horizontal_alignment="center", spacing=20),
+                ft.Text("از اثر انگشت یا تشخیص چهره استفاده کنید", text_align="center"),
+                ft.ProgressRing(width=60, height=60, stroke_width=6),
+                ft.Text("در حال اتصال به حسگر...", size=14, color="grey", text_align="center")
+            ], horizontal_alignment="center", spacing=25, height=200),
             actions=[
                 ft.TextButton("انصراف", on_click=lambda _: (setattr(dlg, 'open', False), page.update()))
-            ]
+            ],
+            actions_alignment=ft.MainAxisAlignment.END
         )
+        
         page.dialog = dlg
         dlg.open = True
         page.update()
 
         # شبیه‌سازی موفقیت بیومتریک
-        import time
-        time.sleep(1.8)
+        time.sleep(2)
         dlg.open = False
         page.session.logged_in = True
-        render()
         page.update()
+        render()
 
-    # ==================== صفحه لاگین ====================
+    # ==================== صفحه لاگین (شبیه عکس دوم) ====================
     def render(tab_index=0):
         page.controls.clear()
 
         if not page.session.logged_in:
             page.add(
                 ft.Column([
-                    # لوگو
+                    # لوگو TopSUNify
                     ft.Container(
-                        content=ft.Image(src="TopSUNify.png", width=180),
-                        margin=ft.margin.Margin(top=50, bottom=30)
+                        content=ft.Image(src="TopSUNify.png", width=190),
+                        margin=ft.margin.Margin(top=40, bottom=40)
                     ),
 
-                    # نام کاربری
+                    # فیلد نام کاربری
                     ft.Container(
                         content=ft.TextField(
                             label="نام کاربری",
-                            width=320,
+                            width=340,
                             border_radius=12,
                             prefix_icon=ft.Icons.PERSON,
+                            text_align=ft.TextAlign.RIGHT,
                         ),
-                        margin=ft.margin.Margin(bottom=15)
+                        margin=ft.margin.Margin(bottom=20)
                     ),
 
-                    # رمز عبور + بیومتریک
+                    # فیلد رمز عبور + آیکون بیومتریک (زرد)
                     ft.Container(
                         content=ft.Row([
+                            ft.Icon(ft.Icons.FINGERPRINT, size=38, color="#FFCC00"),
                             ft.TextField(
                                 label="رمز عبور",
                                 password=True,
-                                width=260,
+                                width=280,
                                 border_radius=12,
                                 prefix_icon=ft.Icons.LOCK,
-                            ),
-                            ft.Container(
-                                content=ft.Icon(ft.Icons.FINGERPRINT, size=42, color="#FFCC00"),
-                                on_click=show_biometric_dialog,
-                                padding=8,
+                                text_align=ft.TextAlign.RIGHT,
                             )
-                        ], alignment="center"),
+                        ], alignment="center", spacing=10),
                         margin=ft.margin.Margin(bottom=30)
                     ),
 
-                    # دکمه ورود زرد
+                    # دکمه ورود زرد بزرگ
                     ft.ElevatedButton(
-                        "TopSUNify به ورود",
-                        width=320,
+                        "ورود به TopSUNify",
+                        width=340,
                         bgcolor="#FFCC00",
                         color="black",
                         style=ft.ButtonStyle(
                             shape=ft.RoundedRectangleBorder(radius=30),
-                            text_style=ft.TextStyle(size=18, weight="bold")
+                            text_style=ft.TextStyle(size=17, weight="bold")
                         ),
                         on_click=lambda e: (setattr(page.session, 'logged_in', True), render())
                     ),
 
-                    ft.Text("فعال‌سازی / فراموشی رمز", size=14, color="blue"),
-
-                    # Powered by
-                    ft.Container(
-                        content=ft.Image(src="TopSUN-Powered.png", width=140),
-                        margin=ft.margin.Margin(top=40, bottom=20)
+                    ft.Text(
+                        "فعال‌سازی / فراموشی رمز",
+                        size=14,
+                        color="blue",
+                        text_align="center"
                     ),
 
-                    # پس‌زمینه پایین (اصلاح شده)
+                    # Powered by - دقیقاً مثل عکس دوم
+                    ft.Container(
+                        content=ft.Image(src="TopSUN-Powered.png", width=160),
+                        margin=ft.margin.Margin(top=50, bottom=30)
+                    ),
+
+                    # تصویر پس‌زمینه پایین
                     ft.Container(
                         expand=True,
-                        content=ft.Stack([
-                            ft.Image(src="landscape.jpg", width=400, height=220, fit="cover"),
-                            ft.Container(
-                                expand=True, 
-                                bgcolor="#FFFFFF"   # سفید ساده با شفافیت از طریق opacity در تصویر
-                            )
-                        ]),
-                        margin=ft.margin.Margin(top=20)
+                        content=ft.Image(
+                            src="landscape.jpg",
+                            width=400,
+                            height=220,
+                            fit="cover"
+                        ),
+                        margin=ft.margin.Margin(top=10)
                     )
                 ], 
                 horizontal_alignment="center", 
@@ -123,8 +127,7 @@ def main(page: ft.Page):
             contents = [
                 ft.Text("داشبورد مدیریتی", size=25),
                 ft.Text("بخش پیش‌فاکتورها", size=25),
-                ft.Column([ft.Image(src="TopSUNify-1.png", width=200), ft.Text("خانه اصلی", size=25)], 
-                         horizontal_alignment="center"),
+                ft.Column([ft.Image(src="TopSUNify-1.png", width=200), ft.Text("خانه اصلی", size=25)], horizontal_alignment="center"),
                 ft.Text("اطلاعات فنی سیستم", size=25),
                 ft.Text("پروفایل کاربری", size=25)
             ]
