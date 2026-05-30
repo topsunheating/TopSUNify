@@ -1,7 +1,5 @@
 import flet as ft
 import os
-import json
-# برای WebAuthn واقعی در آینده می‌توان از JavaScript injection استفاده کرد
 
 def main(page: ft.Page):
     page.fonts = {"iranyekan": "fonts/iranyekan.ttf"}
@@ -13,9 +11,8 @@ def main(page: ft.Page):
     if not hasattr(page.session, "logged_in"):
         page.session.logged_in = False
 
-    # ==================== بیومتریک واقعی با WebAuthn ====================
+    # ==================== دیالوگ بیومتریک ====================
     def show_biometric_dialog(e):
-        # نمایش دیالوگ
         dlg = ft.AlertDialog(
             title=ft.Text("احراز هویت بیومتریک", weight="bold"),
             content=ft.Column([
@@ -31,48 +28,28 @@ def main(page: ft.Page):
         dlg.open = True
         page.update()
 
-        # شبیه‌سازی واقعی WebAuthn (در آینده می‌توان JS تزریق کرد)
-        page.run_js("""
-            async function biometricAuth() {
-                try {
-                    const publicKey = {
-                        challenge: new Uint8Array(32),
-                        rp: { name: "TopSUNify" },
-                        user: { id: new Uint8Array(16), name: "user@example.com", displayName: "کاربر" },
-                        pubKeyCredParams: [{ type: "public-key", alg: -7 }]
-                    };
-                    const credential = await navigator.credentials.create({ publicKey });
-                    console.log("Biometric Success", credential);
-                    // اینجا می‌توانید به Python برگردانید
-                    return true;
-                } catch (err) {
-                    console.error(err);
-                    return false;
-                }
-            }
-            biometricAuth();
-        """)
-
-        # برای نسخه فعلی: بعد از ۱.۵ ثانیه موفق در نظر بگیریم
+        # شبیه‌سازی موفقیت (بعداً WebAuthn واقعی اضافه می‌کنیم)
         import time
-        time.sleep(1.5)
+        time.sleep(1.8)
         dlg.open = False
         page.session.logged_in = True
         render()
         page.update()
 
-    # ==================== صفحه لاگین (شبیه عکس دوم) ====================
+    # ==================== صفحه لاگین ====================
     def render(tab_index=0):
         page.controls.clear()
 
         if not page.session.logged_in:
             page.add(
                 ft.Column([
+                    # لوگو
                     ft.Container(
                         content=ft.Image(src="TopSUNify.png", width=180),
-                        margin=ft.margin.only(top=50, bottom=30)
+                        margin=ft.margin.Margin(top=50, bottom=30)   # اصلاح شده
                     ),
 
+                    # نام کاربری
                     ft.Container(
                         content=ft.TextField(
                             label="نام کاربری",
@@ -80,9 +57,10 @@ def main(page: ft.Page):
                             border_radius=12,
                             prefix_icon=ft.Icons.PERSON,
                         ),
-                        margin=ft.margin.only(bottom=15)
+                        margin=ft.margin.Margin(bottom=15)   # اصلاح شده
                     ),
 
+                    # رمز عبور + بیومتریک
                     ft.Container(
                         content=ft.Row([
                             ft.TextField(
@@ -97,35 +75,53 @@ def main(page: ft.Page):
                                 on_click=show_biometric_dialog,
                                 padding=8,
                             )
-                        ]),
-                        margin=ft.margin.only(bottom=30)
+                        ], alignment="center"),
+                        margin=ft.margin.Margin(bottom=30)   # اصلاح شده
                     ),
 
+                    # دکمه ورود زرد
                     ft.ElevatedButton(
                         "TopSUNify به ورود",
                         width=320,
                         bgcolor="#FFCC00",
                         color="black",
-                        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)),
+                        style=ft.ButtonStyle(
+                            shape=ft.RoundedRectangleBorder(radius=30),
+                            text_style=ft.TextStyle(size=18, weight="bold")
+                        ),
                         on_click=lambda e: (setattr(page.session, 'logged_in', True), render())
                     ),
 
                     ft.Text("فعال‌سازی / فراموشی رمز", size=14, color="blue"),
 
+                    # Powered by
                     ft.Container(
                         content=ft.Image(src="TopSUN-Powered.png", width=140),
-                        margin=ft.margin.only(top=40)
+                        margin=ft.margin.Margin(top=40, bottom=20)   # اصلاح شده
                     ),
 
-                    ft.Container(expand=True)
-                ], horizontal_alignment="center", expand=True, scroll=ft.ScrollMode.AUTO)
+                    # پس‌زمینه پایین
+                    ft.Container(
+                        expand=True,
+                        content=ft.Stack([
+                            ft.Image(src="landscape.jpg", width=400, height=220, fit="cover"),
+                            ft.Container(expand=True, bgcolor=ft.colors.with_opacity(0.35, "white"))
+                        ]),
+                        margin=ft.margin.Margin(top=20)   # اصلاح شده
+                    )
+                ], 
+                horizontal_alignment="center", 
+                expand=True,
+                scroll=ft.ScrollMode.AUTO
+                )
             )
         else:
-            # پنل اصلی
+            # پنل بعد از ورود
             contents = [
                 ft.Text("داشبورد مدیریتی", size=25),
                 ft.Text("بخش پیش‌فاکتورها", size=25),
-                ft.Column([ft.Image(src="TopSUNify-1.png", width=200), ft.Text("خانه اصلی", size=25)], horizontal_alignment="center"),
+                ft.Column([ft.Image(src="TopSUNify-1.png", width=200), ft.Text("خانه اصلی", size=25)], 
+                         horizontal_alignment="center"),
                 ft.Text("اطلاعات فنی سیستم", size=25),
                 ft.Text("پروفایل کاربری", size=25)
             ]
@@ -142,7 +138,11 @@ def main(page: ft.Page):
                 ft.Column([
                     ft.Text("پنل TopSUNify", size=30, weight="bold"),
                     ft.Divider(),
-                    ft.Container(content=contents[tab_index], expand=True, alignment=ft.Alignment(0, 0)),
+                    ft.Container(
+                        content=contents[tab_index], 
+                        expand=True, 
+                        alignment=ft.Alignment(0, 0)
+                    ),
                     nav_buttons
                 ], horizontal_alignment="center", expand=True)
             )
