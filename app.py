@@ -45,98 +45,97 @@ def main(page: ft.Page):
 
     # ==================== دیالوگ ثبت‌نام ====================
     def show_register_dialog(e):
-        # ... (همان کد قبلی شما)
         dlg = ft.AlertDialog(title=ft.Text("ثبت‌نام / بازیابی حساب"))
         page.dialog = dlg
         dlg.open = True
         page.update()
 
-    # ==================== پروفایل کاربری (مطابق عکس) ====================
+    # ==================== صفحه پروفایل (مطابق عکس‌های شما) ====================
     def profile_page():
         return ft.Column([
             # هدر پروفایل
             ft.Container(
                 content=ft.Column([
                     ft.CircleAvatar(
-                        foreground_image_url="https://i.pravatar.cc/150?u=رضا+تلجی",  # یا عکس خودتان
-                        radius=45
+                        foreground_image_src="https://i.pravatar.cc/150?u=reza",  # ← اصلاح شده
+                        radius=48
                     ),
-                    ft.Text("رضا تلجی", size=20, weight="bold"),
-                    ft.Text("۰۹۱۲۶۹۸۲۷۹", size=16, color="grey"),
+                    ft.Text("رضا تلجی", size=20, weight="bold", text_align="center"),
+                    ft.Text("۰۹۱۲۶۹۸۲۷۹", size=16, color="grey", text_align="center"),
                     ft.Container(
-                        content=ft.Text("سامانی ۱۸۹۷", size=15, color="blue"),
+                        content=ft.Text("سامانی ۱۸۹۷", size=15, color="blue", text_align="center"),
                         bgcolor="#f0f0f0",
-                        padding=10,
-                        border_radius=10,
-                        margin=ft.margin.only(top=10)
+                        padding=12,
+                        border_radius=12,
+                        margin=ft.margin.only(top=12, bottom=8)
                     )
                 ], horizontal_alignment="center"),
                 padding=20,
                 bgcolor="#f8f9fa",
-                border_radius=15,
-                margin=ft.margin.only(bottom=15)
+                border_radius=20,
+                margin=ft.margin.only(bottom=20)
             ),
 
-            # لیست منوها (مطابق عکس)
+            # لیست گزینه‌ها
             ft.ListTile(
-                leading=ft.Icon(ft.Icons.ACCOUNT_BALANCE),
+                leading=ft.Icon(ft.Icons.ACCOUNT_BALANCE, color="blue"),
                 title=ft.Text("افتتاح سپرده"),
-                trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=18)
+                trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
+                on_click=lambda e: page.show_snack_bar(ft.SnackBar(ft.Text("در حال توسعه"), open=True))
             ),
             ft.ListTile(
-                leading=ft.Icon(ft.Icons.STAR),
+                leading=ft.Icon(ft.Icons.STAR, color="orange"),
                 title=ft.Text("سپرده‌های منتخب"),
-                trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=18)
+                trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
             ),
             ft.ListTile(
-                leading=ft.Icon(ft.Icons.MONEY),
+                leading=ft.Icon(ft.Icons.MONEY, color="green"),
                 title=ft.Text("تسهیلات بانکی"),
-                trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=18)
+                trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
             ),
             ft.ListTile(
                 leading=ft.Icon(ft.Icons.SIGNATURE),
                 title=ft.Text("امضای دیجیتال"),
-                trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=18)
+                trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
             ),
             ft.ListTile(
                 leading=ft.Icon(ft.Icons.SHOP),
                 title=ft.Text("پایانه‌های فروشگاهی"),
-                trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=18)
+                trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
             ),
             ft.ListTile(
                 leading=ft.Icon(ft.Icons.CALCULATE),
                 title=ft.Text("محاسبه شبا"),
-                trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=18)
+                trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
             ),
             ft.ListTile(
                 leading=ft.Icon(ft.Icons.SAVINGS),
                 title=ft.Text("سپرده بلو"),
-                trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=18)
+                trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
             ),
 
-            ft.Divider(),
+            ft.Divider(height=20),
 
-            # تنظیمات
             ft.ListTile(
                 leading=ft.Icon(ft.Icons.SETTINGS),
                 title=ft.Text("تنظیمات"),
-                trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=18),
-                on_click=lambda e: page.show_snack_bar(ft.SnackBar(ft.Text("بخش تنظیمات در حال توسعه است"), open=True))
+                trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
+                on_click=lambda e: page.show_snack_bar(ft.SnackBar(ft.Text("بخش تنظیمات"), open=True))
             ),
 
             ft.ListTile(
                 leading=ft.Icon(ft.Icons.LOGOUT, color="red"),
                 title=ft.Text("خروج", color="red"),
-                on_click=lambda e: (setattr(page.session, 'logged_in', False), render())
+                on_click=lambda e: (setattr(page.session, 'logged_in', False), render(0))
             )
-        ], scroll=ft.ScrollMode.AUTO, spacing=5)
+        ], scroll=ft.ScrollMode.AUTO, spacing=4)
 
     # ==================== رندر اصلی ====================
     def render(tab_index=0):
         page.controls.clear()
 
         if not page.session.logged_in:
-            # صفحه لاگین (همان قبلی)
+            # صفحه لاگین
             page.add(
                 ft.Column([
                     ft.Container(content=ft.Image(src="TopSUNify.png", width=190), margin=ft.margin.Margin(top=40, bottom=40)),
@@ -195,7 +194,7 @@ def main(page: ft.Page):
                 ft.Text("بخش پیش‌فاکتورها", size=25),
                 ft.Column([ft.Image(src="TopSUNify-1.png", width=200), ft.Text("خانه اصلی", size=25)], horizontal_alignment="center"),
                 ft.Text("اطلاعات فنی سیستم", size=25),
-                profile_page()   # ← پروفایل مطابق عکس
+                profile_page()   # پروفایل
             ]
 
             nav_buttons = ft.Row([
