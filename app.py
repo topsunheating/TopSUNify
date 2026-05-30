@@ -152,10 +152,10 @@ def main(page: ft.Page):
                         on_click=lambda e: (setattr(page.session, 'logged_in', True), render())
                     ),
 
-                    # لینک فعال‌سازی / فراموشی رمز (اصلاح شده با TextButton)
+                    # لینک فعال‌سازی / فراموشی رمز (اصلاح نهایی)
                     ft.TextButton(
-                        text="فعال‌سازی / فراموشی رمز",
-                        style=ft.ButtonStyle(color={"": "blue"}),
+                        "فعال‌سازی / فراموشی رمز",   # متن مستقیماً اینجا
+                        style=ft.ButtonStyle(color={"": ft.colors.BLUE}),
                         on_click=show_register_dialog
                     ),
 
