@@ -23,7 +23,7 @@ def main(page: ft.Page):
         snack.open = True
         page.update()
 
-    # ==================== صفحه پروفایل (وسط چین + محدود) ====================
+    # ==================== صفحه پروفایل ====================
     def profile_page():
         header = ft.Container(
             content=ft.Column([
@@ -35,7 +35,7 @@ def main(page: ft.Page):
                     bgcolor="#f0f0f0", padding=12, border_radius=12, margin=ft.margin.Margin(top=12, bottom=8)
                 )
             ], horizontal_alignment="center"),
-            padding=20, bgcolor="#f8f9fa", border_radius=20, margin=ft.margin.only(bottom=20)
+            padding=20, bgcolor="#f8f9fa", border_radius=20, margin=ft.margin.Margin(bottom=20)
         )
 
         menu_items = [
@@ -67,8 +67,8 @@ def main(page: ft.Page):
                 ft.ListTile(leading=ft.Icon(ft.Icons.LOGOUT, color="red"), title=ft.Text("خروج", color="red"), on_click=lambda e: (setattr(page.session, 'logged_in', False), render())),
                 ft.Text("نسخه ۱.۴.۳", size=12, color="grey", text_align="center")
             ], scroll=ft.ScrollMode.AUTO, spacing=2, horizontal_alignment="center"),
-            width=420,          # عرض محدود (مناسب موبایل و وسط‌چین در لپ‌تاپ)
-            margin=ft.margin.symmetric(horizontal=10),
+            width=400,                         # عرض مناسب برای موبایل و وسط‌چین
+            margin=ft.margin.Margin(left=15, right=15),
             padding=10
         )
 
@@ -76,8 +76,20 @@ def main(page: ft.Page):
     def create_account_request(e):
         dlg = ft.AlertDialog(
             title=ft.Text("درخواست ایجاد حساب جدید"),
-            content=ft.Column([ ... ]),  # همان کد قبلی
-            actions=[ ... ]
+            content=ft.Column([
+                ft.TextField(label="نام و نام خانوادگی / نام شرکت", width=340),
+                ft.TextField(label="شماره موبایل", width=340, keyboard_type=ft.KeyboardType.NUMBER),
+                ft.TextField(label="نام کاربری", width=340),
+                ft.Dropdown(label="سطح دسترسی", options=[
+                    ft.dropdown.Option("نمایندگی"), ft.dropdown.Option("عامل فروش"),
+                    ft.dropdown.Option("کارشناس فروش"), ft.dropdown.Option("کارشناس فنی"),
+                ], width=340),
+                ft.TextField(label="توضیحات / دلیل درخواست", width=340, multiline=True, min_lines=3),
+            ], scroll=ft.ScrollMode.AUTO, height=380, spacing=15),
+            actions=[
+                ft.TextButton("انصراف", on_click=lambda _: (setattr(dlg, 'open', False), page.update())),
+                ft.ElevatedButton("ارسال درخواست", bgcolor="#FFCC00", color="black", on_click=lambda _: (show_message("درخواست ارسال شد"), setattr(dlg, 'open', False), page.update()))
+            ]
         )
         page.dialog = dlg
         dlg.open = True
@@ -85,46 +97,73 @@ def main(page: ft.Page):
 
     # ==================== تنظیمات ====================
     def open_settings(e):
-        dlg = ft.AlertDialog(title=ft.Text("تنظیمات"), content=ft.Column([ ... ]))
+        dlg = ft.AlertDialog(
+            title=ft.Text("تنظیمات"),
+            content=ft.Column([
+                ft.ListTile(title=ft.Text("تغییر نام کاربری"), leading=ft.Icon(ft.Icons.PERSON)),
+                ft.ListTile(title=ft.Text("ذخیره نام کاربری"), leading=ft.Icon(ft.Icons.SAVE)),
+                ft.ListTile(title=ft.Text("ورود با اثر انگشت"), leading=ft.Icon(ft.Icons.FINGERPRINT), trailing=ft.Switch(value=True)),
+                ft.ListTile(title=ft.Text("تغییر رمز ورود"), leading=ft.Icon(ft.Icons.LOCK)),
+                ft.ListTile(title=ft.Text("تغییر شماره تلفن همراه"), leading=ft.Icon(ft.Icons.PHONE)),
+                ft.ListTile(title=ft.Text("دستگاه‌های فعال"), leading=ft.Icon(ft.Icons.DEVICES)),
+                ft.ListTile(title=ft.Text("حذف تنظیمات و خروج"), leading=ft.Icon(ft.Icons.DELETE, color="red")),
+            ], scroll=ft.ScrollMode.AUTO, height=400),
+            actions=[ft.TextButton("بستن", on_click=lambda _: (setattr(dlg, 'open', False), page.update()))]
+        )
         page.dialog = dlg
         dlg.open = True
         page.update()
 
-    # ==================== رندر اصلی (وسط چین + محدود) ====================
+    # ==================== رندر اصلی ====================
     def render(tab_index=0):
         page.controls.clear()
 
         if not page.session.logged_in:
-            # صفحه لاگین (وسط چین)
-            login_content = ft.Container(
-                content=ft.Column([ ... ], horizontal_alignment="center", scroll=ft.ScrollMode.AUTO),  # لاگین قبلی شما
-                width=420,
-                margin=ft.margin.symmetric(horizontal=10)
+            # صفحه لاگین
+            page.add(
+                ft.Container(
+                    content=ft.Column([
+                        ft.Container(content=ft.Image(src="TopSUNify.png", width=190), margin=ft.margin.Margin(top=40, bottom=40)),
+                        ft.Container(content=ft.TextField(label="نام کاربری", width=340, border_radius=12, prefix_icon=ft.Icons.PERSON, text_align=ft.TextAlign.RIGHT), margin=ft.margin.Margin(bottom=20)),
+                        ft.Container(content=ft.Row([ft.Container(content=ft.Icon(ft.Icons.FINGERPRINT, size=42, color="#FFCC00"), on_click=lambda e: show_message("احراز هویت بیومتریک فعال شد"), padding=10, border_radius=12, ink=True),
+                            ft.TextField(label="رمز عبور", password=True, width=270, border_radius=12, prefix_icon=ft.Icons.LOCK, text_align=ft.TextAlign.RIGHT)], alignment="center", spacing=12), margin=ft.margin.Margin(bottom=30)),
+                        ft.ElevatedButton("ورود به TopSUNify", width=340, bgcolor="#FFCC00", color="black", style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)), on_click=lambda e: (setattr(page.session, 'logged_in', True), render())),
+                        ft.TextButton("فعال‌سازی / فراموشی رمز", style=ft.ButtonStyle(color={"": "blue"}), on_click=lambda e: show_message("بخش ثبت‌نام در حال توسعه است")),
+                        ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=160), margin=ft.margin.Margin(top=50, bottom=30)),
+                        ft.Container(expand=True, content=ft.Image(src="landscape.jpg", width=400, height=220, fit="cover"))
+                    ], horizontal_alignment="center", scroll=ft.ScrollMode.AUTO),
+                    width=400,
+                    margin=ft.margin.Margin(left=15, right=15),
+                    alignment=ft.Alignment(0, 0)
+                )
             )
-            page.add(ft.Container(content=login_content, expand=True, alignment=ft.Alignment(0, 0)))
         else:
             contents = [
                 ft.Text("داشبورد مدیریتی", size=25),
                 ft.Text("بخش پیش‌فاکتورها", size=25),
                 ft.Column([ft.Image(src="TopSUNify-1.png", width=200), ft.Text("خانه اصلی", size=25)], horizontal_alignment="center"),
                 ft.Text("اطلاعات فنی سیستم", size=25),
-                profile_page()   # پروفایل محدود و وسط‌چین
+                profile_page()
             ]
 
-            nav_buttons = ft.Row([ ... ])  # ناوبری قبلی
-
-            main_content = ft.Container(
-                content=contents[tab_index],
-                width=420,                    # عرض محدود
-                margin=ft.margin.symmetric(horizontal=10),
-                alignment=ft.Alignment(0, 0)
-            )
+            nav_buttons = ft.Row([
+                ft.Container(content=ft.Image(src="dashboard.png", width=32, height=32), on_click=lambda _: render(0), padding=8),
+                ft.Container(content=ft.Image(src="invoice.png", width=32, height=32), on_click=lambda _: render(1), padding=8),
+                ft.Container(content=ft.Image(src="TopSUNify-1.png", width=32, height=32), on_click=lambda _: render(2), padding=8),
+                ft.Container(content=ft.Image(src="technical.png", width=32, height=32), on_click=lambda _: render(3), padding=8),
+                ft.Container(content=ft.Image(src="profile.png", width=32, height=32), on_click=lambda _: render(4), padding=8),
+            ], alignment="center", spacing=15)
 
             page.add(
                 ft.Column([
                     ft.Text("پنل TopSUNify", size=30, weight="bold"),
                     ft.Divider(),
-                    main_content,
+                    ft.Container(
+                        content=contents[tab_index],
+                        width=400,
+                        margin=ft.margin.Margin(left=15, right=15),
+                        alignment=ft.Alignment(0, 0)
+                    ),
                     nav_buttons
                 ], horizontal_alignment="center", expand=True)
             )
