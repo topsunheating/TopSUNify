@@ -23,6 +23,43 @@ def main(page: ft.Page):
         snack.open = True
         page.update()
 
+    # ==================== تغییر تم ====================
+    def toggle_theme(e):
+        page.theme_mode = "dark" if page.theme_mode == "light" else "light"
+        page.update()
+        show_message(f"تم تغییر کرد به: {page.theme_mode}", "blue")
+
+    # ==================== صفحه تنظیمات ====================
+    def open_settings(e):
+        settings_dialog = ft.AlertDialog(
+            title=ft.Text("تنظیمات", size=20, weight="bold"),
+            content=ft.Column([
+                ft.ListTile(title=ft.Text("تغییر نام کاربری"), leading=ft.Icon(ft.Icons.PERSON)),
+                ft.ListTile(title=ft.Text("ذخیره نام کاربری"), leading=ft.Icon(ft.Icons.SAVE)),
+                ft.ListTile(
+                    title=ft.Text("ورود با اثر انگشت"),
+                    leading=ft.Icon(ft.Icons.FINGERPRINT),
+                    on_click=lambda e: show_message("احراز هویت بیومتریک فعال شد")
+                ),
+                ft.ListTile(title=ft.Text("تغییر رمز ورود"), leading=ft.Icon(ft.Icons.LOCK)),
+                ft.ListTile(title=ft.Text("تغییر شماره تلفن همراه"), leading=ft.Icon(ft.Icons.PHONE)),
+                ft.ListTile(title=ft.Text("دستگاه‌های فعال"), leading=ft.Icon(ft.Icons.DEVICES)),
+                ft.Divider(),
+                ft.ListTile(
+                    title=ft.Text("حذف تنظیمات و خروج از نرم‌افزار", color="red"),
+                    leading=ft.Icon(ft.Icons.DELETE_FOREVER, color="red"),
+                    on_click=lambda e: (setattr(page.session, 'logged_in', False), page.close_dialog(), render())
+                ),
+            ], scroll=ft.ScrollMode.AUTO, spacing=2, width=400),
+            actions=[
+                ft.TextButton("بستن", on_click=lambda e: page.close_dialog())
+            ],
+            actions_alignment=ft.MainAxisAlignment.END
+        )
+        page.dialog = settings_dialog
+        settings_dialog.open = True
+        page.update()
+
     # ==================== صفحه پروفایل ====================
     def profile_page():
         return ft.Container(
@@ -45,7 +82,7 @@ def main(page: ft.Page):
                     width=380
                 ),
 
-                # لیست منوها - وسط چین
+                # لیست منوها
                 ft.Container(
                     content=ft.Column([
                         ft.ListTile(leading=ft.Icon(ft.Icons.PERSON_ADD, color="blue"), title=ft.Text("درخواست ایجاد حساب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=create_account_request),
@@ -55,9 +92,50 @@ def main(page: ft.Page):
                         ft.ListTile(leading=ft.Icon(ft.Icons.GROUP), title=ft.Text("همکاران منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
                         ft.ListTile(leading=ft.Icon(ft.Icons.PERCENT), title=ft.Text("محاسبه درصد همکاری"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
                         ft.ListTile(leading=ft.Icon(ft.Icons.ACCOUNT_BALANCE_WALLET), title=ft.Text("مبلغ اعتبار"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+
                         ft.Divider(height=25),
-                        ft.ListTile(leading=ft.Icon(ft.Icons.SETTINGS), title=ft.Text("تنظیمات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=open_settings),
-                        ft.ListTile(leading=ft.Icon(ft.Icons.LOGOUT, color="red"), title=ft.Text("خروج", color="red"), on_click=lambda e: (setattr(page.session, 'logged_in', False), render())),
+
+                        # موارد جدید اضافه شده
+                        ft.ListTile(
+                            leading=ft.Icon(ft.Icons.PALETTE, color="purple"),
+                            title=ft.Text("نمایش (تم روشن/تیره)"),
+                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
+                            on_click=toggle_theme
+                        ),
+                        ft.ListTile(
+                            leading=ft.Icon(ft.Icons.UPDATE, color="blue"),
+                            title=ft.Text("بروزرسانی"),
+                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                        ),
+                        ft.ListTile(
+                            leading=ft.Icon(ft.Icons.MAP, color="green"),
+                            title=ft.Text("شبکه فروش و خدمات"),
+                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                        ),
+                        ft.ListTile(
+                            leading=ft.Icon(ft.Icons.GAVEL, color="amber"),
+                            title=ft.Text("قوانین"),
+                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                        ),
+                        ft.ListTile(
+                            leading=ft.Icon(ft.Icons.INFO, color="blue"),
+                            title=ft.Text("درباره ما"),
+                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                        ),
+
+                        ft.Divider(height=25),
+
+                        ft.ListTile(
+                            leading=ft.Icon(ft.Icons.SETTINGS, color="grey"),
+                            title=ft.Text("تنظیمات"),
+                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
+                            on_click=open_settings
+                        ),
+                        ft.ListTile(
+                            leading=ft.Icon(ft.Icons.LOGOUT, color="red"),
+                            title=ft.Text("خروج", color="red"),
+                            on_click=lambda e: (setattr(page.session, 'logged_in', False), render())
+                        ),
                         ft.Text("نسخه ۱.۴.۳", size=12, color="grey", text_align=ft.TextAlign.CENTER)
                     ], 
                     spacing=2, 
@@ -75,14 +153,12 @@ def main(page: ft.Page):
     def create_account_request(e):
         show_message("درخواست ایجاد حساب ارسال شد", "blue")
 
-    def open_settings(e):
-        show_message("تنظیمات باز شد", "blue")
-
     # ==================== رندر اصلی ====================
     def render(tab_index=0):
         page.controls.clear()
 
         if not page.session.logged_in:
+            # صفحه ورود (بدون تغییر)
             page.add(
                 ft.Container(
                     content=ft.Column([
@@ -114,12 +190,7 @@ def main(page: ft.Page):
                 profile_page()
             ]
 
-            main_content = ft.Container(
-                content=contents[tab_index], 
-                expand=True, 
-                width=400, 
-                margin=ft.margin.Margin(left=15, right=15)
-            )
+            main_content = ft.Container(content=contents[tab_index], expand=True, width=400, margin=ft.margin.Margin(left=15, right=15))
 
             nav_bar = ft.Container(
                 content=ft.Row([
