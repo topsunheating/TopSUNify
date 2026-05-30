@@ -50,7 +50,7 @@ def main(page: ft.Page):
             label="شماره موبایل", 
             width=340, 
             border_radius=10, 
-            prefix=ft.Text("+98 ", size=16),   # ← اصلاح شده
+            prefix=ft.Text("+98 ", size=16),
             keyboard_type=ft.KeyboardType.NUMBER
         )
         username = ft.TextField(label="نام کاربری", width=340, border_radius=10)
@@ -152,15 +152,11 @@ def main(page: ft.Page):
                         on_click=lambda e: (setattr(page.session, 'logged_in', True), render())
                     ),
 
-                    ft.GestureDetector(
-                        content=ft.Text(
-                            "فعال‌سازی / فراموشی رمز",
-                            size=14,
-                            color="blue",
-                            text_align="center"
-                        ),
-                        on_tap=show_register_dialog,
-                        mouse_cursor=ft.MouseCursor.CLICK
+                    # لینک فعال‌سازی / فراموشی رمز (اصلاح شده با TextButton)
+                    ft.TextButton(
+                        text="فعال‌سازی / فراموشی رمز",
+                        style=ft.ButtonStyle(color={"": "blue"}),
+                        on_click=show_register_dialog
                     ),
 
                     ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=160), margin=ft.margin.Margin(top=50, bottom=30)),
