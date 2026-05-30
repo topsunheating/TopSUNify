@@ -50,7 +50,7 @@ def main(page: ft.Page):
                             ft.Container(width=400, height=200, gradient=ft.LinearGradient(begin=ft.alignment.Alignment(0, 1), end=ft.alignment.Alignment(0, -1), colors=["transparent", "white"]))
                         ], width=400, height=200)
                     ], horizontal_alignment="center", expand=True),
-                    ft.Container(content=dlg, alignment=ft.alignment.center) # دیالوگ در استک
+                    ft.Container(content=dlg, alignment=ft.alignment.Alignment(0, 0)) # دیالوگ در استک
                 ], expand=True)
             )
         else:
