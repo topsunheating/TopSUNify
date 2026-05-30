@@ -26,7 +26,7 @@ def main(page: ft.Page):
     def profile_page():
         return ft.Container(
             content=ft.Column([
-                # هدر پروفایل
+                # هدر
                 ft.Container(
                     content=ft.Column([
                         ft.CircleAvatar(foreground_image_src="https://i.pravatar.cc/150?u=reza", radius=48),
@@ -40,7 +40,7 @@ def main(page: ft.Page):
                     padding=20, bgcolor="#f8f9fa", border_radius=20, margin=ft.margin.Margin(bottom=20)
                 ),
 
-                # منوی اصلی
+                # منوها
                 ft.ListTile(leading=ft.Icon(ft.Icons.PERSON_ADD, color="blue"), title=ft.Text("درخواست ایجاد حساب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=create_account_request),
                 ft.ListTile(leading=ft.Icon(ft.Icons.STAR, color="orange"), title=ft.Text("مشتریان منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
                 ft.ListTile(leading=ft.Icon(ft.Icons.WAREHOUSE, color="green"), title=ft.Text("اعلام موجودی انبار"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
@@ -51,7 +51,6 @@ def main(page: ft.Page):
 
                 ft.Divider(height=25),
 
-                # منوهای مشترک
                 ft.ListTile(leading=ft.Icon(ft.Icons.PALETTE), title=ft.Text("نمایش (تم روشن/تیره)"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
                 ft.ListTile(leading=ft.Icon(ft.Icons.UPDATE), title=ft.Text("بروزرسانی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
                 ft.ListTile(leading=ft.Icon(ft.Icons.MAP), title=ft.Text("شبکه فروش و خدمات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
@@ -70,10 +69,10 @@ def main(page: ft.Page):
         )
 
     def create_account_request(e):
-        show_message("درخواست ایجاد حساب باز شد")
+        show_message("درخواست ایجاد حساب")
 
     def open_settings(e):
-        show_message("تنظیمات باز شد")
+        show_message("تنظیمات")
 
     # ==================== رندر اصلی ====================
     def render(tab_index=0):
@@ -113,7 +112,6 @@ def main(page: ft.Page):
                 profile_page()
             ]
 
-            # محتوای اصلی
             main_content = ft.Container(
                 content=contents[tab_index],
                 expand=True,
@@ -132,7 +130,7 @@ def main(page: ft.Page):
                 ], alignment="center", spacing=15),
                 bgcolor="white",
                 padding=12,
-                border=ft.border.only(top=ft.border.BorderSide(1, "#dddddd"))
+                border=ft.border.only(top=ft.border.BorderSide(1, "#e0e0e0"))   # اصلاح شده
             )
 
             page.add(
