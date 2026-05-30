@@ -155,7 +155,7 @@ def main(page: ft.Page):
                     # لینک فعال‌سازی / فراموشی رمز (اصلاح نهایی)
                     ft.TextButton(
                         "فعال‌سازی / فراموشی رمز",   # متن مستقیماً اینجا
-                        style=ft.ButtonStyle(color={"": ft.colors.BLUE}),
+                        style=ft.ButtonStyle(color={"": ft.COLOR.BLUE}),
                         on_click=show_register_dialog
                     ),
 
