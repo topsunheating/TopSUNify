@@ -23,35 +23,106 @@ def main(page: ft.Page):
         snack.open = True
         page.update()
 
-    # ==================== صفحه پروفایل ====================
+        # ==================== صفحه پروفایل ====================
     def profile_page():
         return ft.Container(
             content=ft.Column([
+                # هدر پروفایل
                 ft.Container(
                     content=ft.Column([
-                        ft.CircleAvatar(foreground_image_src="https://i.pravatar.cc/150?u=reza", radius=48),
-                        ft.Text("نام و نام خانوادگی | نام کاربری", size=20, weight="bold", text_align="center"),
-                        ft.Text("شماره موبایل", size=16, color="grey", text_align="center"),
+                        ft.CircleAvatar(
+                            foreground_image_src="https://i.pravatar.cc/150?u=reza", 
+                            radius=48
+                        ),
+                        ft.Text(
+                            "نام و نام خانوادگی | نام کاربری", 
+                            size=20, 
+                            weight="bold", 
+                            text_align="center"
+                        ),
+                        ft.Text(
+                            "شماره موبایل", 
+                            size=16, 
+                            color="grey", 
+                            text_align="center"
+                        ),
                         ft.Container(
-                            content=ft.Text(f"سطح دسترسی: {page.session.user_role}", size=15, color="blue", text_align="center"),
-                            bgcolor="#f0f0f0", padding=12, border_radius=12, margin=ft.margin.Margin(top=12, bottom=8)
+                            content=ft.Text(
+                                f"سطح دسترسی: {page.session.user_role}", 
+                                size=15, 
+                                color="blue", 
+                                text_align="center"
+                            ),
+                            bgcolor="#f0f0f0", 
+                            padding=12, 
+                            border_radius=12, 
+                            margin=ft.margin.Margin(top=12, bottom=8)
                         )
                     ], horizontal_alignment="center"),
-                    padding=20, bgcolor="#f8f9fa", border_radius=20, margin=ft.margin.Margin(bottom=20)
+                    padding=20, 
+                    bgcolor="#f8f9fa", 
+                    border_radius=20, 
+                    margin=ft.margin.Margin(bottom=20),
+                    width=380  # کمی کمتر از عرض کلی برای زیبایی
                 ),
 
-                ft.ListTile(leading=ft.Icon(ft.Icons.PERSON_ADD, color="blue"), title=ft.Text("درخواست ایجاد حساب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=create_account_request),
-                ft.ListTile(leading=ft.Icon(ft.Icons.STAR, color="orange"), title=ft.Text("مشتریان منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-                ft.ListTile(leading=ft.Icon(ft.Icons.WAREHOUSE, color="green"), title=ft.Text("اعلام موجودی انبار"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-                ft.ListTile(leading=ft.Icon(ft.Icons.SHOPPING_CART), title=ft.Text("ثبت درخواست خرید"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-                ft.ListTile(leading=ft.Icon(ft.Icons.GROUP), title=ft.Text("همکاران منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-                ft.ListTile(leading=ft.Icon(ft.Icons.PERCENT), title=ft.Text("محاسبه درصد همکاری"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-                ft.ListTile(leading=ft.Icon(ft.Icons.ACCOUNT_BALANCE_WALLET), title=ft.Text("مبلغ اعتبار"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-                ft.Divider(height=25),
-                ft.ListTile(leading=ft.Icon(ft.Icons.SETTINGS), title=ft.Text("تنظیمات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=open_settings),
-                ft.ListTile(leading=ft.Icon(ft.Icons.LOGOUT, color="red"), title=ft.Text("خروج", color="red"), on_click=lambda e: (setattr(page.session, 'logged_in', False), render())),
-                ft.Text("نسخه ۱.۴.۳", size=12, color="grey", text_align="center")
-            ], scroll=ft.ScrollMode.AUTO, spacing=2),
+                # منوهای پروفایل - وسط چین شده
+                ft.Container(
+                    content=ft.Column([
+                        ft.ListTile(
+                            leading=ft.Icon(ft.Icons.PERSON_ADD, color="blue"),
+                            title=ft.Text("درخواست ایجاد حساب"),
+                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
+                            on_click=create_account_request
+                        ),
+                        ft.ListTile(
+                            leading=ft.Icon(ft.Icons.STAR, color="orange"),
+                            title=ft.Text("مشتریان منتخب"),
+                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                        ),
+                        ft.ListTile(
+                            leading=ft.Icon(ft.Icons.WAREHOUSE, color="green"),
+                            title=ft.Text("اعلام موجودی انبار"),
+                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                        ),
+                        ft.ListTile(
+                            leading=ft.Icon(ft.Icons.SHOPPING_CART),
+                            title=ft.Text("ثبت درخواست خرید"),
+                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                        ),
+                        ft.ListTile(
+                            leading=ft.Icon(ft.Icons.GROUP),
+                            title=ft.Text("همکاران منتخب"),
+                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                        ),
+                        ft.ListTile(
+                            leading=ft.Icon(ft.Icons.PERCENT),
+                            title=ft.Text("محاسبه درصد همکاری"),
+                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                        ),
+                        ft.ListTile(
+                            leading=ft.Icon(ft.Icons.ACCOUNT_BALANCE_WALLET),
+                            title=ft.Text("مبلغ اعتبار"),
+                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                        ),
+                        ft.Divider(height=25),
+                        ft.ListTile(
+                            leading=ft.Icon(ft.Icons.SETTINGS),
+                            title=ft.Text("تنظیمات"),
+                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
+                            on_click=open_settings
+                        ),
+                        ft.ListTile(
+                            leading=ft.Icon(ft.Icons.LOGOUT, color="red"),
+                            title=ft.Text("خروج", color="red"),
+                            on_click=lambda e: (setattr(page.session, 'logged_in', False), render())
+                        ),
+                        ft.Text("نسخه ۱.۴.۳", size=12, color="grey", text_align="center")
+                    ], spacing=2, horizontal_alignment="center"),
+                    width=380,   # عرض ثابت برای وسط چین شدن بهتر
+                    alignment=ft.alignment.center
+                )
+            ], scroll=ft.ScrollMode.AUTO, horizontal_alignment="center"),
             width=400,
             margin=ft.margin.Margin(left=15, right=15),
             expand=True
