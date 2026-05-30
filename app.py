@@ -23,7 +23,7 @@ def main(page: ft.Page):
         snack.open = True
         page.update()
 
-        # ==================== صفحه پروفایل ====================
+            # ==================== صفحه پروفایل ====================
     def profile_page():
         return ft.Container(
             content=ft.Column([
@@ -38,35 +38,35 @@ def main(page: ft.Page):
                             "نام و نام خانوادگی | نام کاربری", 
                             size=20, 
                             weight="bold", 
-                            text_align="center"
+                            text_align=ft.TextAlign.CENTER
                         ),
                         ft.Text(
                             "شماره موبایل", 
                             size=16, 
                             color="grey", 
-                            text_align="center"
+                            text_align=ft.TextAlign.CENTER
                         ),
                         ft.Container(
                             content=ft.Text(
                                 f"سطح دسترسی: {page.session.user_role}", 
                                 size=15, 
                                 color="blue", 
-                                text_align="center"
+                                text_align=ft.TextAlign.CENTER
                             ),
                             bgcolor="#f0f0f0", 
                             padding=12, 
                             border_radius=12, 
                             margin=ft.margin.Margin(top=12, bottom=8)
                         )
-                    ], horizontal_alignment="center"),
+                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
                     padding=20, 
                     bgcolor="#f8f9fa", 
                     border_radius=20, 
                     margin=ft.margin.Margin(bottom=20),
-                    width=380  # کمی کمتر از عرض کلی برای زیبایی
+                    width=380
                 ),
 
-                # منوهای پروفایل - وسط چین شده
+                # لیست منوها - وسط چین
                 ft.Container(
                     content=ft.Column([
                         ft.ListTile(
@@ -117,12 +117,16 @@ def main(page: ft.Page):
                             title=ft.Text("خروج", color="red"),
                             on_click=lambda e: (setattr(page.session, 'logged_in', False), render())
                         ),
-                        ft.Text("نسخه ۱.۴.۳", size=12, color="grey", text_align="center")
-                    ], spacing=2, horizontal_alignment="center"),
-                    width=380,   # عرض ثابت برای وسط چین شدن بهتر
+                        ft.Text("نسخه ۱.۴.۳", size=12, color="grey", text_align=ft.TextAlign.CENTER)
+                    ], 
+                    spacing=2, 
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+                    width=380,
                     alignment=ft.alignment.center
                 )
-            ], scroll=ft.ScrollMode.AUTO, horizontal_alignment="center"),
+            ], 
+            scroll=ft.ScrollMode.AUTO, 
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400,
             margin=ft.margin.Margin(left=15, right=15),
             expand=True
