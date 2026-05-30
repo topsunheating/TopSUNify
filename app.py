@@ -5,121 +5,120 @@ import requests
 GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbygH2yHhw44Lk5Hv8okJDnRBgGw2UzoF1wsZvMGGGr7ZzhSS0Ro6WhSeVFTPM2TpsMv/exec"
 
 def main(page: ft.Page):
-    page.fonts = {"iranyekan": "fonts/iranyekan.ttf"}
-    page.theme = ft.Theme(font_family="iranyekan")
-    page.padding = 0
-    page.rtl = True
-    page.theme_mode = "light"
-    page.bgcolor = "#f5f5f5"
+    page.fonts = {"iranyekan": "fonts/iranyekan.ttf"}
+    page.theme = ft.Theme(font_family="iranyekan")
+    page.padding = 0
+    page.rtl = True
+    page.theme_mode = "light"
+    page.bgcolor = "#f5f5f5"
 
-    if not hasattr(page.session, "logged_in"):
-        page.session.logged_in = False
-        page.session.user_role = "عمومی"
+    if not hasattr(page.session, "logged_in"):
+        page.session.logged_in = False
+        page.session.user_role = "عمومی"
 
-    def show_message(text: str, color="green"):
-        snack = ft.SnackBar(content=ft.Text(text), bgcolor=color, action="بستن", duration=3000)
-        page.snack_bar = snack
-        snack.open = True
-        page.update()
+    def show_message(text: str, color="green"):
+        snack = ft.SnackBar(content=ft.Text(text), bgcolor=color, action="بستن", duration=3000)
+        page.snack_bar = snack
+        snack.open = True
+        page.update()
 
-    # ==================== صفحه پروفایل ====================
-    def profile_page():
-        return ft.Container(
-            content=ft.Column([
-                # هدر پروفایل
-                ft.Container(
-                    content=ft.Column([
-                        ft.CircleAvatar(foreground_image_src="https://i.pravatar.cc/150?u=reza", radius=48),
-                        ft.Text("نام و نام خانوادگی | نام کاربری", size=20, weight="bold", text_align="center"),
-                        ft.Text("شماره موبایل", size=16, color="grey", text_align="center"),
-                        ft.Container(
-                            content=ft.Text(f"سطح دسترسی: {page.session.user_role}", size=15, color="blue", text_align="center"),
-                            bgcolor="#f0f0f0", padding=12, border_radius=12, margin=ft.margin.Margin(top=12, bottom=8)
-                        )
-                    ], horizontal_alignment="center"),
-                    padding=20, bgcolor="#f8f9fa", border_radius=20, margin=ft.margin.Margin(bottom=20)
-                ),
+    # ==================== صفحه پروفایل ====================
+    def profile_page():
+        return ft.Container(
+            content=ft.Column([
+                # هدر پروفایل
+                ft.Container(
+                    content=ft.Column([
+                        ft.CircleAvatar(foreground_image_src="https://i.pravatar.cc/150?u=reza", radius=48),
+                        ft.Text("نام و نام خانوادگی | نام کاربری", size=20, weight="bold", text_align="center"),
+                        ft.Text("شماره موبایل", size=16, color="grey", text_align="center"),
+                        ft.Container(
+                            content=ft.Text(f"سطح دسترسی: {page.session.user_role}", size=15, color="blue", text_align="center"),
+                            bgcolor="#f0f0f0", padding=12, border_radius=12, margin=ft.margin.Margin(top=12, bottom=8)
+                        )
+                    ], horizontal_alignment="center"),
+                    padding=20, bgcolor="#f8f9fa", border_radius=20, margin=ft.margin.Margin(bottom=20)
+                ),
 
-                # منوهای پروفایل
-                ft.ListTile(leading=ft.Icon(ft.Icons.PERSON_ADD, color="blue"), title=ft.Text("درخواست ایجاد حساب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=create_account_request),
-                ft.ListTile(leading=ft.Icon(ft.Icons.STAR, color="orange"), title=ft.Text("مشتریان منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-                ft.ListTile(leading=ft.Icon(ft.Icons.WAREHOUSE, color="green"), title=ft.Text("اعلام موجودی انبار"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-                ft.ListTile(leading=ft.Icon(ft.Icons.SHOPPING_CART), title=ft.Text("ثبت درخواست خرید"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-                ft.ListTile(leading=ft.Icon(ft.Icons.GROUP), title=ft.Text("همکاران منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-                ft.ListTile(leading=ft.Icon(ft.Icons.PERCENT), title=ft.Text("محاسبه درصد همکاری"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-                ft.ListTile(leading=ft.Icon(ft.Icons.ACCOUNT_BALANCE_WALLET), title=ft.Text("مبلغ اعتبار"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                # منوهای پروفایل
+                ft.ListTile(leading=ft.Icon(ft.Icons.PERSON_ADD, color="blue"), title=ft.Text("درخواست ایجاد حساب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=create_account_request),
+                ft.ListTile(leading=ft.Icon(ft.Icons.STAR, color="orange"), title=ft.Text("مشتریان منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                ft.ListTile(leading=ft.Icon(ft.Icons.WAREHOUSE, color="green"), title=ft.Text("اعلام موجودی انبار"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                ft.ListTile(leading=ft.Icon(ft.Icons.SHOPPING_CART), title=ft.Text("ثبت درخواست خرید"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                ft.ListTile(leading=ft.Icon(ft.Icons.GROUP), title=ft.Text("همکاران منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                ft.ListTile(leading=ft.Icon(ft.Icons.PERCENT), title=ft.Text("محاسبه درصد همکاری"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                ft.ListTile(leading=ft.Icon(ft.Icons.ACCOUNT_BALANCE_WALLET), title=ft.Text("مبلغ اعتبار"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
 
-                ft.Divider(height=25),
+                ft.Divider(height=25),
 
-                ft.ListTile(leading=ft.Icon(ft.Icons.PALETTE), title=ft.Text("نمایش (تم روشن/تیره)"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-                ft.ListTile(leading=ft.Icon(ft.Icons.UPDATE), title=ft.Text("بروزرسانی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-                ft.ListTile(leading=ft.Icon(ft.Icons.MAP), title=ft.Text("شبکه فروش و خدمات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-                ft.ListTile(leading=ft.Icon(ft.Icons.GAVEL), title=ft.Text("قوانین"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-                ft.ListTile(leading=ft.Icon(ft.Icons.INFO), title=ft.Text("درباره ما"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                ft.ListTile(leading=ft.Icon(ft.Icons.PALETTE), title=ft.Text("نمایش (تم روشن/تیره)"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                ft.ListTile(leading=ft.Icon(ft.Icons.UPDATE), title=ft.Text("بروزرسانی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                ft.ListTile(leading=ft.Icon(ft.Icons.MAP), title=ft.Text("شبکه فروش و خدمات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                ft.ListTile(leading=ft.Icon(ft.Icons.GAVEL), title=ft.Text("قوانین"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                ft.ListTile(leading=ft.Icon(ft.Icons.INFO), title=ft.Text("درباره ما"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
 
-                ft.Divider(height=25),
+                ft.Divider(height=25),
 
-                ft.ListTile(leading=ft.Icon(ft.Icons.SETTINGS), title=ft.Text("تنظیمات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=open_settings),
-                ft.ListTile(leading=ft.Icon(ft.Icons.LOGOUT, color="red"), title=ft.Text("خروج", color="red"), on_click=lambda e: (setattr(page.session, 'logged_in', False), render())),
-                ft.Text("نسخه ۱.۴.۳", size=12, color="grey", text_align="center")
-            ], scroll=ft.ScrollMode.AUTO, spacing=2, horizontal_alignment="center"),
-            width=400,
-            margin=ft.margin.Margin(left=15, right=15),
-            expand=True
-        )
+                ft.ListTile(leading=ft.Icon(ft.Icons.SETTINGS), title=ft.Text("تنظیمات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=open_settings),
+                ft.ListTile(leading=ft.Icon(ft.Icons.LOGOUT, color="red"), title=ft.Text("خروج", color="red"), on_click=lambda e: (setattr(page.session, 'logged_in', False), render())),
+                ft.Text("نسخه ۱.۴.۳", size=12, color="grey", text_align="center")
+            ], scroll=ft.ScrollMode.AUTO, spacing=2, horizontal_alignment="center"),
+            width=400,
+            margin=ft.margin.Margin(left=15, right=15),
+            expand=True
+        )
 
-    def create_account_request(e):
-        show_message("درخواست ایجاد حساب")
+    def create_account_request(e):
+        show_message("درخواست ایجاد حساب")
 
-    def open_settings(e):
-        show_message("تنظیمات")
+    def open_settings(e):
+        show_message("تنظیمات")
 
-    # ==================== رندر اصلی ====================
-    def render(tab_index=0):
-        page.controls.clear()
+    # ==================== رندر اصلی ====================
+    def render(tab_index=0):
+        page.controls.clear()
 
-        if not page.session.logged_in:
-            page.add(
-                ft.Container(
-                    content=ft.Column([
-                        ft.Container(content=ft.Image(src="TopSUNify.png", width=190), margin=ft.margin.Margin(top=40, bottom=40)),
-                        ft.Container(content=ft.TextField(label="نام کاربری", width=340, border_radius=12, prefix_icon=ft.Icons.PERSON, text_align=ft.TextAlign.RIGHT), margin=ft.margin.Margin(bottom=20)),
-                        ft.Container(
-                            content=ft.Row([
-                                ft.Container(content=ft.Icon(ft.Icons.FINGERPRINT, size=42, color="#FFCC00"), on_click=lambda e: show_message("احراز هویت بیومتریک"), padding=10, border_radius=12),
-                                ft.TextField(label="رمز عبور", password=True, width=270, border_radius=12, prefix_icon=ft.Icons.LOCK, text_align=ft.TextAlign.RIGHT)
-                            ], alignment="center", spacing=12),
-                            margin=ft.margin.Margin(bottom=30)
-                        ),
-                        ft.ElevatedButton("ورود به TopSUNify", width=340, bgcolor="#FFCC00", color="black", style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)), on_click=lambda e: (setattr(page.session, 'logged_in', True), render())),
-                        ft.TextButton("فعال‌سازی / فراموشی رمز", style=ft.ButtonStyle(color={"": "blue"}), on_click=lambda e: show_message("بخش ثبت‌نام")),
-                        ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=160), margin=ft.margin.Margin(top=50, bottom=30)),
-                        ft.Container(expand=True, content=ft.Image(src="landscape.jpg", width=400, height=220, fit="cover"))
-                    ], horizontal_alignment="center", scroll=ft.ScrollMode.AUTO),
-                    width=400,
-                    margin=ft.margin.Margin(left=15, right=15),
-                    expand=True,
-                    alignment=ft.Alignment(0, 0)
-                )
-            )
-        else:
-            contents = [
-                ft.Text("داشبورد مدیریتی", size=25),
-                ft.Text("بخش پیش‌فاکتورها", size=25),
-                ft.Column([ft.Image(src="TopSUNify-1.png", width=200), ft.Text("خانه اصلی", size=25)], horizontal_alignment="center"),
-                ft.Text("اطلاعات فنی سیستم", size=25),
-                profile_page()
-            ]
+        if not page.session.logged_in:
+            page.add(
+                ft.Container(
+                    content=ft.Column([
+                        ft.Container(content=ft.Image(src="TopSUNify.png", width=190), margin=ft.margin.Margin(top=40, bottom=40)),
+                        ft.Container(content=ft.TextField(label="نام کاربری", width=340, border_radius=12, prefix_icon=ft.Icons.PERSON, text_align=ft.TextAlign.RIGHT), margin=ft.margin.Margin(bottom=20)),
+                        ft.Container(
+                            content=ft.Row([
+                                ft.Container(content=ft.Icon(ft.Icons.FINGERPRINT, size=42, color="#FFCC00"), on_click=lambda e: show_message("احراز هویت بیومتریک"), padding=10, border_radius=12),
+                                ft.TextField(label="رمز عبور", password=True, width=270, border_radius=12, prefix_icon=ft.Icons.LOCK, text_align=ft.TextAlign.RIGHT)
+                            ], alignment="center", spacing=12),
+                            margin=ft.margin.Margin(bottom=30)
+                        ),
+                        ft.ElevatedButton("ورود به TopSUNify", width=340, bgcolor="#FFCC00", color="black", style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)), on_click=lambda e: (setattr(page.session, 'logged_in', True), render())),
+                        ft.TextButton("فعال‌سازی / فراموشی رمز", style=ft.ButtonStyle(color={"": "blue"}), on_click=lambda e: show_message("بخش ثبت‌نام")),
+                        ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=160), margin=ft.margin.Margin(top=50, bottom=30)),
+                        ft.Container(expand=True, content=ft.Image(src="landscape.jpg", width=400, height=220, fit="cover"))
+                    ], horizontal_alignment="center", scroll=ft.ScrollMode.AUTO),
+                    width=400,
+                    margin=ft.margin.Margin(left=15, right=15),
+                    expand=True,
+                    alignment=ft.alignment.center
+                )
+            )
+        else:
+            contents = [
+                ft.Text("داشبورد مدیریتی", size=25),
+                ft.Text("بخش پیش‌فاکتورها", size=25),
+                ft.Column([ft.Image(src="TopSUNify-1.png", width=200), ft.Text("خانه اصلی", size=25)], horizontal_alignment="center"),
+                ft.Text("اطلاعات فنی سیستم", size=25),
+                profile_page()
+            ]
 
-            main_content = ft.Container(
-                content=contents[tab_index],
-                expand=True,
-                width=400,
-                margin=ft.margin.Margin(left=15, right=15)
-            )
+            main_content = ft.Container(
+                content=contents[tab_index],
+                expand=True,
+                width=400,
+                margin=ft.margin.Margin(left=15, right=15),
+                alignment=ft.alignment.center
+            )
 
-            # ناوبری ثابت در پایین (بدون border.only)
-            # روش استاندارد و بدون خطا برای تعریف بوردر
             nav_bar = ft.Container(
                 content=ft.Row([
                     ft.Container(content=ft.Image(src="dashboard.png", width=32, height=32), on_click=lambda _: render(0), padding=8),
@@ -130,7 +129,6 @@ def main(page: ft.Page):
                 ], alignment="center", spacing=15),
                 bgcolor="white",
                 padding=12,
-                # اصلاحیه: استفاده از BorderSide به جای border.all که در برخی نسخه‌ها حذف شده
                 border=ft.Border(
                     top=ft.BorderSide(1, "#e0e0e0"),
                     bottom=ft.BorderSide(1, "#e0e0e0"),
@@ -138,11 +136,22 @@ def main(page: ft.Page):
                     right=ft.BorderSide(1, "#e0e0e0")
                 )
             )
-        page.update()
 
-    render()
+            # اضافه کردن به صفحه در حالت لاگین
+            page.add(
+                ft.Column([
+                    ft.Text("پنل TopSUNify", size=30, weight="bold"),
+                    ft.Divider(),
+                    main_content,
+                    nav_bar
+                ], horizontal_alignment="center", expand=True)
+            )
+
+        page.update()
+
+    render()
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))
-    ft.app(target=main, port=port, host="0.0.0.0", assets_dir="assets")
+    port = int(os.environ.get("PORT", 8080))
+    ft.app(target=main, port=port, host="0.0.0.0", assets_dir="assets")
