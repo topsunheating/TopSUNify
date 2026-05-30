@@ -99,7 +99,7 @@ def main(page: ft.Page):
                     width=400,
                     margin=ft.margin.Margin(left=15, right=15),
                     expand=True,
-                    alignment=ft.alignment.center
+                    alignment= "center"
                 )
             )
         else:
@@ -116,7 +116,7 @@ def main(page: ft.Page):
                 expand=True,
                 width=400,
                 margin=ft.margin.Margin(left=15, right=15),
-                alignment=ft.alignment.center
+                alignment= "center"
             )
 
             nav_bar = ft.Container(
