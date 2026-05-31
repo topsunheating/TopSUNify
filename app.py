@@ -52,7 +52,7 @@ def main(page: ft.Page):
         # ایجاد لیست طولانی سال-ماه
         period_buttons = ft.Row(
             scroll=ft.ScrollMode.AUTO,
-            spacing=8,
+            spacing=0,
             alignment=ft.MainAxisAlignment.START,
         )
 
@@ -68,7 +68,7 @@ def main(page: ft.Page):
                     width=90,
                     height=45,
                     bgcolor="#1565C0" if is_selected else "#f0f0f0",
-                    border_radius=5,
+                    border_radius=10,
                     alignment=ft.Alignment(0.5, 0.5),
                     on_click=lambda e, y=year, m_num=month_num, m_name=month_name: select_period(e, y, m_num, m_name)
                 )
@@ -91,9 +91,9 @@ def main(page: ft.Page):
         # کارت‌های گزارش
         report_cards = ft.GridView(
             runs_count=3,
-            max_extent=175,
+            max_extent=135,
             spacing=12,
-            run_spacing=12,
+            run_spacing=10,
             padding=5,
             expand=True,
         )
