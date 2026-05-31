@@ -217,13 +217,13 @@ def main(page: ft.Page):
             selected_ref.current = e.control
             e.control.update()
             
-            show_message(f"بازه انتخابی: {month_num} - {year} ({month_name})")
+            show_message(f"بازه انتخابی: {year} ({month_num})")
 
         years = ["1401", "1402", "1403", "1404", "1405", "1406", "1407"]
         months = [
-            ("فروردین", "01"), ("اردیبهشت", "02"), ("خرداد", "03"), ("تیر", "04"),
-            ("مرداد", "05"), ("شهریور", "06"), ("مهر", "07"), ("آبان", "08"),
-            ("آذر", "09"), ("دی", "10"), ("بهمن", "11"), ("اسفند", "12")
+            ("01"), ("02"), ("03"), ("04"),
+            ("05"), ("06"), ("07"), ("08"),
+            ("09"), ("10"), ("11"), ("12")
         ]
 
         # ایجاد لیست طولانی سال-ماه
@@ -234,20 +234,20 @@ def main(page: ft.Page):
         )
 
         for year in years:
-            for month_name, month_num in months:
+            for month_num in months:
                 is_selected = (year == "1405" and month_num == "05")  # پیش‌فرض اردیبهشت ۱۴۰۵
                 
                 container = ft.Container(
                     content=ft.Column([
-                        ft.Text(f"{year} - {month_num}", size=12, weight="bold", text_align=ft.TextAlign.CENTER),
-                        ft.Text(month_name, size=12, text_align=ft.TextAlign.CENTER),
+                        ft.Text(f"{year}", size=12, weight="bold", text_align=ft.TextAlign.CENTER),
+                        ft.Text(month_num, size=12, text_align=ft.TextAlign.CENTER),
                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=2),
                     width=85,
                     height=35,
                     bgcolor="#1565C0" if is_selected else "#f0f0f0",
                     border_radius=160,
                     alignment=ft.Alignment(0.5, 0.5),
-                    on_click=lambda e, y=year, m_num=month_num, m_name=month_name: select_period(e, y, m_num, m_name)
+                    on_click=lambda e, y=year, m_num=month_num: select_period(e, y, m_num)
                 )
                 
                 if is_selected:
