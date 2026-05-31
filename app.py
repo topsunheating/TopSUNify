@@ -351,15 +351,7 @@ def main(page: ft.Page):
                 )
             )
         else:
-            contents = [
-                ft.Text("داشبورد مدیریتی", size=18, weight="bold"),
-                pre_invoice_page(),      # تب 1 - پیش فاکتورها
-                home_page(),
-                technical_page(),
-                profile_page(),
-                settings_page()
-                dashboard_page(),
-            ]
+            contents = [dashboard_page(), pre_invoice_page(), home_page(), technical_page(), profile_page(), settings_page()]
             main_content = ft.Container(
                 content=contents[tab_index],
                 expand=True,
