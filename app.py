@@ -28,45 +28,36 @@ def main(page: ft.Page):
 
     # ==================== داشبورد مدیریتی ====================
     def dashboard_page():
-        def select_period(e, year, month_name, month_num):
-            show_message(f"بازه {month_name} {year} انتخاب شد")
+        def select_month(e, month_name, month_num):
+            show_message(f"بازه {month_name} انتخاب شد")
 
-        years = ["1403", "1404", "1405", "1406", "1407"]
         months = [
-            ("فروردین", "01"), ("اردیبهشت", "02"), ("خرداد", "03"), ("تیر", "04"),
-            ("مرداد", "05"), ("شهریور", "06"), ("مهر", "07"), ("آبان", "08"),
-            ("آذر", "09"), ("دی", "10"), ("بهمن", "11"), ("اسفند", "12")
+            ("فروردین", "01"), ("اردیبهشت", "02"), ("خرداد", "03"),
+            ("تیر", "04"), ("مرداد", "05"), ("شهریور", "06"),
+            ("مهر", "07"), ("آبان", "08"), ("آذر", "09"),
+            ("دی", "10"), ("بهمن", "11"), ("اسفند", "12")
         ]
 
-        # لیست سال‌ها و ماه‌های هر سال
-        period_column = ft.Column(scroll=ft.ScrollMode.AUTO, spacing=20)
-
-        for year in years:
-            month_row = ft.Row(
-                controls=[
-                    ft.Container(
-                        content=ft.Column([
-                            ft.Text(num, size=18, weight="bold"),
-                            ft.Text(name, size=13, text_align=ft.TextAlign.CENTER),
-                        ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=2),
-                        width=78,
-                        height=78,
-                        bgcolor="#1565C0" if year == "1405" and i == 4 else "#f0f0f0",
-                        border_radius=14,
-                        alignment=ft.Alignment(0.5, 0.5),
-                        on_click=lambda e, y=year, n=name, num=num: select_period(e, y, n, num)
-                    ) for i, (name, num) in enumerate(months)
-                ],
-                scroll=ft.ScrollMode.AUTO,
-                spacing=8,
-            )
-
-            period_column.controls.append(
-                ft.Column([
-                    ft.Text(f"سال {year}", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
-                    month_row,
-                ], spacing=8)
-            )
+        # نوار ماه‌ها دقیقاً مثل عکس شما
+        month_buttons = ft.Row(
+            controls=[
+                ft.Container(
+                    content=ft.Column([
+                        ft.Text(num, size=22, weight="bold", color="#1565C0" if i == 4 else "#555555"),
+                        ft.Text(name, size=14, color="#1565C0" if i == 4 else "#666666"),
+                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=2),
+                    width=85,
+                    height=85,
+                    bgcolor="#1565C0" if i == 4 else "white",
+                    border_radius=20,
+                    alignment=ft.Alignment(0.5, 0.5),
+                    shadow=ft.BoxShadow(blur_radius=6, color="#e0e0e0") if i != 4 else None,
+                    on_click=lambda e, n=name, num=num: select_month(e, n, num)
+                ) for i, (name, num) in enumerate(months)
+            ],
+            scroll=ft.ScrollMode.AUTO,
+            spacing=10,
+        )
 
         # دکمه مشاهده اطلاعات
         view_button = ft.ElevatedButton(
@@ -75,10 +66,10 @@ def main(page: ft.Page):
             bgcolor="#1565C0",
             color="white",
             style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)),
-            on_click=lambda e: show_message("در حال بارگذاری گزارش‌ها...")
+            on_click=lambda e: show_message("در حال نمایش گزارش‌ها...")
         )
 
-        # کارت‌های گزارش
+        # کارت‌های گزارش (۳ ستونی)
         report_cards = ft.GridView(
             runs_count=3,
             max_extent=175,
@@ -123,7 +114,8 @@ def main(page: ft.Page):
                     margin=ft.margin.Margin(bottom=15)
                 ),
 
-                period_column,
+                ft.Text("انتخاب ماه", size=17, weight="bold", text_align=ft.TextAlign.CENTER),
+                month_buttons,
                 ft.Divider(height=10),
                 view_button,
                 ft.Divider(height=20),
@@ -159,7 +151,7 @@ def main(page: ft.Page):
             expand=True
         )
 
-    # ==================== صفحات دیگر (خلاصه) ====================
+    # ==================== صفحات دیگر ====================
     def pre_invoice_page():
         products = ["گرمایش از کف", "زیرفرشی", "رادیاتور", "حوله خشک کن", "یخ زدایی رمپ", "یخ زدایی پله", "گرمکن مخزن", "گرمکن صندلی", "رستورانی", "عایق بازتابشی"]
         grid = ft.GridView(runs_count=2, max_extent=170, spacing=12, run_spacing=12, padding=10, expand=True)
