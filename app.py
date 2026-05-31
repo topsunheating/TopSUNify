@@ -32,7 +32,7 @@ def main(page: ft.Page):
     def pre_invoice_page():
         products = [
             ("گرمایش از کف", ft.Icons.HEAT_PUMP, "#1565C0"),
-            ("زیرفرشی", ft.Icons.FLOOR, "#2E7D32"),
+            ("زیرفرشی", ft.Icons.HEAT_PUMP, "#2E7D32"),
             ("رادیاتور", ft.Icons.RADIATOR, "#C62828"),
             ("حوله خشک کن", ft.Icons.DRY_CLEAN, "#8E24AA"),
             ("یخ زدایی رمپ", ft.Icons.AC_UNIT, "#455A64"),
