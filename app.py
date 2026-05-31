@@ -26,7 +26,7 @@ def main(page: ft.Page):
     def dashboard_page():
         selected_ref = ft.Ref[ft.Container]()
 
-        def select_period(e, year, month_name):
+        def select_period(e, year, month_num, month_name):
             # تغییر وضعیت انتخاب شده
             if selected_ref.current:
                 selected_ref.current.bgcolor = "#f0f0f0"
@@ -36,13 +36,13 @@ def main(page: ft.Page):
             selected_ref.current = e.control
             e.control.update()
             
-            show_message(f"بازه انتخابی: {year} ({month_name})")
+            show_message(f"بازه انتخابی: {year} - {month_num} ({month_name})")
 
         years = ["1401", "1402", "1403", "1404", "1405", "1406", "1407"]
         months = [
-            "فروردین", "اردیبهشت", "خرداد", "تیر",
-            "مرداد", "شهریور", "مهر", "آبان",
-            "آذر", "دی", "بهمن", "اسفند"
+            ("فروردین", "01"), ("اردیبهشت", "02"), ("خرداد", "03"), ("تیر", "04"),
+            ("مرداد", "05"), ("شهریور", "06"), ("مهر", "07"), ("آبان", "08"),
+            ("آذر", "09"), ("دی", "10"), ("بهمن", "11"), ("اسفند", "12")
         ]
 
         # ایجاد لیست طولانی سال-ماه
@@ -53,21 +53,20 @@ def main(page: ft.Page):
         )
 
         for year in years:
-            for month_name in months:
-                # شرط پیش‌فرض: اردیبهشت ۱۴۰۵
-                is_selected = (year == "1405" and month_name == "اردیبهشت")
+            for month_name, month_num in months:
+                is_selected = (year == "1405" and month_num == "05")  # پیش‌فرض اردیبهشت ۱۴۰۵
                 
                 container = ft.Container(
                     content=ft.Column([
-                        ft.Text(f"{year}", size=15, weight="bold", text_align=ft.TextAlign.CENTER),
+                        ft.Text(f"{year} - {month_num}", size=15, weight="bold", text_align=ft.TextAlign.CENTER),
                         ft.Text(month_name, size=12, text_align=ft.TextAlign.CENTER),
                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=2),
-                    width=90,
-                    height=35,
+                    width=95,
+                    height=85,
                     bgcolor="#1565C0" if is_selected else "#f0f0f0",
-                    border_radius=10,
+                    border_radius=16,
                     alignment=ft.Alignment(0.5, 0.5),
-                    on_click=lambda e, y=year, m=month_name: select_period(e, y, m)
+                    on_click=lambda e, y=year, m_num=month_num, m_name=month_name: select_period(e, y, m_num, m_name)
                 )
                 
                 if is_selected:
@@ -78,7 +77,7 @@ def main(page: ft.Page):
         # دکمه مشاهده اطلاعات
         view_button = ft.ElevatedButton(
             "مشاهده اطلاعات این بازه",
-            width=300,
+            width=320,
             bgcolor="#1565C0",
             color="white",
             style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)),
@@ -88,9 +87,9 @@ def main(page: ft.Page):
         # کارت‌های گزارش
         report_cards = ft.GridView(
             runs_count=3,
-            max_extent=135,
-            spacing=10,
-            run_spacing=10,
+            max_extent=175,
+            spacing=12,
+            run_spacing=12,
             padding=10,
             expand=True,
         )
