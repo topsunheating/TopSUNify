@@ -48,7 +48,7 @@ def main(page: ft.Page):
                     height=78,
                     bgcolor="#1565C0" if i == 4 else "#f0f0f0",
                     border_radius=14,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment(0.5, 0.5),
                     on_click=lambda e, n=name, num=num: select_month(e, n, num)
                 ) for i, (name, num) in enumerate(months)
             ],
@@ -135,7 +135,7 @@ def main(page: ft.Page):
                 ),
                 ft.ElevatedButton("ورود به TopSUNify", width=340, bgcolor="#FFCC00", color="black", style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)), on_click=lambda e: (setattr(page.session, 'logged_in', True), render())),
                 ft.TextButton("فعال‌سازی / فراموشی رمز", style=ft.ButtonStyle(color={"": "blue"})),
-                ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=160), margin=ft.margin.Margin(top=40, bottom=20)),
+                ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=100), margin=ft.margin.Margin(top=40, bottom=20, right=5)),
                 ft.Container(content=ft.Image(src="landscape.jpg", width=400, height=210, fit="cover")),
             ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, scroll=ft.ScrollMode.AUTO),
             width=400,
@@ -151,7 +151,7 @@ def main(page: ft.Page):
             grid.controls.append(ft.Container(
                 content=ft.Text(name, size=15, weight="bold", text_align=ft.TextAlign.CENTER, color="#1565C0"),
                 width=160, height=80, bgcolor="#ffffff", border_radius=12,
-                alignment=ft.alignment.center,
+                alignment=ft.Alignment(0.5, 0.5),
                 on_click=lambda e, n=name: show_message(f"پیش‌فاکتور {n}"), ink=True,
             ))
         return ft.Container(
@@ -161,16 +161,16 @@ def main(page: ft.Page):
         )
 
     def home_page():
-        return ft.Container(content=ft.Text("خانه اصلی", size=24, weight="bold"), expand=True, alignment=ft.alignment.center)
+        return ft.Container(content=ft.Text("خانه اصلی", size=24, weight="bold"), expand=True, alignment=ft.Alignment(0.5, 0.5))
 
     def technical_page():
-        return ft.Container(content=ft.Text("اطلاعات فنی", size=24, weight="bold"), expand=True, alignment=ft.alignment.center)
+        return ft.Container(content=ft.Text("اطلاعات فنی", size=24, weight="bold"), expand=True, alignment=ft.Alignment(0.5, 0.5))
 
     def settings_page():
-        return ft.Container(content=ft.Text("تنظیمات", size=24, weight="bold"), expand=True, alignment=ft.alignment.center)
+        return ft.Container(content=ft.Text("تنظیمات", size=24, weight="bold"), expand=True, alignment=ft.Alignment(0.5, 0.5))
 
     def profile_page():
-        return ft.Container(content=ft.Text("پروفایل", size=24, weight="bold"), expand=True, alignment=ft.alignment.center)
+        return ft.Container(content=ft.Text("پروفایل", size=24, weight="bold"), expand=True, alignment=ft.Alignment(0.5, 0.5))
 
     # ==================== رندر ====================
     def render(tab_index=0):
