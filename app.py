@@ -40,21 +40,22 @@ def main(page: ft.Page):
 
         years = ["1401", "1402", "1403", "1404", "1405", "1406", "1407"]
         months = [
-            ("فروردین"), ("اردیبهشت"), ("خرداد"), ("تیر"),
-            ("مرداد"), ("شهریور"), ("مهر"), ("آبان),
-            ("آذر"), ("دی"), ("بهمن"), ("اسفند")
+            "فروردین", "اردیبهشت", "خرداد", "تیر",
+            "مرداد", "شهریور", "مهر", "آبان",
+            "آذر", "دی", "بهمن", "اسفند"
         ]
 
         # ایجاد لیست طولانی سال-ماه
         period_buttons = ft.Row(
             scroll=ft.ScrollMode.AUTO,
-            spacing=2,
+            spacing=8,
             alignment=ft.MainAxisAlignment.START,
         )
 
         for year in years:
             for month_name in months:
-                is_selected = (year == "1405" and month_num == "اردیبهشت")  # پیش‌فرض اردیبهشت ۱۴۰۵
+                # شرط پیش‌فرض: اردیبهشت ۱۴۰۵
+                is_selected = (year == "1405" and month_name == "اردیبهشت")
                 
                 container = ft.Container(
                     content=ft.Column([
@@ -62,11 +63,11 @@ def main(page: ft.Page):
                         ft.Text(month_name, size=12, text_align=ft.TextAlign.CENTER),
                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=2),
                     width=90,
-                    height=85,
+                    height=35,
                     bgcolor="#1565C0" if is_selected else "#f0f0f0",
                     border_radius=10,
                     alignment=ft.Alignment(0.5, 0.5),
-                    on_click=lambda e, y=year, m_name=month_name: select_period(e, y, m_name)
+                    on_click=lambda e, y=year, m=month_name: select_period(e, y, m)
                 )
                 
                 if is_selected:
