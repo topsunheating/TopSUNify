@@ -33,14 +33,14 @@ def main(page: ft.Page):
     def home_page():
         return ft.Container(
             content=ft.Column([
-                # لوگو و عنوان
+                # لوگو و عنوان (در صورت تمایل می‌توانید این بخش داخلی را هم کوچک‌تر کنید)
                 ft.Container(
                     content=ft.Column([
-                        ft.Image(src="TopSUNify-1.png", width=180),
-                        ft.Text("خوش آمدید به TopSUNify", size=24, weight="bold", text_align=ft.TextAlign.CENTER),
-                        ft.Text("مرکز خدمات و پشتیبانی", size=16, color="grey", text_align=ft.TextAlign.CENTER),
+                        ft.Image(src="TopSUNify-1.png", width=140),
+                        ft.Text("خوش آمدید به TopSUNify", size=22, weight="bold", text_align=ft.TextAlign.CENTER),
+                        ft.Text("مرکز خدمات و پشتیبانی", size=15, color="grey", text_align=ft.TextAlign.CENTER),
                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-                    margin=ft.margin.Margin(top=20, bottom=30)
+                    margin=ft.margin.Margin(top=10, bottom=20)
                 ),
 
                 # منوی خدمات
@@ -90,9 +90,9 @@ def main(page: ft.Page):
         return ft.Container(
             content=ft.Column([
                 ft.Container(
-                    content=ft.Text("اطلاعات فنی سیستم", size=26, weight="bold", text_align=ft.TextAlign.CENTER),
-                    padding=20,
-                    margin=ft.margin.Margin(bottom=15)
+                    content=ft.Text("اطلاعات فنی سیستم", size=24, weight="bold", text_align=ft.TextAlign.CENTER),
+                    padding=15,
+                    margin=ft.margin.Margin(bottom=10)
                 ),
                 ft.Container(
                     content=ft.Column([
@@ -118,12 +118,12 @@ def main(page: ft.Page):
                 ft.Container(
                     content=ft.Row([
                         ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)),
-                        ft.Text("تنظیمات", size=24, weight="bold")
+                        ft.Text("تنظیمات", size=22, weight="bold")
                     ]),
-                    padding=15,
+                    padding=12,
                     bgcolor="#f8f9fa",
-                    border_radius=20,
-                    margin=ft.margin.Margin(bottom=20)
+                    border_radius=15,
+                    margin=ft.margin.Margin(bottom=15)
                 ),
                 ft.Column([
                     ft.ListTile(leading=ft.Icon(ft.Icons.PERSON), title=ft.Text("تغییر نام کاربری"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
@@ -238,6 +238,14 @@ def main(page: ft.Page):
                 margin=ft.margin.Margin(left=15, right=15)
             )
 
+            # --- هدر جدید اپلیکیشن (به جای متن زرد قدیمی، لوگو نمایش داده می‌شود) ---
+            app_header = ft.Container(
+                content=ft.Image(src="TopSUNify.png", width=140, height=50, fit="contain"),
+                alignment=ft.alignment.center,
+                padding=ft.padding.only(top=15, bottom=10),
+                bgcolor="#f5f5f5"  # رنگ هماهنگ با پس‌زمینه اصلی صفحه
+            )
+
             nav_bar = ft.Container(
                 content=ft.Row([
                     ft.Container(content=ft.Image(src="dashboard.png", width=32, height=32), on_click=lambda _: render(0), padding=8),
@@ -253,8 +261,7 @@ def main(page: ft.Page):
 
             page.add(
                 ft.Column([
-                    ft.Text("پنل TopSUNify", size=30, weight="bold"),
-                    ft.Divider(),
+                    app_header,        # لوگوی رسمی جایگزین متن قدیمی شد
                     main_content,
                     nav_bar
                 ], expand=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
