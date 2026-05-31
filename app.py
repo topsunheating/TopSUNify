@@ -31,15 +31,15 @@ def main(page: ft.Page):
     # ==================== صفحه پیش‌فاکتورها ====================
     def pre_invoice_page():
         products = [
-            ("گرمایش از کف", ft.Icons.FLOORING, "#1565C0"),
+            ("گرمایش از کف", ft.Icons.HEATING, "#1565C0"),
             ("زیرفرشی", ft.Icons.RUGS, "#2E7D32"),
             ("رادیاتور", ft.Icons.RADIATOR, "#C62828"),
             ("حوله خشک کن", ft.Icons.DRY_CLEAN, "#8E24AA"),
-            ("یخ زدایی رمپ", ft.Icons.SNOWMOBILE, "#455A64"),
+            ("یخ زدایی رمپ", ft.Icons.AC_UNIT, "#455A64"),
             ("یخ زدایی پله", ft.Icons.STAIRS, "#FF8F00"),
             ("گرمکن مخزن", ft.Icons.WATER, "#0277BD"),
             ("گرمکن صندلی", ft.Icons.CHAIR, "#6A1B9A"),
-            ("رستورانی", ft.Icons.RESTAURANT_MENU, "#D84315"),
+            ("رستورانی", ft.Icons.RESTAURANT, "#D84315"),
         ]
 
         grid = ft.GridView(
@@ -63,7 +63,7 @@ def main(page: ft.Page):
                     bgcolor="#ffffff",
                     border_radius=15,
                     shadow=ft.BoxShadow(blur_radius=8, color="#e0e0e0"),
-                    on_click=lambda e, n=name: show_message(f"پیش‌فاکتور {n}"),
+                    on_click=lambda e, n=name: show_message(f"در حال ورود به پیش‌فاکتور {n}"),
                     ink=True,
                 )
             )
@@ -79,7 +79,7 @@ def main(page: ft.Page):
             expand=True
         )
 
-    # ==================== صفحات دیگر ====================
+    # ==================== صفحات دیگر (خلاصه) ====================
     def home_page():
         return ft.Container(
             content=ft.Column([
@@ -101,7 +101,6 @@ def main(page: ft.Page):
         )
 
     def profile_page():
-        # کد پروفایل قبلی شما (خلاصه شده)
         return ft.Container(
             content=ft.Text("پروفایل کاربری", size=22, weight="bold", text_align=ft.TextAlign.CENTER),
             width=400,
@@ -132,7 +131,7 @@ def main(page: ft.Page):
                         ft.Container(content=ft.TextField(label="نام کاربری", width=340, border_radius=12, prefix_icon=ft.Icons.PERSON, text_align=ft.TextAlign.RIGHT), margin=ft.margin.Margin(bottom=20)),
                         ft.Container(
                             content=ft.Row([
-                                ft.Container(content=ft.Icon(ft.Icons.FINGERPRINT, size=42, color="#FFCC00"), on_click=lambda e: show_message("احراز هویت بیومتریک"), padding=10, border_radius=12),
+                                ft.Container(content=ft.Icon(ft.Icons.FINGERPRINT, size=42, color="#FFCC00"), on_click=lambda e: show_message("احراز هویت بیومتریک", "orange"), padding=10, border_radius=12),
                                 ft.TextField(label="رمز عبور", password=True, width=270, border_radius=12, prefix_icon=ft.Icons.LOCK, text_align=ft.TextAlign.RIGHT)
                             ], alignment=ft.MainAxisAlignment.CENTER, spacing=12),
                             margin=ft.margin.Margin(bottom=30)
@@ -149,7 +148,7 @@ def main(page: ft.Page):
         else:
             contents = [
                 ft.Text("داشبورد مدیریتی", size=18, weight="bold"),
-                pre_invoice_page(),      # تب 1
+                pre_invoice_page(),      # تب 1 - پیش فاکتورها
                 home_page(),             # تب 2
                 technical_page(),        # تب 3
                 profile_page(),          # تب 4
