@@ -135,7 +135,7 @@ def main(page: ft.Page):
                 ),
                 ft.ElevatedButton("ورود به TopSUNify", width=340, bgcolor="#FFCC00", color="black", style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)), on_click=lambda e: (setattr(page.session, 'logged_in', True), render())),
                 ft.TextButton("فعال‌سازی / فراموشی رمز", style=ft.ButtonStyle(color={"": "blue"})),
-                ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=100), margin=ft.margin.Margin(top=40, bottom=20, right=35)),
+                ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=160), margin=ft.margin.Margin(top=40, bottom=20)),
                 ft.Container(content=ft.Image(src="landscape.jpg", width=400, height=210, fit="cover")),
             ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, scroll=ft.ScrollMode.AUTO),
             width=400,
