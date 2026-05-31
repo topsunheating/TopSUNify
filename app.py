@@ -1,9 +1,8 @@
 import flet as ft
 import os
+import requests
 
-# ==================== تنظیمات ====================
 GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbygH2yHhw44Lk5Hv8okJDnRBgGw2UzoF1wsZvMGGGr7ZzhSS0Ro6WhSeVFTPM2TpsMv/exec"
-
 
 def main(page: ft.Page):
     page.fonts = {"iranyekan": "fonts/iranyekan.ttf"}
@@ -29,11 +28,10 @@ def main(page: ft.Page):
         page.update()
         show_message(f"تم تغییر کرد به: {page.theme_mode}", "blue")
 
-    # ==================== صفحه خانه اصلی (TopSUNify) ====================
+    # ==================== صفحه خانه اصلی ====================
     def home_page():
         return ft.Container(
             content=ft.Column([
-                # لوگو و عنوان
                 ft.Container(
                     content=ft.Column([
                         ft.Image(src="TopSUNify-1.png", width=180),
@@ -42,41 +40,14 @@ def main(page: ft.Page):
                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
                     margin=ft.margin.Margin(top=20, bottom=30)
                 ),
-
-                # منوی خدمات
                 ft.Container(
                     content=ft.Column([
-                        ft.ListTile(
-                            leading=ft.Icon(ft.Icons.SHIELD, color="green"),
-                            title=ft.Text("ثبت گارانتی"),
-                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
-                            on_click=lambda e: show_message("ثبت گارانتی")
-                        ),
-                        ft.ListTile(
-                            leading=ft.Icon(ft.Icons.INSTALL_DESKTOP, color="blue"),
-                            title=ft.Text("درخواست نصب اولیه"),
-                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
-                            on_click=lambda e: show_message("درخواست نصب اولیه")
-                        ),
-                        ft.ListTile(
-                            leading=ft.Icon(ft.Icons.SUPPORT_AGENT, color="orange"),
-                            title=ft.Text("درخواست خدمات فنی"),
-                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
-                            on_click=lambda e: show_message("درخواست خدمات فنی")
-                        ),
-                        ft.ListTile(
-                            leading=ft.Icon(ft.Icons.SHOPPING_CART_CHECKOUT, color="purple"),
-                            title=ft.Text("ثبت درخواست سفارشی و عمده"),
-                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
-                            on_click=lambda e: show_message("درخواست سفارشی و عمده")
-                        ),
-                        ft.ListTile(
-                            leading=ft.Icon(ft.Icons.PRINT, color="red"),
-                            title=ft.Text("درخواست چاپ طرح سفارشی"),
-                            trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
-                            on_click=lambda e: show_message("درخواست چاپ طرح سفارشی")
-                        ),
-                    ], spacing=2, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+                        ft.ListTile(leading=ft.Icon(ft.Icons.SHIELD, color="green"), title=ft.Text("ثبت گارانتی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                        ft.ListTile(leading=ft.Icon(ft.Icons.INSTALL_DESKTOP, color="blue"), title=ft.Text("درخواست نصب اولیه"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                        ft.ListTile(leading=ft.Icon(ft.Icons.SUPPORT_AGENT, color="orange"), title=ft.Text("درخواست خدمات فنی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                        ft.ListTile(leading=ft.Icon(ft.Icons.SHOPPING_CART_CHECKOUT, color="purple"), title=ft.Text("ثبت درخواست سفارشی و عمده"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                        ft.ListTile(leading=ft.Icon(ft.Icons.PRINT, color="red"), title=ft.Text("درخواست چاپ طرح سفارشی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                    ], spacing=2),
                     width=380
                 )
             ], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
@@ -102,7 +73,7 @@ def main(page: ft.Page):
                         ft.ListTile(leading=ft.Icon(ft.Icons.DESCRIPTION, color="orange"), title=ft.Text("پروپوزال و گزارش فنی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
                         ft.ListTile(leading=ft.Icon(ft.Icons.IMAGE, color="pink"), title=ft.Text("تصاویر و فیلم پروژه‌ها"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
                         ft.ListTile(leading=ft.Icon(ft.Icons.VIDEO_LIBRARY, color="red"), title=ft.Text("فیلم‌های تبلیغاتی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-                    ], spacing=2, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+                    ], spacing=2),
                     width=380
                 )
             ], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
@@ -116,14 +87,8 @@ def main(page: ft.Page):
         return ft.Container(
             content=ft.Column([
                 ft.Container(
-                    content=ft.Row([
-                        ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)),
-                        ft.Text("تنظیمات", size=24, weight="bold")
-                    ]),
-                    padding=15,
-                    bgcolor="#f8f9fa",
-                    border_radius=20,
-                    margin=ft.margin.Margin(bottom=20)
+                    content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("تنظیمات", size=24, weight="bold")]),
+                    padding=15, bgcolor="#f8f9fa", border_radius=20, margin=ft.margin.Margin(bottom=20)
                 ),
                 ft.Column([
                     ft.ListTile(leading=ft.Icon(ft.Icons.PERSON), title=ft.Text("تغییر نام کاربری"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
@@ -157,7 +122,6 @@ def main(page: ft.Page):
                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
                     padding=20, bgcolor="#f8f9fa", border_radius=20, margin=ft.margin.Margin(bottom=20), width=380
                 ),
-
                 ft.Container(
                     content=ft.Column([
                         ft.ListTile(leading=ft.Icon(ft.Icons.PERSON_ADD, color="blue"), title=ft.Text("درخواست ایجاد حساب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=create_account_request),
@@ -167,17 +131,13 @@ def main(page: ft.Page):
                         ft.ListTile(leading=ft.Icon(ft.Icons.GROUP), title=ft.Text("همکاران منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
                         ft.ListTile(leading=ft.Icon(ft.Icons.PERCENT), title=ft.Text("محاسبه درصد همکاری"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
                         ft.ListTile(leading=ft.Icon(ft.Icons.ACCOUNT_BALANCE_WALLET), title=ft.Text("مبلغ اعتبار"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-
                         ft.Divider(height=25),
-
                         ft.ListTile(leading=ft.Icon(ft.Icons.PALETTE, color="purple"), title=ft.Text("نمایش (تم روشن/تیره)"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=toggle_theme),
                         ft.ListTile(leading=ft.Icon(ft.Icons.UPDATE, color="blue"), title=ft.Text("بروزرسانی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
                         ft.ListTile(leading=ft.Icon(ft.Icons.MAP, color="green"), title=ft.Text("شبکه فروش و خدمات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
                         ft.ListTile(leading=ft.Icon(ft.Icons.GAVEL, color="amber"), title=ft.Text("قوانین"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
                         ft.ListTile(leading=ft.Icon(ft.Icons.INFO, color="blue"), title=ft.Text("درباره ما"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
-
                         ft.Divider(height=25),
-
                         ft.ListTile(leading=ft.Icon(ft.Icons.SETTINGS, color="grey"), title=ft.Text("تنظیمات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=lambda e: render(5)),
                         ft.ListTile(leading=ft.Icon(ft.Icons.LOGOUT, color="red"), title=ft.Text("خروج", color="red"), on_click=lambda e: (setattr(page.session, 'logged_in', False), render())),
                         ft.Text("نسخه ۱.۴.۳", size=12, color="grey", text_align=ft.TextAlign.CENTER)
@@ -225,16 +185,16 @@ def main(page: ft.Page):
             contents = [
                 ft.Text("داشبورد مدیریتی", size=25, weight="bold"),
                 ft.Text("بخش پیش‌فاکتورها", size=25, weight="bold"),
-                home_page(),           # تب 2 - خانه اصلی (TopSUNify)
-                technical_page(),      # تب 3
-                profile_page(),        # تب 4
-                settings_page()        # تب 5
+                home_page(),
+                technical_page(),
+                profile_page(),
+                settings_page()
             ]
 
             main_content = ft.Container(
-                content=contents[tab_index], 
-                expand=True, 
-                width=400, 
+                content=contents[tab_index],
+                expand=True,
+                width=400,
                 margin=ft.margin.Margin(left=15, right=15)
             )
 
@@ -248,12 +208,15 @@ def main(page: ft.Page):
                 ], alignment=ft.MainAxisAlignment.CENTER, spacing=15),
                 bgcolor="white",
                 padding=12,
-                border=ft.Border(top=ft.BorderSide(1, "#e0e0e0"), bottom=ft.BorderSide(1, "#e0e0e0"))
+                border=ft.border.all(1, "#e0e0e0")
             )
 
             page.add(
                 ft.Column([
-                    ft.Text("پنل TopSUNify", size=30, weight="bold"),
+                    ft.Container(                                      # ← لوگو به جای متن
+                        content=ft.Image(src="TopSUNify.png", width=180),
+                        margin=ft.margin.Margin(top=10, bottom=10)
+                    ),
                     ft.Divider(),
                     main_content,
                     nav_bar
@@ -265,7 +228,6 @@ def main(page: ft.Page):
     render()
 
 
-# ==================== اجرا ====================
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     ft.app(target=main, port=port, host="0.0.0.0", assets_dir="assets")
