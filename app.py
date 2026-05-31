@@ -45,10 +45,10 @@ def main(page: ft.Page):
 
         grid = ft.GridView(
             runs_count=2,          # دو ستونه برای نمایش بهتر متن
-            max_extent=160,
+            max_extent=120,
             spacing=10,
             run_spacing=12,
-            padding=15,
+            padding=10,
             expand=True,
         )
 
