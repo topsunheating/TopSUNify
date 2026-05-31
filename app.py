@@ -27,7 +27,7 @@ def main(page: ft.Page):
         page.theme_mode = "dark" if page.theme_mode == "light" else "light"
         page.update()
         show_message(f"تم تغییر کرد به: {page.theme_mode}", "blue")
-# ==================== داشبورد مدیریتی ====================
+    # ==================== داشبورد مدیریتی ====================
     def dashboard_page():
         selected_ref = ft.Ref[ft.Container]()
 
