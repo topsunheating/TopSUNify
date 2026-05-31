@@ -65,10 +65,10 @@ def main(page: ft.Page):
                         ft.Text(f"{year} - {month_num}", size=15, weight="bold", text_align=ft.TextAlign.CENTER),
                         ft.Text(month_name, size=12, text_align=ft.TextAlign.CENTER),
                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=2),
-                    width=95,
+                    width=90,
                     height=45,
                     bgcolor="#1565C0" if is_selected else "#f0f0f0",
-                    border_radius=16,
+                    border_radius=5,
                     alignment=ft.Alignment(0.5, 0.5),
                     on_click=lambda e, y=year, m_num=month_num, m_name=month_name: select_period(e, y, m_num, m_name)
                 )
@@ -110,12 +110,12 @@ def main(page: ft.Page):
             report_cards.controls.append(
                 ft.Container(
                     content=ft.Column([
-                        ft.Icon(icon, size=36, color=color),
-                        ft.Text(title, size=13.5, weight="bold", text_align=ft.TextAlign.CENTER),
+                        ft.Icon(icon, size=30, color=color),
+                        ft.Text(title, size=13, weight="bold", text_align=ft.TextAlign.CENTER),
                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=8),
                     bgcolor="white",
-                    border_radius=16,
-                    padding=14,
+                    border_radius=5,
+                    padding=5,
                     shadow=ft.BoxShadow(blur_radius=8, color="#e0e0e0"),
                     expand=True,
                     on_click=lambda e, t=title: show_message(f"بخش {t}"),
