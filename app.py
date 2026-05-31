@@ -1,6 +1,5 @@
 import flet as ft
 import os
-from datetime import datetime
 
 def main(page: ft.Page):
     page.fonts = {"iranyekan": "fonts/iranyekan.ttf"}
@@ -29,34 +28,27 @@ def main(page: ft.Page):
 
     # ==================== داشبورد مدیریتی ====================
     def dashboard_page():
-        selected_period = ft.Ref[ft.Text]()
+        def select_month(e, month_name, month_num):
+            show_message(f"بازه {month_name} ۱۴۰۵ انتخاب شد")
 
-        years = ["1403", "1404", "1405", "1406", "1407"]
         months = [
             ("فروردین", "01"), ("اردیبهشت", "02"), ("خرداد", "03"), ("تیر", "04"),
             ("مرداد", "05"), ("شهریور", "06"), ("مهر", "07"), ("آبان", "08"),
             ("آذر", "09"), ("دی", "10"), ("بهمن", "11"), ("اسفند", "12")
         ]
 
-        def select_month(e, month_name, month_num):
-            if selected_period.current:
-                selected_period.current.value = f"{month_num} - {month_name} ۱۴۰۵"
-                selected_period.current.update()
-            show_message(f"بازه {month_name} ۱۴۰۵ انتخاب شد")
-
-        # ماه‌ها
         month_buttons = ft.Row(
             controls=[
                 ft.Container(
                     content=ft.Column([
                         ft.Text(num, size=19, weight="bold"),
-                        ft.Text(name, size=12.5),
+                        ft.Text(name, size=13),
                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=1),
                     width=78,
                     height=78,
                     bgcolor="#1565C0" if i == 4 else "#f0f0f0",
                     border_radius=14,
-                    alignment=ft.Alignment(0, 0),
+                    alignment=ft.alignment.center,
                     on_click=lambda e, n=name, num=num: select_month(e, n, num)
                 ) for i, (name, num) in enumerate(months)
             ],
@@ -64,17 +56,15 @@ def main(page: ft.Page):
             spacing=10,
         )
 
-        # دکمه مشاهده اطلاعات
         view_button = ft.ElevatedButton(
             "مشاهده اطلاعات",
             width=320,
             bgcolor="#1565C0",
             color="white",
             style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)),
-            on_click=lambda e: show_message("در حال بارگذاری گزارش‌های مالی و عملیاتی...")
+            on_click=lambda e: show_message("در حال بارگذاری گزارش‌ها...")
         )
 
-        # کارت‌های گزارش (۳ ستونی)
         report_cards = ft.GridView(
             runs_count=3,
             max_extent=175,
@@ -112,19 +102,16 @@ def main(page: ft.Page):
         return ft.Container(
             content=ft.Column([
                 ft.Container(content=ft.Image(src="TopSUNify.png", width=155), margin=ft.margin.Margin(top=8, bottom=12)),
-                
                 ft.Container(
                     content=ft.Dropdown(value="رضا تلچی", options=[ft.dropdown.Option("رضا تلچی"), ft.dropdown.Option("زیرمجموعه فروش")],
                                       width=320, border_radius=30, bgcolor="white"),
                     margin=ft.margin.Margin(bottom=15)
                 ),
-
-                ft.Text("انتخاب سال و ماه", size=17, weight="bold", text_align=ft.TextAlign.CENTER),
+                ft.Text("انتخاب ماه", size=17, weight="bold", text_align=ft.TextAlign.CENTER),
                 month_buttons,
                 ft.Divider(height=8),
                 view_button,
                 ft.Divider(height=20),
-
                 ft.Text("گزارش‌های مالی و عملیاتی", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
                 report_cards,
             ], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=12),
@@ -148,25 +135,23 @@ def main(page: ft.Page):
                 ),
                 ft.ElevatedButton("ورود به TopSUNify", width=340, bgcolor="#FFCC00", color="black", style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)), on_click=lambda e: (setattr(page.session, 'logged_in', True), render())),
                 ft.TextButton("فعال‌سازی / فراموشی رمز", style=ft.ButtonStyle(color={"": "blue"})),
-                ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=160), margin=ft.margin.Margin(top=40, bottom=20)),
+                ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=100), margin=ft.margin.Margin(top=40, bottom=20, right=35)),
                 ft.Container(content=ft.Image(src="landscape.jpg", width=400, height=210, fit="cover")),
             ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, scroll=ft.ScrollMode.AUTO),
             width=400,
             margin=ft.margin.Margin(left=15, right=15),
-            expand=True,
-            alignment=ft.alignment.center
+            expand=True
         )
 
-    # ==================== صفحات دیگر (خلاصه) ====================
+    # ==================== صفحات دیگر ====================
     def pre_invoice_page():
-        # کد قبلی شما
         products = ["گرمایش از کف", "زیرفرشی", "رادیاتور", "حوله خشک کن", "یخ زدایی رمپ", "یخ زدایی پله", "گرمکن مخزن", "گرمکن صندلی", "رستورانی", "عایق بازتابشی"]
         grid = ft.GridView(runs_count=2, max_extent=170, spacing=12, run_spacing=12, padding=10, expand=True)
         for name in products:
             grid.controls.append(ft.Container(
                 content=ft.Text(name, size=15, weight="bold", text_align=ft.TextAlign.CENTER, color="#1565C0"),
                 width=160, height=80, bgcolor="#ffffff", border_radius=12,
-                alignment=ft.Alignment(0, 0),
+                alignment=ft.alignment.center,
                 on_click=lambda e, n=name: show_message(f"پیش‌فاکتور {n}"), ink=True,
             ))
         return ft.Container(
@@ -176,7 +161,7 @@ def main(page: ft.Page):
         )
 
     def home_page():
-        return ft.Container(content=ft.Text("خانه اصلی - TopSUNify", size=24, weight="bold"), expand=True, alignment=ft.alignment.center)
+        return ft.Container(content=ft.Text("خانه اصلی", size=24, weight="bold"), expand=True, alignment=ft.alignment.center)
 
     def technical_page():
         return ft.Container(content=ft.Text("اطلاعات فنی", size=24, weight="bold"), expand=True, alignment=ft.alignment.center)
@@ -194,14 +179,7 @@ def main(page: ft.Page):
         if not page.session.logged_in:
             page.add(login_page())
         else:
-            contents = [
-                dashboard_page(),
-                pre_invoice_page(),
-                home_page(),
-                technical_page(),
-                profile_page(),
-                settings_page()
-            ]
+            contents = [dashboard_page(), pre_invoice_page(), home_page(), technical_page(), profile_page(), settings_page()]
 
             main_content = ft.Container(content=contents[tab_index], expand=True, width=400, margin=ft.margin.Margin(left=15, right=15))
 
