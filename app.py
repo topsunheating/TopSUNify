@@ -247,7 +247,7 @@ def main(page: ft.Page):
                     bgcolor="#1565C0" if is_selected else "#f0f0f0",
                     border_radius=160,
                     alignment=ft.Alignment(0.5, 0.5),
-                    on_click=lambda e, y=year, m_num=month_num: select_period(e, y, m_num)
+                    on_click=lambda e, y=year,m_n=month_num, m_name=month_name: select_period(e, y, m_num)
                 )
                 
                 if is_selected:
