@@ -29,8 +29,7 @@ def main(page: ft.Page):
 
     # ==================== داشبورد مدیریتی ====================
     def dashboard_page():
-        selected_year = ft.Ref[ft.Text]()
-        selected_month = ft.Ref[ft.Text]()
+        selected_period = ft.Ref[ft.Text]()
 
         years = ["1403", "1404", "1405", "1406", "1407"]
         months = [
@@ -39,55 +38,46 @@ def main(page: ft.Page):
             ("آذر", "09"), ("دی", "10"), ("بهمن", "11"), ("اسفند", "12")
         ]
 
-        # انتخاب سال
-        year_row = ft.Row([
-            ft.Text("سال:", size=16, weight="bold"),
-            ft.Dropdown(
-                value="1405",
-                options=[ft.dropdown.Option(y) for y in years],
-                width=100,
-                on_change=lambda e: show_message(f"سال {e.control.value} انتخاب شد")
-            )
-        ], alignment=ft.MainAxisAlignment.CENTER)
+        def select_month(e, month_name, month_num):
+            if selected_period.current:
+                selected_period.current.value = f"{month_num} - {month_name} ۱۴۰۵"
+                selected_period.current.update()
+            show_message(f"بازه {month_name} ۱۴۰۵ انتخاب شد")
 
-        # ماه‌ها (قابل اسکرول)
+        # ماه‌ها
         month_buttons = ft.Row(
             controls=[
                 ft.Container(
                     content=ft.Column([
-                        ft.Text(num, size=20, weight="bold"),
-                        ft.Text(name, size=13, text_align=ft.TextAlign.CENTER),
+                        ft.Text(num, size=19, weight="bold"),
+                        ft.Text(name, size=12.5),
                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=1),
-                    width=75,
-                    height=75,
+                    width=78,
+                    height=78,
                     bgcolor="#1565C0" if i == 4 else "#f0f0f0",
-                    border_radius=12,
+                    border_radius=14,
                     alignment=ft.Alignment(0, 0),
-                    on_click=lambda e, n=name, num=num: [
-                        selected_month.current.value = f"{num} - {n}",
-                        selected_month.current.update(),
-                        show_message(f"ماه {n} {selected_year.current.value} انتخاب شد")
-                    ]
+                    on_click=lambda e, n=name, num=num: select_month(e, n, num)
                 ) for i, (name, num) in enumerate(months)
             ],
             scroll=ft.ScrollMode.AUTO,
-            spacing=8,
+            spacing=10,
         )
 
         # دکمه مشاهده اطلاعات
         view_button = ft.ElevatedButton(
-            "مشاهده اطلاعات این بازه",
+            "مشاهده اطلاعات",
             width=320,
             bgcolor="#1565C0",
             color="white",
             style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)),
-            on_click=lambda e: show_message(f"نمایش گزارش‌های مالی و عملیاتی برای {selected_year.current.value}")
+            on_click=lambda e: show_message("در حال بارگذاری گزارش‌های مالی و عملیاتی...")
         )
 
         # کارت‌های گزارش (۳ ستونی)
         report_cards = ft.GridView(
             runs_count=3,
-            max_extent=180,
+            max_extent=175,
             spacing=12,
             run_spacing=12,
             padding=10,
@@ -106,13 +96,13 @@ def main(page: ft.Page):
             report_cards.controls.append(
                 ft.Container(
                     content=ft.Column([
-                        ft.Icon(icon, size=38, color=color),
-                        ft.Text(title, size=14, weight="bold", text_align=ft.TextAlign.CENTER),
+                        ft.Icon(icon, size=36, color=color),
+                        ft.Text(title, size=13.5, weight="bold", text_align=ft.TextAlign.CENTER),
                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=8),
                     bgcolor="white",
                     border_radius=16,
-                    padding=16,
-                    shadow=ft.BoxShadow(blur_radius=10, color="#e0e0e0"),
+                    padding=14,
+                    shadow=ft.BoxShadow(blur_radius=8, color="#e0e0e0"),
                     expand=True,
                     on_click=lambda e, t=title: show_message(f"بخش {t}"),
                     ink=True,
@@ -121,33 +111,29 @@ def main(page: ft.Page):
 
         return ft.Container(
             content=ft.Column([
-                ft.Container(content=ft.Image(src="TopSUNify.png", width=160), margin=ft.margin.Margin(top=10, bottom=15)),
+                ft.Container(content=ft.Image(src="TopSUNify.png", width=155), margin=ft.margin.Margin(top=8, bottom=12)),
                 
                 ft.Container(
-                    content=ft.Dropdown(
-                        value=page.session.username,
-                        options=[ft.dropdown.Option("رضا تلچی"), ft.dropdown.Option("زیرمجموعه فروش")],
-                        width=320, border_radius=30, bgcolor="white"
-                    ),
-                    margin=ft.margin.Margin(bottom=20)
+                    content=ft.Dropdown(value="رضا تلچی", options=[ft.dropdown.Option("رضا تلچی"), ft.dropdown.Option("زیرمجموعه فروش")],
+                                      width=320, border_radius=30, bgcolor="white"),
+                    margin=ft.margin.Margin(bottom=15)
                 ),
 
-                year_row,
-                ft.Text("انتخاب ماه", size=17, weight="bold", text_align=ft.TextAlign.CENTER),
+                ft.Text("انتخاب سال و ماه", size=17, weight="bold", text_align=ft.TextAlign.CENTER),
                 month_buttons,
-                ft.Divider(height=10),
+                ft.Divider(height=8),
                 view_button,
-                ft.Divider(height=25),
+                ft.Divider(height=20),
 
                 ft.Text("گزارش‌های مالی و عملیاتی", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
                 report_cards,
-            ], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=15),
+            ], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=12),
             width=400,
             margin=ft.margin.Margin(left=15, right=15),
             expand=True
         )
 
-    # ==================== صفحه ورود (کاملاً وسط چین) ====================
+    # ==================== صفحه ورود ====================
     def login_page():
         return ft.Container(
             content=ft.Column([
@@ -155,20 +141,15 @@ def main(page: ft.Page):
                 ft.Container(content=ft.TextField(label="نام کاربری", width=340, border_radius=12, prefix_icon=ft.Icons.PERSON, text_align=ft.TextAlign.RIGHT), margin=ft.margin.Margin(bottom=20)),
                 ft.Container(
                     content=ft.Row([
-                        ft.Container(content=ft.Icon(ft.Icons.FINGERPRINT, size=42, color="#FFCC00"), 
-                                   on_click=lambda e: show_message("احراز هویت بیومتریک", "orange"), 
-                                   padding=10, border_radius=12),
-                        ft.TextField(label="رمز عبور", password=True, width=270, border_radius=12, 
-                                   prefix_icon=ft.Icons.LOCK, text_align=ft.TextAlign.RIGHT)
+                        ft.Container(content=ft.Icon(ft.Icons.FINGERPRINT, size=42, color="#FFCC00"), on_click=lambda e: show_message("احراز هویت بیومتریک", "orange"), padding=10, border_radius=12),
+                        ft.TextField(label="رمز عبور", password=True, width=270, border_radius=12, prefix_icon=ft.Icons.LOCK, text_align=ft.TextAlign.RIGHT)
                     ], alignment=ft.MainAxisAlignment.CENTER, spacing=12),
                     margin=ft.margin.Margin(bottom=30)
                 ),
-                ft.ElevatedButton("ورود به TopSUNify", width=340, bgcolor="#FFCC00", color="black", 
-                                style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)), 
-                                on_click=lambda e: (setattr(page.session, 'logged_in', True), render())),
+                ft.ElevatedButton("ورود به TopSUNify", width=340, bgcolor="#FFCC00", color="black", style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)), on_click=lambda e: (setattr(page.session, 'logged_in', True), render())),
                 ft.TextButton("فعال‌سازی / فراموشی رمز", style=ft.ButtonStyle(color={"": "blue"})),
-                ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=160), margin=ft.margin.Margin(top=50, bottom=30)),
-                ft.Container(content=ft.Image(src="landscape.jpg", width=400, height=220, fit="cover")),
+                ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=160), margin=ft.margin.Margin(top=40, bottom=20)),
+                ft.Container(content=ft.Image(src="landscape.jpg", width=400, height=210, fit="cover")),
             ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, scroll=ft.ScrollMode.AUTO),
             width=400,
             margin=ft.margin.Margin(left=15, right=15),
@@ -176,34 +157,37 @@ def main(page: ft.Page):
             alignment=ft.alignment.center
         )
 
-    # ==================== بقیه صفحات (خلاصه) ====================
-    # ... (pre_invoice_page, home_page, technical_page, settings_page, profile_page) 
-    # همان کد قبلی را نگه دارید. برای اختصار اینجا فقط داشبورد و صفحه ورود بروز شد.
-
+    # ==================== صفحات دیگر (خلاصه) ====================
     def pre_invoice_page():
-        # (کد قبلی)
-        pass  # کد قبلی را اینجا بگذارید
+        # کد قبلی شما
+        products = ["گرمایش از کف", "زیرفرشی", "رادیاتور", "حوله خشک کن", "یخ زدایی رمپ", "یخ زدایی پله", "گرمکن مخزن", "گرمکن صندلی", "رستورانی", "عایق بازتابشی"]
+        grid = ft.GridView(runs_count=2, max_extent=170, spacing=12, run_spacing=12, padding=10, expand=True)
+        for name in products:
+            grid.controls.append(ft.Container(
+                content=ft.Text(name, size=15, weight="bold", text_align=ft.TextAlign.CENTER, color="#1565C0"),
+                width=160, height=80, bgcolor="#ffffff", border_radius=12,
+                alignment=ft.Alignment(0, 0),
+                on_click=lambda e, n=name: show_message(f"پیش‌فاکتور {n}"), ink=True,
+            ))
+        return ft.Container(
+            content=ft.Column([ft.Text("نوع محصول مورد نظر را انتخاب کنید", size=18, weight="bold", text_align=ft.TextAlign.CENTER), ft.Divider(), grid],
+                              scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            width=400, margin=ft.margin.Margin(left=15, right=15), expand=True
+        )
 
     def home_page():
-        # (کد قبلی)
-        pass
+        return ft.Container(content=ft.Text("خانه اصلی - TopSUNify", size=24, weight="bold"), expand=True, alignment=ft.alignment.center)
 
     def technical_page():
-        # (کد قبلی)
-        pass
+        return ft.Container(content=ft.Text("اطلاعات فنی", size=24, weight="bold"), expand=True, alignment=ft.alignment.center)
 
     def settings_page():
-        # (کد قبلی)
-        pass
+        return ft.Container(content=ft.Text("تنظیمات", size=24, weight="bold"), expand=True, alignment=ft.alignment.center)
 
     def profile_page():
-        # (کد قبلی)
-        pass
+        return ft.Container(content=ft.Text("پروفایل", size=24, weight="bold"), expand=True, alignment=ft.alignment.center)
 
-    def create_account_request(e):
-        show_message("درخواست ایجاد حساب ارسال شد", "blue")
-
-    # ==================== رندر اصلی ====================
+    # ==================== رندر ====================
     def render(tab_index=0):
         page.controls.clear()
 
@@ -211,12 +195,12 @@ def main(page: ft.Page):
             page.add(login_page())
         else:
             contents = [
-                dashboard_page(),      # 0 - داشبورد
-                pre_invoice_page(),    # 1
-                home_page(),           # 2
-                technical_page(),      # 3
-                profile_page(),        # 4
-                settings_page()        # 5
+                dashboard_page(),
+                pre_invoice_page(),
+                home_page(),
+                technical_page(),
+                profile_page(),
+                settings_page()
             ]
 
             main_content = ft.Container(content=contents[tab_index], expand=True, width=400, margin=ft.margin.Margin(left=15, right=15))
