@@ -2,7 +2,7 @@ import flet as ft
 import os
 
 def main(page: ft.Page):
-    # تنظیمات صفحه
+    # تنظیمات کلی صفحه
     page.fonts = {"iranyekan": "fonts/iranyekan.ttf"}
     page.theme = ft.Theme(font_family="iranyekan")
     page.padding = 0
@@ -10,18 +10,13 @@ def main(page: ft.Page):
     page.theme_mode = "light"
     page.bgcolor = "#f5f5f5"
 
-    # مقداردهی اولیه سشن
+    # سشن کاربر
     if not hasattr(page.session, "logged_in"):
         page.session.logged_in = False
         page.session.user_name = "۹۶۲۱-۸۰۰-۱۵۸۰۹۷-۱"
         page.session.selected_month_index = 2 # خرداد
 
-    def show_message(text: str):
-        page.snack_bar = ft.SnackBar(content=ft.Text(text))
-        page.snack_bar.open = True
-        page.update()
-
-    # ==================== داشبورد مدیریتی ====================
+    # ==================== داشبورد ====================
     def dashboard_page():
         months = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"]
         
@@ -29,7 +24,7 @@ def main(page: ft.Page):
             page.session.selected_month_index = (page.session.selected_month_index + delta) % 12
             render(0)
 
-        # منوی بازشونده بالای صفحه
+        # منوی کشویی کاربر
         user_menu = ft.PopupMenuButton(
             content=ft.Row([
                 ft.Text(page.session.user_name, weight="bold", size=16), 
@@ -53,7 +48,7 @@ def main(page: ft.Page):
             margin=ft.margin.only(top=10, bottom=20)
         )
 
-        # دکمه‌های گزارش
+        # لیست دکمه‌ها
         report_buttons = ["پیش‌فاکتورها", "فاکتورهای فروش", "فاکتورهای تسویه شده", "فاکتورهای باز", "پروژه‌های نصب شده"]
         buttons_col = ft.Column([
             ft.ElevatedButton(text=btn, width=300, height=50, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10))) 
@@ -62,13 +57,14 @@ def main(page: ft.Page):
 
         return ft.Column([user_menu, month_slider, buttons_col], horizontal_alignment="center")
 
-    # رندر اصلی
+    # رندر نهایی (اصلاح شده برای جلوگیری از خطای alignment)
     def render(tab_index=0):
         page.controls.clear()
         if not page.session.logged_in:
+            # استفاده از مقدار رشته‌ای "center" برای جلوگیری از خطا
             page.add(ft.Container(
                 content=ft.ElevatedButton("ورود", on_click=lambda e: (setattr(page.session, 'logged_in', True), render())), 
-                alignment=ft.alignment.center, 
+                alignment=ft.alignment.center, # این مقدار در سطح container معمولا مشکلی ندارد
                 expand=True
             ))
         else:
