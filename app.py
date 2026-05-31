@@ -234,7 +234,7 @@ def main(page: ft.Page):
         )
 
         for year in years:
-            for month_num in months:
+            for month_num, month_name in months:
                 is_selected = (year == "1405" and month_num == "02")  # پیش‌فرض اردیبهشت ۱۴۰۵
                 
                 container = ft.Container(
