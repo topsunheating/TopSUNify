@@ -302,7 +302,6 @@ def main(page: ft.Page):
 
         return ft.Container(
             content=ft.Column([
-                ft.Container(content=ft.Image(src="TopSUNify.png", width=155), margin=ft.margin.Margin(top=8, bottom=12)),
                 
                 ft.Container(
                     content=ft.Dropdown(value="رضا تلچی", options=[ft.dropdown.Option("رضا تلچی"), ft.dropdown.Option("زیرمجموعه فروش")],
