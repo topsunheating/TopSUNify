@@ -33,7 +33,7 @@ def main(page: ft.Page):
         products = [
             ("گرمایش از کف", ft.Icons.HEAT_PUMP, "#1565C0"),
             ("زیرفرشی", ft.Icons.HEAT_PUMP, "#2E7D32"),
-            ("رادیاتور", ft.Icons.RADIATOR, "#C62828"),
+            ("رادیاتور", ft.Icons.HEAT_PUMP, "#C62828"),
             ("حوله خشک کن", ft.Icons.DRY_CLEAN, "#8E24AA"),
             ("یخ زدایی رمپ", ft.Icons.AC_UNIT, "#455A64"),
             ("یخ زدایی پله", ft.Icons.STAIRS, "#FF8F00"),
