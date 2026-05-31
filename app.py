@@ -27,126 +27,6 @@ def main(page: ft.Page):
         page.theme_mode = "dark" if page.theme_mode == "light" else "light"
         page.update()
         show_message(f"تم تغییر کرد به: {page.theme_mode}", "blue")
-# ==================== داشبورد مدیریتی ====================
-    def dashboard_page():
-        selected_ref = ft.Ref[ft.Container]()
-
-        def select_period(e, year, month_num, month_name):
-            # تغییر وضعیت انتخاب شده
-            if selected_ref.current:
-                selected_ref.current.bgcolor = "#f0f0f0"
-                selected_ref.current.update()
-            
-            e.control.bgcolor = "#1565C0"
-            selected_ref.current = e.control
-            e.control.update()
-            
-            show_message(f"بازه انتخابی: {year} - {month_num} ({month_name})")
-
-        years = ["1401", "1402", "1403", "1404", "1405", "1406", "1407"]
-        months = [
-            ("فروردین", "01"), ("اردیبهشت", "02"), ("خرداد", "03"), ("تیر", "04"),
-            ("مرداد", "05"), ("شهریور", "06"), ("مهر", "07"), ("آبان", "08"),
-            ("آذر", "09"), ("دی", "10"), ("بهمن", "11"), ("اسفند", "12")
-        ]
-
-        # ایجاد لیست طولانی سال-ماه
-        period_buttons = ft.Row(
-            scroll=ft.ScrollMode.AUTO,
-            spacing=8,
-            alignment=ft.MainAxisAlignment.START,
-        )
-
-        for year in years:
-            for month_name, month_num in months:
-                is_selected = (year == "1405" and month_num == "05")  # پیش‌فرض اردیبهشت ۱۴۰۵
-                
-                container = ft.Container(
-                    content=ft.Column([
-                        ft.Text(f"{year} - {month_num}", size=15, weight="bold", text_align=ft.TextAlign.CENTER),
-                        ft.Text(month_name, size=12, text_align=ft.TextAlign.CENTER),
-                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=2),
-                    width=95,
-                    height=85,
-                    bgcolor="#1565C0" if is_selected else "#f0f0f0",
-                    border_radius=16,
-                    alignment=ft.Alignment(0.5, 0.5),
-                    on_click=lambda e, y=year, m_num=month_num, m_name=month_name: select_period(e, y, m_num, m_name)
-                )
-                
-                if is_selected:
-                    selected_ref.current = container
-                    
-                period_buttons.controls.append(container)
-
-        # دکمه مشاهده اطلاعات
-        view_button = ft.ElevatedButton(
-            "مشاهده اطلاعات این بازه",
-            width=320,
-            bgcolor="#1565C0",
-            color="white",
-            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)),
-            on_click=lambda e: show_message("در حال بارگذاری گزارش‌های مالی و عملیاتی...")
-        )
-
-        # کارت‌های گزارش
-        report_cards = ft.GridView(
-            runs_count=3,
-            max_extent=175,
-            spacing=12,
-            run_spacing=12,
-            padding=10,
-            expand=True,
-        )
-
-        cards_data = [
-            ("فاکتورهای تسویه شده", ft.Icons.CHECK_CIRCLE, "#1976D2"),
-            ("فاکتورهای فروش", ft.Icons.SHOPPING_CART, "#388E3C"),
-            ("پیش فاکتورها", ft.Icons.RECEIPT_LONG, "#1565C0"),
-            ("پروژه‌های نصب شده", ft.Icons.HOME_WORK, "#7B1FA2"),
-            ("فاکتورهای باز", ft.Icons.PENDING, "#F57C00"),
-        ]
-
-        for title, icon, color in cards_data:
-            report_cards.controls.append(
-                ft.Container(
-                    content=ft.Column([
-                        ft.Icon(icon, size=36, color=color),
-                        ft.Text(title, size=13.5, weight="bold", text_align=ft.TextAlign.CENTER),
-                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=8),
-                    bgcolor="white",
-                    border_radius=16,
-                    padding=14,
-                    shadow=ft.BoxShadow(blur_radius=8, color="#e0e0e0"),
-                    expand=True,
-                    on_click=lambda e, t=title: show_message(f"بخش {t}"),
-                    ink=True,
-                )
-            )
-
-        return ft.Container(
-            content=ft.Column([
-                ft.Container(content=ft.Image(src="TopSUNify.png", width=155), margin=ft.margin.Margin(top=8, bottom=12)),
-                
-                ft.Container(
-                    content=ft.Dropdown(value="رضا تلچی", options=[ft.dropdown.Option("رضا تلچی"), ft.dropdown.Option("زیرمجموعه فروش")],
-                                      width=320, border_radius=30, bgcolor="white"),
-                    margin=ft.margin.Margin(bottom=15)
-                ),
-
-                ft.Text("انتخاب بازه زمانی", size=17, weight="bold", text_align=ft.TextAlign.CENTER),
-                period_buttons,
-                ft.Divider(height=10),
-                view_button,
-                ft.Divider(height=20),
-
-                ft.Text("گزارش‌های مالی و عملیاتی", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
-                report_cards,
-            ], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=15),
-            width=400,
-            margin=ft.margin.Margin(left=15, right=15),
-            expand=True
-        )
     # ==================== صفحه پیش‌فاکتورها (فقط متن) ====================
     def pre_invoice_page():
         products = [
@@ -323,7 +203,126 @@ def main(page: ft.Page):
 
     def create_account_request(e):
         show_message("درخواست ایجاد حساب ارسال شد", "blue")
+# ==================== داشبورد مدیریتی ====================
+    def dashboard_page():
+        selected_ref = ft.Ref[ft.Container]()
 
+        def select_period(e, year, month_num, month_name):
+            # تغییر وضعیت انتخاب شده
+            if selected_ref.current:
+                selected_ref.current.bgcolor = "#f0f0f0"
+                selected_ref.current.update()
+            
+            e.control.bgcolor = "#1565C0"
+            selected_ref.current = e.control
+            e.control.update()
+            
+            show_message(f"بازه انتخابی: {year} - {month_num} ({month_name})")
+
+        years = ["1401", "1402", "1403", "1404", "1405", "1406", "1407"]
+        months = [
+            ("فروردین", "01"), ("اردیبهشت", "02"), ("خرداد", "03"), ("تیر", "04"),
+            ("مرداد", "05"), ("شهریور", "06"), ("مهر", "07"), ("آبان", "08"),
+            ("آذر", "09"), ("دی", "10"), ("بهمن", "11"), ("اسفند", "12")
+        ]
+
+        # ایجاد لیست طولانی سال-ماه
+        period_buttons = ft.Row(
+            scroll=ft.ScrollMode.AUTO,
+            spacing=8,
+            alignment=ft.MainAxisAlignment.START,
+        )
+
+        for year in years:
+            for month_name, month_num in months:
+                is_selected = (year == "1405" and month_num == "05")  # پیش‌فرض اردیبهشت ۱۴۰۵
+                
+                container = ft.Container(
+                    content=ft.Column([
+                        ft.Text(f"{year} - {month_num}", size=15, weight="bold", text_align=ft.TextAlign.CENTER),
+                        ft.Text(month_name, size=12, text_align=ft.TextAlign.CENTER),
+                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=2),
+                    width=95,
+                    height=85,
+                    bgcolor="#1565C0" if is_selected else "#f0f0f0",
+                    border_radius=16,
+                    alignment=ft.Alignment(0.5, 0.5),
+                    on_click=lambda e, y=year, m_num=month_num, m_name=month_name: select_period(e, y, m_num, m_name)
+                )
+                
+                if is_selected:
+                    selected_ref.current = container
+                    
+                period_buttons.controls.append(container)
+
+        # دکمه مشاهده اطلاعات
+        view_button = ft.ElevatedButton(
+            "مشاهده اطلاعات این بازه",
+            width=320,
+            bgcolor="#1565C0",
+            color="white",
+            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)),
+            on_click=lambda e: show_message("در حال بارگذاری گزارش‌های مالی و عملیاتی...")
+        )
+
+        # کارت‌های گزارش
+        report_cards = ft.GridView(
+            runs_count=3,
+            max_extent=175,
+            spacing=12,
+            run_spacing=12,
+            padding=10,
+            expand=True,
+        )
+
+        cards_data = [
+            ("فاکتورهای تسویه شده", ft.Icons.CHECK_CIRCLE, "#1976D2"),
+            ("فاکتورهای فروش", ft.Icons.SHOPPING_CART, "#388E3C"),
+            ("پیش فاکتورها", ft.Icons.RECEIPT_LONG, "#1565C0"),
+            ("پروژه‌های نصب شده", ft.Icons.HOME_WORK, "#7B1FA2"),
+            ("فاکتورهای باز", ft.Icons.PENDING, "#F57C00"),
+        ]
+
+        for title, icon, color in cards_data:
+            report_cards.controls.append(
+                ft.Container(
+                    content=ft.Column([
+                        ft.Icon(icon, size=36, color=color),
+                        ft.Text(title, size=13.5, weight="bold", text_align=ft.TextAlign.CENTER),
+                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=8),
+                    bgcolor="white",
+                    border_radius=16,
+                    padding=14,
+                    shadow=ft.BoxShadow(blur_radius=8, color="#e0e0e0"),
+                    expand=True,
+                    on_click=lambda e, t=title: show_message(f"بخش {t}"),
+                    ink=True,
+                )
+            )
+
+        return ft.Container(
+            content=ft.Column([
+                ft.Container(content=ft.Image(src="TopSUNify.png", width=155), margin=ft.margin.Margin(top=8, bottom=12)),
+                
+                ft.Container(
+                    content=ft.Dropdown(value="رضا تلچی", options=[ft.dropdown.Option("رضا تلچی"), ft.dropdown.Option("زیرمجموعه فروش")],
+                                      width=320, border_radius=30, bgcolor="white"),
+                    margin=ft.margin.Margin(bottom=15)
+                ),
+
+                ft.Text("انتخاب بازه زمانی", size=17, weight="bold", text_align=ft.TextAlign.CENTER),
+                period_buttons,
+                ft.Divider(height=10),
+                view_button,
+                ft.Divider(height=20),
+
+                ft.Text("گزارش‌های مالی و عملیاتی", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
+                report_cards,
+            ], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=15),
+            width=400,
+            margin=ft.margin.Margin(left=15, right=15),
+            expand=True
+        )
     # ==================== رندر اصلی ====================
     def render(tab_index=0):
         page.controls.clear()
