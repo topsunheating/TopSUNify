@@ -66,7 +66,7 @@ def main(page: ft.Page):
                         ft.Text(month_name, size=12, text_align=ft.TextAlign.CENTER),
                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=2),
                     width=95,
-                    height=85,
+                    height=45,
                     bgcolor="#1565C0" if is_selected else "#f0f0f0",
                     border_radius=16,
                     alignment=ft.Alignment(0.5, 0.5),
@@ -94,7 +94,7 @@ def main(page: ft.Page):
             max_extent=175,
             spacing=12,
             run_spacing=12,
-            padding=10,
+            padding=5,
             expand=True,
         )
 
