@@ -258,7 +258,7 @@ def main(page: ft.Page):
         # دکمه مشاهده اطلاعات
         view_button = ft.ElevatedButton(
             "مشاهده اطلاعات این بازه",
-            width=320,
+            width=250,
             bgcolor="#1565C0",
             color="white",
             style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)),
@@ -267,9 +267,9 @@ def main(page: ft.Page):
 
         # کارت‌های گزارش
         report_cards = ft.GridView(
-            runs_count=3,
-            max_extent=175,
-            spacing=12,
+            runs_count=2,
+            max_extent=120,
+            spacing=10,
             run_spacing=12,
             padding=10,
             expand=True,
