@@ -230,7 +230,7 @@ def main(page: ft.Page):
         period_buttons = ft.Row(
             scroll=ft.ScrollMode.AUTO,
             spacing=8,
-            alignment=ft.MainAxisAlignment.START,
+            alignment=ft.MainAxisAlignment.CENTER,
         )
 
         for year in years:
