@@ -356,6 +356,7 @@ def main(page: ft.Page):
                 ft.Text("داشبورد مدیریتی", size=18, weight="bold"),
                 pre_invoice_page(),      # تب 1 - پیش فاکتورها
                 home_page(),
+                dashboard_page(),
                 technical_page(),
                 profile_page(),
                 settings_page()
