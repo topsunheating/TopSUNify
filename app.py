@@ -32,7 +32,7 @@ def main(page: ft.Page):
     def pre_invoice_page():
         products = [
             ("گرمایش از کف", ft.Icons.HEAT_PUMP, "#1565C0"),
-            ("زیرفرشی", ft.Icons.ROLL, "#2E7D32"),
+            ("زیرفرشی", ft.Icons.FLOOR, "#2E7D32"),
             ("رادیاتور", ft.Icons.RADIATOR, "#C62828"),
             ("حوله خشک کن", ft.Icons.DRY_CLEAN, "#8E24AA"),
             ("یخ زدایی رمپ", ft.Icons.AC_UNIT, "#455A64"),
@@ -79,7 +79,7 @@ def main(page: ft.Page):
             expand=True
         )
 
-    # ==================== صفحات داخلی (کد قبلی شما) ====================
+    # ==================== بقیه صفحات (دقیقاً همان کد شما) ====================
     def home_page():
         return ft.Container(
             content=ft.Column([
@@ -230,7 +230,7 @@ def main(page: ft.Page):
         else:
             contents = [
                 ft.Text("داشبورد مدیریتی", size=18, weight="bold"),
-                pre_invoice_page(),      # ← پیش‌فاکتورها
+                pre_invoice_page(),      # تب 1 - پیش فاکتورها
                 home_page(),
                 technical_page(),
                 profile_page(),
