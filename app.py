@@ -60,7 +60,7 @@ def main(page: ft.Page):
         return ft.Container(
             content=ft.Column([
                 ft.Container(
-                    content=ft.Text("اطلاعات فنی سیستم", size=26, weight="bold", text_align=ft.TextAlign.CENTER),
+                    content=ft.Text("اطلاعات فنی", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
                     padding=20, margin=ft.margin.Margin(bottom=15)
                 ),
                 ft.Container(
@@ -179,8 +179,8 @@ def main(page: ft.Page):
             )
         else:
             contents = [
-                ft.Text("داشبورد مدیریتی", size=25, weight="bold"),
-                ft.Text("بخش پیش‌فاکتورها", size=25, weight="bold"),
+                ft.Text("داشبورد مدیریتی", size=18, weight="bold"),
+                ft.Text("بخش پیش‌فاکتورها", size=18, weight="bold"),
                 home_page(),
                 technical_page(),
                 profile_page(),
