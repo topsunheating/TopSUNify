@@ -42,16 +42,13 @@ def main(page: ft.Page):
             ("رستورانی", ft.Icons.RESTAURANT_MENU, "#D84315"),
         ]
 
-        def open_pre_invoice(product_name):
-            show_message(f"در حال ورود به صدور پیش‌فاکتور {product_name}", "blue")
-
         grid = ft.GridView(
-            expand=True,
             runs_count=3,
             max_extent=130,
             spacing=15,
             run_spacing=15,
             padding=10,
+            expand=True,
         )
 
         for name, icon, color in products:
@@ -62,13 +59,12 @@ def main(page: ft.Page):
                         ft.Text(name, size=13, weight="bold", text_align=ft.TextAlign.CENTER),
                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=8),
                     width=110,
-                    height=110,
+                    height=120,
                     bgcolor="#ffffff",
                     border_radius=15,
                     shadow=ft.BoxShadow(blur_radius=8, color="#e0e0e0"),
-                    on_click=lambda e, n=name: open_pre_invoice(n),
+                    on_click=lambda e, n=name: show_message(f"پیش‌فاکتور {n}"),
                     ink=True,
-                    alignment=ft.Alignment(0, 0)
                 )
             )
 
@@ -83,30 +79,67 @@ def main(page: ft.Page):
             expand=True
         )
 
-    # ==================== صفحات دیگر (خلاصه) ====================
+    # ==================== صفحات دیگر ====================
     def home_page():
-        return ft.Container(...)  # همان کد قبلی شما
+        return ft.Container(
+            content=ft.Column([
+                ft.Image(src="TopSUNify-1.png", width=180),
+                ft.Text("خوش آمدید به TopSUNify", size=20, weight="bold", text_align=ft.TextAlign.CENTER),
+            ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, scroll=ft.ScrollMode.AUTO),
+            width=400,
+            margin=ft.margin.Margin(left=15, right=15),
+            expand=True
+        )
 
     def technical_page():
-        return ft.Container(...)  # همان کد قبلی
+        return ft.Container(
+            content=ft.Text("اطلاعات فنی سیستم", size=22, weight="bold", text_align=ft.TextAlign.CENTER),
+            width=400,
+            margin=ft.margin.Margin(left=15, right=15),
+            expand=True,
+            alignment=ft.Alignment(0, 0)
+        )
 
     def profile_page():
-        return ft.Container(...)  # همان کد قبلی
+        # کد پروفایل قبلی شما (خلاصه شده)
+        return ft.Container(
+            content=ft.Text("پروفایل کاربری", size=22, weight="bold", text_align=ft.TextAlign.CENTER),
+            width=400,
+            margin=ft.margin.Margin(left=15, right=15),
+            expand=True,
+            alignment=ft.Alignment(0, 0)
+        )
 
     def settings_page():
-        return ft.Container(...)  # همان کد قبلی
+        return ft.Container(
+            content=ft.Text("تنظیمات", size=22, weight="bold", text_align=ft.TextAlign.CENTER),
+            width=400,
+            margin=ft.margin.Margin(left=15, right=15),
+            expand=True,
+            alignment=ft.Alignment(0, 0)
+        )
 
     # ==================== رندر اصلی ====================
     def render(tab_index=0):
         page.controls.clear()
 
         if not page.session.logged_in:
-            # صفحه لاگین (همان قبلی)
+            # صفحه لاگین
             page.add(
                 ft.Container(
                     content=ft.Column([
                         ft.Container(content=ft.Image(src="TopSUNify.png", width=190), margin=ft.margin.Margin(top=40, bottom=40)),
-                        # ... بقیه لاگین
+                        ft.Container(content=ft.TextField(label="نام کاربری", width=340, border_radius=12, prefix_icon=ft.Icons.PERSON, text_align=ft.TextAlign.RIGHT), margin=ft.margin.Margin(bottom=20)),
+                        ft.Container(
+                            content=ft.Row([
+                                ft.Container(content=ft.Icon(ft.Icons.FINGERPRINT, size=42, color="#FFCC00"), on_click=lambda e: show_message("احراز هویت بیومتریک"), padding=10, border_radius=12),
+                                ft.TextField(label="رمز عبور", password=True, width=270, border_radius=12, prefix_icon=ft.Icons.LOCK, text_align=ft.TextAlign.RIGHT)
+                            ], alignment=ft.MainAxisAlignment.CENTER, spacing=12),
+                            margin=ft.margin.Margin(bottom=30)
+                        ),
+                        ft.ElevatedButton("ورود به TopSUNify", width=340, bgcolor="#FFCC00", color="black", style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)), on_click=lambda e: (setattr(page.session, 'logged_in', True), render())),
+                        ft.TextButton("فعال‌سازی / فراموشی رمز", style=ft.ButtonStyle(color={"": "blue"})),
+                        ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=160), margin=ft.margin.Margin(top=50, bottom=30)),
                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, scroll=ft.ScrollMode.AUTO),
                     width=400,
                     margin=ft.margin.Margin(left=15, right=15),
@@ -116,11 +149,11 @@ def main(page: ft.Page):
         else:
             contents = [
                 ft.Text("داشبورد مدیریتی", size=18, weight="bold"),
-                pre_invoice_page(),           # ← تب 1: پیش‌فاکتورها
-                home_page(),                  # تب 2: خانه اصلی
-                technical_page(),             # تب 3: اطلاعات فنی
-                profile_page(),               # تب 4: پروفایل
-                settings_page()               # تب 5: تنظیمات
+                pre_invoice_page(),      # تب 1
+                home_page(),             # تب 2
+                technical_page(),        # تب 3
+                profile_page(),          # تب 4
+                settings_page()          # تب 5
             ]
 
             main_content = ft.Container(
@@ -144,8 +177,7 @@ def main(page: ft.Page):
 
             page.add(
                 ft.Column([
-                    ft.Container(content=ft.Image(src="TopSUNify.png", width=100), margin=ft.margin.Margin(top=10, bottom=10)),
-                    ft.Divider(),
+                    ft.Container(content=ft.Image(src="TopSUNify.png", width=80), margin=ft.margin.Margin(top=10, bottom=5)),
                     main_content,
                     nav_bar
                 ], expand=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
