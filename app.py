@@ -31,18 +31,25 @@ def main(page: ft.Page):
 
         # منوی بازشونده بالای صفحه
         user_menu = ft.PopupMenuButton(
-            content=ft.Row([ft.Text(page.session.user_name, weight="bold", size=16), ft.Icon(ft.Icons.ARROW_DROP_DOWN)], alignment=ft.MainAxisAlignment.CENTER),
+            content=ft.Row([
+                ft.Text(page.session.user_name, weight="bold", size=16), 
+                ft.Icon(ft.Icons.ARROW_DROP_DOWN)
+            ], alignment="center"),
             items=[ft.PopupMenuItem(text="زیرمجموعه ۱"), ft.PopupMenuItem(text="زیرمجموعه ۲")]
         )
 
-        # نوار ماه و سال (مشابه تصویر)
+        # نوار ماه و سال
         month_slider = ft.Container(
             content=ft.Row([
                 ft.IconButton(ft.Icons.ARROW_LEFT, on_click=lambda _: change_month(1)),
-                ft.Container(content=ft.Text(months[page.session.selected_month_index], size=18, weight="bold", color="white"), 
-                             bgcolor="#2196F3", padding=ft.padding.symmetric(horizontal=20, vertical=5), border_radius=20),
+                ft.Container(
+                    content=ft.Text(months[page.session.selected_month_index], size=18, weight="bold", color="white"), 
+                    bgcolor="#2196F3", 
+                    padding=ft.padding.symmetric(horizontal=20, vertical=5), 
+                    border_radius=20
+                ),
                 ft.IconButton(ft.Icons.ARROW_RIGHT, on_click=lambda _: change_month(-1)),
-            ], alignment=ft.MainAxisAlignment.CENTER),
+            ], alignment="center"),
             margin=ft.margin.only(top=10, bottom=20)
         )
 
@@ -51,15 +58,19 @@ def main(page: ft.Page):
         buttons_col = ft.Column([
             ft.ElevatedButton(text=btn, width=300, height=50, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10))) 
             for btn in report_buttons
-        ], horizontal_alignment=ft.CrossAxisAlignment.CENTER)
+        ], horizontal_alignment="center")
 
-        return ft.Column([user_menu, month_slider, buttons_col], horizontal_alignment=ft.CrossAxisAlignment.CENTER)
+        return ft.Column([user_menu, month_slider, buttons_col], horizontal_alignment="center")
 
-    # توابع دیگر (خلاصه شده برای جلوگیری از خطا)
+    # رندر اصلی
     def render(tab_index=0):
         page.controls.clear()
         if not page.session.logged_in:
-            page.add(ft.Container(content=ft.ElevatedButton("ورود", on_click=lambda e: (setattr(page.session, 'logged_in', True), render())), alignment=ft.alignment.center, expand=True))
+            page.add(ft.Container(
+                content=ft.ElevatedButton("ورود", on_click=lambda e: (setattr(page.session, 'logged_in', True), render())), 
+                alignment=ft.alignment.center, 
+                expand=True
+            ))
         else:
             page.add(
                 ft.Column([
@@ -67,9 +78,11 @@ def main(page: ft.Page):
                     ft.NavigationBar(
                         selected_index=tab_index,
                         on_change=lambda e: render(e.control.selected_index),
-                        destinations=[ft.NavigationDestination(icon=ft.Icons.DASHBOARD, label="داشبورد"), 
-                                      ft.NavigationDestination(icon=ft.Icons.INVOICE, label="فاکتور"), 
-                                      ft.NavigationDestination(icon=ft.Icons.PERSON, label="پروفایل")]
+                        destinations=[
+                            ft.NavigationDestination(icon=ft.Icons.DASHBOARD, label="داشبورد"), 
+                            ft.NavigationDestination(icon=ft.Icons.INVOICE, label="فاکتور"), 
+                            ft.NavigationDestination(icon=ft.Icons.PERSON, label="پروفایل")
+                        ]
                     )
                 ], expand=True)
             )
@@ -78,6 +91,5 @@ def main(page: ft.Page):
     render()
 
 if __name__ == "__main__":
-    # در سرور از پورت محیطی استفاده کنید
     port = int(os.environ.get("PORT", 8080))
     ft.app(target=main, port=port, host="0.0.0.0")
