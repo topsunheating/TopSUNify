@@ -26,7 +26,7 @@ def main(page: ft.Page):
     def dashboard_page():
         selected_ref = ft.Ref[ft.Container]()
 
-        def select_period(e, year, month_num, month_name):
+        def select_period(e, year, month_name):
             # تغییر وضعیت انتخاب شده
             if selected_ref.current:
                 selected_ref.current.bgcolor = "#f0f0f0"
