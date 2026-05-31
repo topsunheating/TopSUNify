@@ -34,8 +34,8 @@ def main(page: ft.Page):
             content=ft.Column([
                 ft.Container(
                     content=ft.Column([
-                        ft.Image(src="TopSUNify-1.png", width=180),
-                        ft.Text("خوش آمدید به TopSUNify", size=24, weight="bold", text_align=ft.TextAlign.CENTER),
+                        ft.Image(src="TopSUNify-1.png", width=80),
+                        ft.Text("خوش آمدید به TopSUNify", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
                         ft.Text("مرکز خدمات و پشتیبانی", size=16, color="grey", text_align=ft.TextAlign.CENTER),
                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
                     margin=ft.margin.Margin(top=20, bottom=30)
