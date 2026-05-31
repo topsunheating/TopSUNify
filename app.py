@@ -207,8 +207,8 @@ def main(page: ft.Page):
     def dashboard_page():
         selected_ref = ft.Ref[ft.Container]()
 
-        def select_period(e, year, month_num, month_name):
-            # تغییر وضعیت انتخاب شده
+        # اصلاح تابع برای دریافت فقط ۲ پارامتر
+        def select_period(e, year, month_num):
             if selected_ref.current:
                 selected_ref.current.bgcolor = "#f0f0f0"
                 selected_ref.current.update()
@@ -217,16 +217,13 @@ def main(page: ft.Page):
             selected_ref.current = e.control
             e.control.update()
             
-            show_message(f"بازه انتخابی: {year} ({month_num})")
+            show_message(f"بازه انتخابی: {year}/{month_num}")
 
         years = ["1401", "1402", "1403", "1404", "1405", "1406", "1407"]
-        months = [
-            ("01"), ("02"), ("03"), ("04"),
-            ("05"), ("06"), ("07"), ("08"),
-            ("09"), ("10"), ("11"), ("12")
-        ]
+        
+        # لیست ساده شامل فقط شماره ماه‌ها
+        months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
 
-        # ایجاد لیست طولانی سال-ماه
         period_buttons = ft.Row(
             scroll=ft.ScrollMode.AUTO,
             spacing=8,
@@ -234,20 +231,17 @@ def main(page: ft.Page):
         )
 
         for year in years:
-            for month_num, month_name in months:
-                is_selected = (year == "1405" and month_num == "02")  # پیش‌فرض اردیبهشت ۱۴۰۵
+            for month_num in months:
+                is_selected = (year == "1405" and month_num == "05")
                 
                 container = ft.Container(
-                    content=ft.Column([
-                        ft.Text(f"{year}", size=12, weight="bold", text_align=ft.TextAlign.CENTER),
-                        ft.Text(month_num, size=12, text_align=ft.TextAlign.CENTER),
-                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=2),
+                    content=ft.Text(f"{year}/{month_num}", size=14, weight="bold", text_align=ft.TextAlign.CENTER),
                     width=85,
                     height=35,
                     bgcolor="#1565C0" if is_selected else "#f0f0f0",
                     border_radius=160,
-                    alignment=ft.Alignment(0.5, 0.5),
-                    on_click=lambda e, y=year,m_n=month_num, m_name=month_name: select_period(e, y, m_num)
+                    alignment=ft.alignment.center, # اصلاح برای مرکزیت دقیق
+                    on_click=lambda e, y=year, m=month_num: select_period(e, y, m)
                 )
                 
                 if is_selected:
