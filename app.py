@@ -28,7 +28,7 @@ def main(page: ft.Page):
         page.update()
         show_message(f"تم تغییر کرد به: {page.theme_mode}", "blue")
 
-    # ==================== صفحه خانه اصلی ====================
+    # ==================== صفحات داخلی ====================
     def home_page():
         return ft.Container(
             content=ft.Column([
@@ -56,14 +56,12 @@ def main(page: ft.Page):
             expand=True
         )
 
-    # ==================== صفحه اطلاعات فنی ====================
     def technical_page():
         return ft.Container(
             content=ft.Column([
                 ft.Container(
                     content=ft.Text("اطلاعات فنی سیستم", size=26, weight="bold", text_align=ft.TextAlign.CENTER),
-                    padding=20,
-                    margin=ft.margin.Margin(bottom=15)
+                    padding=20, margin=ft.margin.Margin(bottom=15)
                 ),
                 ft.Container(
                     content=ft.Column([
@@ -82,7 +80,6 @@ def main(page: ft.Page):
             expand=True
         )
 
-    # ==================== صفحه تنظیمات ====================
     def settings_page():
         return ft.Container(
             content=ft.Column([
@@ -106,7 +103,6 @@ def main(page: ft.Page):
             expand=True
         )
 
-    # ==================== صفحه پروفایل ====================
     def profile_page():
         return ft.Container(
             content=ft.Column([
@@ -158,7 +154,7 @@ def main(page: ft.Page):
         page.controls.clear()
 
         if not page.session.logged_in:
-            # صفحه ورود
+            # صفحه لاگین
             page.add(
                 ft.Container(
                     content=ft.Column([
@@ -198,6 +194,7 @@ def main(page: ft.Page):
                 margin=ft.margin.Margin(left=15, right=15)
             )
 
+            # ناوبری ثابت
             nav_bar = ft.Container(
                 content=ft.Row([
                     ft.Container(content=ft.Image(src="dashboard.png", width=32, height=32), on_click=lambda _: render(0), padding=8),
@@ -208,12 +205,12 @@ def main(page: ft.Page):
                 ], alignment=ft.MainAxisAlignment.CENTER, spacing=15),
                 bgcolor="white",
                 padding=12,
-                border=ft.border.all(1, "#e0e0e0")
+                # بدون border پیچیده
             )
 
             page.add(
                 ft.Column([
-                    ft.Container(                                      # ← لوگو به جای متن
+                    ft.Container(
                         content=ft.Image(src="TopSUNify.png", width=180),
                         margin=ft.margin.Margin(top=10, bottom=10)
                     ),
