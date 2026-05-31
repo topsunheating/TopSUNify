@@ -40,12 +40,13 @@ def main(page: ft.Page):
             "گرمکن مخزن",
             "گرمکن صندلی",
             "رستورانی",
+            "عایق بازتابشی",
         ]
 
         grid = ft.GridView(
             runs_count=2,          # دو ستونه برای نمایش بهتر متن
             max_extent=160,
-            spacing=12,
+            spacing=10,
             run_spacing=12,
             padding=15,
             expand=True,
