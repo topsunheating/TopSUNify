@@ -211,7 +211,7 @@ def main(page: ft.Page):
             page.add(
                 ft.Column([
                     ft.Container(
-                        content=ft.Image(src="TopSUNify.png", width=180),
+                        content=ft.Image(src="TopSUNify.png", width=80),
                         margin=ft.margin.Margin(top=10, bottom=10)
                     ),
                     ft.Divider(),
