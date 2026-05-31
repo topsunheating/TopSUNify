@@ -28,41 +28,45 @@ def main(page: ft.Page):
         page.update()
         show_message(f"تم تغییر کرد به: {page.theme_mode}", "blue")
 
-    # ==================== صفحه پیش‌فاکتورها ====================
+    # ==================== صفحه پیش‌فاکتورها (فقط متن) ====================
     def pre_invoice_page():
         products = [
-            ("گرمایش از کف", ft.Icons.HEAT_PUMP, "#1565C0"),
-            ("زیرفرشی", ft.Icons.HEAT_PUMP, "#2E7D32"),
-            ("رادیاتور", ft.Icons.HEAT_PUMP, "#C62828"),
-            ("حوله خشک کن", ft.Icons.DRY_CLEAN, "#8E24AA"),
-            ("یخ زدایی رمپ", ft.Icons.AC_UNIT, "#455A64"),
-            ("یخ زدایی پله", ft.Icons.STAIRS, "#FF8F00"),
-            ("گرمکن مخزن", ft.Icons.WATER_DROP, "#0277BD"),
-            ("گرمکن صندلی", ft.Icons.CHAIR, "#6A1B9A"),
-            ("رستورانی", ft.Icons.RESTAURANT, "#D84315"),
+            "گرمایش از کف",
+            "زیرفرشی",
+            "رادیاتور",
+            "حوله خشک کن",
+            "یخ زدایی رمپ",
+            "یخ زدایی پله",
+            "گرمکن مخزن",
+            "گرمکن صندلی",
+            "رستورانی",
         ]
 
         grid = ft.GridView(
-            runs_count=3,
-            max_extent=130,
-            spacing=15,
-            run_spacing=15,
+            runs_count=2,          # دو ستونه برای نمایش بهتر متن
+            max_extent=160,
+            spacing=12,
+            run_spacing=12,
             padding=15,
             expand=True,
         )
 
-        for name, icon, color in products:
+        for name in products:
             grid.controls.append(
                 ft.Container(
-                    content=ft.Column([
-                        ft.Icon(icon, size=48, color=color),
-                        ft.Text(name, size=13, weight="bold", text_align=ft.TextAlign.CENTER),
-                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=8),
-                    width=110,
-                    height=120,
+                    content=ft.Text(
+                        name, 
+                        size=15, 
+                        weight="bold", 
+                        text_align=ft.TextAlign.CENTER,
+                        color="#1565C0"
+                    ),
+                    width=170,
+                    height=70,
                     bgcolor="#ffffff",
-                    border_radius=15,
-                    shadow=ft.BoxShadow(blur_radius=8, color="#e0e0e0"),
+                    border_radius=12,
+                    alignment=ft.Alignment(0, 0),
+                    shadow=ft.BoxShadow(blur_radius=6, color="#e0e0e0"),
                     on_click=lambda e, n=name: show_message(f"پیش‌فاکتور {n}"),
                     ink=True,
                 )
