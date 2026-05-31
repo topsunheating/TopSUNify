@@ -353,12 +353,12 @@ def main(page: ft.Page):
         else:
             contents = [
                 ft.Text("داشبورد مدیریتی", size=18, weight="bold"),
-                dashboard_page(),
                 pre_invoice_page(),      # تب 1 - پیش فاکتورها
                 home_page(),
                 technical_page(),
                 profile_page(),
                 settings_page()
+                dashboard_page(),
             ]
             main_content = ft.Container(
                 content=contents[tab_index],
