@@ -36,7 +36,7 @@ def main(page: ft.Page):
             selected_ref.current = e.control
             e.control.update()
             
-            show_message(f"بازه انتخابی: {year} - {month_num} ({month_name})")
+            show_message(f"بازه انتخابی: {year} ({month_name})")
 
         years = ["1401", "1402", "1403", "1404", "1405", "1406", "1407"]
         months = [
@@ -53,8 +53,8 @@ def main(page: ft.Page):
         )
 
         for year in years:
-            for month_name, month_num in months:
-                is_selected = (year == "1405" and month_num == "05")  # پیش‌فرض اردیبهشت ۱۴۰۵
+            for month_name in months:
+                is_selected = (year == "1405" and month_num == "اردیبهشت")  # پیش‌فرض اردیبهشت ۱۴۰۵
                 
                 container = ft.Container(
                     content=ft.Column([
