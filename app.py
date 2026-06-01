@@ -240,7 +240,7 @@ def main(page: ft.Page):
                     height=35,
                     bgcolor="#1565C0" if is_selected else "#f0f0f0",
                     border_radius=160,
-                    alignment=ft.alignment.center, # اصلاح برای مرکزیت دقیق
+                    alignment=ft.MainAxisAlignment.CENTER, # اصلاح برای مرکزیت دقیق
                     on_click=lambda e, y=year, m=month_num: select_period(e, y, m)
                 )
                 
