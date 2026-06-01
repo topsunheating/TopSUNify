@@ -1,5 +1,7 @@
 import flet as ft
 import os
+import requests
+from flet import alignment
 
 def main(page: ft.Page):
     page.fonts = {"iranyekan": "fonts/iranyekan.ttf"}
