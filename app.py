@@ -26,35 +26,36 @@ def main(page: ft.Page):
         page.theme_mode = "dark" if page.theme_mode == "light" else "light"
         page.update()
 
-    # --- دیالوگ درخواست ایجاد حساب ---
-    def open_account_request_dialog(e):
-        dlg = ft.AlertDialog(
-            title=ft.Text("درخواست ایجاد حساب همکاری", text_align=ft.TextAlign.CENTER),
-            content=ft.Container(
-                content=ft.Column([
-                    ft.TextField(label="نام و نام خانوادگی", text_align=ft.TextAlign.RIGHT),
-                    ft.TextField(label="نام پدر", text_align=ft.TextAlign.RIGHT),
-                    ft.TextField(label="تاریخ تولد", text_align=ft.TextAlign.RIGHT),
-                    ft.TextField(label="شماره شناسنامه", text_align=ft.TextAlign.RIGHT),
-                    ft.TextField(label="شماره ملی", text_align=ft.TextAlign.RIGHT),
-                    ft.Dropdown(label="نوع درخواست", options=[
-                        ft.dropdown.Option("نماینده فروش"),
-                        ft.dropdown.Option("عامل فروش"),
-                        ft.dropdown.Option("کارشناس فروش"),
-                        ft.dropdown.Option("نصاب فنی"),
-                    ]),
-                    ft.Text("اینجانب جهت همکاری طبق قوانین شرکت معرفی می‌کنم.", size=12, italic=True),
-                    ft.ElevatedButton("تایید درخواست", bgcolor="#1565C0", color="white", on_click=lambda e: show_message("درخواست با موفقیت ثبت شد")),
-                    ft.OutlinedButton("بازگشت به منوی اصلی", on_click=lambda e: setattr(dlg, 'open', False) or page.update()),
-                ], scroll=ft.ScrollMode.AUTO, tight=True),
-                width=350, height=500
-            )
+    # --- تعریف دیالوگ درخواست به صورت یک شیء پایدار ---
+    account_dlg = ft.AlertDialog(
+        title=ft.Text("درخواست ایجاد حساب همکاری", text_align=ft.TextAlign.CENTER),
+        content=ft.Container(
+            content=ft.Column([
+                ft.TextField(label="نام و نام خانوادگی", text_align=ft.TextAlign.RIGHT),
+                ft.TextField(label="نام پدر", text_align=ft.TextAlign.RIGHT),
+                ft.TextField(label="تاریخ تولد", text_align=ft.TextAlign.RIGHT),
+                ft.TextField(label="شماره شناسنامه", text_align=ft.TextAlign.RIGHT),
+                ft.TextField(label="شماره ملی", text_align=ft.TextAlign.RIGHT),
+                ft.Dropdown(label="نوع درخواست", options=[
+                    ft.dropdown.Option("نماینده فروش"),
+                    ft.dropdown.Option("عامل فروش"),
+                    ft.dropdown.Option("کارشناس فروش"),
+                    ft.dropdown.Option("نصاب فنی"),
+                ]),
+                ft.Text("اینجانب جهت همکاری طبق قوانین شرکت معرفی می‌کنم.", size=12, italic=True),
+                ft.ElevatedButton("تایید درخواست", bgcolor="#1565C0", color="white", on_click=lambda e: show_message("درخواست با موفقیت ثبت شد")),
+                ft.OutlinedButton("بازگشت به منوی اصلی", on_click=lambda e: (setattr(account_dlg, 'open', False), page.update())),
+            ], scroll=ft.ScrollMode.AUTO, tight=True),
+            width=350, height=500
         )
-        page.dialog = dlg
-        dlg.open = True
+    )
+
+    def open_account_request_dialog(e):
+        page.dialog = account_dlg
+        account_dlg.open = True
         page.update()
 
-    # ==================== سایر صفحات ====================
+    # ==================== سایر توابع صفحات (بدون تغییر) ====================
     def pre_invoice_page():
         products = ["گرمایش از کف", "زیرفرشی", "رادیاتور", "حوله خشک کن", "یخ زدایی رمپ", "یخ زدایی پله", "گرمکن مخزن", "گرمکن صندلی", "رستورانی", "عایق بازتابشی"]
         grid = ft.GridView(runs_count=2, max_extent=120, spacing=10, run_spacing=12, padding=10, expand=True)
