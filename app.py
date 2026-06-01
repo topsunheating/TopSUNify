@@ -82,7 +82,12 @@ def main(page: ft.Page):
 
     def account_request_page():
         return ft.Container(content=ft.Column([
-            ft.Text("فرم درخواست همکاری", size=20, weight="bold"),
+            # اضافه کردن ردیف شامل فلش برگشت و عنوان صفحه
+            ft.Container(content=ft.Row([
+                ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), 
+                ft.Text("فرم درخواست همکاری", size=20, weight="bold")
+            ]), padding=10),
+            
             ft.TextField(label="نام و نام خانوادگی", text_align=ft.TextAlign.RIGHT),
             ft.TextField(label="نام پدر", text_align=ft.TextAlign.RIGHT),
             ft.TextField(label="تاریخ تولد", text_align=ft.TextAlign.RIGHT),
@@ -94,8 +99,8 @@ def main(page: ft.Page):
                 ft.dropdown.Option("کارشناس فروش"),
                 ft.dropdown.Option("نصاب فنی"),
             ]),
-            ft.ElevatedButton("ثبت نهایی درخواست", bgcolor="#1565C0", color="white", on_click=lambda e: show_message("درخواست با موفقیت ثبت شد")),
-            ft.OutlinedButton("بازگشت به پروفایل", on_click=lambda e: render(4))
+            ft.ElevatedButton("ثبت نهایی درخواست", bgcolor="#1565C0", color="white", on_click=lambda e: show_message("درخواست با موفقیت ثبت شد"))
+            # دکمه بازگشت قدیمی حذف شد
         ], scroll=ft.ScrollMode.AUTO), padding=20)
 
     # --- توابع اصلی ---
