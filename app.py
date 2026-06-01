@@ -26,6 +26,17 @@ def main(page: ft.Page):
         show_message("درخواست با موفقیت ثبت شد", "green")
         dlg.open = False
         page.update()
+    def open_dialog(e):
+        page.dialog = dlg
+        dlg.open = True
+        page.update()
+
+    def create_account_request(e):
+        show_message("درخواست ایجاد حساب ارسال شد")
+
+    def toggle_theme(e):
+        page.theme_mode = "dark" if page.theme_mode == "light" else "light"
+        page.update()
 
     dlg = ft.AlertDialog(
         title=ft.Text("فرم درخواست همکاری", text_align=ft.TextAlign.CENTER),
@@ -39,15 +50,6 @@ def main(page: ft.Page):
         )
     )
 
-    def open_dialog(e):
-        page.dialog = dlg
-        dlg.open = True
-        page.update()
-    # ==================== تغییر تم ====================
-    def toggle_theme(e):
-        page.theme_mode = "dark" if page.theme_mode == "light" else "light"
-        page.update()
-        show_message(f"تم تغییر کرد به: {page.theme_mode}", "blue")
     # ==================== صفحه پیش‌فاکتورها (فقط متن) ====================
     def pre_invoice_page():
         products = [
