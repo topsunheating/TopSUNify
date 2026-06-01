@@ -152,6 +152,66 @@ def main(page: ft.Page):
                     ft.Divider(height=20),
                     ft.ListTile(leading=ft.Icon(ft.Icons.DELETE_FOREVER, color="red"), title=ft.Text("حذف تنظیمات و خروج از نرم‌افزار", color="red"), on_click=lambda e: (setattr(page.session, 'logged_in', False), render())),
                 ], spacing=2, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
+
+               # 1. اول دیالوگ را تعریف می‌کنیم (در ابتدای تابع main یا قبل از profile_page)
+    def submit_form(e):
+        show_message(f"درخواست با موفقیت ثبت شد", "green")
+        dlg.open = False
+        page.update()
+
+    dlg = ft.AlertDialog(
+        title=ft.Text("فرم درخواست همکاری", text_align=ft.TextAlign.CENTER),
+        content=ft.Container(
+            content=ft.Column([
+                ft.TextField(label="نام و نام خانوادگی", text_align=ft.TextAlign.RIGHT),
+                ft.TextField(label="نام پدر", text_align=ft.TextAlign.RIGHT),
+                ft.TextField(label="تاریخ تولد", hint_text="1400/01/01", text_align=ft.TextAlign.RIGHT),
+                ft.TextField(label="شماره ملی", text_align=ft.TextAlign.RIGHT),
+                ft.Dropdown(
+                    label="نوع درخواست",
+                    options=[
+                        ft.dropdown.Option("نماینده فروش"),
+                        ft.dropdown.Option("عامل فروش"),
+                        ft.dropdown.Option("کارشناس فروش"),
+                        ft.dropdown.Option("نصاب فنی"),
+                    ]
+                ),
+                ft.ElevatedButton("تایید درخواست", bgcolor="#1565C0", color="white", on_click=submit_form)
+            ], scroll=ft.ScrollMode.AUTO, tight=True),
+            width=350,
+            height=400
+        )
+    )
+
+    # 2. تابع باز کننده دیالوگ
+    def open_dialog(e):
+        page.dialog = dlg
+        dlg.open = True
+        page.update()
+
+    # 3. اصلاح profile_page برای استفاده از تابع جدید
+    def profile_page():
+        return ft.Container(
+            content=ft.Column([
+                # ... (بقیه کدهای بالای صفحه پروفایل شما)
+                ft.Container(
+                    content=ft.Column([
+                        ft.CircleAvatar(foreground_image_src="https://i.pravatar.cc/150?u=reza", radius=48),
+                        ft.Text("نام و نام خانوادگی", size=20, weight="bold"),
+                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+                    padding=20
+                ),
+                ft.ListTile(
+                    leading=ft.Icon(ft.Icons.PERSON_ADD, color="blue"), 
+                    title=ft.Text("درخواست ایجاد حساب"), 
+                    trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), 
+                    on_click=open_dialog # از تابع open_dialog استفاده کردیم
+                ),
+                # ... (ادامه لیست‌های شما)
+            ], scroll=ft.ScrollMode.AUTO),
+            width=400,
+            expand=True
+        ) 
             ], scroll=ft.ScrollMode.AUTO),
             width=400,
             margin=ft.margin.Margin(left=15, right=15),
@@ -201,52 +261,7 @@ def main(page: ft.Page):
             expand=True
         )
 
-    def create_account_request(e):
-        # تعریف فیلدهای ورودی
-        name_field = ft.TextField(label="نام و نام خانوادگی", text_align=ft.TextAlign.RIGHT)
-        father_field = ft.TextField(label="نام پدر", text_align=ft.TextAlign.RIGHT)
-        birth_field = ft.TextField(label="تاریخ تولد", hint_text="1400/01/01", text_align=ft.TextAlign.RIGHT)
-        id_field = ft.TextField(label="شماره شناسنامه", text_align=ft.TextAlign.RIGHT)
-        national_field = ft.TextField(label="شماره ملی", text_align=ft.TextAlign.RIGHT)
-        
-        type_dropdown = ft.Dropdown(
-            label="نوع درخواست",
-            options=[
-                ft.dropdown.Option("نماینده فروش"),
-                ft.dropdown.Option("عامل فروش"),
-                ft.dropdown.Option("کارشناس فروش"),
-                ft.dropdown.Option("نصاب فنی"),
-            ]
-        )
-
-        def close_dialog(e):
-            page.dialog.open = False
-            page.update()
-
-        def submit_form(e):
-            # اینجا می‌توانید در آینده کدهای ارسال به سرور را اضافه کنید
-            show_message(f"درخواست {name_field.value} با موفقیت ثبت شد", "green")
-            close_dialog(None)
-
-        page.dialog = ft.AlertDialog(
-            title=ft.Text("فرم درخواست همکاری", text_align=ft.TextAlign.CENTER),
-            content=ft.Container(
-                content=ft.Column([
-                    name_field,
-                    father_field,
-                    birth_field,
-                    id_field,
-                    national_field,
-                    type_dropdown,
-                    ft.Text("اینجانب درخواست خود را جهت همکاری طبق قوانین شرکت ثبت می‌نمایم.", size=12, color="grey", text_align=ft.TextAlign.RIGHT),
-                    ft.ElevatedButton("تایید درخواست", bgcolor="#1565C0", color="white", on_click=submit_form)
-                ], scroll=ft.ScrollMode.AUTO, tight=True),
-                width=350,
-                height=450
-            )
-        )
-        page.dialog.open = True
-        page.update()
+   
 # ==================== داشبورد مدیریتی ====================
     def dashboard_page():
         selected_ref = ft.Ref[ft.Container]()
