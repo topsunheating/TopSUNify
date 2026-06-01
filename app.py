@@ -174,42 +174,6 @@ def main(page: ft.Page):
                     ft.ListTile(leading=ft.Icon(ft.Icons.DELETE_FOREVER, color="red"), title=ft.Text("حذف تنظیمات و خروج از نرم‌افزار", color="red"), on_click=lambda e: (setattr(page.session, 'logged_in', False), render())),
                 ], spacing=2, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
 
-               # 1. اول دیالوگ را تعریف می‌کنیم (در ابتدای تابع main یا قبل از profile_page)
-    def submit_form(e):
-        show_message(f"درخواست با موفقیت ثبت شد", "green")
-        dlg.open = False
-        page.update()
-
-    dlg = ft.AlertDialog(
-        title=ft.Text("فرم درخواست همکاری", text_align=ft.TextAlign.CENTER),
-        content=ft.Container(
-            content=ft.Column([
-                ft.TextField(label="نام و نام خانوادگی", text_align=ft.TextAlign.RIGHT),
-                ft.TextField(label="نام پدر", text_align=ft.TextAlign.RIGHT),
-                ft.TextField(label="تاریخ تولد", hint_text="1400/01/01", text_align=ft.TextAlign.RIGHT),
-                ft.TextField(label="شماره ملی", text_align=ft.TextAlign.RIGHT),
-                ft.Dropdown(
-                    label="نوع درخواست",
-                    options=[
-                        ft.dropdown.Option("نماینده فروش"),
-                        ft.dropdown.Option("عامل فروش"),
-                        ft.dropdown.Option("کارشناس فروش"),
-                        ft.dropdown.Option("نصاب فنی"),
-                    ]
-                ),
-                ft.ElevatedButton("تایید درخواست", bgcolor="#1565C0", color="white", on_click=submit_form)
-            ], scroll=ft.ScrollMode.AUTO, tight=True),
-            width=350,
-            height=400
-        )
-    )
-
-    # 2. تابع باز کننده دیالوگ
-    def open_dialog(e):
-        page.dialog = dlg
-        dlg.open = True
-        page.update()
-
     def profile_page():
         return ft.Container(
             content=ft.Column([
