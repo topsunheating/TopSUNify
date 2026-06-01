@@ -60,7 +60,7 @@ def main(page: ft.Page):
             grid.controls.append(
                 ft.Container(
                     content=ft.Text(name, size=15, weight="bold", text_align=ft.TextAlign.CENTER, color="#1565C0"),
-                    width=170, height=70, bgcolor="#ffffff", border_radius=12, alignment=ft.alignment.center,
+                    width=170, height=70, bgcolor="#ffffff", border_radius=12, alignment=ft.Alignment(0, 0),
                     shadow=ft.BoxShadow(blur_radius=6, color="#e0e0e0"),
                     on_click=lambda e, n=name: show_message(f"پیش‌فاکتور {n}"), ink=True,
                 )
