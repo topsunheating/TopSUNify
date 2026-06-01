@@ -62,7 +62,7 @@ def main(page: ft.Page):
                 padding=10
             ),
             actions=[
-                ft.TextButton("انصراف", on_click=lambda _: (setattr(dlg, 'open', False), page.update())),
+                ft.TextButton("بازگشت", on_click=lambda _: (setattr(dlg, 'open', False), page.update())),
                 ft.ElevatedButton("تایید و ارسال درخواست", bgcolor="#1565C0", color="white", on_click=lambda _: (show_message("درخواست با موفقیت ارسال شد", "green"), setattr(dlg, 'open', False), page.update()))
             ],
             actions_alignment=ft.MainAxisAlignment.END
@@ -92,7 +92,9 @@ def main(page: ft.Page):
                 height=400,
                 padding=10
             ),
-            actions=[ft.TextButton("بستن", on_click=lambda _: (setattr(dlg, 'open', False), page.update()))]
+            actions=[
+                ft.TextButton("بازگشت", on_click=lambda _: (setattr(dlg, 'open', False), page.update()))
+            ]
         )
         page.dialog = dlg
         dlg.open = True
@@ -145,7 +147,7 @@ def main(page: ft.Page):
                 padding=10
             ),
             actions=[
-                ft.TextButton("انصراف", on_click=lambda _: (setattr(dlg, 'open', False), page.update())),
+                ft.TextButton("بازگشت", on_click=lambda _: (setattr(dlg, 'open', False), page.update())),
                 ft.ElevatedButton("تایید و تولید PDF", bgcolor="#1565C0", color="white", on_click=submit_inventory)
             ]
         )
@@ -240,162 +242,7 @@ def main(page: ft.Page):
             expand=True
         )
 
-    # ==================== داشبورد مدیریتی ====================
-    def dashboard_page():
-        selected_ref = ft.Ref[ft.Container]()
-
-        def select_period(e, year, month_num):
-            if selected_ref.current:
-                selected_ref.current.bgcolor = "#f0f0f0"
-                selected_ref.current.update()
-            e.control.bgcolor = "#1565C0"
-            selected_ref.current = e.control
-            e.control.update()
-            show_message(f"بازه انتخابی: {year}/{month_num}")
-
-        years = ["1401", "1402", "1403", "1404", "1405", "1406", "1407"]
-        months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
-
-        period_buttons = ft.Row(scroll=ft.ScrollMode.AUTO, spacing=8, alignment=ft.MainAxisAlignment.CENTER)
-
-        for year in years:
-            for month_num in months:
-                is_selected = (year == "1405" and month_num == "05")
-                container = ft.Container(
-                    content=ft.Text(f"{year}/{month_num}", size=14, weight="bold", text_align=ft.TextAlign.CENTER),
-                    width=85,
-                    height=35,
-                    bgcolor="#1565C0" if is_selected else "#f0f0f0",
-                    border_radius=30,
-                    alignment=ft.Alignment(0, 0),
-                    on_click=lambda e, y=year, m=month_num: select_period(e, y, m)
-                )
-                if is_selected:
-                    selected_ref.current = container
-                period_buttons.controls.append(container)
-
-        view_button = ft.ElevatedButton(
-            "مشاهده اطلاعات این بازه",
-            width=250,
-            bgcolor="#1565C0",
-            color="white",
-            style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)),
-            on_click=lambda e: show_message("در حال بارگذاری گزارش‌های مالی و عملیاتی...")
-        )
-
-        report_cards = ft.GridView(runs_count=2, max_extent=140, spacing=10, run_spacing=12, padding=10, expand=True)
-
-        cards_data = [
-            ("فاکتورهای تسویه شده", ft.Icons.CHECK_CIRCLE, "#1976D2"),
-            ("فاکتورهای فروش", ft.Icons.SHOPPING_CART, "#388E3C"),
-            ("پیش فاکتورها", ft.Icons.RECEIPT_LONG, "#1565C0"),
-            ("پروژه‌های نصب شده", ft.Icons.HOME_WORK, "#7B1FA2"),
-            ("فاکتورهای باز", ft.Icons.PENDING, "#F57C00"),
-        ]
-
-        for title, icon, color in cards_data:
-            report_cards.controls.append(
-                ft.Container(
-                    content=ft.Column([
-                        ft.Icon(icon, size=36, color=color),
-                        ft.Text(title, size=13.5, weight="bold", text_align=ft.TextAlign.CENTER),
-                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=8),
-                    bgcolor="white",
-                    border_radius=16,
-                    padding=14,
-                    shadow=ft.BoxShadow(blur_radius=8, color="#e0e0e0"),
-                    expand=True,
-                    on_click=lambda e, t=title: show_message(f"بخش {t}"),
-                    ink=True,
-                )
-            )
-
-        return ft.Container(
-            content=ft.Column([
-                ft.Container(
-                    content=ft.Dropdown(value="رضا تلچی", options=[ft.dropdown.Option("رضا تلچی"), ft.dropdown.Option("زیرمجموعه فروش")], width=320, border_radius=30, bgcolor="white"),
-                    margin=ft.margin.Margin(bottom=15)
-                ),
-                ft.Text("انتخاب بازه زمانی", size=17, weight="bold", text_align=ft.TextAlign.CENTER),
-                period_buttons,
-                ft.Divider(height=10),
-                view_button,
-                ft.Divider(height=20),
-                ft.Text("گزارش‌های مالی و عملیاتی", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
-                report_cards,
-            ], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=15),
-            width=400,
-            margin=ft.margin.Margin(left=15, right=15),
-            expand=True
-        )
-
-    # ==================== رندر اصلی ====================
-    def render(tab_index=0):
-        page.controls.clear()
-        if not page.session.logged_in:
-            # صفحه لاگین
-            page.add(
-                ft.Container(
-                    content=ft.Column([
-                        ft.Container(content=ft.Image(src="TopSUNify.png", width=190), margin=ft.margin.Margin(top=40, bottom=40)),
-                        ft.Container(content=ft.TextField(label="نام کاربری", width=340, border_radius=12, prefix_icon=ft.Icons.PERSON, text_align=ft.TextAlign.RIGHT), margin=ft.margin.Margin(bottom=20)),
-                        ft.Container(
-                            content=ft.Row([
-                                ft.Container(content=ft.Icon(ft.Icons.FINGERPRINT, size=42, color="#FFCC00"), on_click=lambda e: show_message("احراز هویت بیومتریک", "orange"), padding=10, border_radius=12),
-                                ft.TextField(label="رمز عبور", password=True, width=270, border_radius=12, prefix_icon=ft.Icons.LOCK, text_align=ft.TextAlign.RIGHT)
-                            ], alignment=ft.MainAxisAlignment.CENTER, spacing=12),
-                            margin=ft.margin.Margin(bottom=30)
-                        ),
-                        ft.ElevatedButton("ورود به TopSUNify", width=340, bgcolor="#FFCC00", color="black", style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)), on_click=lambda e: (setattr(page.session, 'logged_in', True), render())),
-                        ft.TextButton("فعال‌سازی / فراموشی رمز", style=ft.ButtonStyle(color={"": "blue"})),
-                        ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=160), margin=ft.margin.Margin(top=50, bottom=30)),
-                        ft.Container(content=ft.Image(src="landscape.jpg", width=400, height=220, fit="cover"), expand=True)
-                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, scroll=ft.ScrollMode.AUTO),
-                    width=400,
-                    margin=ft.margin.Margin(left=15, right=15),
-                    expand=True
-                )
-            )
-        else:
-            contents = [
-                dashboard_page(),      # تب 0
-                pre_invoice_page(),    # تب 1
-                home_page(),           # تب 2
-                technical_page(),      # تب 3
-                profile_page(),        # تب 4
-                settings_page()        # تب 5
-            ]
-            main_content = ft.Container(
-                content=contents[tab_index],
-                expand=True,
-                width=400,
-                margin=ft.margin.Margin(left=15, right=15)
-            )
-            nav_bar = ft.Container(
-                content=ft.Row([
-                    ft.Container(content=ft.Image(src="dashboard.png", width=32, height=32), on_click=lambda _: render(0), padding=8),
-                    ft.Container(content=ft.Image(src="invoice.png", width=32, height=32), on_click=lambda _: render(1), padding=8),
-                    ft.Container(content=ft.Image(src="TopSUNify-1.png", width=32, height=32), on_click=lambda _: render(2), padding=8),
-                    ft.Container(content=ft.Image(src="technical.png", width=32, height=32), on_click=lambda _: render(3), padding=8),
-                    ft.Container(content=ft.Image(src="profile.png", width=32, height=32), on_click=lambda _: render(4), padding=8),
-                ], alignment=ft.MainAxisAlignment.CENTER, spacing=15),
-                bgcolor="white",
-                padding=12,
-            )
-            page.add(
-                ft.Column([
-                    ft.Container(
-                        content=ft.Image(src="TopSUNify.png", width=80),
-                        margin=ft.margin.Margin(top=10, bottom=10)
-                    ),
-                    ft.Divider(),
-                    main_content,
-                    nav_bar
-                ], expand=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
-            )
-        page.update()
-
-    # ==================== صفحات دیگر (تعریف کامل) ====================
+    # ==================== صفحات دیگر ====================
     def home_page():
         return ft.Container(
             content=ft.Column([
@@ -469,6 +316,68 @@ def main(page: ft.Page):
             margin=ft.margin.Margin(left=15, right=15),
             expand=True
         )
+
+    # ==================== رندر اصلی ====================
+    def render(tab_index=0):
+        page.controls.clear()
+        if not page.session.logged_in:
+            page.add(
+                ft.Container(
+                    content=ft.Column([
+                        ft.Container(content=ft.Image(src="TopSUNify.png", width=190), margin=ft.margin.Margin(top=40, bottom=40)),
+                        ft.Container(content=ft.TextField(label="نام کاربری", width=340, border_radius=12, prefix_icon=ft.Icons.PERSON, text_align=ft.TextAlign.RIGHT), margin=ft.margin.Margin(bottom=20)),
+                        ft.Container(
+                            content=ft.Row([
+                                ft.Container(content=ft.Icon(ft.Icons.FINGERPRINT, size=42, color="#FFCC00"), on_click=lambda e: show_message("احراز هویت بیومتریک", "orange"), padding=10, border_radius=12),
+                                ft.TextField(label="رمز عبور", password=True, width=270, border_radius=12, prefix_icon=ft.Icons.LOCK, text_align=ft.TextAlign.RIGHT)
+                            ], alignment=ft.MainAxisAlignment.CENTER, spacing=12),
+                            margin=ft.margin.Margin(bottom=30)
+                        ),
+                        ft.ElevatedButton("ورود به TopSUNify", width=340, bgcolor="#FFCC00", color="black", style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)), on_click=lambda e: (setattr(page.session, 'logged_in', True), render())),
+                        ft.TextButton("فعال‌سازی / فراموشی رمز", style=ft.ButtonStyle(color={"": "blue"})),
+                        ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=160), margin=ft.margin.Margin(top=50, bottom=30)),
+                        ft.Container(content=ft.Image(src="landscape.jpg", width=400, height=220, fit="cover"), expand=True)
+                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, scroll=ft.ScrollMode.AUTO),
+                    width=400,
+                    margin=ft.margin.Margin(left=15, right=15),
+                    expand=True
+                )
+            )
+        else:
+            contents = [
+                ft.Text("داشبورد مدیریتی", size=18, weight="bold"),
+                pre_invoice_page(),
+                home_page(),
+                technical_page(),
+                profile_page(),
+                settings_page()
+            ]
+            main_content = ft.Container(
+                content=contents[tab_index],
+                expand=True,
+                width=400,
+                margin=ft.margin.Margin(left=15, right=15)
+            )
+            nav_bar = ft.Container(
+                content=ft.Row([
+                    ft.Container(content=ft.Image(src="dashboard.png", width=32, height=32), on_click=lambda _: render(0), padding=8),
+                    ft.Container(content=ft.Image(src="invoice.png", width=32, height=32), on_click=lambda _: render(1), padding=8),
+                    ft.Container(content=ft.Image(src="TopSUNify-1.png", width=32, height=32), on_click=lambda _: render(2), padding=8),
+                    ft.Container(content=ft.Image(src="technical.png", width=32, height=32), on_click=lambda _: render(3), padding=8),
+                    ft.Container(content=ft.Image(src="profile.png", width=32, height=32), on_click=lambda _: render(4), padding=8),
+                ], alignment=ft.MainAxisAlignment.CENTER, spacing=15),
+                bgcolor="white",
+                padding=12,
+            )
+            page.add(
+                ft.Column([
+                    ft.Container(content=ft.Image(src="TopSUNify.png", width=80), margin=ft.margin.Margin(top=10, bottom=10)),
+                    ft.Divider(),
+                    main_content,
+                    nav_bar
+                ], expand=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
+            )
+        page.update()
 
     render()
 
