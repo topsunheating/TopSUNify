@@ -47,7 +47,9 @@ def main(page: ft.Page):
             width=350, height=500
         )
     )
-
+    def profile_page():
+        return 
+        
     def open_account_request_dialog(e):
         page.dialog = account_dlg
         account_dlg.open = True
