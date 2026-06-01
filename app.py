@@ -67,7 +67,7 @@ def main(page: ft.Page):
             product_name, product_size, product_qty,
             ft.ElevatedButton("تایید موجودی", on_click=add_to_table, bgcolor="green", color="white"),
             ft.Divider(),
-            ft.SingleChildScrollView(content=table),
+            table,
             ft.ElevatedButton("اعلام کل موجودی", on_click=finalize_inventory, bgcolor="blue", color="white", width=350)
         ], scroll=ft.ScrollMode.AUTO), width=400, expand=True)
 
