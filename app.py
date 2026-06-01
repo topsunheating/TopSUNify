@@ -83,7 +83,7 @@ def main(page: ft.Page):
             for month_num in months:
                 is_selected = (year == "1405" and month_num == "05")
                 # اصلاح نهایی در خط پایین:
-                container = ft.Container(content=ft.Text(f"{year}/{month_num}", size=14, weight="bold", text_align=ft.TextAlign.CENTER), width=85, height=35, bgcolor="#1565C0" if is_selected else "#f0f0f0", border_radius=160, alignment=ft.alignment.center, on_click=lambda e, y=year, m=month_num: select_period(e, y, m))
+                container = ft.Container(content=ft.Text(f"{year}/{month_num}", size=14, weight="bold", text_align=ft.TextAlign.CENTER), width=85, height=35, bgcolor="#1565C0" if is_selected else "#f0f0f0", border_radius=160, alignment=ft.Alignment(0, 0), on_click=lambda e, y=year, m=month_num: select_period(e, y, m))
                 if is_selected: selected_ref.current = container
                 period_buttons.controls.append(container)
         view_button = ft.ElevatedButton("مشاهده اطلاعات این بازه", width=250, bgcolor="#1565C0", color="white", style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)), on_click=lambda e: show_message("در حال بارگذاری گزارش‌های مالی و عملیاتی..."))
