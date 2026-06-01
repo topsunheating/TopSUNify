@@ -21,7 +21,28 @@ def main(page: ft.Page):
         page.snack_bar = snack
         snack.open = True
         page.update()
+# دیالوگ درخواست (تعریف یکباره در سطح اصلی)
+    def submit_form(e):
+        show_message("درخواست با موفقیت ثبت شد", "green")
+        dlg.open = False
+        page.update()
 
+    dlg = ft.AlertDialog(
+        title=ft.Text("فرم درخواست همکاری", text_align=ft.TextAlign.CENTER),
+        content=ft.Container(
+            content=ft.Column([
+                ft.TextField(label="نام و نام خانوادگی", text_align=ft.TextAlign.RIGHT),
+                ft.TextField(label="شماره ملی", text_align=ft.TextAlign.RIGHT),
+                ft.ElevatedButton("تایید درخواست", bgcolor="#1565C0", color="white", on_click=submit_form)
+            ], tight=True),
+            width=300, height=250
+        )
+    )
+
+    def open_dialog(e):
+        page.dialog = dlg
+        dlg.open = True
+        page.update()
     # ==================== تغییر تم ====================
     def toggle_theme(e):
         page.theme_mode = "dark" if page.theme_mode == "light" else "light"
@@ -188,35 +209,6 @@ def main(page: ft.Page):
         page.dialog = dlg
         dlg.open = True
         page.update()
-
-    # 3. اصلاح profile_page برای استفاده از تابع جدید
-    def profile_page():
-        return ft.Container(
-            content=ft.Column([
-                # ... (بقیه کدهای بالای صفحه پروفایل شما)
-                ft.Container(
-                    content=ft.Column([
-                        ft.CircleAvatar(foreground_image_src="https://i.pravatar.cc/150?u=reza", radius=48),
-                        ft.Text("نام و نام خانوادگی", size=20, weight="bold"),
-                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-                    padding=20
-                ),
-                ft.ListTile(
-                    leading=ft.Icon(ft.Icons.PERSON_ADD, color="blue"), 
-                    title=ft.Text("درخواست ایجاد حساب"), 
-                    trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), 
-                    on_click=open_dialog # از تابع open_dialog استفاده کردیم
-                ),
-                # ... (ادامه لیست‌های شما)
-            ], scroll=ft.ScrollMode.AUTO),
-            width=400,
-            expand=True
-        ) 
-            ], scroll=ft.ScrollMode.AUTO),
-            width=400,
-            margin=ft.margin.Margin(left=15, right=15),
-            expand=True
-        )
 
     def profile_page():
         return ft.Container(
