@@ -13,7 +13,7 @@ def main(page: ft.Page):
     if not hasattr(page.session, "logged_in"):
         page.session.logged_in = False
         page.session.user_role = "عمومی"
-        page.session.inventory_data = [] # برای ذخیره موجودی ها
+        page.session.inventory_list = []
 
     def show_message(text: str, color="green"):
         snack = ft.SnackBar(content=ft.Text(text), bgcolor=color, action="بستن", duration=3000)
@@ -25,38 +25,42 @@ def main(page: ft.Page):
         page.theme_mode = "dark" if page.theme_mode == "light" else "light"
         page.update()
 
-    # --- صفحات جدید اضافه شده ---
-
+    # --- صفحه انبار اصلاح شده ---
     def inventory_page():
-        product_name = ft.TextField(label="نام محصول", text_align=ft.TextAlign.RIGHT)
-        product_size = ft.TextField(label="ابعاد محصول", text_align=ft.TextAlign.RIGHT)
-        product_qty = ft.TextField(label="تعداد موجودی", text_align=ft.TextAlign.RIGHT, keyboard_type=ft.KeyboardType.NUMBER)
+        product_name = ft.TextField(label="نام محصول", width=350)
+        product_size = ft.TextField(label="ابعاد محصول", width=350)
+        product_qty = ft.TextField(label="تعداد موجودی", width=350, keyboard_type=ft.KeyboardType.NUMBER)
         
         table = ft.DataTable(
             columns=[ft.DataColumn(ft.Text("نام")), ft.DataColumn(ft.Text("ابعاد")), ft.DataColumn(ft.Text("تعداد"))],
             rows=[]
         )
 
-        def add_item(e):
-            table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text(product_name.value)), ft.DataCell(ft.Text(product_size.value)), ft.DataCell(ft.Text(product_qty.value))]))
-            product_name.value = ""
-            product_size.value = ""
-            product_qty.value = ""
-            page.update()
+        def add_to_table(e):
+            if product_name.value and product_qty.value:
+                table.rows.append(ft.DataRow(cells=[
+                    ft.DataCell(ft.Text(product_name.value)),
+                    ft.DataCell(ft.Text(product_size.value)),
+                    ft.DataCell(ft.Text(product_qty.value))
+                ]))
+                product_name.value = ""
+                product_size.value = ""
+                product_qty.value = ""
+                page.update()
+            else:
+                show_message("لطفاً نام و تعداد را وارد کنید", "red")
 
-        def submit_all(e):
-            show_message("فایل موجودی با موفقیت ثبت و ارسال شد")
-            render(4) # بازگشت به پروفایل
-
-        return ft.Container(content=ft.Column([
+        # استفاده از ListView به جای SingleChildScrollView برای جلوگیری از خطا
+        return ft.Container(content=ft.ListView([
             ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("اعلام موجودی انبار", size=20, weight="bold")]), padding=10),
             product_name, product_size, product_qty,
-            ft.ElevatedButton("تایید موجودی", on_click=add_item),
+            ft.ElevatedButton("تایید موجودی", on_click=add_to_table, bgcolor="green", color="white"),
             ft.Divider(),
             table,
-            ft.ElevatedButton("اعلام کل موجودی (PDF)", on_click=submit_all, bgcolor="green", color="white")
-        ], scroll=ft.ScrollMode.AUTO), width=400, expand=True)
+            ft.ElevatedButton("اعلام کل موجودی", on_click=lambda e: show_message("ثبت شد"), bgcolor="blue", color="white", width=350)
+        ], expand=1, spacing=10, padding=20), width=400, expand=True)
 
+    # --- سایر صفحات (طبق کد دوم شما) ---
     def selected_customers_page():
         return ft.Container(content=ft.Column([
             ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("مشتریان منتخب", size=20, weight="bold")]), padding=10),
@@ -66,47 +70,51 @@ def main(page: ft.Page):
 
     def account_request_page():
         return ft.Container(content=ft.Column([
-            ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("فرم درخواست همکاری", size=20, weight="bold")]), padding=10),
+            ft.Text("فرم درخواست همکاری", size=20, weight="bold"),
             ft.TextField(label="نام و نام خانوادگی", text_align=ft.TextAlign.RIGHT),
-            ft.ElevatedButton("ثبت نهایی درخواست", on_click=lambda e: show_message("ثبت شد"))
-        ], scroll=ft.ScrollMode.AUTO), width=400, expand=True)
-
-    # --- توابع اصلی شما (بدون تغییر) ---
+            ft.Dropdown(label="نوع درخواست", options=[ft.dropdown.Option("نماینده فروش"), ft.dropdown.Option("نصاب فنی")]),
+            ft.ElevatedButton("ثبت نهایی", on_click=lambda e: show_message("ثبت شد")),
+            ft.OutlinedButton("بازگشت", on_click=lambda e: render(4))
+        ], scroll=ft.ScrollMode.AUTO), padding=20)
 
     def pre_invoice_page():
-        products = ["گرمایش از کف", "زیرفرشی", "رادیاتور", "حوله خشک کن", "یخ زدایی رمپ", "یخ زدایی پله", "گرمکن مخزن", "گرمکن صندلی", "رستورانی", "عایق بازتابشی"]
-        grid = ft.GridView(runs_count=2, max_extent=120, spacing=10, run_spacing=12, padding=10, expand=True)
+        products = ["گرمایش از کف", "زیرفرشی", "رادیاتور"]
+        grid = ft.GridView(runs_count=2, max_extent=120, spacing=10, padding=10, expand=True)
         for name in products:
-            grid.controls.append(ft.Container(content=ft.Text(name, size=15, weight="bold", text_align=ft.TextAlign.CENTER, color="#1565C0"), width=170, height=70, bgcolor="#ffffff", border_radius=12, alignment=ft.Alignment(0, 0), shadow=ft.BoxShadow(blur_radius=6, color="#e0e0e0"), on_click=lambda e, n=name: show_message(f"پیش‌فاکتور {n}"), ink=True))
-        return ft.Container(content=ft.Column([ft.Text("نوع محصول مورد نظر را انتخاب کنید", size=18, weight="bold", text_align=ft.TextAlign.CENTER), ft.Divider(height=10), grid], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=10), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
+            grid.controls.append(ft.Container(content=ft.Text(name), width=170, height=70, bgcolor="#ffffff", on_click=lambda e, n=name: show_message(f"پیش‌فاکتور {n}"), ink=True))
+        return ft.Container(content=ft.Column([ft.Text("نوع محصول", size=18, weight="bold"), grid], scroll=ft.ScrollMode.AUTO), width=400, expand=True)
 
     def home_page():
-        return ft.Container(content=ft.Column([ft.Container(content=ft.Column([ft.Image(src="TopSUNify-1.png", width=80), ft.Text("خوش آمدید به TopSUNify", size=18, weight="bold", text_align=ft.TextAlign.CENTER)], horizontal_alignment=ft.CrossAxisAlignment.CENTER), margin=ft.margin.Margin(top=20, bottom=30))], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
+        return ft.Container(content=ft.Column([ft.Text("خوش آمدید")], scroll=ft.ScrollMode.AUTO), width=400, expand=True)
 
     def technical_page():
-        return ft.Container(content=ft.Column([ft.Container(content=ft.Text("اطلاعات فنی", size=18, weight="bold", text_align=ft.TextAlign.CENTER), padding=20)], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
+        return ft.Container(content=ft.Column([ft.Text("اطلاعات فنی")], scroll=ft.ScrollMode.AUTO), width=400, expand=True)
 
     def settings_page():
-        return ft.Container(content=ft.Column([ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("تنظیمات", size=24, weight="bold")]), padding=15)], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER))
+        return ft.Container(content=ft.Column([ft.Text("تنظیمات")], scroll=ft.ScrollMode.AUTO))
 
     def profile_page():
         return ft.Container(content=ft.Column([
-            ft.ListTile(leading=ft.Icon(ft.Icons.PERSON_ADD), title=ft.Text("درخواست ایجاد حساب"), on_click=lambda e: render(6)), 
-            ft.ListTile(leading=ft.Icon(ft.Icons.STAR), title=ft.Text("مشتریان منتخب"), on_click=lambda e: render(7)), 
-            ft.ListTile(leading=ft.Icon(ft.Icons.WAREHOUSE), title=ft.Text("اعلام موجودی انبار"), on_click=lambda e: render(8)), 
+            ft.Text("پروفایل کاربری"),
+            ft.ListTile(leading=ft.Icon(ft.Icons.WAREHOUSE), title=ft.Text("اعلام موجودی انبار"), on_click=lambda e: render(8)),
             ft.ListTile(leading=ft.Icon(ft.Icons.LOGOUT), title=ft.Text("خروج"), on_click=lambda e: (setattr(page.session, 'logged_in', False), render()))
-        ], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
+        ], scroll=ft.ScrollMode.AUTO), width=400, expand=True)
 
     def dashboard_page():
-        return ft.Container(content=ft.Text("داشبورد مدیریتی"), padding=20)
+        return ft.Container(content=ft.Text("داشبورد"), padding=20)
 
+    # --- تابع رندر ---
     def render(tab_index=0):
         page.controls.clear()
         if not page.session.logged_in:
-            page.add(ft.ElevatedButton("ورود به برنامه", on_click=lambda e: (setattr(page.session, 'logged_in', True), render())))
+            page.add(ft.ElevatedButton("ورود به TopSUNify", on_click=lambda e: (setattr(page.session, 'logged_in', True), render())))
         else:
+            # لیست صفحات (ایندکس 8 مربوط به انبار)
             contents = [dashboard_page(), pre_invoice_page(), home_page(), technical_page(), profile_page(), settings_page(), account_request_page(), selected_customers_page(), inventory_page()]
-            page.add(ft.Column([ft.Container(content=contents[tab_index], expand=True, width=400, margin=ft.margin.Margin(left=15, right=15))]))
+            page.add(ft.Column([
+                ft.Container(content=contents[tab_index], expand=True, width=400, margin=ft.margin.Margin(left=15, right=15)),
+                ft.Row([ft.IconButton(ft.Icons.HOME, on_click=lambda _: render(0)), ft.IconButton(ft.Icons.PERSON, on_click=lambda _: render(4))], alignment=ft.MainAxisAlignment.CENTER)
+            ], expand=True))
         page.update()
 
     render()
