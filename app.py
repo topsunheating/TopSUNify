@@ -316,6 +316,52 @@ def main(page: ft.Page):
             margin=ft.margin.Margin(left=15, right=15),
             expand=True
         )
+        def create_account_request(e):
+        # تعریف فیلدها
+        name_field = ft.TextField(label="نام و نام خانوادگی", text_align=ft.TextAlign.RIGHT)
+        father_field = ft.TextField(label="نام پدر", text_align=ft.TextAlign.RIGHT)
+        birth_field = ft.TextField(label="تاریخ تولد", hint_text="1400/01/01", text_align=ft.TextAlign.RIGHT)
+        id_field = ft.TextField(label="شماره شناسنامه", text_align=ft.TextAlign.RIGHT)
+        national_field = ft.TextField(label="شماره ملی", text_align=ft.TextAlign.RIGHT)
+        
+        type_dropdown = ft.Dropdown(
+            label="نوع درخواست",
+            options=[
+                ft.dropdown.Option("نماینده فروش"),
+                ft.dropdown.Option("عامل فروش"),
+                ft.dropdown.Option("کارشناس فروش"),
+                ft.dropdown.Option("نصاب فنی"),
+            ]
+        )
+
+        def close_dialog(e):
+            page.dialog.open = False
+            page.update()
+
+        def submit_form(e):
+            # اینجا می‌توانید منطق ارسال به دیتابیس را اضافه کنید
+            show_message(f"درخواست همکاری {name_field.value} با موفقیت ثبت شد")
+            close_dialog(None)
+
+        page.dialog = ft.AlertDialog(
+            title=ft.Text("فرم درخواست همکاری", text_align=ft.TextAlign.CENTER),
+            content=ft.Container(
+                content=ft.Column([
+                    name_field,
+                    father_field,
+                    birth_field,
+                    id_field,
+                    national_field,
+                    type_dropdown,
+                    ft.Text("اینجانب درخواست خود را جهت همکاری طبق قوانین شرکت ثبت می‌نمایم.", size=12, color="grey"),
+                    ft.ElevatedButton("تایید درخواست", bgcolor="#1565C0", color="white", on_click=submit_form)
+                ], scroll=ft.ScrollMode.AUTO, tight=True),
+                width=350,
+                height=450
+            )
+        )
+        page.dialog.open = True
+        page.update()
     # ==================== رندر اصلی ====================
     def render(tab_index=0):
         page.controls.clear()
