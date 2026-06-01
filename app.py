@@ -1,5 +1,6 @@
 import flet as ft
 import os
+import datetime
 
 def main(page: ft.Page):
     page.fonts = {"iranyekan": "fonts/iranyekan.ttf"}
@@ -12,6 +13,7 @@ def main(page: ft.Page):
     if not hasattr(page.session, "logged_in"):
         page.session.logged_in = False
         page.session.user_role = "عمومی"
+        page.session.inventory_list = [] # لیست برای ذخیره موجودی ها
 
     def show_message(text: str, color="green"):
         snack = ft.SnackBar(content=ft.Text(text), bgcolor=color, action="بستن", duration=3000)
@@ -25,6 +27,50 @@ def main(page: ft.Page):
 
     # --- صفحات جدید اضافه شده ---
 
+    def inventory_page():
+        # فیلدهای فرم
+        product_name = ft.TextField(label="نام محصول", width=350)
+        product_size = ft.TextField(label="ابعاد محصول", width=350)
+        product_qty = ft.TextField(label="تعداد موجودی", width=350, keyboard_type=ft.KeyboardType.NUMBER)
+        
+        # جدول داده‌ها
+        table = ft.DataTable(
+            columns=[ft.DataColumn(ft.Text("نام")), ft.DataColumn(ft.Text("ابعاد")), ft.DataColumn(ft.Text("تعداد"))],
+            rows=[]
+        )
+
+        def add_to_table(e):
+            if product_name.value and product_qty.value:
+                new_row = ft.DataRow(cells=[
+                    ft.DataCell(ft.Text(product_name.value)),
+                    ft.DataCell(ft.Text(product_size.value)),
+                    ft.DataCell(ft.Text(product_qty.value))
+                ])
+                table.rows.append(new_row)
+                page.session.inventory_list.append({"name": product_name.value, "qty": product_qty.value})
+                product_name.value = ""
+                product_size.value = ""
+                product_qty.value = ""
+                page.update()
+            else:
+                show_message("لطفاً نام و تعداد را وارد کنید", "red")
+
+        def finalize_inventory(e):
+            show_message(f"فایل موجودی با تاریخ {datetime.date.today()} برای مدیر ارسال شد")
+            # در اینجا منطق تولید PDF اضافه می شود
+            page.session.inventory_list = []
+            table.rows = []
+            page.update()
+
+        return ft.Container(content=ft.Column([
+            ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("اعلام موجودی انبار", size=20, weight="bold")]), padding=10),
+            product_name, product_size, product_qty,
+            ft.ElevatedButton("تایید موجودی", on_click=add_to_table, bgcolor="green", color="white"),
+            ft.Divider(),
+            ft.SingleChildScrollView(content=table),
+            ft.ElevatedButton("اعلام کل موجودی", on_click=finalize_inventory, bgcolor="blue", color="white", width=350)
+        ], scroll=ft.ScrollMode.AUTO), width=400, expand=True)
+
     def selected_customers_page():
         return ft.Container(content=ft.Column([
             ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("مشتریان منتخب", size=20, weight="bold")]), padding=10),
@@ -36,12 +82,23 @@ def main(page: ft.Page):
 
     def account_request_page():
         return ft.Container(content=ft.Column([
-            ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("درخواست ایجاد حساب", size=20, weight="bold")]), padding=10),
-            ft.TextField(label="نام و نام خانوادگی"), ft.TextField(label="شماره ملی"),
-            ft.ElevatedButton("تایید", on_click=lambda e: show_message("درخواست ثبت شد"))
-        ], scroll=ft.ScrollMode.AUTO), width=400, expand=True)
+            ft.Text("فرم درخواست همکاری", size=20, weight="bold"),
+            ft.TextField(label="نام و نام خانوادگی", text_align=ft.TextAlign.RIGHT),
+            ft.TextField(label="نام پدر", text_align=ft.TextAlign.RIGHT),
+            ft.TextField(label="تاریخ تولد", text_align=ft.TextAlign.RIGHT),
+            ft.TextField(label="شماره شناسنامه", text_align=ft.TextAlign.RIGHT),
+            ft.TextField(label="شماره ملی", text_align=ft.TextAlign.RIGHT),
+            ft.Dropdown(label="نوع درخواست", options=[
+                ft.dropdown.Option("نماینده فروش"),
+                ft.dropdown.Option("عامل فروش"),
+                ft.dropdown.Option("کارشناس فروش"),
+                ft.dropdown.Option("نصاب فنی"),
+            ]),
+            ft.ElevatedButton("ثبت نهایی درخواست", bgcolor="#1565C0", color="white", on_click=lambda e: show_message("درخواست با موفقیت ثبت شد")),
+            ft.OutlinedButton("بازگشت به پروفایل", on_click=lambda e: render(4))
+        ], scroll=ft.ScrollMode.AUTO), padding=20)
 
-    # --- توابع اصلی شما (بدون تغییر) ---
+    # --- توابع اصلی ---
 
     def pre_invoice_page():
         products = ["گرمایش از کف", "زیرفرشی", "رادیاتور", "حوله خشک کن", "یخ زدایی رمپ", "یخ زدایی پله", "گرمکن مخزن", "گرمکن صندلی", "رستورانی", "عایق بازتابشی"]
@@ -70,7 +127,7 @@ def main(page: ft.Page):
             ft.Container(content=ft.Column([
                 ft.ListTile(leading=ft.Icon(ft.Icons.PERSON_ADD, color="blue"), title=ft.Text("درخواست ایجاد حساب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=lambda e: render(6)), 
                 ft.ListTile(leading=ft.Icon(ft.Icons.STAR, color="orange"), title=ft.Text("مشتریان منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=lambda e: render(7)), 
-                ft.ListTile(leading=ft.Icon(ft.Icons.WAREHOUSE, color="green"), title=ft.Text("اعلام موجودی انبار"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), 
+                ft.ListTile(leading=ft.Icon(ft.Icons.WAREHOUSE, color="green"), title=ft.Text("اعلام موجودی انبار"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=lambda e: render(8)), 
                 ft.ListTile(leading=ft.Icon(ft.Icons.SHOPPING_CART), title=ft.Text("ثبت درخواست خرید"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), 
                 ft.ListTile(leading=ft.Icon(ft.Icons.GROUP), title=ft.Text("همکاران منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), 
                 ft.ListTile(leading=ft.Icon(ft.Icons.PERCENT), title=ft.Text("محاسبه درصد همکاری"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), 
@@ -112,7 +169,8 @@ def main(page: ft.Page):
         if not page.session.logged_in:
             page.add(ft.Container(content=ft.Column([ft.Container(content=ft.Image(src="TopSUNify.png", width=190), margin=ft.margin.Margin(top=40, bottom=40)), ft.Container(content=ft.TextField(label="نام کاربری", width=340, border_radius=12, prefix_icon=ft.Icons.PERSON, text_align=ft.TextAlign.RIGHT), margin=ft.margin.Margin(bottom=20)), ft.Container(content=ft.Row([ft.Container(content=ft.Icon(ft.Icons.FINGERPRINT, size=42, color="#FFCC00"), on_click=lambda e: show_message("احراز هویت بیومتریک", "orange"), padding=10, border_radius=12), ft.TextField(label="رمز عبور", password=True, width=270, border_radius=12, prefix_icon=ft.Icons.LOCK, text_align=ft.TextAlign.RIGHT)], alignment=ft.MainAxisAlignment.CENTER, spacing=12), margin=ft.margin.Margin(bottom=30)), ft.ElevatedButton("ورود به TopSUNify", width=340, bgcolor="#FFCC00", color="black", style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)), on_click=lambda e: (setattr(page.session, 'logged_in', True), render())), ft.TextButton("فعال‌سازی / فراموشی رمز", style=ft.ButtonStyle(color={"": "blue"})), ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=160), margin=ft.margin.Margin(top=50, bottom=30)), ft.Container(content=ft.Image(src="landscape.jpg", width=400, height=220, fit="cover"), expand=True)], horizontal_alignment=ft.CrossAxisAlignment.CENTER, scroll=ft.ScrollMode.AUTO), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True))
         else:
-            contents = [dashboard_page(), pre_invoice_page(), home_page(), technical_page(), profile_page(), settings_page(), account_request_page(), selected_customers_page()]
+            # لیست صفحات (ایندکس 8 برای انبار اضافه شد)
+            contents = [dashboard_page(), pre_invoice_page(), home_page(), technical_page(), profile_page(), settings_page(), account_request_page(), selected_customers_page(), inventory_page()]
             page.add(ft.Column([ft.Container(content=ft.Image(src="TopSUNify.png", width=80), margin=ft.margin.Margin(top=10, bottom=10)), ft.Divider(), ft.Container(content=contents[tab_index], expand=True, width=400, margin=ft.margin.Margin(left=15, right=15)), ft.Container(content=ft.Row([ft.Container(content=ft.Image(src="dashboard.png", width=32, height=32), on_click=lambda _: render(0), padding=8), ft.Container(content=ft.Image(src="invoice.png", width=32, height=32), on_click=lambda _: render(1), padding=8), ft.Container(content=ft.Image(src="TopSUNify-1.png", width=32, height=32), on_click=lambda _: render(2), padding=8), ft.Container(content=ft.Image(src="technical.png", width=32, height=32), on_click=lambda _: render(3), padding=8), ft.Container(content=ft.Image(src="profile.png", width=32, height=32), on_click=lambda _: render(4), padding=8)], alignment=ft.MainAxisAlignment.CENTER, spacing=15), bgcolor="white", padding=12)], expand=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER))
         page.update()
 
