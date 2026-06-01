@@ -22,12 +22,6 @@ def main(page: ft.Page):
         snack.open = True
         page.update()
 
-    # ==================== تغییر تم ====================
-    def toggle_theme(e):
-        page.theme_mode = "dark" if page.theme_mode == "light" else "light"
-        page.update()
-        show_message(f"تم تغییر کرد به: {page.theme_mode}", "blue")
-
     # ==================== دیالوگ‌ها ====================
     def open_create_account_dialog(e):
         dlg = ft.AlertDialog(
@@ -46,7 +40,7 @@ def main(page: ft.Page):
             ),
             actions=[
                 ft.TextButton("بازگشت", on_click=lambda _: (setattr(dlg, 'open', False), page.update())),
-                ft.ElevatedButton("تایید و ارسال درخواست", bgcolor="#1565C0", color="white", on_click=lambda _: (show_message("درخواست با موفقیت ارسال شد", "green"), setattr(dlg, 'open', False), page.update()))
+                ft.ElevatedButton("تایید و ارسال درخواست", bgcolor="#1565C0", color="white", on_click=lambda _: (show_message("درخواست ارسال شد", "green"), setattr(dlg, 'open', False), page.update()))
             ],
             actions_alignment=ft.MainAxisAlignment.END
         )
@@ -61,8 +55,8 @@ def main(page: ft.Page):
                 content=ft.DataTable(
                     columns=[ft.DataColumn(ft.Text("کد مشتری")), ft.DataColumn(ft.Text("نام و نام خانوادگی / مجموعه")), ft.DataColumn(ft.Text("شماره تماس")), ft.DataColumn(ft.Text("شهر"))],
                     rows=[
-                        ft.DataRow(cells=[ft.DataCell(ft.Text(x)) for x in ["C1001", "شرکت آریا تهویه", "09123456789", "تهران"]]),
-                        ft.DataRow(cells=[ft.DataCell(ft.Text(x)) for x in ["C1002", "مهندس رضایی", "09129876543", "اصفهان"]])
+                        ft.DataRow(cells=[ft.DataCell(ft.Text(x)) for x in ["C1001","شرکت آریا تهویه","09123456789","تهران"]]),
+                        ft.DataRow(cells=[ft.DataCell(ft.Text(x)) for x in ["C1002","مهندس رضایی","09129876543","اصفهان"]])
                     ]
                 ),
                 width=380, height=400, padding=10
@@ -94,16 +88,16 @@ def main(page: ft.Page):
 
         def submit_inventory(e):
             if items:
-                show_message(f"موجودی انبار با {len(items)} ردیف ثبت و PDF تولید شد", "green")
+                show_message(f"موجودی انبار با {len(items)} ردیف ثبت شد", "green")
                 dlg.open = False
             else:
-                show_message("ابتدا حداقل یک محصول اضافه کنید", "red")
+                show_message("حداقل یک محصول اضافه کنید", "red")
             page.update()
 
         dlg = ft.AlertDialog(
             title=ft.Text("اعلام موجودی انبار", size=18, weight="bold"),
             content=ft.Container(
-                content=ft.Column([product, dimension, quantity, ft.ElevatedButton("اضافه کردن به لیست", on_click=add_item), ft.Divider(), ft.Text("لیست موجودی اعلام شده:"), inventory_list], scroll=ft.ScrollMode.AUTO, spacing=10),
+                content=ft.Column([product, dimension, quantity, ft.ElevatedButton("اضافه کردن به لیست", on_click=add_item), ft.Divider(), ft.Text("لیست موجودی:"), inventory_list], scroll=ft.ScrollMode.AUTO, spacing=10),
                 width=380, height=520, padding=10
             ),
             actions=[
@@ -115,22 +109,30 @@ def main(page: ft.Page):
         dlg.open = True
         page.update()
 
-    # ==================== صفحه پروفایل ====================
+    # ==================== صفحات ====================
+    def dashboard_page():
+        return ft.Container(content=ft.Text("داشبورد مدیریتی", size=25, weight="bold"), expand=True, width=400)
+
+    def pre_invoice_page():
+        products = ["گرمایش از کف", "زیرفرشی", "رادیاتور", "حوله خشک کن", "یخ زدایی رمپ", "یخ زدایی پله", "گرمکن مخزن", "گرمکن صندلی", "رستورانی"]
+        grid = ft.GridView(runs_count=2, max_extent=160, spacing=12, run_spacing=12, padding=15, expand=True)
+        for name in products:
+            grid.controls.append(ft.Container(content=ft.Text(name, size=15, weight="bold", text_align=ft.TextAlign.CENTER, color="#1565C0"), width=170, height=70, bgcolor="#ffffff", border_radius=12, alignment=ft.Alignment(0,0), on_click=lambda e, n=name: show_message(f"پیش‌فاکتور {n}"), ink=True))
+        return ft.Container(content=ft.Column([ft.Text("نوع محصول مورد نظر را انتخاب کنید", size=18, weight="bold"), grid], scroll=ft.ScrollMode.AUTO), width=400, expand=True, margin=ft.margin.Margin(left=15, right=15))
+
+    def home_page():
+        return ft.Container(content=ft.Text("خانه اصلی", size=25, weight="bold"), expand=True, width=400)
+
+    def technical_page():
+        return ft.Container(content=ft.Text("اطلاعات فنی سیستم", size=25, weight="bold"), expand=True, width=400)
+
+    def settings_page():
+        return ft.Container(content=ft.Text("تنظیمات", size=25, weight="bold"), expand=True, width=400)
+
     def profile_page():
         return ft.Container(
             content=ft.Column([
-                ft.Container(
-                    content=ft.Column([
-                        ft.CircleAvatar(foreground_image_src="https://i.pravatar.cc/150?u=reza", radius=48),
-                        ft.Text("نام و نام خانوادگی | نام کاربری", size=20, weight="bold", text_align=ft.TextAlign.CENTER),
-                        ft.Text("شماره موبایل", size=16, color="grey", text_align=ft.TextAlign.CENTER),
-                        ft.Container(
-                            content=ft.Text(f"سطح دسترسی: {page.session.user_role}", size=15, color="blue", text_align=ft.TextAlign.CENTER),
-                            bgcolor="#f0f0f0", padding=12, border_radius=12, margin=ft.margin.Margin(top=12, bottom=8)
-                        )
-                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-                    padding=20, bgcolor="#f8f9fa", border_radius=20, margin=ft.margin.Margin(bottom=20), width=380
-                ),
+                ft.Container(content=ft.Column([ft.CircleAvatar(foreground_image_src="https://i.pravatar.cc/150?u=reza", radius=48), ft.Text("نام و نام خانوادگی | نام کاربری", size=20, weight="bold", text_align=ft.TextAlign.CENTER), ft.Text("شماره موبایل", size=16, color="grey", text_align=ft.TextAlign.CENTER), ft.Container(content=ft.Text(f"سطح دسترسی: {page.session.user_role}", size=15, color="blue"), bgcolor="#f0f0f0", padding=12, border_radius=12)], horizontal_alignment=ft.CrossAxisAlignment.CENTER), padding=20, bgcolor="#f8f9fa", border_radius=20, margin=ft.margin.Margin(bottom=20), width=380),
                 ft.Container(
                     content=ft.Column([
                         ft.ListTile(leading=ft.Icon(ft.Icons.PERSON_ADD, color="blue"), title=ft.Text("درخواست ایجاد حساب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=open_create_account_dialog),
@@ -154,72 +156,37 @@ def main(page: ft.Page):
                     width=360
                 )
             ], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-            width=400,
-            margin=ft.margin.Margin(left=15, right=15),
-            expand=True
+            width=400, margin=ft.margin.Margin(left=15, right=15), expand=True
         )
-
-    # ==================== صفحات دیگر ====================
-    def dashboard_page():
-        return ft.Container(content=ft.Text("داشبورد مدیریتی", size=25, weight="bold"), expand=True, width=400)
-
-    def pre_invoice_page():
-        products = ["گرمایش از کف", "زیرفرشی", "رادیاتور", "حوله خشک کن", "یخ زدایی رمپ", "یخ زدایی پله", "گرمکن مخزن", "گرمکن صندلی", "رستورانی"]
-        grid = ft.GridView(runs_count=2, max_extent=160, spacing=12, run_spacing=12, padding=15, expand=True)
-        for name in products:
-            grid.controls.append(
-                ft.Container(
-                    content=ft.Text(name, size=15, weight="bold", text_align=ft.TextAlign.CENTER, color="#1565C0"),
-                    width=170, height=70, bgcolor="#ffffff", border_radius=12,
-                    alignment=ft.Alignment(0, 0), shadow=ft.BoxShadow(blur_radius=6),
-                    on_click=lambda e, n=name: show_message(f"پیش‌فاکتور {n}"),
-                    ink=True
-                )
-            )
-        return ft.Container(
-            content=ft.Column([ft.Text("نوع محصول مورد نظر را انتخاب کنید", size=18, weight="bold"), grid], scroll=ft.ScrollMode.AUTO),
-            width=400, expand=True, margin=ft.margin.Margin(left=15, right=15)
-        )
-
-    def home_page():
-        return ft.Container(content=ft.Text("خانه اصلی", size=25), expand=True, width=400)
-
-    def technical_page():
-        return ft.Container(content=ft.Text("اطلاعات فنی سیستم", size=25), expand=True, width=400)
-
-    def settings_page():
-        return ft.Container(content=ft.Text("تنظیمات", size=25), expand=True, width=400)
 
     # ==================== رندر اصلی ====================
     def render(tab_index=0):
         page.controls.clear()
 
         if not page.session.logged_in:
-            # صفحه لاگین کامل
+            # صفحه لاگین
             page.add(
                 ft.Container(
                     content=ft.Column([
                         ft.Container(content=ft.Image(src="TopSUNify.png", width=190), margin=ft.margin.Margin(top=40, bottom=40)),
                         ft.Container(content=ft.TextField(label="نام کاربری", width=340, border_radius=12, prefix_icon=ft.Icons.PERSON, text_align=ft.TextAlign.RIGHT), margin=ft.margin.Margin(bottom=20)),
-                        ft.Container(
-                            content=ft.Row([
-                                ft.Container(content=ft.Icon(ft.Icons.FINGERPRINT, size=42, color="#FFCC00"), on_click=lambda e: show_message("احراز هویت بیومتریک", "orange"), padding=10, border_radius=12),
-                                ft.TextField(label="رمز عبور", password=True, width=270, border_radius=12, prefix_icon=ft.Icons.LOCK, text_align=ft.TextAlign.RIGHT)
-                            ], alignment=ft.MainAxisAlignment.CENTER, spacing=12),
-                            margin=ft.margin.Margin(bottom=30)
-                        ),
+                        ft.Container(content=ft.Row([ft.Container(content=ft.Icon(ft.Icons.FINGERPRINT, size=42, color="#FFCC00"), on_click=lambda e: show_message("احراز هویت بیومتریک", "orange"), padding=10, border_radius=12), ft.TextField(label="رمز عبور", password=True, width=270, border_radius=12, prefix_icon=ft.Icons.LOCK, text_align=ft.TextAlign.RIGHT)], alignment=ft.MainAxisAlignment.CENTER, spacing=12), margin=ft.margin.Margin(bottom=30)),
                         ft.ElevatedButton("ورود به TopSUNify", width=340, bgcolor="#FFCC00", color="black", style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)), on_click=lambda e: (setattr(page.session, 'logged_in', True), render())),
                         ft.TextButton("فعال‌سازی / فراموشی رمز", style=ft.ButtonStyle(color={"": "blue"})),
                         ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=160), margin=ft.margin.Margin(top=50, bottom=30)),
-                        ft.Container(content=ft.Image(src="landscape.jpg", width=400, height=220, fit="cover"), expand=True)
                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, scroll=ft.ScrollMode.AUTO),
-                    width=400,
-                    margin=ft.margin.Margin(left=15, right=15),
-                    expand=True
+                    width=400, margin=ft.margin.Margin(left=15, right=15), expand=True
                 )
             )
         else:
-            contents = [dashboard_page(), pre_invoice_page(), home_page(), technical_page(), profile_page(), settings_page()]
+            contents = [
+                dashboard_page(),   # 0
+                pre_invoice_page(), # 1
+                home_page(),        # 2
+                technical_page(),   # 3
+                profile_page(),     # 4
+                settings_page()     # 5
+            ]
             main_content = ft.Container(content=contents[tab_index], expand=True, width=400, margin=ft.margin.Margin(left=15, right=15))
             nav_bar = ft.Container(
                 content=ft.Row([
@@ -240,6 +207,16 @@ def main(page: ft.Page):
                 ], expand=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
             )
         page.update()
+
+    # ==================== صفحات ساده ====================
+    def home_page():
+        return ft.Container(content=ft.Text("خانه اصلی", size=25, weight="bold"), expand=True, width=400)
+
+    def technical_page():
+        return ft.Container(content=ft.Text("اطلاعات فنی سیستم", size=25, weight="bold"), expand=True, width=400)
+
+    def settings_page():
+        return ft.Container(content=ft.Text("تنظیمات", size=25, weight="bold"), expand=True, width=400)
 
     render()
 
