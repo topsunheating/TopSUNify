@@ -28,44 +28,72 @@ def main(page: ft.Page):
     # --- صفحات جدید اضافه شده ---
 
     def inventory_page():
-        # فیلدهای فرم
-        product_name = ft.TextField(label="نام محصول", width=350)
+        # لیست محصولات برای انتخاب
+        product_options = [
+            ft.dropdown.Option("پد زیر فرشی - طول 1/2 متر"),
+            ft.dropdown.Option("پد زیر فرشی - طول 1/5 متر"),
+            ft.dropdown.Option("پد زیر فرشی - 2 ردیف با طول 2 متر")
+        ]
+        
+        # فیلدهای فرم با سایزهای جدید
+        product_name = ft.Dropdown(label="نام محصول", options=product_options, width=350)
         product_size = ft.TextField(label="ابعاد محصول", width=350)
-        product_qty = ft.TextField(label="تعداد موجودی", width=350, keyboard_type=ft.KeyboardType.NUMBER)
+        product_qty = ft.TextField(label="تعداد", width=100, keyboard_type=ft.KeyboardType.NUMBER)
         
         # جدول داده‌ها
         table = ft.DataTable(
-            columns=[ft.DataColumn(ft.Text("نام")), ft.DataColumn(ft.Text("ابعاد")), ft.DataColumn(ft.Text("تعداد"))],
+            columns=[
+                ft.DataColumn(ft.Text("نام")), 
+                ft.DataColumn(ft.Text("ابعاد")), 
+                ft.DataColumn(ft.Text("تعداد")),
+                ft.DataColumn(ft.Text("حذف"))
+            ],
             rows=[]
         )
 
         def add_to_table(e):
             if product_name.value and product_qty.value:
+                # ایجاد سطر جدید
                 new_row = ft.DataRow(cells=[
                     ft.DataCell(ft.Text(product_name.value)),
                     ft.DataCell(ft.Text(product_size.value)),
-                    ft.DataCell(ft.Text(product_qty.value))
+                    ft.DataCell(ft.Text(product_qty.value)),
+                    ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color="red", on_click=lambda e: delete_row(new_row)))
                 ])
                 table.rows.append(new_row)
-                page.session.inventory_list.append({"name": product_name.value, "qty": product_qty.value})
-                product_name.value = ""
+                page.session.inventory_list.append({"name": product_name.value, "size": product_size.value, "qty": product_qty.value})
+                
+                # پاک کردن فیلدها بعد از افزودن
+                product_name.value = None
                 product_size.value = ""
                 product_qty.value = ""
                 page.update()
             else:
-                show_message("لطفاً نام و تعداد را وارد کنید", "red")
+                show_message("لطفاً محصول و تعداد را وارد کنید", "red")
+
+        # تابع حذف سطر
+        def delete_row(row):
+            table.rows.remove(row)
+            page.update()
 
         def finalize_inventory(e):
+            if not table.rows:
+                show_message("لیست موجودی خالی است!", "red")
+                return
             show_message(f"فایل موجودی با تاریخ {datetime.date.today()} برای مدیر ارسال شد")
-            # در اینجا منطق تولید PDF اضافه می شود
             page.session.inventory_list = []
             table.rows = []
             page.update()
 
         return ft.Container(content=ft.Column([
-            ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("اعلام موجودی انبار", size=20, weight="bold")]), padding=10),
-            product_name, product_size, product_qty,
-            ft.ElevatedButton("تایید موجودی", on_click=add_to_table, bgcolor="green", color="white"),
+            ft.Container(content=ft.Row([
+                ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), 
+                ft.Text("اعلام موجودی انبار", size=20, weight="bold")
+            ]), padding=10),
+            product_name, 
+            product_size, 
+            product_qty,
+            ft.ElevatedButton("تایید و افزودن به لیست", on_click=add_to_table, bgcolor="green", color="white"),
             ft.Divider(),
             table,
             ft.ElevatedButton("اعلام کل موجودی", on_click=finalize_inventory, bgcolor="blue", color="white", width=350)
