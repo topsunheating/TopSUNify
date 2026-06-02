@@ -36,12 +36,15 @@ def main(page: ft.Page):
         }
 
         # کنترل‌های فرم
+        # 1. تعریف دراپ‌دان بدون on_change
         product_name = ft.Dropdown(
             label="نام محصول", 
             options=[ft.dropdown.Option(k) for k in product_data.keys()], 
-            width=350,
-            on_change=lambda e: update_sizes(e) # با تغییر محصول، ابعاد عوض می‌شود
+            width=350
         )
+        
+        # 2. اختصاص دادن تابع به صورت جداگانه (این روش امن‌ترین حالت است)
+        product_name.on_change = update_sizes
         
         product_size = ft.Dropdown(label="ابعاد محصول", width=350, options=[])
         product_qty = ft.TextField(label="تعداد", width=100, keyboard_type=ft.KeyboardType.NUMBER)
