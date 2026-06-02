@@ -79,7 +79,7 @@ def main(page: ft.Page):
             
             # 5. بروزرسانی کنترل ابعاد و سپس صفحه
             product_size.update()
-            page.update() 
+            e.control.page.update()
 
         # این خط لینک‌دهنده اصلی است
         product_name.on_change = update_sizes
