@@ -38,7 +38,7 @@ def main(page: ft.Page):
             width=350,
         )
 
-        product_size = ft.Dropdown(label="ابعاد محصول", width=350)
+        product_size = ft.Dropdown(label="ابعاد محصول", width=350, options=[])
         product_qty = ft.TextField(label="تعداد", width=100, keyboard_type=ft.KeyboardType.NUMBER)
 
         table = ft.DataTable(
@@ -53,15 +53,18 @@ def main(page: ft.Page):
 
         # تابع بروزرسانی ابعاد
         def update_sizes(e):
-            if product_name.value and product_name.value in product_data:
-                product_size.options = [ft.dropdown.Option(s) for s in product_data[product_name.value]]
-                product_size.value = None
+            selected = product_name.value
+
+            if selected:
+                product_size.options = [
+                    ft.dropdown.Option(item)
+                    for item in product_data[selected]
+                ]
             else:
                 product_size.options = []
                 product_size.value = None
-            product_size.update()
-            page.update()   # بسیار مهم
-
+                page.update()   # بسیار مهم
+                
         product_name.on_change = update_sizes
 
         def delete_row(row):
