@@ -21,50 +21,6 @@ def main(page: ft.Page):
     def toggle_theme(e):
         page.theme_mode = "dark" if page.theme_mode == "light" else "light"
         page.update()
-# ==================== صفجه همکراان منتخب ====================
-    def colleagues_page():
-    # لیست نمونه همکاران (در حالت واقعی این را از دیتابیس می‌گیرید)
-    all_colleagues = [
-        {"code": "101", "name": "علی علوی", "company": "شرکت آلفا", "phone": "09120000000", "city": "تهران", "is_approved": True},
-        {"code": "102", "name": "رضا رضایی", "company": "تکنو صنعت", "phone": "09130000000", "city": "اصفهان", "is_approved": True},
-        {"code": "103", "name": "سارا حسینی", "company": "بازرگانی نوین", "phone": "09190000000", "city": "شیراز", "is_approved": False}, # این نمایش داده نمی‌شود
-    ]
-
-    # فیلتر کردن فقط همکاران تایید شده
-    approved_colleagues = [c for c in all_colleagues if c["is_approved"]]
-
-    table = ft.DataTable(
-        columns=[
-            ft.DataColumn(ft.Text("کد")),
-            ft.DataColumn(ft.Text("نام")),
-            ft.DataColumn(ft.Text("مجموعه")),
-            ft.DataColumn(ft.Text("تماس")),
-            ft.DataColumn(ft.Text("شهر")),
-        ],
-        rows=[
-            ft.DataRow(cells=[
-                ft.DataCell(ft.Text(c["code"])),
-                ft.DataCell(ft.Text(c["name"])),
-                ft.DataCell(ft.Text(c["company"])),
-                ft.DataCell(ft.Text(c["phone"])),
-                ft.DataCell(ft.Text(c["city"])),
-            ]) for c in approved_colleagues
-        ],
-        heading_row_height=40,
-        data_row_min_height=40,
-    )
-
-    return ft.Container(
-        content=ft.Column([
-            ft.Container(content=ft.Row([
-                ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), 
-                ft.Text("همکاران منتخب", size=20, weight="bold")
-            ]), padding=10),
-            ft.Container(content=table, expand=True) # قراردادن جدول در کانتینر برای اسکرول
-        ], scroll=ft.ScrollMode.AUTO),
-        width=400,
-        expand=True
-    )
     # ==================== صفحه اعلام موجودی انبار ====================
     def inventory_page():
         product_data = {
@@ -223,7 +179,50 @@ def main(page: ft.Page):
                 expand=True
             )
         ], scroll=ft.ScrollMode.AUTO), width=400, expand=True)
-       
+    # ==================== صفجه همکاران منتخب ====================
+    def colleagues_page():
+    # لیست نمونه همکاران (در حالت واقعی این را از دیتابیس می‌گیرید)
+    all_colleagues = [
+        {"code": "101", "name": "علی علوی", "company": "شرکت آلفا", "phone": "09120000000", "city": "تهران", "is_approved": True},
+        {"code": "102", "name": "رضا رضایی", "company": "تکنو صنعت", "phone": "09130000000", "city": "اصفهان", "is_approved": True},
+        {"code": "103", "name": "سارا حسینی", "company": "بازرگانی نوین", "phone": "09190000000", "city": "شیراز", "is_approved": False}, # این نمایش داده نمی‌شود
+    ]
+
+    # فیلتر کردن فقط همکاران تایید شده
+    approved_colleagues = [c for c in all_colleagues if c["is_approved"]]
+
+    table = ft.DataTable(
+        columns=[
+            ft.DataColumn(ft.Text("کد")),
+            ft.DataColumn(ft.Text("نام")),
+            ft.DataColumn(ft.Text("مجموعه")),
+            ft.DataColumn(ft.Text("تماس")),
+            ft.DataColumn(ft.Text("شهر")),
+        ],
+        rows=[
+            ft.DataRow(cells=[
+                ft.DataCell(ft.Text(c["code"])),
+                ft.DataCell(ft.Text(c["name"])),
+                ft.DataCell(ft.Text(c["company"])),
+                ft.DataCell(ft.Text(c["phone"])),
+                ft.DataCell(ft.Text(c["city"])),
+            ]) for c in approved_colleagues
+        ],
+        heading_row_height=40,
+        data_row_min_height=40,
+    )
+
+    return ft.Container(
+        content=ft.Column([
+            ft.Container(content=ft.Row([
+                ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), 
+                ft.Text("همکاران منتخب", size=20, weight="bold")
+            ]), padding=10),
+            ft.Container(content=table, expand=True) # قراردادن جدول در کانتینر برای اسکرول
+        ], scroll=ft.ScrollMode.AUTO),
+        width=400,
+        expand=True
+    )   
     def account_request_page():
         return ft.Container(content=ft.Column([
             # اضافه کردن ردیف شامل فلش برگشت و عنوان صفحه
