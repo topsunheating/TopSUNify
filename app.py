@@ -100,7 +100,7 @@ def main(page: ft.Page):
             width=400, expand=True, padding=15
         )
         
-        def selected_customers_page():
+    def selected_customers_page():
         return ft.Container(content=ft.Column([
             ft.Container(content=ft.Row([
                 ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)),
