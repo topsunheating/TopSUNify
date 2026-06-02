@@ -77,6 +77,22 @@ def main(page: ft.Page):
             table,
             ft.ElevatedButton("اعلام کل موجودی", on_click=lambda e: show_message("ارسال شد"), bgcolor="blue", color="white", width=350)
         ], scroll=ft.ScrollMode.AUTO), width=400, expand=True)
+
+    def selected_customers_page():
+        return ft.Container(content=ft.Column([
+            ft.Container(content=ft.Row([
+                ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), 
+                ft.Text("مشتریان منتخب", size=20, weight="bold")
+            ]), padding=10),
+            ft.ListView(
+                controls=[
+                    ft.ListTile(leading=ft.Icon(ft.Icons.PERSON, color="blue"), title=ft.Text("مشتری نمونه ۱")),
+                    ft.ListTile(leading=ft.Icon(ft.Icons.PERSON, color="blue"), title=ft.Text("مشتری نمونه ۲")),
+                ],
+                expand=True
+            )
+        ], scroll=ft.ScrollMode.AUTO), width=400, expand=True)
+        
     def account_request_page():
         return ft.Container(content=ft.Column([
             # اضافه کردن ردیف شامل فلش برگشت و عنوان صفحه
