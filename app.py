@@ -60,7 +60,7 @@ def main(page: ft.Page):
 
         page.controls.clear()
         if not page.session.logged_in:
-            page.add(ft.Container(content=ft.Column([ft.Image(src="TopSUNify.png", width=190), ft.ElevatedButton("ورود به TopSUNify", on_click=lambda e: (setattr(page.session, 'logged_in', True), render()))]), width=400, alignment=ft.alignment.center))
+            page.add(ft.Container(content=ft.Column([ft.Image(src="TopSUNify.png", width=190), ft.ElevatedButton("ورود به TopSUNify", on_click=lambda e: (setattr(page.session, 'logged_in', True), render()))]), width=400, alignment=ft.Alignment(0, 0)))
         else:
             page.add(ft.Column([ft.Container(content=contents[tab_index], expand=True), ft.Row([ft.IconButton(ft.Icons.HOME, on_click=lambda _: render(2)), ft.IconButton(ft.Icons.PERSON, on_click=lambda _: render(4))], alignment=ft.MainAxisAlignment.CENTER)]))
         page.update()
