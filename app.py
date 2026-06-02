@@ -31,32 +31,33 @@ def main(page: ft.Page):
         # تعریف محصولات و ابعاد مربوطه
         product_data = {
             "گرمایش زیرفرشی": ["طول 1/2 متر", "طول 1/5 متر", "2 ردیف با طول 2 متر"],
-            "رادیاتور": ["مدل 50 سانتی", "مدل 100 سانتی"],
-            "عایق بازتابشی": ["رول 10 متری", "رول 50 متری"]
+            "رادیاتور": ["سایز 50×50 سانت", "سایز 50×90 سانت", "سایز 50×110 سانت", "سایز 50×150 سانت", "سایز 60×60 سانت", "سایز 60×80 سانت", "سایز 90×90 سانت", "سایز 90×110 سانت", "سایز 90×150 سانت", "سایز 90×200 سانت"],
+            "عایق بازتابشی": ["3 مترمربع", "6 متر مربع"]
         }
 
-        # کنترل‌های فرم
-        # 1. تعریف دراپ‌دان بدون on_change
+        def update_sizes(e):
+            selected_product = product_name.value
+            product_size.options = [ft.dropdown.Option(s) for s in product_data.get(selected_product, [])]
+            product_size.value = None 
+            product_size.update()
+
+        # 2. تعریف کنترل‌ها
         product_name = ft.Dropdown(
             label="نام محصول", 
             options=[ft.dropdown.Option(k) for k in product_data.keys()], 
-            width=350
+            width=350,
+            on_change=update_sizes # حالا که تابع تعریف شده، اینجا مشکلی ندارد
         )
-        
-        # 2. اختصاص دادن تابع به صورت جداگانه (این روش امن‌ترین حالت است)
-        product_name.on_change = update_sizes
         
         product_size = ft.Dropdown(label="ابعاد محصول", width=350, options=[])
         product_qty = ft.TextField(label="تعداد", width=100, keyboard_type=ft.KeyboardType.NUMBER)
 
-        # تابع به‌روزرسانی لیست ابعاد
-        def update_sizes(e):
-            selected_product = product_name.value
-            product_size.options = [ft.dropdown.Option(s) for s in product_data.get(selected_product, [])]
-            product_size.value = None # پاک کردن انتخاب قبلی
-            product_size.update()
+        # 3. تعریف تابع حذف
+        def delete_row(row):
+            table.rows.remove(row)
+            page.update()
 
-        # جدول داده‌ها
+        # 4. تعریف جدول
         table = ft.DataTable(
             columns=[ft.DataColumn(ft.Text("نام")), ft.DataColumn(ft.Text("ابعاد")), ft.DataColumn(ft.Text("تعداد")), ft.DataColumn(ft.Text("حذف"))],
             rows=[]
@@ -73,18 +74,14 @@ def main(page: ft.Page):
                 table.rows.append(new_row)
                 page.update()
             else:
-                show_message("لطفاً تمامی موارد را انتخاب/وارد کنید", "red")
-
-        def delete_row(row):
-            table.rows.remove(row)
-            page.update()
+                show_message("لطفاً تمامی موارد را انتخاب کنید", "red")
 
         return ft.Container(content=ft.Column([
             ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("اعلام موجودی انبار", size=20, weight="bold")]), padding=10),
             product_name, 
             product_size, 
             product_qty,
-            ft.ElevatedButton("تایید و افزودن به لیست", on_click=add_to_table, bgcolor="green", color="white"),
+            ft.ElevatedButton("افزودن به لیست", on_click=add_to_table, bgcolor="green", color="white"),
             ft.Divider(),
             table,
             ft.ElevatedButton("اعلام کل موجودی", on_click=lambda e: show_message("ارسال شد"), bgcolor="blue", color="white", width=350)
