@@ -39,7 +39,12 @@ def main(page: ft.Page):
             options=[ft.dropdown.Option(k) for k in product_data.keys()]
         )
 
-        product_size = ft.Dropdown(label="ابعاد محصول", width=350)
+        product_size = ft.Dropdown(
+            label="ابعاد محصول", 
+            width=350,
+            options=[], # همیشه در ابتدا خالی باشد
+            hint_text="ابتدا نام محصول را انتخاب کنید" # این به کاربر کمک می‌کند
+        )
 
         product_qty = ft.TextField(label="تعداد", width=100, keyboard_type=ft.KeyboardType.NUMBER)
 
