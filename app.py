@@ -52,9 +52,6 @@ def main(page: ft.Page):
             rows=[]
         )
 
-        file_picker = ft.FilePicker()
-        page.overlay.append(file_picker)
-
         def load_sizes(e):
             if product_name.value:
                 selected = product_name.value
@@ -90,10 +87,10 @@ def main(page: ft.Page):
             product_qty.value = ""
             page.update()
 
-        # ==================== تولید و دانلود PDF ====================
+        # ==================== تولید PDF ====================
         def generate_and_download_pdf(e):
             if not table.rows:
-                show_message("ابتدا حداقل یک مورد به لیست اضافه کنید", "red")
+                show_message("ابتدا حداقل یک مورد اضافه کنید", "red")
                 return
 
             try:
@@ -124,16 +121,16 @@ def main(page: ft.Page):
                     name = row.cells[0].content.value
                     size = row.cells[1].content.value
                     qty = row.cells[2].content.value
-                    c.drawString(100, y, name)
-                    c.drawString(280, y, size)
+                    c.drawString(100, y, name[:30])
+                    c.drawString(280, y, size[:25])
                     c.drawString(450, y, qty)
                     y -= 25
 
                 c.save()
 
                 # دانلود فایل
-                file_picker.save_file_dialog(file_name=filename)
-                show_message("فایل PDF آماده دانلود شد", "green")
+                page.download_file(filename)
+                show_message(f"فایل PDF آماده دانلود شد: {filename}", "green")
 
             except Exception as ex:
                 show_message(f"خطا در ایجاد PDF: {str(ex)}", "red")
