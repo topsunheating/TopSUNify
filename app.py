@@ -52,6 +52,9 @@ def main(page: ft.Page):
             rows=[]
         )
 
+        file_picker = ft.FilePicker()
+        page.overlay.append(file_picker)
+
         def load_sizes(e):
             if product_name.value:
                 selected = product_name.value
@@ -83,12 +86,11 @@ def main(page: ft.Page):
                 delete_row(new_row)
 
             new_row.cells[3].content.on_click = handle_delete
-
             table.rows.append(new_row)
             product_qty.value = ""
             page.update()
 
-        # ==================== تولید PDF ====================
+        # ==================== تولید و دانلود PDF ====================
         def generate_and_download_pdf(e):
             if not table.rows:
                 show_message("ابتدا حداقل یک مورد به لیست اضافه کنید", "red")
@@ -129,9 +131,9 @@ def main(page: ft.Page):
 
                 c.save()
 
-                # دانلود فایل برای کاربر
-                page.download_file(filename)
-                show_message(f"فایل PDF با موفقیت ایجاد و دانلود شد", "green")
+                # دانلود فایل
+                file_picker.save_file_dialog(file_name=filename)
+                show_message("فایل PDF آماده دانلود شد", "green")
 
             except Exception as ex:
                 show_message(f"خطا در ایجاد PDF: {str(ex)}", "red")
