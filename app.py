@@ -21,33 +21,17 @@ def main(page: ft.Page):
     def toggle_theme(e):
         page.theme_mode = "dark" if page.theme_mode == "light" else "light"
         page.update()
-        
+        # ==================== صفحه اعلام موجودی انبار ====================
     def inventory_page():
-        product_data = {
-            "گرمایش زیرفرشی": ["طول 1/2 متر", "طول 1/5 متر", "2 ردیف با طول 2 متر"],
-            "رادیاتور": [
-                "سایز 50×50 سانت", "سایز 50×90 سانت", "سایز 50×110 سانت", "سایز 50×150 سانت",
-                "سایز 60×60 سانت", "سایز 60×80 سانت", "سایز 90×90 سانت", "سایز 90×110 سانت",
-                "سایز 90×150 سانت", "سایز 90×200 سانت"
-            ],
-            "عایق بازتابشی": ["3 مترمربع", "6 متر مربع"]
-        }
-
-        # یک کانتینر برای نگه داشتن دراپ‌دان ابعاد (این ظرفِ ماست که دراپ‌دان‌ها را عوض می‌کنیم)
-        size_container = ft.Container()
-
-        def get_size_dropdown(selected_name=None):
-            if not selected_name:
-                return ft.Dropdown(label="ابعاد محصول", width=350, hint_text="ابتدا محصول را انتخاب کنید")
-            
-            return ft.Dropdown(
-                label="ابعاد محصول",
-                width=350,
-                options=[ft.dropdown.Option(item) for item in product_data.get(selected_name, [])]
-            )
-
-        # مقدار اولیه
-        size_container.content = get_size_dropdown()
+        product_data = {
+            "گرمایش زیرفرشی": ["طول 1/2 متر", "طول 1/5 متر", "2 ردیف با طول 2 متر"],
+            "رادیاتور": [
+                "سایز 50×50 سانت", "سایز 50×90 سانت", "سایز 50×110 سانت", "سایز 50×150 سانت",
+                "سایز 60×60 سانت", "سایز 60×80 سانت", "سایز 90×90 سانت", "سایز 90×110 سانت",
+                "سایز 90×150 سانت", "سایز 90×200 سانت"
+            ],
+            "عایق بازتابشی": ["3 مترمربع", "6 متر مربع"]
+        }
 
         product_name = ft.Dropdown(
             label="نام محصول",
@@ -55,13 +39,36 @@ def main(page: ft.Page):
             options=[ft.dropdown.Option(k) for k in product_data.keys()]
         )
 
-        product_qty = ft.TextField(label="تعداد", width=100, keyboard_type=ft.KeyboardType.NUMBER)
-        table = ft.DataTable(columns=[ft.DataColumn(ft.Text("نام")), ft.DataColumn(ft.Text("ابعاد")), ft.DataColumn(ft.Text("تعداد")), ft.DataColumn(ft.Text("حذف"))], rows=[])
+        product_size = ft.Dropdown(
+            label="ابعاد محصول", 
+            width=350,
+            options=[]
+        )
 
+        product_qty = ft.TextField(label="تعداد", width=100, keyboard_type=ft.KeyboardType.NUMBER)
+
+        table = ft.DataTable(
+            columns=[
+                ft.DataColumn(ft.Text("نام")),
+                ft.DataColumn(ft.Text("ابعاد")),
+                ft.DataColumn(ft.Text("تعداد")),
+                ft.DataColumn(ft.Text("حذف"))
+            ],
+            rows=[]
+        )
+
+        # تابع بروزرسانی ابعاد
         def update_sizes(e):
-            # کانتینر را با یک دراپ‌دان جدید که گزینه‌هایش تنظیم شده جایگزین می‌کنیم
-            size_container.content = get_size_dropdown(product_name.value)
-            size_container.update()
+            if product_name.value and product_name.value in product_data:
+                product_size.options = [ft.dropdown.Option(item) for item in product_data[product_name.value]]
+                product_size.value = None
+            else:
+                product_size.options = []
+                product_size.value = None
+            
+            # بروزرسانی قوی
+            product_size.update()
+            page.update()
 
         product_name.on_change = update_sizes
 
@@ -70,17 +77,19 @@ def main(page: ft.Page):
             page.update()
 
         def add_to_table(e):
-            # دقت کنید: اینجا به content کانتینر دسترسی می‌گیریم تا مقدارش را بخوانیم
-            current_size_dropdown = size_container.content
-            if not product_name.value or not current_size_dropdown.value or not product_qty.value:
+            if not product_name.value or not product_size.value or not product_qty.value:
                 show_message("لطفاً همه فیلدها را پر کنید", "red")
                 return
 
             new_row = ft.DataRow(cells=[
                 ft.DataCell(ft.Text(product_name.value)),
-                ft.DataCell(ft.Text(current_size_dropdown.value)),
+                ft.DataCell(ft.Text(product_size.value)),
                 ft.DataCell(ft.Text(product_qty.value)),
-                ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color="red", on_click=lambda _, r=new_row: delete_row(r)))
+                ft.DataCell(ft.IconButton(
+                    ft.Icons.DELETE, 
+                    icon_color="red",
+                    on_click=lambda _, r=new_row: delete_row(r)
+                ))
             ])
             table.rows.append(new_row)
             product_qty.value = ""
@@ -88,16 +97,24 @@ def main(page: ft.Page):
 
         return ft.Container(
             content=ft.Column([
-                ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("اعلام موجودی انبار", size=20, weight="bold")]), padding=10),
+                ft.Container(
+                    content=ft.Row([
+                        ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)),
+                        ft.Text("اعلام موجودی انبار", size=20, weight="bold")
+                    ]),
+                    padding=10
+                ),
                 product_name,
-                size_container, # دراپ‌دان ابعاد حالا داخل این کانتینر پویاست
+                product_size,
                 product_qty,
                 ft.ElevatedButton("افزودن به لیست", on_click=add_to_table, bgcolor="green", color="white", width=350),
                 ft.Divider(),
                 table,
                 ft.ElevatedButton("اعلام کل موجودی", on_click=lambda e: show_message("موجودی با موفقیت اعلام شد"), bgcolor="blue", color="white", width=350)
             ], scroll=ft.ScrollMode.AUTO, spacing=15),
-            width=400, expand=True, padding=15
+            width=400,
+            expand=True,
+            padding=15
         )
         
     def selected_customers_page():
