@@ -28,20 +28,13 @@ def main(page: ft.Page):
     # --- صفحات جدید اضافه شده ---
 
     def inventory_page():
-        # تعریف محصولات و ابعاد مربوطه
         product_data = {
             "گرمایش زیرفرشی": ["طول 1/2 متر", "طول 1/5 متر", "2 ردیف با طول 2 متر"],
             "رادیاتور": ["سایز 50×50 سانت", "سایز 50×90 سانت", "سایز 50×110 سانت", "سایز 50×150 سانت", "سایز 60×60 سانت", "سایز 60×80 سانت", "سایز 90×90 سانت", "سایز 90×110 سانت", "سایز 90×150 سانت", "سایز 90×200 سانت"],
             "عایق بازتابشی": ["3 مترمربع", "6 متر مربع"]
         }
-        # کنترل‌ها
-        product_name = ft.Dropdown(
-            label="نام محصول", 
-            options=[ft.dropdown.Option(k) for k in product_data.keys()], 
-            width=350
-        )
         
-        # نکته: یک آپشن پیش‌فرض برای تست قرار می‌دهیم یا خالی می‌گذاریم
+        product_name = ft.Dropdown(label="نام محصول", options=[ft.dropdown.Option(k) for k in product_data.keys()], width=350)
         product_size = ft.Dropdown(label="ابعاد محصول", width=350)
         product_qty = ft.TextField(label="تعداد", width=100, keyboard_type=ft.KeyboardType.NUMBER)
         
@@ -52,12 +45,10 @@ def main(page: ft.Page):
 
         def update_sizes(e):
             selected = product_name.value
-            # آپدیت گزینه‌ها
             product_size.options = [ft.dropdown.Option(s) for s in product_data.get(selected, [])]
-            # ریست کردن مقدار انتخاب شده
             product_size.value = None
-            # آپدیت اجباری کنترل
             product_size.update()
+            page.update()
 
         product_name.on_change = update_sizes
 
@@ -78,63 +69,14 @@ def main(page: ft.Page):
             else:
                 show_message("لطفاً همه موارد را انتخاب کنید", "red")
 
-        # بازگشت خروجی
-        container = ft.Container(content=ft.Column([
+        return ft.Container(content=ft.Column([
             ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("اعلام موجودی انبار", size=20, weight="bold")]), padding=10),
-            product_name, 
-            product_size, 
-            product_qty,
+            product_name, product_size, product_qty,
             ft.ElevatedButton("افزودن به لیست", on_click=add_to_table, bgcolor="green", color="white"),
             ft.Divider(),
             table,
             ft.ElevatedButton("اعلام کل موجودی", on_click=lambda e: show_message("ارسال شد"), bgcolor="blue", color="white", width=350)
         ], scroll=ft.ScrollMode.AUTO), width=400, expand=True)
-        
-        return container
-
-        def update_sizes(e):
-            selected = product_name.value
-            # آپدیت گزینه‌ها
-            product_size.options = [ft.dropdown.Option(s) for s in product_data.get(selected, [])]
-            # ریست کردن مقدار انتخاب شده
-            product_size.value = None
-            # آپدیت اجباری کنترل
-            product_size.update()
-
-        product_name.on_change = update_sizes
-
-        def delete_row(row):
-            table.rows.remove(row)
-            page.update()
-
-        def add_to_table(e):ش
-            if product_name.value and product_size.value and product_qty.value:
-                new_row = ft.DataRow(cells=[
-                    ft.DataCell(ft.Text(product_name.value)),
-                    ft.DataCell(ft.Text(product_size.value)),
-                    ft.DataCell(ft.Text(product_qty.value)),
-                    ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color="red", on_click=lambda e: delete_row(new_row)))
-                ])
-                table.rows.append(new_row)
-                page.update()
-            else:
-                show_message("لطفاً همه موارد را انتخاب کنید", "red")
-
-        # بازگشت خروجی
-        container = ft.Container(content=ft.Column([
-            ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("اعلام موجودی انبار", size=20, weight="bold")]), padding=10),
-            product_name, 
-            product_size, 
-            product_qty,
-            ft.ElevatedButton("افزودن به لیست", on_click=add_to_table, bgcolor="green", color="white"),
-            ft.Divider(),
-            table,
-            ft.ElevatedButton("اعلام کل موجودی", on_click=lambda e: show_message("ارسال شد"), bgcolor="blue", color="white", width=350)
-        ], scroll=ft.ScrollMode.AUTO), width=400, expand=True)
-        
-        return container
-    # --- سایر صفحات (طبق کد دوم شما) ---
-
     def account_request_page():
         return ft.Container(content=ft.Column([
             # اضافه کردن ردیف شامل فلش برگشت و عنوان صفحه
