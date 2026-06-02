@@ -56,17 +56,25 @@ def main(page: ft.Page):
         # تابع بروزرسانی
         def update_sizes(e):
             if product_name.value:
-                sizes = product_data.get(product_name.value, [])
-                product_size.options = [ft.dropdown.Option(s) for s in sizes]
-                product_size.value = sizes[0] if sizes else None
+                selected = product_name.value
+                # 1. گزینه‌های جدید را بسازید
+                new_options = [ft.dropdown.Option(item) for item in product_data.get(selected, [])]
+                
+                # 2. گزینه‌های قبلی را کاملاً پاک کنید
+                product_size.options.clear()
+                
+                # 3. گزینه‌های جدید را اضافه کنید
+                product_size.options.extend(new_options)
+                
+                # 4. مقدار را ریست کنید
+                product_size.value = None
             else:
-                product_size.options = []
+                product_size.options.clear()
                 product_size.value = None
             
+            # 5. بروزرسانی کنترل ابعاد و سپس صفحه
             product_size.update()
-            page.update()
-
-        product_name.on_change = update_sizes
+            page.update() # این بسیار مهم است
 
         def delete_row(row):
             table.rows.remove(row)
