@@ -1,4 +1,5 @@
 import flet as ft
+print(ft.__version__)
 import os
 import datetime
 def main(page: ft.Page):
