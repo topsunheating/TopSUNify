@@ -65,6 +65,48 @@ def main(page: ft.Page):
             table.rows.remove(row)
             page.update()
 
+        def add_to_table(e):
+            if product_name.value and product_size.value and product_qty.value:
+                new_row = ft.DataRow(cells=[
+                    ft.DataCell(ft.Text(product_name.value)),
+                    ft.DataCell(ft.Text(product_size.value)),
+                    ft.DataCell(ft.Text(product_qty.value)),
+                    ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color="red", on_click=lambda e: delete_row(new_row)))
+                ])
+                table.rows.append(new_row)
+                page.update()
+            else:
+                show_message("لطفاً همه موارد را انتخاب کنید", "red")
+
+        # بازگشت خروجی
+        container = ft.Container(content=ft.Column([
+            ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("اعلام موجودی انبار", size=20, weight="bold")]), padding=10),
+            product_name, 
+            product_size, 
+            product_qty,
+            ft.ElevatedButton("افزودن به لیست", on_click=add_to_table, bgcolor="green", color="white"),
+            ft.Divider(),
+            table,
+            ft.ElevatedButton("اعلام کل موجودی", on_click=lambda e: show_message("ارسال شد"), bgcolor="blue", color="white", width=350)
+        ], scroll=ft.ScrollMode.AUTO), width=400, expand=True)
+        
+        return container
+
+        def update_sizes(e):
+            selected = product_name.value
+            # آپدیت گزینه‌ها
+            product_size.options = [ft.dropdown.Option(s) for s in product_data.get(selected, [])]
+            # ریست کردن مقدار انتخاب شده
+            product_size.value = None
+            # آپدیت اجباری کنترل
+            product_size.update()
+
+        product_name.on_change = update_sizes
+
+        def delete_row(row):
+            table.rows.remove(row)
+            page.update()
+
         def add_to_table(e):ش
             if product_name.value and product_size.value and product_qty.value:
                 new_row = ft.DataRow(cells=[
