@@ -61,12 +61,9 @@ def main(page: ft.Page):
                     ft.dropdown.Option(item)
                     for item in product_data[selected]
                 ]
-            else:
-                product_size.options = []
-                product_size.value = None
-                page.update()   # بسیار مهم
+                show_messege(str(len(product_size.options)))
                 
-        product_name.on_change = update_sizes
+            page.update()
 
         def delete_row(row):
             table.rows.remove(row)
