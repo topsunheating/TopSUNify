@@ -23,76 +23,73 @@ def main(page: ft.Page):
         page.update()
          # ==================== صفحه اعلام موجودی انبار (نسخه نهایی) ====================
     def inventory_page():
-        product_data = {
-            "گرمایش زیرفرشی": ["طول 1/2 متر", "طول 1/5 متر", "2 ردیف با طول 2 متر"],
-            "رادیاتور": ["سایز 50×50 سانت", "سایز 50×90 سانت", "سایز 90×200 سانت"],
-            "عایق بازتابشی": ["3 مترمربع", "6 متر مربع"]
-        }
+    # 1. داده‌ها
+    product_data = {
+        "گرمایش زیرفرشی": ["طول 1/2 متر", "طول 1/5 متر", "2 ردیف با طول 2 متر"],
+        "رادیاتور": ["سایز 50×50 سانت", "سایز 50×90 سانت", "سایز 90×200 سانت"],
+        "عایق بازتابشی": ["3 مترمربع", "6 متر مربع"]
+    }
 
-        # استفاده از یک متغیر برای ذخیره محصول انتخاب شده
-        selected_product = {"name": None}
+    # 2. تعریف ویجت‌ها در بالاترین سطح (تا همه جا در دسترس باشند)
+    product_name = ft.Dropdown(label="نام محصول", width=350)
+    product_name.options = [ft.dropdown.Option(k) for k in product_data.keys()]
+    
+    size_wrapper = ft.Container(content=ft.Dropdown(label="ابعاد محصول", width=350, disabled=True))
+    product_qty = ft.TextField(label="تعداد", width=100, keyboard_type=ft.KeyboardType.NUMBER)
+    
+    # تعریف جدول در سطح اصلی
+    table = ft.DataTable(
+        columns=[
+            ft.DataColumn(ft.Text("نام")),
+            ft.DataColumn(ft.Text("ابعاد")),
+            ft.DataColumn(ft.Text("تعداد")),
+            ft.DataColumn(ft.Text("حذف"))
+        ],
+        rows=[]
+    )
 
-        product_name = ft.Dropdown(
-            label="نام محصول",
+    # 3. توابع منطقی
+    def update_sizes(e):
+        selected = product_name.value
+        # ایجاد دراپ‌دان جدید برای ابعاد
+        new_dd = ft.Dropdown(
+            label="ابعاد محصول",
             width=350,
-            options=[ft.dropdown.Option(k) for k in product_data.keys()]
+            options=[ft.dropdown.Option(item) for item in product_data.get(selected, [])]
         )
+        size_wrapper.content = new_dd
+        size_wrapper.update()
 
-        # کانتینر برای دراپ‌دان ابعاد
-        size_wrapper = ft.Container()
+    product_name.on_change = update_sizes
 
-        def get_size_dropdown(selected_name=None):
-            # اگر محصولی انتخاب نشده بود، غیرفعال باشد
-            if not selected_name:
-                return ft.Dropdown(label="ابعاد محصول", width=350, disabled=True)
-            
-            # اگر انتخاب شده بود، فعال باشد و گزینه‌ها را بگیرد
-            return ft.Dropdown(
-                label="ابعاد محصول",
-                width=350,
-                disabled=False, # صریحاً فعالش می‌کنیم
-                options=[ft.dropdown.Option(item) for item in product_data.get(selected_name, [])]
-            )
+    def add_to_table(e):
+        # حالا چون table در سطح بالا تعریف شده، اینجا شناخته می‌شود
+        size_dd = size_wrapper.content
+        if not product_name.value or not size_dd.value or not product_qty.value:
+            return
+        
+        new_row = ft.DataRow(cells=[
+            ft.DataCell(ft.Text(product_name.value)),
+            ft.DataCell(ft.Text(size_dd.value)),
+            ft.DataCell(ft.Text(product_qty.value)),
+            ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color="red", 
+                        on_click=lambda e: (table.rows.remove(new_row), table.update())))
+        ])
+        table.rows.append(new_row)
+        table.update() # آپدیت مستقیم جدول
 
-        def update_sizes(e):
-            # 1. مقدار جدید را بگیرید
-            selected_name = product_name.value
-            
-            # 2. دراپ‌دان جدید را بسازید (که حتما فعال است)
-            new_dropdown = get_size_dropdown(selected_name)
-            
-            # 3. محتوای کانتینر را عوض کنید
-            size_wrapper.content = new_dropdown
-            
-            # 4. آپدیت کردن صفحه بسیار مهم است
-            size_wrapper.update()
-            page.update() # این دستور باعث رفرش شدن کل صفحه می‌شود
-        def add_to_table(e):
-            # دسترسی مستقیم به کنترل داخل کانتینر
-            size_dd = size_wrapper.content
-            if not product_name.value or not size_dd.value:
-                show_message("لطفاً مقادیر را انتخاب کنید", "red")
-                return
-            
-            new_row = ft.DataRow(cells=[
-                ft.DataCell(ft.Text(product_name.value)),
-                ft.DataCell(ft.Text(size_dd.value)),
-                ft.DataCell(ft.Text("1")), # فرض بر ۱ تا وقتی فیلد تعداد کامل شود
-                ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color="red", on_click=lambda e: (table.rows.remove(new_row), page.update())))
-            ])
-            table.rows.append(new_row)
-            page.update()
-
-        return ft.Container(
-            content=ft.Column([
-                ft.Text("اعلام موجودی انبار", size=20, weight="bold"),
-                product_name,
-                size_wrapper, # نمایش دراپ‌دان ابعاد
-                ft.ElevatedButton("افزودن به لیست", on_click=add_to_table),
-                table
-            ], scroll=ft.ScrollMode.AUTO),
-            width=400, expand=True, padding=15
-        )
+    # 4. چیدمان نهایی
+    return ft.Container(
+        content=ft.Column([
+            ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("اعلام موجودی", size=20)]),
+            product_name,
+            size_wrapper,
+            product_qty,
+            ft.ElevatedButton("افزودن به لیست", on_click=add_to_table),
+            table
+        ], scroll=ft.ScrollMode.AUTO),
+        padding=15
+    )
     def selected_customers_page():
         return ft.Container(content=ft.Column([
             ft.Container(content=ft.Row([
