@@ -21,7 +21,7 @@ def main(page: ft.Page):
     def toggle_theme(e):
         page.theme_mode = "dark" if page.theme_mode == "light" else "light"
         page.update()
-     # ==================== صفحه اعلام موجودی انبار ====================
+    # ==================== صفحه اعلام موجودی انبار ====================
     def inventory_page():
         product_data = {
             "گرمایش زیرفرشی": ["طول 1/2 متر", "طول 1/5 متر", "2 ردیف با طول 2 متر"],
@@ -72,27 +72,68 @@ def main(page: ft.Page):
                 show_message("لطفاً همه فیلدها را پر کنید", "red")
                 return
 
-            # ایجاد ردیف
             new_row = ft.DataRow(cells=[
                 ft.DataCell(ft.Text(product_name.value)),
                 ft.DataCell(ft.Text(product_size.value)),
                 ft.DataCell(ft.Text(product_qty.value)),
-                ft.DataCell(
-                    ft.IconButton(
-                        ft.Icons.DELETE,
-                        icon_color="red",
-                        # راه‌حل نهایی برای جلوگیری از خطای closure
-                        on_click=lambda e, r=None: None
-                    )
-                )
+                ft.DataCell(ft.IconButton(
+                    ft.Icons.DELETE, 
+                    icon_color="red",
+                    on_click=lambda _, r=new_row: delete_row(r)
+                ))
             ])
-
-            # تنظیم صحیح on_click بعد از ایجاد ردیف
             new_row.cells[3].content.on_click = lambda e, row=new_row: delete_row(row)
 
             table.rows.append(new_row)
             product_qty.value = ""
             page.update()
+
+        # ==================== ایجاد PDF ====================
+        def generate_pdf(e):
+            if not table.rows:
+                show_message("ابتدا حداقل یک مورد به لیست اضافه کنید", "red")
+                return
+
+            try:
+                from reportlab.lib.pagesizes import A4
+                from reportlab.pdfgen import canvas
+                from reportlab.lib import colors
+                import datetime
+
+                filename = f"موجودی_{page.session.username}_{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.pdf"
+                
+                c = canvas.Canvas(filename, pagesize=A4)
+                c.setFont("Helvetica-Bold", 16)
+                c.drawString(100, 800, f"گزارش موجودی انبار - {page.session.username}")
+                c.setFont("Helvetica", 12)
+                c.drawString(100, 780, f"تاریخ: {datetime.datetime.now().strftime('%Y/%m/%d %H:%M')}")
+                c.drawString(100, 760, "─" * 60)
+
+                y = 720
+                c.setFont("Helvetica-Bold", 12)
+                c.drawString(300, y, "نام محصول")
+                c.drawString(450, y, "ابعاد")
+                c.drawString(100, y, "تعداد")
+                y -= 30
+
+                c.setFont("Helvetica", 11)
+                for row in table.rows:
+                    name = row.cells[0].content.value
+                    size = row.cells[1].content.value
+                    qty = row.cells[2].content.value
+                    c.drawString(300, y, name)
+                    c.drawString(450, y, size)
+                    c.drawString(100, y, qty)
+                    y -= 25
+
+                c.save()
+
+                # دانلود فایل
+                page.download_file(filename)
+                show_message(f"فایل PDF با نام {filename} دانلود شد", "green")
+
+            except Exception as ex:
+                show_message(f"خطا در ایجاد PDF: {ex}", "red")
 
         return ft.Container(
             content=ft.Column([
@@ -110,7 +151,14 @@ def main(page: ft.Page):
                 ft.ElevatedButton("افزودن به لیست", on_click=add_to_table, bgcolor="green", color="white", width=350),
                 ft.Divider(),
                 table,
-                ft.ElevatedButton("اعلام کل موجودی", on_click=lambda e: show_message("موجودی با موفقیت اعلام شد"), bgcolor="blue", color="white", width=350)
+                ft.ElevatedButton(
+                    "اعلام کل موجودی و دانلود PDF", 
+                    on_click=generate_pdf, 
+                    bgcolor="blue", 
+                    color="white", 
+                    width=350,
+                    icon=ft.Icons.DOWNLOAD
+                )
             ], scroll=ft.ScrollMode.AUTO, spacing=15),
             width=400,
             expand=True,
