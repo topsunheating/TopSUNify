@@ -35,8 +35,13 @@ def main(page: ft.Page):
 
         product_name = ft.Dropdown(
             label="نام محصول",
-            options=[ft.dropdown.Option(k) for k in product_data.keys()],
             width=350,
+            options=[
+                ft.dropdown.Option("گرمایش زیرفرشی"),
+                ft.dropdown.Option("رادیاتور"),
+                ft.dropdown.Option("عایق بازتابشی")
+            ],
+            on_change=update_sizes
         )
 
         product_size = ft.Dropdown(label="ابعاد محصول", width=350, options=[])
@@ -57,7 +62,6 @@ def main(page: ft.Page):
             print("UPDATE CALLED")
             show_message("تغییر کرد")
             page.update()
-        product_name.on_change = update_sizes
 
         def delete_row(row):
             table.rows.remove(row)
