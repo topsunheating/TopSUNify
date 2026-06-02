@@ -1,4 +1,3 @@
-
 import flet as ft
 import os
 import datetime
@@ -22,174 +21,93 @@ def main(page: ft.Page):
         page.theme_mode = "dark" if page.theme_mode == "light" else "light"
         page.update()
     # ==================== صفحه اعلام موجودی انبار ====================
-def inventory_page():
+    def inventory_page():
+        product_data = {
+            "گرمایش زیرفرشی": ["طول 1/2 متر", "طول 1/5 متر", "2 ردیف با طول 2 متر"],
+            "رادیاتور": [
+                "سایز 50×50 سانت", "سایز 50×90 سانت", "سایز 50×110 سانت", "سایز 50×150 سانت",
+                "سایز 60×60 سانت", "سایز 60×80 سانت", "سایز 90×90 سانت", "سایز 90×110 سانت",
+                "سایز 90×150 سانت", "سایز 90×200 سانت"
+            ],
+            "عایق بازتابشی": ["3 مترمربع", "6 متر مربع"]
+        }
 
-    product_data = {
-        "گرمایش زیرفرشی": [
-            "طول 1/2 متر",
-            "طول 1/5 متر",
-            "2 ردیف با طول 2 متر"
-        ],
-        "رادیاتور": [
-            "سایز 50×50 سانت",
-            "سایز 50×90 سانت",
-            "سایز 50×110 سانت",
-            "سایز 50×150 سانت",
-            "سایز 60×60 سانت",
-            "سایز 60×80 سانت",
-            "سایز 90×90 سانت",
-            "سایز 90×110 سانت",
-            "سایز 90×150 سانت",
-            "سایز 90×200 سانت"
-        ],
-        "عایق بازتابشی": [
-            "3 مترمربع",
-            "6 متر مربع"
-        ]
-    }
+        product_name = ft.Dropdown(
+            label="نام محصول",
+            options=[ft.dropdown.Option(k) for k in product_data.keys()],
+            width=350,
+        )
 
-    product_name = ft.Dropdown(
-        label="نام محصول",
-        options=[ft.dropdown.Option(k) for k in product_data.keys()],
-        width=350,
-    )
+        product_size = ft.Dropdown(label="ابعاد محصول", width=350)
+        product_qty = ft.TextField(label="تعداد", width=100, keyboard_type=ft.KeyboardType.NUMBER)
 
-    product_size = ft.Dropdown(
-        label="ابعاد محصول",
-        width=350,
-        options=[]
-    )
+        table = ft.DataTable(
+            columns=[
+                ft.DataColumn(ft.Text("نام")),
+                ft.DataColumn(ft.Text("ابعاد")),
+                ft.DataColumn(ft.Text("تعداد")),
+                ft.DataColumn(ft.Text("حذف"))
+            ],
+            rows=[]
+        )
 
-    product_qty = ft.TextField(
-        label="تعداد",
-        width=100,
-        keyboard_type=ft.KeyboardType.NUMBER
-    )
+        # تابع بروزرسانی ابعاد
+        def update_sizes(e):
+            if product_name.value and product_name.value in product_data:
+                product_size.options = [ft.dropdown.Option(s) for s in product_data[product_name.value]]
+                product_size.value = None
+            else:
+                product_size.options = []
+                product_size.value = None
+            product_size.update()
+            page.update()   # بسیار مهم
 
-    table = ft.DataTable(
-        columns=[
-            ft.DataColumn(ft.Text("نام")),
-            ft.DataColumn(ft.Text("ابعاد")),
-            ft.DataColumn(ft.Text("تعداد")),
-            ft.DataColumn(ft.Text("حذف"))
-        ],
-        rows=[]
-    )
+        product_name.on_change = update_sizes
 
-    # بروزرسانی ابعاد محصول
-    def update_sizes(e):
-
-        selected = product_name.value
-
-        if selected:
-            product_size.options = [
-                ft.dropdown.Option(item)
-                for item in product_data[selected]
-            ]
-        else:
-            product_size.options = []
-
-        product_size.value = None
-
-        page.update()
-
-    product_name.on_change = update_sizes
-
-    def delete_row(row):
-        if row in table.rows:
+        def delete_row(row):
             table.rows.remove(row)
             page.update()
 
-    def add_to_table(e):
+        def add_to_table(e):
+            if not product_name.value or not product_size.value or not product_qty.value:
+                show_message("لطفاً همه فیلدها را پر کنید", "red")
+                return
 
-        if not product_name.value:
-            show_message("نام محصول را انتخاب کنید", "red")
-            return
-
-        if not product_size.value:
-            show_message("ابعاد محصول را انتخاب کنید", "red")
-            return
-
-        if not product_qty.value:
-            show_message("تعداد را وارد کنید", "red")
-            return
-
-        row = ft.DataRow(cells=[])
-
-        row.cells = [
-            ft.DataCell(ft.Text(product_name.value)),
-            ft.DataCell(ft.Text(product_size.value)),
-            ft.DataCell(ft.Text(product_qty.value)),
-            ft.DataCell(
-                ft.IconButton(
-                    icon=ft.Icons.DELETE,
+            new_row = ft.DataRow(cells=[
+                ft.DataCell(ft.Text(product_name.value)),
+                ft.DataCell(ft.Text(product_size.value)),
+                ft.DataCell(ft.Text(product_qty.value)),
+                ft.DataCell(ft.IconButton(
+                    ft.Icons.DELETE, 
                     icon_color="red",
-                    on_click=lambda e, r=row: delete_row(r)
-                )
-            )
-        ]
+                    on_click=lambda _, r=new_row: delete_row(r)
+                ))
+            ])
+            table.rows.append(new_row)
+            product_qty.value = ""
+            page.update()
 
-        table.rows.append(row)
-
-        product_qty.value = ""
-
-        page.update()
-
-    return ft.Container(
-        content=ft.Column(
-            [
+        return ft.Container(
+            content=ft.Column([
                 ft.Container(
-                    content=ft.Row(
-                        [
-                            ft.IconButton(
-                                icon=ft.Icons.ARROW_BACK,
-                                on_click=lambda e: render(4)
-                            ),
-                            ft.Text(
-                                "اعلام موجودی انبار",
-                                size=20,
-                                weight="bold"
-                            )
-                        ]
-                    ),
+                    content=ft.Row([
+                        ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)),
+                        ft.Text("اعلام موجودی انبار", size=20, weight="bold")
+                    ]),
                     padding=10
                 ),
-
                 product_name,
-
                 product_size,
-
                 product_qty,
-
-                ft.ElevatedButton(
-                    "افزودن به لیست",
-                    on_click=add_to_table,
-                    bgcolor="green",
-                    color="white",
-                    width=350
-                ),
-
+                ft.ElevatedButton("افزودن به لیست", on_click=add_to_table, bgcolor="green", color="white", width=350),
                 ft.Divider(),
-
                 table,
-
-                ft.ElevatedButton(
-                    "اعلام کل موجودی",
-                    on_click=lambda e: show_message(
-                        "موجودی با موفقیت اعلام شد"
-                    ),
-                    bgcolor="blue",
-                    color="white",
-                    width=350
-                )
-            ],
-            scroll=ft.ScrollMode.AUTO,
-            spacing=15
-        ),
-        width=400,
-        expand=True,
-        padding=15
-    )
+                ft.ElevatedButton("اعلام کل موجودی", on_click=lambda e: show_message("موجودی با موفقیت اعلام شد"), bgcolor="blue", color="white", width=350)
+            ], scroll=ft.ScrollMode.AUTO, spacing=15),
+            width=400,
+            expand=True,
+            padding=15
+        )
     def selected_customers_page():
         return ft.Container(content=ft.Column([
             ft.Container(content=ft.Row([
