@@ -21,7 +21,7 @@ def main(page: ft.Page):
     def toggle_theme(e):
         page.theme_mode = "dark" if page.theme_mode == "light" else "light"
         page.update()
-      # ==================== صفحه اعلام موجودی انبار (روش جایگزین) ====================
+         # ==================== صفحه اعلام موجودی انبار (نسخه نهایی) ====================
     def inventory_page():
         product_data = {
             "گرمایش زیرفرشی": ["طول 1/2 متر", "طول 1/5 متر", "2 ردیف با طول 2 متر"],
@@ -40,6 +40,7 @@ def main(page: ft.Page):
         )
 
         product_size = ft.Dropdown(label="ابعاد محصول", width=350)
+
         product_qty = ft.TextField(label="تعداد", width=100, keyboard_type=ft.KeyboardType.NUMBER)
 
         table = ft.DataTable(
@@ -52,16 +53,16 @@ def main(page: ft.Page):
             rows=[]
         )
 
+        # تابع بروزرسانی
         def update_sizes(e):
             if product_name.value:
-                selected = product_name.value
-                product_size.options = [ft.dropdown.Option(item) for item in product_data.get(selected, [])]
-                product_size.value = None
+                sizes = product_data.get(product_name.value, [])
+                product_size.options = [ft.dropdown.Option(s) for s in sizes]
+                product_size.value = sizes[0] if sizes else None
             else:
                 product_size.options = []
                 product_size.value = None
             
-            # بروزرسانی قوی و چند مرحله‌ای
             product_size.update()
             page.update()
 
@@ -80,11 +81,7 @@ def main(page: ft.Page):
                 ft.DataCell(ft.Text(product_name.value)),
                 ft.DataCell(ft.Text(product_size.value)),
                 ft.DataCell(ft.Text(product_qty.value)),
-                ft.DataCell(ft.IconButton(
-                    ft.Icons.DELETE, 
-                    icon_color="red",
-                    on_click=lambda _, r=new_row: delete_row(r)
-                ))
+                ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color="red", on_click=lambda _, r=new_row: delete_row(r)))
             ])
             table.rows.append(new_row)
             product_qty.value = ""
