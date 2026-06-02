@@ -95,42 +95,142 @@ def main(page: ft.Page):
         )
 
     def colleagues_page():
-    all_colleagues = [
-        {"code": "101", "name": "علی علوی", "company": "شرکت آلفا", "phone": "09120000000", "city": "تهران"},
-        {"code": "102", "name": "رضا رضایی", "company": "تکنو صنعت", "phone": "09130000000", "city": "اصفهان"},
-        {"code": "103", "name": "سارا احمدی", "company": "بازرگانی نوین", "phone": "09190000000", "city": "شیراز"},
-    ]
+        all_colleagues = [
+            {"code": "101", "name": "علی علوی", "company": "شرکت آلفا", "phone": "09120000000", "city": "تهران", "is_approved": True},
+            {"code": "102", "name": "رضا رضایی", "company": "تکنو صنعت", "phone": "09130000000", "city": "اصفهان", "is_approved": True},
+        ]
+        table = ft.DataTable(
+            columns=[ft.DataColumn(ft.Text("کد")), ft.DataColumn(ft.Text("نام")), ft.DataColumn(ft.Text("مجموعه")), ft.DataColumn(ft.Text("تماس")), ft.DataColumn(ft.Text("شهر"))],
+            rows=[ft.DataRow(cells=[ft.DataCell(ft.Text(c["code"])), ft.DataCell(ft.Text(c["name"])), ft.DataCell(ft.Text(c["company"])), ft.DataCell(ft.Text(c["phone"])), ft.DataCell(ft.Text(c["city"]))]) for c in all_colleagues]
+        )
+        return ft.Container(
+            content=ft.Column([
+                ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("همکاران منتخب", size=20, weight="bold")]), padding=10),
+                table
+            ], scroll=ft.ScrollMode.AUTO),
+            width=400, expand=True
+        )
+    def purchase_request_page():
+    # داده‌های نمونه محصولات
+    product_data = {
+        "گرمایش از کف": ["طول 1 متر", "طول 2 متر", "طول 3 متر"],
+        "رادیاتور": ["50×50", "50×90", "60×60", "90×150", "90×200"],
+        "حوله خشک کن": ["60×40", "80×50", "100×60"],
+        "گرمکن مخزن": ["100 لیتری", "200 لیتری", "500 لیتری"],
+        "عایق بازتابشی": ["3 مترمربع", "6 مترمربع", "10 مترمربع"]
+    }
+
+    product_name = ft.Dropdown(
+        label="نام محصول",
+        width=350,
+        options=[ft.dropdown.Option(k) for k in product_data.keys()]
+    )
+    product_size = ft.Dropdown(label="ابعاد / مشخصات", width=350, options=[])
+    product_qty = ft.TextField(label="تعداد", width=100, keyboard_type=ft.KeyboardType.NUMBER)
 
     table = ft.DataTable(
         columns=[
-            ft.DataColumn(ft.Text("کد")),
-            ft.DataColumn(ft.Text("نام")),
-            ft.DataColumn(ft.Text("مجموعه")),
-            ft.DataColumn(ft.Text("تماس")),
-            ft.DataColumn(ft.Text("شهر")),
+            ft.DataColumn(ft.Text("نام محصول")),
+            ft.DataColumn(ft.Text("ابعاد")),
+            ft.DataColumn(ft.Text("تعداد")),
+            ft.DataColumn(ft.Text("حذف"))
         ],
-        rows=[
-            ft.DataRow(cells=[
-                ft.DataCell(ft.Text(c["code"])),
-                ft.DataCell(ft.Text(c["name"])),
-                ft.DataCell(ft.Text(c["company"])),
-                ft.DataCell(ft.Text(c["phone"])),
-                ft.DataCell(ft.Text(c["city"])),
-            ]) for c in all_colleagues
-        ]
+        rows=[]
     )
+
+    def load_sizes(e):
+        if product_name.value:
+            selected = product_name.value
+            product_size.options = [ft.dropdown.Option(item) for item in product_data.get(selected, [])]
+            product_size.value = None
+            page.update()
+
+    def add_to_table(e):
+        if not product_name.value or not product_size.value or not product_qty.value:
+            show_message("لطفاً همه فیلدها را پر کنید", "red")
+            return
+        new_row = ft.DataRow(cells=[
+            ft.DataCell(ft.Text(product_name.value)),
+            ft.DataCell(ft.Text(product_size.value)),
+            ft.DataCell(ft.Text(product_qty.value)),
+            ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color="red", on_click=lambda _: (table.rows.remove(new_row), page.update())))
+        ])
+        table.rows.append(new_row)
+        product_qty.value = ""
+        page.update()
+
+    def generate_purchase_pdf(e):
+        if not table.rows:
+            show_message("ابتدا حداقل یک درخواست اضافه کنید", "red")
+            return
+
+        try:
+            from reportlab.lib.pagesizes import A4
+            from reportlab.pdfgen import canvas
+            import datetime
+
+            current_time = datetime.datetime.now()
+            filename = f"درخواست_خرید_{page.session.get('username', 'کاربر')}_{current_time.strftime('%Y%m%d_%H%M')}.pdf"
+
+            c = canvas.Canvas(filename, pagesize=A4)
+            c.setFont("Helvetica-Bold", 18)
+            c.drawString(100, 800, "درخواست خرید")
+            c.setFont("Helvetica", 12)
+            c.drawString(100, 770, f"نام کاربر: {page.session.get('username', 'نامشخص')}")
+            c.drawString(100, 750, f"تاریخ: {current_time.strftime('%Y/%m/%d %H:%M')}")
+            c.line(100, 740, 500, 740)
+
+            y = 700
+            c.setFont("Helvetica-Bold", 12)
+            c.drawString(100, y, "نام محصول")
+            c.drawString(280, y, "ابعاد")
+            c.drawString(450, y, "تعداد")
+            y -= 25
+            c.setFont("Helvetica", 11)
+
+            for row in table.rows:
+                name = row.cells[0].content.value
+                size = row.cells[1].content.value
+                qty = row.cells[2].content.value
+                c.drawString(100, y, name[:30])
+                c.drawString(280, y, size[:25])
+                c.drawString(450, y, qty)
+                y -= 25
+
+            c.save()
+
+            # دانلود فایل
+            page.download_file(filename)
+            show_message(f"فایل PDF درخواست خرید آماده دانلود شد", "green")
+
+        except Exception as ex:
+            show_message(f"خطا در ایجاد PDF: {str(ex)}", "red")
 
     return ft.Container(
         content=ft.Column([
             ft.Container(
                 content=ft.Row([
                     ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)),
-                    ft.Text("همکاران منتخب", size=20, weight="bold")
+                    ft.Text("ثبت درخواست خرید", size=20, weight="bold")
                 ]),
                 padding=10
             ),
-            table
-        ], scroll=ft.ScrollMode.AUTO),
+            product_name,
+            ft.ElevatedButton("بارگذاری ابعاد", on_click=load_sizes, bgcolor="#1565C0", color="white", width=350),
+            product_size,
+            product_qty,
+            ft.ElevatedButton("افزودن به لیست", on_click=add_to_table, bgcolor="green", color="white", width=350),
+            ft.Divider(),
+            table,
+            ft.ElevatedButton(
+                "ثبت نهایی درخواست خرید و دانلود PDF",
+                on_click=generate_purchase_pdf,
+                bgcolor="#1565C0",
+                color="white",
+                width=350,
+                icon=ft.Icons.DOWNLOAD
+            )
+        ], scroll=ft.ScrollMode.AUTO, spacing=15),
         width=400,
         expand=True,
         padding=15
@@ -174,7 +274,7 @@ def main(page: ft.Page):
                 ft.ListTile(leading=ft.Icon(ft.Icons.PERSON_ADD, color="blue"), title=ft.Text("درخواست ایجاد حساب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=lambda e: render(6)),
                 ft.ListTile(leading=ft.Icon(ft.Icons.STAR, color="orange"), title=ft.Text("مشتریان منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=lambda e: render(7)),
                 ft.ListTile(leading=ft.Icon(ft.Icons.WAREHOUSE, color="green"), title=ft.Text("اعلام موجودی انبار"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=lambda e: render(8)),
-                ft.ListTile(leading=ft.Icon(ft.Icons.SHOPPING_CART), title=ft.Text("ثبت درخواست خرید"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
+                ft.ListTile(leading=ft.Icon(ft.Icons.SHOPPING_CART), title=ft.Text("ثبت درخواست خرید"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), on_click=lambda e: render(10))
                 ft.ListTile(leading=ft.Icon(ft.Icons.GROUP), title=ft.Text("همکاران منتخب"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=lambda e: render(9)),
                 ft.ListTile(leading=ft.Icon(ft.Icons.PERCENT), title=ft.Text("محاسبه درصد همکاری"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
                 ft.ListTile(leading=ft.Icon(ft.Icons.ACCOUNT_BALANCE_WALLET), title=ft.Text("مبلغ اعتبار"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)),
@@ -244,7 +344,7 @@ def main(page: ft.Page):
             contents = [
                 dashboard_page(), pre_invoice_page(), home_page(), technical_page(),
                 profile_page(), settings_page(), account_request_page(),
-                selected_customers_page(), inventory_page(), colleagues_page()
+                selected_customers_page(), inventory_page(), colleagues_page(), purchase_request_page()
             ]
             main_content = ft.Container(content=contents[tab_index], expand=True, width=400, margin=ft.margin.Margin(left=15, right=15))
             nav_bar = ft.Container(
