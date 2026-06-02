@@ -76,20 +76,20 @@ def main(page: ft.Page):
                 ft.DataCell(ft.Text(product_name.value)),
                 ft.DataCell(ft.Text(product_size.value)),
                 ft.DataCell(ft.Text(product_qty.value)),
-                ft.DataCell(ft.IconButton(
-                    ft.Icons.DELETE, 
-                    icon_color="red",
-                    on_click=lambda _, r=new_row: delete_row(r)
-                ))
+                ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color="red"))
             ])
-            new_row.cells[3].content.on_click = lambda e, row=new_row: delete_row(row)
+
+            def handle_delete(e):
+                delete_row(new_row)
+
+            new_row.cells[3].content.on_click = handle_delete
 
             table.rows.append(new_row)
             product_qty.value = ""
             page.update()
 
-        # ==================== ایجاد PDF ====================
-        def generate_pdf(e):
+        # ==================== تولید PDF ====================
+        def generate_and_download_pdf(e):
             if not table.rows:
                 show_message("ابتدا حداقل یک مورد به لیست اضافه کنید", "red")
                 return
@@ -97,43 +97,44 @@ def main(page: ft.Page):
             try:
                 from reportlab.lib.pagesizes import A4
                 from reportlab.pdfgen import canvas
-                from reportlab.lib import colors
                 import datetime
 
-                filename = f"موجودی_{page.session.username}_{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.pdf"
-                
-                c = canvas.Canvas(filename, pagesize=A4)
-                c.setFont("Helvetica-Bold", 16)
-                c.drawString(100, 800, f"گزارش موجودی انبار - {page.session.username}")
-                c.setFont("Helvetica", 12)
-                c.drawString(100, 780, f"تاریخ: {datetime.datetime.now().strftime('%Y/%m/%d %H:%M')}")
-                c.drawString(100, 760, "─" * 60)
+                current_time = datetime.datetime.now()
+                filename = f"موجودی_{page.session.username}_{current_time.strftime('%Y%m%d_%H%M')}.pdf"
 
-                y = 720
+                c = canvas.Canvas(filename, pagesize=A4)
+                c.setFont("Helvetica-Bold", 18)
+                c.drawString(100, 800, "گزارش موجودی انبار")
+                c.setFont("Helvetica", 12)
+                c.drawString(100, 770, f"نام کاربر: {page.session.username}")
+                c.drawString(100, 750, f"تاریخ: {current_time.strftime('%Y/%m/%d %H:%M')}")
+                c.line(100, 740, 500, 740)
+
+                y = 700
                 c.setFont("Helvetica-Bold", 12)
-                c.drawString(300, y, "نام محصول")
-                c.drawString(450, y, "ابعاد")
-                c.drawString(100, y, "تعداد")
-                y -= 30
+                c.drawString(100, y, "نام محصول")
+                c.drawString(280, y, "ابعاد")
+                c.drawString(450, y, "تعداد")
+                y -= 25
 
                 c.setFont("Helvetica", 11)
                 for row in table.rows:
                     name = row.cells[0].content.value
                     size = row.cells[1].content.value
                     qty = row.cells[2].content.value
-                    c.drawString(300, y, name)
-                    c.drawString(450, y, size)
-                    c.drawString(100, y, qty)
+                    c.drawString(100, y, name)
+                    c.drawString(280, y, size)
+                    c.drawString(450, y, qty)
                     y -= 25
 
                 c.save()
 
-                # دانلود فایل
+                # دانلود فایل برای کاربر
                 page.download_file(filename)
-                show_message(f"فایل PDF با نام {filename} دانلود شد", "green")
+                show_message(f"فایل PDF با موفقیت ایجاد و دانلود شد", "green")
 
             except Exception as ex:
-                show_message(f"خطا در ایجاد PDF: {ex}", "red")
+                show_message(f"خطا در ایجاد PDF: {str(ex)}", "red")
 
         return ft.Container(
             content=ft.Column([
@@ -152,10 +153,10 @@ def main(page: ft.Page):
                 ft.Divider(),
                 table,
                 ft.ElevatedButton(
-                    "اعلام کل موجودی و دانلود PDF", 
-                    on_click=generate_pdf, 
-                    bgcolor="blue", 
-                    color="white", 
+                    "اعلام کل موجودی و دانلود PDF",
+                    on_click=generate_and_download_pdf,
+                    bgcolor="blue",
+                    color="white",
                     width=350,
                     icon=ft.Icons.DOWNLOAD
                 )
