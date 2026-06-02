@@ -54,16 +54,10 @@ def main(page: ft.Page):
 
         # تابع بروزرسانی ابعاد
         def update_sizes(e):
-            selected = product_name.value
-
-            if selected:
-                product_size.options = [
-                    ft.dropdown.Option(item)
-                    for item in product_data[selected]
-                ]
-                show_messege(str(len(product_size.options)))
-                
+            print("UPDATE CALLED")
+            show_message("تغییر کرد")
             page.update()
+        product_name.on_change = update_sizes
 
         def delete_row(row):
             table.rows.remove(row)
