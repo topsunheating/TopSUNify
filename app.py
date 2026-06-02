@@ -95,22 +95,46 @@ def main(page: ft.Page):
         )
 
     def colleagues_page():
-        all_colleagues = [
-            {"code": "101", "name": "علی علوی", "company": "شرکت آلفا", "phone": "09120000000", "city": "تهران", "is_approved": True},
-            {"code": "102", "name": "رضا رضایی", "company": "تکنو صنعت", "phone": "09130000000", "city": "اصفهان", "is_approved": True},
-        ]
-        table = ft.DataTable(
-            columns=[ft.DataColumn(ft.Text("کد")), ft.DataColumn(ft.Text("نام")), ft.DataColumn(ft.Text("مجموعه")), ft.DataColumn(ft.Text("تماس")), ft.DataColumn(ft.Text("شهر"))],
-            rows=[ft.DataRow(cells=[ft.DataCell(ft.Text(c["code"])), ft.DataCell(ft.Text(c["name"])), ft.DataCell(ft.Text(c["company"])), ft.DataCell(ft.Text(c["phone"])), ft.DataCell(ft.Text(c["city"]))]) for c in all_colleagues]
-        )
-        return ft.Container(
-            content=ft.Column([
-                ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("همکاران منتخب", size=20, weight="bold")]), padding=10),
-                table
-            ], scroll=ft.ScrollMode.AUTO),
-            width=400, expand=True
-        )
+    all_colleagues = [
+        {"code": "101", "name": "علی علوی", "company": "شرکت آلفا", "phone": "09120000000", "city": "تهران"},
+        {"code": "102", "name": "رضا رضایی", "company": "تکنو صنعت", "phone": "09130000000", "city": "اصفهان"},
+        {"code": "103", "name": "سارا احمدی", "company": "بازرگانی نوین", "phone": "09190000000", "city": "شیراز"},
+    ]
 
+    table = ft.DataTable(
+        columns=[
+            ft.DataColumn(ft.Text("کد")),
+            ft.DataColumn(ft.Text("نام")),
+            ft.DataColumn(ft.Text("مجموعه")),
+            ft.DataColumn(ft.Text("تماس")),
+            ft.DataColumn(ft.Text("شهر")),
+        ],
+        rows=[
+            ft.DataRow(cells=[
+                ft.DataCell(ft.Text(c["code"])),
+                ft.DataCell(ft.Text(c["name"])),
+                ft.DataCell(ft.Text(c["company"])),
+                ft.DataCell(ft.Text(c["phone"])),
+                ft.DataCell(ft.Text(c["city"])),
+            ]) for c in all_colleagues
+        ]
+    )
+
+    return ft.Container(
+        content=ft.Column([
+            ft.Container(
+                content=ft.Row([
+                    ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)),
+                    ft.Text("همکاران منتخب", size=20, weight="bold")
+                ]),
+                padding=10
+            ),
+            table
+        ], scroll=ft.ScrollMode.AUTO),
+        width=400,
+        expand=True,
+        padding=15
+    )
     def account_request_page():
         return ft.Container(
             content=ft.Column([
