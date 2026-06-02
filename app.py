@@ -21,7 +21,7 @@ def main(page: ft.Page):
     def toggle_theme(e):
         page.theme_mode = "dark" if page.theme_mode == "light" else "light"
         page.update()
-    # ==================== صفحه اعلام موجودی انبار (روش سوم - با دکمه) ====================
+    # ==================== صفحه اعلام موجودی انبار ====================
     def inventory_page():
         product_data = {
             "گرمایش زیرفرشی": ["طول 1/2 متر", "طول 1/5 متر", "2 ردیف با طول 2 متر"],
@@ -39,7 +39,7 @@ def main(page: ft.Page):
             options=[ft.dropdown.Option(k) for k in product_data.keys()]
         )
 
-        product_size = ft.Dropdown(label="ابعاد محصول", width=350, options=[])
+        product_size = ft.Dropdown(label="ابعاد محصول", width=350)
         product_qty = ft.TextField(label="تعداد", width=100, keyboard_type=ft.KeyboardType.NUMBER)
 
         table = ft.DataTable(
@@ -52,17 +52,17 @@ def main(page: ft.Page):
             rows=[]
         )
 
-        # تابع بارگذاری ابعاد با دکمه
-        def load_sizes(e):
-            if product_name.value:
-                selected = product_name.value
-                product_size.options = [ft.dropdown.Option(item) for item in product_data.get(selected, [])]
+        def update_sizes(e):
+            if product_name.value and product_name.value in product_data:
+                product_size.options = [ft.dropdown.Option(item) for item in product_data[product_name.value]]
                 product_size.value = None
-                product_size.update()
-                page.update()
-                show_message(f"ابعاد {selected} بارگذاری شد", "blue")
             else:
-                show_message("ابتدا نام محصول را انتخاب کنید", "red")
+                product_size.options = []
+                product_size.value = None
+            product_size.update()
+            page.update()
+
+        product_name.on_change = update_sizes
 
         def delete_row(row):
             table.rows.remove(row)
@@ -73,16 +73,23 @@ def main(page: ft.Page):
                 show_message("لطفاً همه فیلدها را پر کنید", "red")
                 return
 
+            # ایجاد ردیف
             new_row = ft.DataRow(cells=[
                 ft.DataCell(ft.Text(product_name.value)),
                 ft.DataCell(ft.Text(product_size.value)),
                 ft.DataCell(ft.Text(product_qty.value)),
-                ft.DataCell(ft.IconButton(
-                    ft.Icons.DELETE, 
-                    icon_color="red",
-                    on_click=lambda _, r=new_row: delete_row(r)
-                ))
+                ft.DataCell(
+                    ft.IconButton(
+                        ft.Icons.DELETE,
+                        icon_color="red",
+                        on_click=lambda e, r=None: delete_row(r)   # r بعداً مقداردهی می‌شود
+                    )
+                )
             ])
+
+            # حالا lambda را درست تنظیم می‌کنیم
+            new_row.cells[3].content.on_click = lambda e, row=new_row: delete_row(row)
+
             table.rows.append(new_row)
             product_qty.value = ""
             page.update()
@@ -97,7 +104,6 @@ def main(page: ft.Page):
                     padding=10
                 ),
                 product_name,
-                ft.ElevatedButton("بارگذاری ابعاد", on_click=load_sizes, bgcolor="#1565C0", color="white", width=350),
                 product_size,
                 product_qty,
                 ft.ElevatedButton("افزودن به لیست", on_click=add_to_table, bgcolor="green", color="white", width=350),
