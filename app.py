@@ -21,7 +21,7 @@ def main(page: ft.Page):
     def toggle_theme(e):
         page.theme_mode = "dark" if page.theme_mode == "light" else "light"
         page.update()
-           # ==================== صفحه اعلام موجودی انبار ====================
+      # ==================== صفحه اعلام موجودی انبار ====================
     def inventory_page():
         product_data = {
             "گرمایش زیرفرشی": ["طول 1/2 متر", "طول 1/5 متر", "2 ردیف با طول 2 متر"],
@@ -39,12 +39,7 @@ def main(page: ft.Page):
             options=[ft.dropdown.Option(k) for k in product_data.keys()]
         )
 
-        product_size = ft.Dropdown(
-            label="ابعاد محصول", 
-            width=350,
-            options=[]
-        )
-
+        product_size = ft.Dropdown(label="ابعاد محصول", width=350)
         product_qty = ft.TextField(label="تعداد", width=100, keyboard_type=ft.KeyboardType.NUMBER)
 
         table = ft.DataTable(
@@ -66,10 +61,10 @@ def main(page: ft.Page):
                 product_size.options = []
                 product_size.value = None
             
-            # بروزرسانی قوی
             product_size.update()
-            page.update()
+            page.update()   # بروزرسانی قوی
 
+        # اتصال رویداد
         product_name.on_change = update_sizes
 
         def delete_row(row):
