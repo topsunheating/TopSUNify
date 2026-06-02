@@ -34,34 +34,36 @@ def main(page: ft.Page):
             "رادیاتور": ["سایز 50×50 سانت", "سایز 50×90 سانت", "سایز 50×110 سانت", "سایز 50×150 سانت", "سایز 60×60 سانت", "سایز 60×80 سانت", "سایز 90×90 سانت", "سایز 90×110 سانت", "سایز 90×150 سانت", "سایز 90×200 سانت"],
             "عایق بازتابشی": ["3 مترمربع", "6 متر مربع"]
         }
-
-        def update_sizes(e):
-            selected_product = product_name.value
-            product_size.options = [ft.dropdown.Option(s) for s in product_data.get(selected_product, [])]
-            product_size.value = None 
-            product_size.update()
-
-        # 2. تعریف کنترل‌ها
+        # 1. تعریف کنترل‌ها بدون پارامترهای دردسرساز
         product_name = ft.Dropdown(
             label="نام محصول", 
             options=[ft.dropdown.Option(k) for k in product_data.keys()], 
-            width=350,
-            on_change=update_sizes # حالا که تابع تعریف شده، اینجا مشکلی ندارد
+            width=350
         )
         
         product_size = ft.Dropdown(label="ابعاد محصول", width=350, options=[])
         product_qty = ft.TextField(label="تعداد", width=100, keyboard_type=ft.KeyboardType.NUMBER)
 
-        # 3. تعریف تابع حذف
-        def delete_row(row):
-            table.rows.remove(row)
-            page.update()
+        # 2. تعریف تابع در داخل inventory_page
+        def update_sizes(e):
+            selected_product = product_name.value
+            # آپدیت کردن گزینه‌های دراپ‌دان ابعاد
+            product_size.options = [ft.dropdown.Option(s) for s in product_data.get(selected_product, [])]
+            product_size.value = None 
+            product_size.update()
 
-        # 4. تعریف جدول
+        # 3. تنظیم رویداد بعد از تعریف شیء و تابع (این کار خطا را از بین می‌برد)
+        product_name.on_change = update_sizes
+
+        # 4. بقیه منطق کد
         table = ft.DataTable(
             columns=[ft.DataColumn(ft.Text("نام")), ft.DataColumn(ft.Text("ابعاد")), ft.DataColumn(ft.Text("تعداد")), ft.DataColumn(ft.Text("حذف"))],
             rows=[]
         )
+
+        def delete_row(row):
+            table.rows.remove(row)
+            page.update()
 
         def add_to_table(e):
             if product_name.value and product_size.value and product_qty.value:
