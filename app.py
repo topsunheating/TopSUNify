@@ -21,7 +21,7 @@ def main(page: ft.Page):
     def toggle_theme(e):
         page.theme_mode = "dark" if page.theme_mode == "light" else "light"
         page.update()
-      # ==================== صفحه اعلام موجودی انبار ====================
+      # ==================== صفحه اعلام موجودی انبار (روش جایگزین) ====================
     def inventory_page():
         product_data = {
             "گرمایش زیرفرشی": ["طول 1/2 متر", "طول 1/5 متر", "2 ردیف با طول 2 متر"],
@@ -52,19 +52,19 @@ def main(page: ft.Page):
             rows=[]
         )
 
-        # تابع بروزرسانی ابعاد
         def update_sizes(e):
-            if product_name.value and product_name.value in product_data:
-                product_size.options = [ft.dropdown.Option(item) for item in product_data[product_name.value]]
+            if product_name.value:
+                selected = product_name.value
+                product_size.options = [ft.dropdown.Option(item) for item in product_data.get(selected, [])]
                 product_size.value = None
             else:
                 product_size.options = []
                 product_size.value = None
             
+            # بروزرسانی قوی و چند مرحله‌ای
             product_size.update()
-            page.update()   # بروزرسانی قوی
+            page.update()
 
-        # اتصال رویداد
         product_name.on_change = update_sizes
 
         def delete_row(row):
