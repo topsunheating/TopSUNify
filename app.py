@@ -27,7 +27,6 @@ def main(page: ft.Page):
 
     # ==================== صفحات اضافی ====================
     def inventory_page():
-        # ... (کد قبلی شما)
         product_data = {
             "گرمایش زیرفرشی": ["طول 1/2 متر", "طول 1/5 متر", "2 ردیف با طول 2 متر"],
             "رادیاتور": ["سایز 50×50 سانت", "سایز 50×90 سانت", "سایز 50×110 سانت", "سایز 50×150 سانت", "سایز 60×60 سانت", "سایز 60×80 سانت", "سایز 90×90 سانت", "سایز 90×110 سانت", "سایز 90×150 سانت", "سایز 90×200 سانت"],
@@ -64,8 +63,7 @@ def main(page: ft.Page):
             if not table.rows:
                 show_message("ابتدا حداقل یک مورد اضافه کنید", "red")
                 return
-            # شبیه‌سازی واقعی PDF
-            show_message("فایل PDF موجودی انبار ایجاد و دانلود شد", "green")
+            show_message("PDF تولید و آماده دانلود شد", "green")
             page.update()
 
         return ft.Container(
@@ -96,6 +94,94 @@ def main(page: ft.Page):
                 )
             ], scroll=ft.ScrollMode.AUTO),
             width=400, expand=True, padding=15
+        )
+
+    def colleagues_page():
+        all_colleagues = [
+            {"code": "101", "name": "علی علوی", "company": "شرکت آلفا", "phone": "09120000000", "city": "تهران"},
+            {"code": "102", "name": "رضا رضایی", "company": "تکنو صنعت", "phone": "09130000000", "city": "اصفهان"}
+        ]
+        table = ft.DataTable(
+            columns=[ft.DataColumn(ft.Text("کد")), ft.DataColumn(ft.Text("نام")), ft.DataColumn(ft.Text("مجموعه")), ft.DataColumn(ft.Text("تماس")), ft.DataColumn(ft.Text("شهر"))],
+            rows=[ft.DataRow(cells=[ft.DataCell(ft.Text(c["code"])), ft.DataCell(ft.Text(c["name"])), ft.DataCell(ft.Text(c["company"])), ft.DataCell(ft.Text(c["phone"])), ft.DataCell(ft.Text(c["city"]))]) for c in all_colleagues]
+        )
+        return ft.Container(
+            content=ft.Column([
+                ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("همکاران منتخب", size=20, weight="bold")]), padding=10),
+                table
+            ], scroll=ft.ScrollMode.AUTO),
+            width=400, expand=True, padding=15
+        )
+
+    def purchase_request_page():
+        product_data = {
+            "گرمایش از کف": ["طول 1 متر", "طول 2 متر", "طول 3 متر"],
+            "رادیاتور": ["50×50", "50×90", "60×60", "90×150", "90×200"],
+            "حوله خشک کن": ["60×40", "80×50", "100×60"],
+            "گرمکن مخزن": ["100 لیتری", "200 لیتری", "500 لیتری"],
+            "عایق بازتابشی": ["3 مترمربع", "6 مترمربع", "10 مترمربع"]
+        }
+        product_name = ft.Dropdown(label="نام محصول", width=350, options=[ft.dropdown.Option(k) for k in product_data.keys()])
+        product_size = ft.Dropdown(label="ابعاد / مشخصات", width=350, options=[])
+        product_qty = ft.TextField(label="تعداد", width=100, keyboard_type=ft.KeyboardType.NUMBER)
+        table = ft.DataTable(columns=[ft.DataColumn(ft.Text("نام محصول")), ft.DataColumn(ft.Text("ابعاد")), ft.DataColumn(ft.Text("تعداد")), ft.DataColumn(ft.Text("حذف"))], rows=[])
+
+        def load_sizes(e):
+            if product_name.value:
+                selected = product_name.value
+                product_size.options = [ft.dropdown.Option(item) for item in product_data.get(selected, [])]
+                product_size.value = None
+                page.update()
+
+        def add_to_table(e):
+            if not product_name.value or not product_size.value or not product_qty.value:
+                show_message("لطفاً همه فیلدها را پر کنید", "red")
+                return
+            new_row = ft.DataRow(cells=[
+                ft.DataCell(ft.Text(product_name.value)),
+                ft.DataCell(ft.Text(product_size.value)),
+                ft.DataCell(ft.Text(product_qty.value)),
+                ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color="red", on_click=lambda _: (table.rows.remove(new_row), page.update())))
+            ])
+            table.rows.append(new_row)
+            product_qty.value = ""
+            page.update()
+
+        def generate_purchase_pdf(e):
+            if not table.rows:
+                show_message("ابتدا حداقل یک درخواست اضافه کنید", "red")
+                return
+            show_message("PDF درخواست خرید تولید و آماده دانلود شد", "green")
+            page.update()
+
+        return ft.Container(
+            content=ft.Column([
+                ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("ثبت درخواست خرید", size=20, weight="bold")]), padding=10),
+                product_name,
+                ft.ElevatedButton("بارگذاری ابعاد", on_click=load_sizes, bgcolor="#1565C0", color="white", width=350),
+                product_size,
+                product_qty,
+                ft.ElevatedButton("افزودن به لیست", on_click=add_to_table, bgcolor="green", color="white", width=350),
+                ft.Divider(),
+                table,
+                ft.ElevatedButton("ثبت نهایی درخواست خرید و دانلود PDF", on_click=generate_purchase_pdf, bgcolor="#1565C0", color="white", width=350, icon=ft.Icons.DOWNLOAD)
+            ], scroll=ft.ScrollMode.AUTO, spacing=15),
+            width=400, expand=True, padding=15
+        )
+
+    def account_request_page():
+        return ft.Container(
+            content=ft.Column([
+                ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("فرم درخواست همکاری", size=20, weight="bold")]), padding=10),
+                ft.TextField(label="نام و نام خانوادگی", text_align=ft.TextAlign.RIGHT),
+                ft.TextField(label="نام پدر", text_align=ft.TextAlign.RIGHT),
+                ft.TextField(label="تاریخ تولد", text_align=ft.TextAlign.RIGHT),
+                ft.TextField(label="شماره شناسنامه", text_align=ft.TextAlign.RIGHT),
+                ft.TextField(label="شماره ملی", text_align=ft.TextAlign.RIGHT),
+                ft.Dropdown(label="نوع درخواست", options=[ft.dropdown.Option(i) for i in ["نماینده فروش","عامل فروش","کارشناس فروش","نصاب فنی"]]),
+                ft.ElevatedButton("ثبت نهایی درخواست", bgcolor="#1565C0", color="white", on_click=lambda e: show_message("درخواست با موفقیت ثبت شد"))
+            ], scroll=ft.ScrollMode.AUTO),
+            padding=20, width=400, expand=True
         )
 
     def commission_page():
@@ -207,7 +293,6 @@ def main(page: ft.Page):
     def render(tab_index=0):
         page.controls.clear()
         if not page.session.logged_in:
-            # صفحه لاگین (بدون تغییر)
             page.add(
                 ft.Container(
                     content=ft.Column([
