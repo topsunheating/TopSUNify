@@ -21,7 +21,7 @@ def main(page: ft.Page):
     def toggle_theme(e):
         page.theme_mode = "dark" if page.theme_mode == "light" else "light"
         page.update()
-        # ==================== صفحه اعلام موجودی انبار (روش سوم - با دکمه) ====================
+     # ==================== صفحه اعلام موجودی انبار ====================
     def inventory_page():
         product_data = {
             "گرمایش زیرفرشی": ["طول 1/2 متر", "طول 1/5 متر", "2 ردیف با طول 2 متر"],
@@ -52,7 +52,6 @@ def main(page: ft.Page):
             rows=[]
         )
 
-        # تابع بارگذاری ابعاد با دکمه
         def load_sizes(e):
             if product_name.value:
                 selected = product_name.value
@@ -60,7 +59,7 @@ def main(page: ft.Page):
                 product_size.value = None
                 product_size.update()
                 page.update()
-                show_message(f"ابعاد {selected} بارگذاری شد", "blue")
+                show_message(f"ابعاد برای {selected} بارگذاری شد", "blue")
             else:
                 show_message("ابتدا نام محصول را انتخاب کنید", "red")
 
@@ -82,12 +81,13 @@ def main(page: ft.Page):
                     ft.IconButton(
                         ft.Icons.DELETE,
                         icon_color="red",
-                        on_click=lambda e, r=None: delete_row(r)   # r بعداً مقداردهی می‌شود
+                        # راه‌حل نهایی برای جلوگیری از خطای closure
+                        on_click=lambda e, r=None: None
                     )
                 )
             ])
 
-            # حالا lambda را درست تنظیم می‌کنیم
+            # تنظیم صحیح on_click بعد از ایجاد ردیف
             new_row.cells[3].content.on_click = lambda e, row=new_row: delete_row(row)
 
             table.rows.append(new_row)
@@ -104,6 +104,7 @@ def main(page: ft.Page):
                     padding=10
                 ),
                 product_name,
+                ft.ElevatedButton("بارگذاری ابعاد", on_click=load_sizes, bgcolor="#1565C0", color="white", width=350),
                 product_size,
                 product_qty,
                 ft.ElevatedButton("افزودن به لیست", on_click=add_to_table, bgcolor="green", color="white", width=350),
