@@ -21,7 +21,7 @@ def main(page: ft.Page):
     def toggle_theme(e):
         page.theme_mode = "dark" if page.theme_mode == "light" else "light"
         page.update()
-    # ==================== صفحه اعلام موجودی انبار ====================
+        # ==================== صفحه اعلام موجودی انبار (روش سوم - با دکمه) ====================
     def inventory_page():
         product_data = {
             "گرمایش زیرفرشی": ["طول 1/2 متر", "طول 1/5 متر", "2 ردیف با طول 2 متر"],
@@ -39,7 +39,7 @@ def main(page: ft.Page):
             options=[ft.dropdown.Option(k) for k in product_data.keys()]
         )
 
-        product_size = ft.Dropdown(label="ابعاد محصول", width=350)
+        product_size = ft.Dropdown(label="ابعاد محصول", width=350, options=[])
         product_qty = ft.TextField(label="تعداد", width=100, keyboard_type=ft.KeyboardType.NUMBER)
 
         table = ft.DataTable(
@@ -52,17 +52,17 @@ def main(page: ft.Page):
             rows=[]
         )
 
-        def update_sizes(e):
-            if product_name.value and product_name.value in product_data:
-                product_size.options = [ft.dropdown.Option(item) for item in product_data[product_name.value]]
+        # تابع بارگذاری ابعاد با دکمه
+        def load_sizes(e):
+            if product_name.value:
+                selected = product_name.value
+                product_size.options = [ft.dropdown.Option(item) for item in product_data.get(selected, [])]
                 product_size.value = None
+                product_size.update()
+                page.update()
+                show_message(f"ابعاد {selected} بارگذاری شد", "blue")
             else:
-                product_size.options = []
-                product_size.value = None
-            product_size.update()
-            page.update()
-
-        product_name.on_change = update_sizes
+                show_message("ابتدا نام محصول را انتخاب کنید", "red")
 
         def delete_row(row):
             table.rows.remove(row)
