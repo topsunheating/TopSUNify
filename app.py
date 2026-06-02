@@ -34,9 +34,15 @@ def main(page: ft.Page):
             "رادیاتور": ["سایز 50×50 سانت", "سایز 50×90 سانت", "سایز 50×110 سانت", "سایز 50×150 سانت", "سایز 60×60 سانت", "سایز 60×80 سانت", "سایز 90×90 سانت", "سایز 90×110 سانت", "سایز 90×150 سانت", "سایز 90×200 سانت"],
             "عایق بازتابشی": ["3 مترمربع", "6 متر مربع"]
         }
-        # 1. تعریف کنترل‌ها
-        product_name = ft.Dropdown(label="نام محصول", options=[ft.dropdown.Option(k) for k in product_data.keys()], width=350)
-        product_size = ft.Dropdown(label="ابعاد محصول", width=350, options=[])
+        # کنترل‌ها
+        product_name = ft.Dropdown(
+            label="نام محصول", 
+            options=[ft.dropdown.Option(k) for k in product_data.keys()], 
+            width=350
+        )
+        
+        # نکته: یک آپشن پیش‌فرض برای تست قرار می‌دهیم یا خالی می‌گذاریم
+        product_size = ft.Dropdown(label="ابعاد محصول", width=350)
         product_qty = ft.TextField(label="تعداد", width=100, keyboard_type=ft.KeyboardType.NUMBER)
         
         table = ft.DataTable(
@@ -44,15 +50,16 @@ def main(page: ft.Page):
             rows=[]
         )
 
-        # 2. تابع آپدیت ابعاد
         def update_sizes(e):
-            selected_product = product_name.value
-            product_size.options = [ft.dropdown.Option(s) for s in product_data.get(selected_product, [])]
-            product_size.value = None 
-            product_size.update() # به‌روزرسانی خودِ دراپ‌دان ابعاد
-            page.update()         # به‌روزرسانی صفحه برای نمایش تغییرات
+            selected = product_name.value
+            # آپدیت گزینه‌ها
+            product_size.options = [ft.dropdown.Option(s) for s in product_data.get(selected, [])]
+            # ریست کردن مقدار انتخاب شده
+            product_size.value = None
+            # آپدیت اجباری کنترل
+            product_size.update()
 
-        product_name.on_change = update_sizes # اتصال تابع به رویداد
+        product_name.on_change = update_sizes
 
         def delete_row(row):
             table.rows.remove(row)
@@ -71,12 +78,9 @@ def main(page: ft.Page):
             else:
                 show_message("لطفاً همه موارد را انتخاب کنید", "red")
 
-        # 3. بازگشت خروجی (همان چیزی که خواسته بودید)
-        return ft.Container(content=ft.Column([
-            ft.Container(content=ft.Row([
-                ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), 
-                ft.Text("اعلام موجودی انبار", size=20, weight="bold")
-            ]), padding=10),
+        # بازگشت خروجی
+        container = ft.Container(content=ft.Column([
+            ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("اعلام موجودی انبار", size=20, weight="bold")]), padding=10),
             product_name, 
             product_size, 
             product_qty,
@@ -85,15 +89,8 @@ def main(page: ft.Page):
             table,
             ft.ElevatedButton("اعلام کل موجودی", on_click=lambda e: show_message("ارسال شد"), bgcolor="blue", color="white", width=350)
         ], scroll=ft.ScrollMode.AUTO), width=400, expand=True)
-
-    def selected_customers_page():
-        return ft.Container(content=ft.Column([
-            ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("مشتریان منتخب", size=20, weight="bold")]), padding=10),
-            ft.DataTable(
-                columns=[ft.DataColumn(ft.Text("کد")), ft.DataColumn(ft.Text("نام")), ft.DataColumn(ft.Text("تماس")), ft.DataColumn(ft.Text("شهر"))],
-                rows=[ft.DataRow(cells=[ft.DataCell(ft.Text("101")), ft.DataCell(ft.Text("رضا احمدی")), ft.DataCell(ft.Text("09121234567")), ft.DataCell(ft.Text("تهران"))])],
-            )
-        ], scroll=ft.ScrollMode.AUTO), width=400, expand=True)
+        
+        return container
 
     def account_request_page():
         return ft.Container(content=ft.Column([
