@@ -21,6 +21,50 @@ def main(page: ft.Page):
     def toggle_theme(e):
         page.theme_mode = "dark" if page.theme_mode == "light" else "light"
         page.update()
+# ==================== صفجه همکراان منتخب ====================
+    def colleagues_page():
+    # لیست نمونه همکاران (در حالت واقعی این را از دیتابیس می‌گیرید)
+    all_colleagues = [
+        {"code": "101", "name": "علی علوی", "company": "شرکت آلفا", "phone": "09120000000", "city": "تهران", "is_approved": True},
+        {"code": "102", "name": "رضا رضایی", "company": "تکنو صنعت", "phone": "09130000000", "city": "اصفهان", "is_approved": True},
+        {"code": "103", "name": "سارا حسینی", "company": "بازرگانی نوین", "phone": "09190000000", "city": "شیراز", "is_approved": False}, # این نمایش داده نمی‌شود
+    ]
+
+    # فیلتر کردن فقط همکاران تایید شده
+    approved_colleagues = [c for c in all_colleagues if c["is_approved"]]
+
+    table = ft.DataTable(
+        columns=[
+            ft.DataColumn(ft.Text("کد")),
+            ft.DataColumn(ft.Text("نام")),
+            ft.DataColumn(ft.Text("مجموعه")),
+            ft.DataColumn(ft.Text("تماس")),
+            ft.DataColumn(ft.Text("شهر")),
+        ],
+        rows=[
+            ft.DataRow(cells=[
+                ft.DataCell(ft.Text(c["code"])),
+                ft.DataCell(ft.Text(c["name"])),
+                ft.DataCell(ft.Text(c["company"])),
+                ft.DataCell(ft.Text(c["phone"])),
+                ft.DataCell(ft.Text(c["city"])),
+            ]) for c in approved_colleagues
+        ],
+        heading_row_height=40,
+        data_row_min_height=40,
+    )
+
+    return ft.Container(
+        content=ft.Column([
+            ft.Container(content=ft.Row([
+                ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), 
+                ft.Text("همکاران منتخب", size=20, weight="bold")
+            ]), padding=10),
+            ft.Container(content=table, expand=True) # قراردادن جدول در کانتینر برای اسکرول
+        ], scroll=ft.ScrollMode.AUTO),
+        width=400,
+        expand=True
+    )
     # ==================== صفحه اعلام موجودی انبار ====================
     def inventory_page():
         product_data = {
@@ -268,7 +312,7 @@ def main(page: ft.Page):
             page.add(ft.Container(content=ft.Column([ft.Container(content=ft.Image(src="TopSUNify.png", width=190), margin=ft.margin.Margin(top=40, bottom=40)), ft.Container(content=ft.TextField(label="نام کاربری", width=340, border_radius=12, prefix_icon=ft.Icons.PERSON, text_align=ft.TextAlign.RIGHT), margin=ft.margin.Margin(bottom=20)), ft.Container(content=ft.Row([ft.Container(content=ft.Icon(ft.Icons.FINGERPRINT, size=42, color="#FFCC00"), on_click=lambda e: show_message("احراز هویت بیومتریک", "orange"), padding=10, border_radius=12), ft.TextField(label="رمز عبور", password=True, width=270, border_radius=12, prefix_icon=ft.Icons.LOCK, text_align=ft.TextAlign.RIGHT)], alignment=ft.MainAxisAlignment.CENTER, spacing=12), margin=ft.margin.Margin(bottom=30)), ft.ElevatedButton("ورود به TopSUNify", width=340, bgcolor="#FFCC00", color="black", style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)), on_click=lambda e: (setattr(page.session, 'logged_in', True), render())), ft.TextButton("فعال‌سازی / فراموشی رمز", style=ft.ButtonStyle(color={"": "blue"})), ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=160), margin=ft.margin.Margin(top=50, bottom=30)), ft.Container(content=ft.Image(src="landscape.jpg", width=400, height=220, fit="cover"), expand=True)], horizontal_alignment=ft.CrossAxisAlignment.CENTER, scroll=ft.ScrollMode.AUTO), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True))
         else:
             # لیست صفحات (ایندکس 8 برای انبار اضافه شد)
-            contents = [dashboard_page(), pre_invoice_page(), home_page(), technical_page(), profile_page(), settings_page(), account_request_page(), selected_customers_page(), inventory_page()]
+            contents = [dashboard_page(), pre_invoice_page(), home_page(), technical_page(), profile_page(), settings_page(), account_request_page(), selected_customers_page(), inventory_page(), colleagues_page()]
             page.add(ft.Column([ft.Container(content=ft.Image(src="TopSUNify.png", width=80), margin=ft.margin.Margin(top=10, bottom=10)), ft.Divider(), ft.Container(content=contents[tab_index], expand=True, width=400, margin=ft.margin.Margin(left=15, right=15)), ft.Container(content=ft.Row([ft.Container(content=ft.Image(src="dashboard.png", width=32, height=32), on_click=lambda _: render(0), padding=8), ft.Container(content=ft.Image(src="invoice.png", width=32, height=32), on_click=lambda _: render(1), padding=8), ft.Container(content=ft.Image(src="TopSUNify-1.png", width=32, height=32), on_click=lambda _: render(2), padding=8), ft.Container(content=ft.Image(src="technical.png", width=32, height=32), on_click=lambda _: render(3), padding=8), ft.Container(content=ft.Image(src="profile.png", width=32, height=32), on_click=lambda _: render(4), padding=8)], alignment=ft.MainAxisAlignment.CENTER, spacing=15), bgcolor="white", padding=12)], expand=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER))
         page.update()
     render()
