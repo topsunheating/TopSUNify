@@ -34,41 +34,25 @@ def main(page: ft.Page):
             "رادیاتور": ["سایز 50×50 سانت", "سایز 50×90 سانت", "سایز 50×110 سانت", "سایز 50×150 سانت", "سایز 60×60 سانت", "سایز 60×80 سانت", "سایز 90×90 سانت", "سایز 90×110 سانت", "سایز 90×150 سانت", "سایز 90×200 سانت"],
             "عایق بازتابشی": ["3 مترمربع", "6 متر مربع"]
         }
-        # 1. تعریف کنترل‌ها بدون پارامترهای دردسرساز
-        product_name = ft.Dropdown(
-            label="نام محصول", 
-            options=[ft.dropdown.Option(k) for k in product_data.keys()], 
-            width=350
-        )
-        
+        # 1. تعریف کنترل‌ها
+        product_name = ft.Dropdown(label="نام محصول", options=[ft.dropdown.Option(k) for k in product_data.keys()], width=350)
         product_size = ft.Dropdown(label="ابعاد محصول", width=350, options=[])
         product_qty = ft.TextField(label="تعداد", width=100, keyboard_type=ft.KeyboardType.NUMBER)
-
-        # تابع به‌روزرسانی ابعاد (این نسخه دقیق‌تر است)
-        def update_sizes(e):
-            selected_product = product_name.value
-            # ۱. دریافت لیست جدید ابعاد بر اساس محصول انتخابی
-            new_sizes = product_data.get(selected_product, [])
-            
-            # ۲. خالی کردن گزینه‌های قبلی
-            product_size.options.clear()
-            
-            # ۳. اضافه کردن گزینه‌های جدید
-            for s in new_sizes:
-                product_size.options.append(ft.dropdown.Option(s))
-            
-            # ۴. ریست کردن مقدار انتخاب شده و به‌روزرسانی UI
-            product_size.value = None 
-            product_size.update()
-
-        # 3. تنظیم رویداد بعد از تعریف شیء و تابع (این کار خطا را از بین می‌برد)
-        product_name.on_change = update_sizes
-
-        # 4. بقیه منطق کد
+        
         table = ft.DataTable(
             columns=[ft.DataColumn(ft.Text("نام")), ft.DataColumn(ft.Text("ابعاد")), ft.DataColumn(ft.Text("تعداد")), ft.DataColumn(ft.Text("حذف"))],
             rows=[]
         )
+
+        # 2. تابع آپدیت ابعاد
+        def update_sizes(e):
+            selected_product = product_name.value
+            product_size.options = [ft.dropdown.Option(s) for s in product_data.get(selected_product, [])]
+            product_size.value = None 
+            product_size.update() # به‌روزرسانی خودِ دراپ‌دان ابعاد
+            page.update()         # به‌روزرسانی صفحه برای نمایش تغییرات
+
+        product_name.on_change = update_sizes # اتصال تابع به رویداد
 
         def delete_row(row):
             table.rows.remove(row)
@@ -85,10 +69,14 @@ def main(page: ft.Page):
                 table.rows.append(new_row)
                 page.update()
             else:
-                show_message("لطفاً تمامی موارد را انتخاب کنید", "red")
+                show_message("لطفاً همه موارد را انتخاب کنید", "red")
 
+        # 3. بازگشت خروجی (همان چیزی که خواسته بودید)
         return ft.Container(content=ft.Column([
-            ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("اعلام موجودی انبار", size=20, weight="bold")]), padding=10),
+            ft.Container(content=ft.Row([
+                ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), 
+                ft.Text("اعلام موجودی انبار", size=20, weight="bold")
+            ]), padding=10),
             product_name, 
             product_size, 
             product_qty,
