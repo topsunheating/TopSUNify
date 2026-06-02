@@ -65,7 +65,7 @@ def main(page: ft.Page):
             table.rows.remove(row)
             page.update()
 
-        def add_to_table(e):
+        def add_to_table(e):ش
             if product_name.value and product_size.value and product_qty.value:
                 new_row = ft.DataRow(cells=[
                     ft.DataCell(ft.Text(product_name.value)),
@@ -91,6 +91,13 @@ def main(page: ft.Page):
         ], scroll=ft.ScrollMode.AUTO), width=400, expand=True)
         
         return container
+    # --- سایر صفحات (طبق کد دوم شما) ---
+    def selected_customers_page():
+        return ft.Container(content=ft.Column([
+            ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("مشتریان منتخب", size=20, weight="bold")]), padding=10),
+            ft.DataTable(columns=[ft.DataColumn(ft.Text("کد")), ft.DataColumn(ft.Text("نام")), ft.DataColumn(ft.Text("تماس")), ft.DataColumn(ft.Text("شهر"))],
+                rows=[ft.DataRow(cells=[ft.DataCell(ft.Text("101")), ft.DataCell(ft.Text("رضا احمدی")), ft.DataCell(ft.Text("09121234567")), ft.DataCell(ft.Text("تهران"))])]),
+        ], scroll=ft.ScrollMode.AUTO), width=400, expand=True)
 
     def account_request_page():
         return ft.Container(content=ft.Column([
@@ -114,7 +121,7 @@ def main(page: ft.Page):
             ft.ElevatedButton("ثبت نهایی درخواست", bgcolor="#1565C0", color="white", on_click=lambda e: show_message("درخواست با موفقیت ثبت شد"))
             # دکمه بازگشت قدیمی حذف شد
         ], scroll=ft.ScrollMode.AUTO), padding=20)
-
+     
     # --- توابع اصلی ---
 
     def pre_invoice_page():
