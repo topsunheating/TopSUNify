@@ -21,7 +21,7 @@ def main(page: ft.Page):
     def toggle_theme(e):
         page.theme_mode = "dark" if page.theme_mode == "light" else "light"
         page.update()
-        # ==================== صفحه اعلام موجودی انبار ====================
+           # ==================== صفحه اعلام موجودی انبار ====================
     def inventory_page():
         product_data = {
             "گرمایش زیرفرشی": ["طول 1/2 متر", "طول 1/5 متر", "2 ردیف با طول 2 متر"],
@@ -39,7 +39,12 @@ def main(page: ft.Page):
             options=[ft.dropdown.Option(k) for k in product_data.keys()]
         )
 
-        product_size = ft.Dropdown(label="ابعاد محصول", width=350, options=[])
+        product_size = ft.Dropdown(
+            label="ابعاد محصول", 
+            width=350,
+            options=[]
+        )
+
         product_qty = ft.TextField(label="تعداد", width=100, keyboard_type=ft.KeyboardType.NUMBER)
 
         table = ft.DataTable(
@@ -52,27 +57,24 @@ def main(page: ft.Page):
             rows=[]
         )
 
-        # تابع بروزرسانی ابعاد (قبل از割り当て on_change تعریف شده)
+        # تابع بروزرسانی ابعاد
         def update_sizes(e):
             if product_name.value and product_name.value in product_data:
-                product_size.options = [
-                    ft.dropdown.Option(item) for item in product_data[product_name.value]
-                ]
+                product_size.options = [ft.dropdown.Option(item) for item in product_data[product_name.value]]
                 product_size.value = None
             else:
                 product_size.options = []
                 product_size.value = None
             
+            # بروزرسانی قوی
             product_size.update()
             page.update()
 
-        # حالا on_change را تنظیم می‌کنیم
         product_name.on_change = update_sizes
 
         def delete_row(row):
-            if row in table.rows:
-                table.rows.remove(row)
-                page.update()
+            table.rows.remove(row)
+            page.update()
 
         def add_to_table(e):
             if not product_name.value or not product_size.value or not product_qty.value:
@@ -84,7 +86,7 @@ def main(page: ft.Page):
                 ft.DataCell(ft.Text(product_size.value)),
                 ft.DataCell(ft.Text(product_qty.value)),
                 ft.DataCell(ft.IconButton(
-                    ft.Icons.DELETE,
+                    ft.Icons.DELETE, 
                     icon_color="red",
                     on_click=lambda _, r=new_row: delete_row(r)
                 ))
