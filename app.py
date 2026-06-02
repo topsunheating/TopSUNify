@@ -44,11 +44,20 @@ def main(page: ft.Page):
         product_size = ft.Dropdown(label="ابعاد محصول", width=350, options=[])
         product_qty = ft.TextField(label="تعداد", width=100, keyboard_type=ft.KeyboardType.NUMBER)
 
-        # 2. تعریف تابع در داخل inventory_page
+        # تابع به‌روزرسانی ابعاد (این نسخه دقیق‌تر است)
         def update_sizes(e):
             selected_product = product_name.value
-            # آپدیت کردن گزینه‌های دراپ‌دان ابعاد
-            product_size.options = [ft.dropdown.Option(s) for s in product_data.get(selected_product, [])]
+            # ۱. دریافت لیست جدید ابعاد بر اساس محصول انتخابی
+            new_sizes = product_data.get(selected_product, [])
+            
+            # ۲. خالی کردن گزینه‌های قبلی
+            product_size.options.clear()
+            
+            # ۳. اضافه کردن گزینه‌های جدید
+            for s in new_sizes:
+                product_size.options.append(ft.dropdown.Option(s))
+            
+            # ۴. ریست کردن مقدار انتخاب شده و به‌روزرسانی UI
             product_size.value = None 
             product_size.update()
 
