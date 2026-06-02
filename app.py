@@ -79,8 +79,11 @@ def main(page: ft.Page):
             
             # 5. بروزرسانی کنترل ابعاد و سپس صفحه
             product_size.update()
-            page.update() # این بسیار مهم است
+            page.update() 
 
+        # این خط لینک‌دهنده اصلی است
+        product_name.on_change = update_sizes
+        
         def delete_row(row):
             table.rows.remove(row)
             page.update()
