@@ -24,7 +24,12 @@ def main(page: ft.Page):
     # ==================== صفحه گرمایش از کف ====================
     def floor_heating_page():
         # 1. تعریف FilePicker و اضافه کردن به Overlay
-        file_picker = ft.FilePicker(on_result=lambda e: print("فایل انتخاب شد:", e.files))
+        file_picker = ft.FilePicker()
+        
+        # اختصاص دادن هندلر به صورت جداگانه (اصلاح خطای پارامتر)
+        file_picker.on_result = lambda e: print("فایل انتخاب شد:", e.files)
+        
+        # اضافه کردن به overlay
         page.overlay.append(file_picker)
         page.update()
 
