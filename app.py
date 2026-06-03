@@ -449,7 +449,7 @@ def main(page: ft.Page):
                         text_align=ft.TextAlign.CENTER,
                         color="#1565C0"
                     ),
-                    width=170,
+                    width=120,
                     height=70,
                     bgcolor="#ffffff",
                     border_radius=12,
