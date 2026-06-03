@@ -1,7 +1,7 @@
 import flet as ft
 import os
 
-def main_app(page: ft.Page):
+def main(page: ft.Page):
     page.fonts = {"iranyekan": "fonts/iranyekan.ttf"}
     page.theme = ft.Theme(font_family="iranyekan")
     page.padding = 0
