@@ -25,37 +25,27 @@ def main(page: ft.Page):
         page.update()
         show_message(f"تم تغییر کرد به: {page.theme_mode}", "blue")
 
-# ==================== صفحه گرمایش از کف ====================
+    # ==================== صفحه گرمایش از کف ====================
     def floor_heating_page():
         file_picker = ft.FilePicker()
         page.overlay.append(file_picker)
-
-        def method1_upload(e):
-            file_picker.pick_files(allow_multiple=False, allowed_extensions=["dwg", "dxf"])
 
         def on_file_picked(e):
             if e.files:
                 file = e.files[0]
                 show_message(f"فایل {file.name} در حال پردازش...", "blue")
-                # بعداً هسته main.py فراخوانی می‌شود
-                process_dwg(file.name)
+                process_uploaded_file(file)
 
         file_picker.on_result = on_file_picked
 
-        def method2_manual(e):
-            show_message("ورود دستی ابعاد اتاق‌ها (در حال توسعه)", "blue")
-
-        def method3_direct(e):
-            show_message("روش مقادیر مستقیم (در حال توسعه)", "blue")
-
-        def process_dwg(filename):
+        def process_uploaded_file(file):
             try:
                 from main import generate_layout_plan
                 from Financial import calculate_tosunify_proforma, generate_proforma_pdf
 
-                # مثال (بعداً از خروجی main پر می‌شود)
+                # مثال (بعداً مقادیر واقعی از main.py گرفته می‌شود)
                 res = calculate_tosunify_proforma(45.5, 8.2, 12, 5, 9, 3)
-                pdf_bytes = generate_proforma_pdf(res, 45.5, 8.2, 65, 3, 1, "مشتری تست")
+                pdf_bytes = generate_proforma_pdf(res, 45.5, 8.2, 65, 3, 1, page.session.username, 1001)
 
                 import tempfile
                 with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
@@ -63,10 +53,16 @@ def main(page: ft.Page):
                     temp_path = f.name
 
                 page.download_file(temp_path)
-                show_message("پیش‌فاکتور و پلان چیدمان صادر شد", "green")
+                show_message("پیش‌فاکتور و پلان چیدمان با موفقیت صادر شد", "green")
 
             except Exception as ex:
-                show_message(f"خطا: {ex}", "red")
+                show_message(f"خطا در پردازش: {ex}", "red")
+
+        def method2_manual(e):
+            show_message("ورود دستی ابعاد اتاق‌ها (در حال توسعه)", "blue")
+
+        def method3_direct(e):
+            show_message("روش مقادیر مستقیم (در حال توسعه)", "blue")
 
         return ft.Container(
             content=ft.Column([
@@ -79,33 +75,53 @@ def main(page: ft.Page):
                     bgcolor="#f8f9fa",
                     border_radius=12
                 ),
-                ft.Text("روش صدور پیش‌فاکتور را انتخاب کنید", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
+
+                ft.Text("روش صدور پیش‌فاکتور را انتخاب کنید", 
+                       size=18, weight="bold", text_align=ft.TextAlign.CENTER),
                 ft.Divider(height=25),
 
+                # روش 1
                 ft.Container(
                     content=ft.ElevatedButton(
-                        content=ft.Row([ft.Icon(ft.Icons.UPLOAD_FILE), ft.Text("📂 آپلود فایل DWG / DXF", weight="bold")], alignment=ft.MainAxisAlignment.CENTER),
-                        width=360, height=75, bgcolor="#1565C0", color="white",
-                        on_click=method1_upload,
+                        content=ft.Row([ft.Icon(ft.Icons.UPLOAD_FILE, color="white"), 
+                                      ft.Text("📂 آپلود فایل DWG / DXF", weight="bold")], 
+                                      alignment=ft.MainAxisAlignment.CENTER),
+                        width=360,
+                        height=75,
+                        bgcolor="#1565C0",
+                        color="white",
+                        on_click=lambda e: file_picker.pick_files(allow_multiple=False, allowed_extensions=["dwg", "dxf"]),
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     ),
-                    margin=ft.margin.only(bottom=12)
+                    margin=ft.margin.Margin(bottom=12)   # اصلاح شده
                 ),
 
+                # روش 2
                 ft.Container(
                     content=ft.ElevatedButton(
-                        content=ft.Row([ft.Icon(ft.Icons.EDIT_NOTE), ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", weight="bold")], alignment=ft.MainAxisAlignment.CENTER),
-                        width=360, height=75, bgcolor="#1565C0", color="white",
+                        content=ft.Row([ft.Icon(ft.Icons.EDIT_NOTE, color="white"), 
+                                      ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", weight="bold")], 
+                                      alignment=ft.MainAxisAlignment.CENTER),
+                        width=360,
+                        height=75,
+                        bgcolor="#1565C0",
+                        color="white",
                         on_click=method2_manual,
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     ),
-                    margin=ft.margin.only(bottom=12)
+                    margin=ft.margin.Margin(bottom=12)   # اصلاح شده
                 ),
 
+                # روش 3
                 ft.Container(
                     content=ft.ElevatedButton(
-                        content=ft.Row([ft.Icon(ft.Icons.CALCULATOR), ft.Text("✍️ مقادیر مستقیم (متراژ)", weight="bold")], alignment=ft.MainAxisAlignment.CENTER),
-                        width=360, height=75, bgcolor="#1565C0", color="white",
+                        content=ft.Row([ft.Icon(ft.Icons.CALCULATOR, color="white"), 
+                                      ft.Text("✍️ مقادیر مستقیم (متراژ)", weight="bold")], 
+                                      alignment=ft.MainAxisAlignment.CENTER),
+                        width=360,
+                        height=75,
+                        bgcolor="#1565C0",
+                        color="white",
                         on_click=method3_direct,
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     )
