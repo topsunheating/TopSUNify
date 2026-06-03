@@ -7,67 +7,117 @@ def main(page: ft.Page):
     page.padding = 0
     page.rtl = True
     page.theme_mode = "light"
+    page.bgcolor = "#f5f5f5"
 
-    # مدیریت نشست (Session)
-    if not hasattr(page.session, "manual_rooms"):
-        page.session.manual_rooms = []
-        page.session.logged_in = True 
+    if not hasattr(page.session, "logged_in"):
+        page.session.logged_in = False
+        page.session.user_role = "عمومی"
+        page.session.username = "رضا تلچی"
 
-    # 1. تعریف FilePicker در سطح کلاس
-    file_picker = ft.FilePicker(on_result=lambda e: print("فایل انتخاب شد:", e.files))
-    page.overlay.append(file_picker)
-
-    def show_message(text, color="green"):
-        snack = ft.SnackBar(content=ft.Text(text), bgcolor=color)
+    def show_message(text: str, color="green"):
+        snack = ft.SnackBar(content=ft.Text(text), bgcolor=color, action="بستن", duration=3000)
         page.snack_bar = snack
         snack.open = True
         page.update()
 
+    def toggle_theme(e):
+        page.theme_mode = "dark" if page.theme_mode == "light" else "light"
+        page.update()
+        show_message(f"تم تغییر کرد به: {page.theme_mode}", "blue")
+
+# ==================== صفحه گرمایش از کف ====================
     def floor_heating_page():
-        # متدهای داخلی
+        file_picker = ft.FilePicker()
+        page.overlay.append(file_picker)
+
         def method1_upload(e):
             file_picker.pick_files(allow_multiple=False, allowed_extensions=["dwg", "dxf"])
 
+        def on_file_picked(e):
+            if e.files:
+                file = e.files[0]
+                show_message(f"فایل {file.name} در حال پردازش...", "blue")
+                # بعداً هسته main.py فراخوانی می‌شود
+                process_dwg(file.name)
+
+        file_picker.on_result = on_file_picked
+
         def method2_manual(e):
-            show_message("ورود دستی ابعاد - در حال توسعه", "blue")
+            show_message("ورود دستی ابعاد اتاق‌ها (در حال توسعه)", "blue")
 
         def method3_direct(e):
-            show_message("مقادیر مستقیم - در حال توسعه", "blue")
+            show_message("روش مقادیر مستقیم (در حال توسعه)", "blue")
+
+        def process_dwg(filename):
+            try:
+                from main import generate_layout_plan
+                from Financial import calculate_tosunify_proforma, generate_proforma_pdf
+
+                # مثال (بعداً از خروجی main پر می‌شود)
+                res = calculate_tosunify_proforma(45.5, 8.2, 12, 5, 9, 3)
+                pdf_bytes = generate_proforma_pdf(res, 45.5, 8.2, 65, 3, 1, "مشتری تست")
+
+                import tempfile
+                with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
+                    f.write(pdf_bytes)
+                    temp_path = f.name
+
+                page.download_file(temp_path)
+                show_message("پیش‌فاکتور و پلان چیدمان صادر شد", "green")
+
+            except Exception as ex:
+                show_message(f"خطا: {ex}", "red")
 
         return ft.Container(
             content=ft.Column([
                 ft.Container(
                     content=ft.Row([
-                        ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: page.go("/")),
+                        ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
                         ft.Text("گرمایش از کف (سیستم هوشمند)", size=21, weight="bold")
                     ]),
-                    padding=15, bgcolor="#f8f9fa", border_radius=12
+                    padding=15,
+                    bgcolor="#f8f9fa",
+                    border_radius=12
                 ),
-                ft.ElevatedButton("📂 آپلود فایل پلان", on_click=method1_upload, width=360, height=75),
-                ft.ElevatedButton("⌨️ ورود دستی ابعاد", on_click=method2_manual, width=360, height=75),
-                ft.ElevatedButton("✍️ مقادیر مستقیم", on_click=method3_direct, width=360, height=75),
-            ], spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+                ft.Text("روش صدور پیش‌فاکتور را انتخاب کنید", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
+                ft.Divider(height=25),
+
+                ft.Container(
+                    content=ft.ElevatedButton(
+                        content=ft.Row([ft.Icon(ft.Icons.UPLOAD_FILE), ft.Text("📂 آپلود فایل DWG / DXF", weight="bold")], alignment=ft.MainAxisAlignment.CENTER),
+                        width=360, height=75, bgcolor="#1565C0", color="white",
+                        on_click=method1_upload,
+                        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
+                    ),
+                    margin=ft.margin.only(bottom=12)
+                ),
+
+                ft.Container(
+                    content=ft.ElevatedButton(
+                        content=ft.Row([ft.Icon(ft.Icons.EDIT_NOTE), ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", weight="bold")], alignment=ft.MainAxisAlignment.CENTER),
+                        width=360, height=75, bgcolor="#1565C0", color="white",
+                        on_click=method2_manual,
+                        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
+                    ),
+                    margin=ft.margin.only(bottom=12)
+                ),
+
+                ft.Container(
+                    content=ft.ElevatedButton(
+                        content=ft.Row([ft.Icon(ft.Icons.CALCULATOR), ft.Text("✍️ مقادیر مستقیم (متراژ)", weight="bold")], alignment=ft.MainAxisAlignment.CENTER),
+                        width=360, height=75, bgcolor="#1565C0", color="white",
+                        on_click=method3_direct,
+                        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
+                    )
+                ),
+
+                ft.Divider(height=30),
+                ft.Text("هسته main.py و Financial.py متصل شد", size=13, color="grey", text_align=ft.TextAlign.CENTER)
+            ], scroll=ft.ScrollMode.AUTO, spacing=12, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            width=400,
+            expand=True,
             padding=15
         )
-
-    # سایر صفحات
-    def account_request_page():
-        return ft.Container(content=ft.Text("فرم درخواست همکاری"))
-
-    # تنظیم روت‌ها
-    def route_change(route):
-        page.controls.clear()
-        if page.route == "/floor":
-            page.add(floor_heating_page())
-        else:
-            page.add(ft.Text("صفحه اصلی"))
-        page.update()
-
-    page.on_route_change = route_change
-    page.go("/")
-
-if __name__ == "__main__":
-    ft.app(target=main_app, assets_dir="assets")
     # ==================== صفحات اضافی ====================
     def account_request_page():
         return ft.Container(
