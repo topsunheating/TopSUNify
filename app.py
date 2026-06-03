@@ -431,22 +431,10 @@ def main(page: ft.Page):
             ("رستورانی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
             ("عایق بازتابشی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
         ]
-        grid = ft.GridView(runs_count=2, max_extent=160, spacing=12, run_spacing=12, padding=15, expand=True)
+        grid = ft.GridView(runs_count=2, max_extent=120, spacing=10, run_spacing=10, padding=10, expand=True)
         for name, action in products:
             grid.controls.append(
-                ft.Container(
-                    content=ft.Column([
-                        ft.Text(name, 
-                                size=48, color="#1565C0"),
-                        ft.Text(name, size=16, weight="bold", text_align=ft.TextAlign.CENTER)
-                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=8),
-                    width=170,
-                    height=110, bgcolor="#ffffff", border_radius=12, 
-                    alignment=ft.Alignment(0, 0), shadow=ft.BoxShadow(blur_radius=8, color="#e0e0e0"),
-                    on_click=action,
-                    ink=True
-                )
-            )
+                ft.Container((content=ft.Text(name, size=15, weight="bold", text_align=ft.TextAlign.CENTER, color="#1565C0"), width=170, height=70, bgcolor="#ffffff", border_radius=12, alignment=ft.Alignment(0, 0), shadow=ft.BoxShadow(blur_radius=6, color="#e0e0e0"), on_click=lambda e, n=name: show_message(f"پیش‌فاکتور {n}"), ink=True))
             return ft.Container(
                 content=ft.Column([
                     ft.Text("نوع محصول مورد نظر را انتخاب کنید", 
