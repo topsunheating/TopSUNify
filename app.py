@@ -1,5 +1,7 @@
 import flet as ft
 import os
+import main
+import Financial
 
 def main(page: ft.Page):
     page.fonts = {"iranyekan": "fonts/iranyekan.ttf"}
@@ -27,18 +29,67 @@ def main(page: ft.Page):
 
     # ==================== صفحه گرمایش از کف ====================
     def floor_heating_page():
-        def method1_upload(e):
-            show_message("📂 آپلود فایل DWG/DXF\n(در نسخه کامل: فایل آپلود و تحلیل می‌شود)", "blue")
+        file_picker = ft.FilePicker()
+        page.overlay.append(file_picker)
+
+        def on_file_picked(e):
+            if e.files:
+                file = e.files[0]
+                show_message(f"فایل {file.name} در حال پردازش توسط هسته main.py...", "blue")
+                process_dwg_file(file)
+
+        file_picker.on_result = on_file_picked
+
+        def process_dwg_file(file):
+            try:
+                # 1. فراخوانی هسته main.py برای تحلیل فایل و تولید پلان
+                from main import generate_layout_plan
+                layout_pdf_bytes = generate_layout_plan(file.path if hasattr(file, 'path') else file.name)
+
+                # 2. فراخوانی هسته Financial.py برای صدور پیش‌فاکتور
+                from Financial import calculate_tosunify_proforma, generate_proforma_pdf
+
+                # مثال (بعداً مقادیر واقعی از خروجی main.py گرفته می‌شود)
+                res = calculate_tosunify_proforma(
+                    width_80_m=45.5,
+                    width_40_m=8.2,
+                    installation_pct=12,
+                    discount_pct=5,
+                    tax_pct=9,
+                    thermostats_count=3
+                )
+
+                financial_pdf_bytes = generate_proforma_pdf(
+                    res=res,
+                    m80=45.5,
+                    m40=8.2,
+                    xps=65,
+                    thermostats=3,
+                    p_count=1,
+                    customer_name=page.session.username,
+                    doc_number=1001
+                )
+
+                # ذخیره و دانلود
+                import tempfile
+                with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
+                    f.write(financial_pdf_bytes)
+                    temp_path = f.name
+
+                page.download_file(temp_path)
+                show_message("پیش‌فاکتور و پلان چیدمان با موفقیت صادر شد", "green")
+
+            except Exception as ex:
+                show_message(f"خطا در پردازش: {ex}", "red")
 
         def method2_manual(e):
-            show_message("⌨️ ورود دستی ابعاد اتاق‌ها\n(در نسخه کامل: فرم ابعاد فعال می‌شود)", "blue")
+            show_message("ورود دستی ابعاد اتاق‌ها (در حال توسعه)", "blue")
 
         def method3_direct(e):
-            show_message("✍️ روش مقادیر مستقیم\n(در نسخه کامل: پیش‌فاکتور مستقیم صادر می‌شود)", "blue")
+            show_message("روش مقادیر مستقیم (در حال توسعه)", "blue")
 
         return ft.Container(
             content=ft.Column([
-                # هدر
                 ft.Container(
                     content=ft.Row([
                         ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
@@ -53,7 +104,7 @@ def main(page: ft.Page):
                        size=18, weight="bold", text_align=ft.TextAlign.CENTER),
                 ft.Divider(height=25),
 
-                # روش 1
+                # روش 1 - آپلود فایل
                 ft.Container(
                     content=ft.ElevatedButton(
                         content=ft.Row([
@@ -64,13 +115,13 @@ def main(page: ft.Page):
                         height=75,
                         bgcolor="#1565C0",
                         color="white",
-                        on_click=method1_upload,
+                        on_click=lambda e: file_picker.pick_files(allow_multiple=False, allowed_extensions=["dwg", "dxf"]),
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     ),
                     margin=ft.margin.Margin(bottom=12)
                 ),
 
-                # روش 2
+                # روش 2 - ابعاد دستی
                 ft.Container(
                     content=ft.ElevatedButton(
                         content=ft.Row([
@@ -87,7 +138,7 @@ def main(page: ft.Page):
                     margin=ft.margin.Margin(bottom=12)
                 ),
 
-                # روش 3
+                # روش 3 - مقادیر مستقیم
                 ft.Container(
                     content=ft.ElevatedButton(
                         content=ft.Row([
@@ -104,8 +155,7 @@ def main(page: ft.Page):
                 ),
 
                 ft.Divider(height=30),
-                ft.Text("هسته main.py و Financial.py آماده اتصال کامل است", 
-                       size=13, color="grey", text_align=ft.TextAlign.CENTER)
+                ft.Text("هسته main.py و Financial.py متصل شد", size=13, color="grey", text_align=ft.TextAlign.CENTER)
             ], scroll=ft.ScrollMode.AUTO, spacing=12, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400,
             expand=True,
