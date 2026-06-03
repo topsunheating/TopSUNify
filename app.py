@@ -439,7 +439,7 @@ def main(page: ft.Page):
             padding=10,
             expand=True
         )
-        for name, action in products:
+        for name in products:
             grid.controls.append(
                 ft.Container(
                     content=ft.Text(
