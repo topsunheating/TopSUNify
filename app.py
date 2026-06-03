@@ -261,23 +261,59 @@ def main(page: ft.Page):
             width=400, expand=True, padding=15
         )
 
-    # ==================== صفحه گرمایش از کف ====================
+    # ==================== صفحه گرمایش از کف (بدون Tab - سازگار) ====================
     def floor_heating_page():
-        tabs = ft.Tabs(
-            selected_index=0,
-            tabs=[
-                ft.Tab(label="📂 آپلود فایل DWG/DXF", content=ft.Column([ft.Text("فایل نقشه اتوکد را آپلود کنید", size=18, weight="bold"), ft.ElevatedButton("شبیه‌سازی پردازش", bgcolor="#1565C0", color="white", width=350, on_click=lambda e: show_message("فایل پردازش شد", "green"))], horizontal_alignment=ft.CrossAxisAlignment.CENTER)),
-                ft.Tab(label="⌨️ ورود دستی ابعاد", content=ft.Column([ft.Text("ابعاد اتاق‌ها را وارد کنید", size=18, weight="bold")], horizontal_alignment=ft.CrossAxisAlignment.CENTER)),
-                ft.Tab(label="✍️ مقادیر مستقیم", content=ft.Column([ft.Text("مقادیر را مستقیم وارد کنید", size=18, weight="bold"), ft.ElevatedButton("صدور پیش‌فاکتور", bgcolor="#1565C0", color="white", width=350, on_click=lambda e: show_message("پیش‌فاکتور صادر شد", "green"))], horizontal_alignment=ft.CrossAxisAlignment.CENTER)),
-            ],
-            expand=1
-        )
         return ft.Container(
             content=ft.Column([
-                ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(1)), ft.Text("گرمایش از کف", size=20, weight="bold")]), padding=10),
-                tabs
-            ], scroll=ft.ScrollMode.AUTO),
-            width=400, expand=True, padding=15
+                ft.Container(
+                    content=ft.Row([
+                        ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
+                        ft.Text("گرمایش از کف (سیستم هوشمند)", size=20, weight="bold")
+                    ]),
+                    padding=10
+                ),
+                ft.Text("نوع روش صدور پیش‌فاکتور را انتخاب کنید:", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
+                ft.Divider(),
+                
+                # روش 1
+                ft.Container(
+                    content=ft.ElevatedButton(
+                        "📂 آپلود فایل DWG/DXF",
+                        width=350,
+                        bgcolor="#1565C0",
+                        color="white",
+                        on_click=lambda e: show_message("در نسخه کامل: فایل آپلود و تحلیل می‌شود", "blue")
+                    ),
+                    padding=8
+                ),
+                
+                # روش 2
+                ft.Container(
+                    content=ft.ElevatedButton(
+                        "⌨️ ورود دستی ابعاد اتاق‌ها",
+                        width=350,
+                        bgcolor="#1565C0",
+                        color="white",
+                        on_click=lambda e: show_message("در نسخه کامل: ابعاد دستی وارد می‌شود", "blue")
+                    ),
+                    padding=8
+                ),
+                
+                # روش 3
+                ft.Container(
+                    content=ft.ElevatedButton(
+                        "✍️ مقادیر مستقیم",
+                        width=350,
+                        bgcolor="#1565C0",
+                        color="white",
+                        on_click=lambda e: show_message("پیش‌فاکتور مستقیم صادر شد", "green")
+                    ),
+                    padding=8
+                ),
+            ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            width=400,
+            expand=True,
+            padding=15
         )
 
     # ==================== صفحه پروفایل ====================
