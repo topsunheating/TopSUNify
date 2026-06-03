@@ -18,6 +18,37 @@ DIMMERS = {
     "دیمر 900 وات": 1450000,
     "دیمر 1500 وات": 2450000,
 }
+RADIATOR_PRODUCTS = {
+    "50×50 سانت": 6500000,
+    "60×60 سانت": 7800000,
+    "90×90 سانت": 11200000,
+
+    "50×90 سانت": 8400000,
+    "50×110 سانت": 9600000,
+    "50×150 سانت": 12400000,
+
+    "60×80 سانت": 9200000,
+
+    "90×110 سانت": 13800000,
+    "90×150 سانت": 17200000,
+    "90×200 سانت": 22800000,
+
+    "50×200 سانت": 15800000,
+    "60×150 سانت": 14600000
+}
+
+RADIATOR_COLORS = [
+    "سنگ سفید",
+    "نوک مدادی",
+    "مشکی",
+    "طوسی"
+]
+
+SQUARE_SIZES = [
+    "50×50 سانت",
+    "60×60 سانت",
+    "90×90 سانت"
+]
 def main(page: ft.Page):
     page.fonts = {"iranyekan": "fonts/iranyekan.ttf"}
     page.theme = ft.Theme(font_family="iranyekan")
@@ -38,6 +69,65 @@ def main(page: ft.Page):
         page.theme_mode = "dark" if page.theme_mode == "light" else "light"
         page.update()
         show_message(f"تم تغییر کرد به: {page.theme_mode}", "blue")
+# ==================== پیش فاکتور دستی زیرفرشی ====================
+    def radiator_manual_invoice_page():
+        radiator_size = ft.Dropdown(label="ابعاد رادیاتور", width=350, options=[ft.dropdown.Option(x) for x in RADIATOR_PRODUCTS.keys()])
+        radiator_color = ft.Dropdown(label="طرح رادیاتور", width=350, options=[ft.dropdown.Option(x) for x in RADIATOR_COLORS])
+        radiator_orientation = ft.Dropdown(label="نوع نصب", width=350, disabled=True, options=[ft.dropdown.Option("افقی"), ft.dropdown.Option("عمودی")])
+        radiator_qty = ft.TextField(label="تعداد", width=350, value="1", keyboard_type=ft.KeyboardType.NUMBER)
+        
+        table = ft.DataTable(columns=[ft.DataColumn(ft.Text("شرح")), ft.DataColumn(ft.Text("تعداد")), ft.DataColumn(ft.Text("قیمت"))], rows=[])
+        total_text = ft.Text("جمع کل: 0 تومان", size=18, weight="bold")
+        
+        def update_orientation(e):
+            square_sizes = ["50×50 سانت", "60×60 سانت", "90×90 سانت"]
+            if radiator_size.value in square_sizes:
+                radiator_orientation.disabled = True
+                radiator_orientation.value = "-"
+            else:
+                radiator_orientation.disabled = False
+                radiator_orientation.value = None
+            page.update()
+        
+        def calculate_invoice(e):
+            try:
+                if not radiator_size.value:
+                    show_message("ابعاد رادیاتور را انتخاب کنید", "red")
+                    return
+                qty = int(radiator_qty.value or 0)
+                unit_price = RADIATOR_PRODUCTS.get(radiator_size.value, 0)
+                line_total = qty * unit_price
+                
+                description = f"{radiator_size.value} | {radiator_color.value or 'ساده'}"
+                if radiator_orientation.value and radiator_orientation.value != "-":
+                    description += f" | {radiator_orientation.value}"
+                table.rows = [ft.DataRow(cells=[ft.DataCell(ft.Text(description)), ft.DataCell(ft.Text(str(qty))), ft.DataCell(ft.Text(f"{line_total:,}"))])]
+                total_text.value = f"جمع کل: {line_total:,} تومان"
+                page.update()
+            except Exception as ex:
+                show_message(f"خطا: {ex}", "red")
+        radiator_size.on_change = update_orientation
+        
+        return ft.Container(
+            content=ft.Column([
+                ft.Row([
+                    ft.IconButton(ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
+                    ft.Text("پیش فاکتور رادیاتور", size=20, weight="bold")
+                ]),
+                ft.Divider(),
+                radiator_size,
+                radiator_color,
+                radiator_orientation,
+                radiator_qty,
+                ft.FilledButton("محاسبه پیش فاکتور", on_click=calculate_invoice, width=350, bgcolor="green"),
+                ft.Container(content=table, padding=ft.padding.only(top=10, bottom=10)),
+                total_text,
+                ft.FilledButton("صدور PDF", icon=ft.Icons.PICTURE_AS_PDF, width=350, on_click=lambda e: show_message("در حال آماده‌سازی...")),
+            ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            padding=20,
+            width=400,
+            expand=True
+        )
     # ==================== پیش فاکتور دستی زیرفرشی ====================
     def floor_manual_invoice_page():
 
@@ -652,7 +742,7 @@ def main(page: ft.Page):
                 profile_page(), settings_page(), account_request_page(),
                 selected_customers_page(), inventory_page(), colleagues_page(),
                 purchase_request_page(), commission_page(), credit_page(),
-                theme_page(), update_page(), network_page(), rules_page(), about_page(), floor_heating_page(), floor_manual_invoice_page()
+                theme_page(), update_page(), network_page(), rules_page(), about_page(), floor_heating_page(), floor_manual_invoice_page(), radiator_manual_invoice_page()
             ]
             main_content = ft.Container(content=contents[tab_index], expand=True, width=400, margin=ft.margin.Margin(left=15, right=15))
             nav_bar = ft.Container(
@@ -710,7 +800,7 @@ def main(page: ft.Page):
         products = [
             ("گرمایش از کف", lambda e: render(18)),
             ("زیرفرشی", lambda e: render(19)),
-            ("رادیاتور", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+            ("رادیاتور", lambda e: render(20)),
             ("حوله خشک کن", lambda e: show_message("به زودی فعال می‌شود", "blue")),
             ("یخ زدایی رمپ", lambda e: show_message("به زودی فعال می‌شود", "blue")),
             ("یخ زدایی پله", lambda e: show_message("به زودی فعال می‌شود", "blue")),
