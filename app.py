@@ -417,8 +417,8 @@ def main(page: ft.Page):
             report_cards.controls.append(ft.Container(content=ft.Column([ft.Icon(icon, size=36, color=color), ft.Text(title, size=13.5, weight="bold", text_align=ft.TextAlign.CENTER)], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=8), bgcolor="white", border_radius=16, padding=14, shadow=ft.BoxShadow(blur_radius=8, color="#e0e0e0"), expand=True, on_click=lambda e, t=title: show_message(f"بخش {t}"), ink=True))
 
         return ft.Container(content=ft.Column([ft.Container(content=ft.Dropdown(value="رضا تلچی", options=[ft.dropdown.Option("رضا تلچی"), ft.dropdown.Option("زیرمجموعه فروش")], width=320, border_radius=30, bgcolor="white"), margin=ft.margin.Margin(bottom=15)), ft.Text("انتخاب بازه زمانی", size=17, weight="bold", text_align=ft.TextAlign.CENTER), period_buttons, ft.Divider(height=10), view_button, ft.Divider(height=20), ft.Text("گزارش‌های مالی و عملیاتی", size=18, weight="bold", text_align=ft.TextAlign.CENTER), report_cards], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=15), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
-
-        def pre_invoice_page():
+    # ==================== صفحات اصلی ====================
+    def pre_invoice_page():
         products = [
             ("گرمایش از کف", lambda e: render(18)),
             ("زیرفرشی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
