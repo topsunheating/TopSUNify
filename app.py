@@ -313,7 +313,7 @@ def main(page: ft.Page):
                 profile_page(), settings_page(), account_request_page(),
                 selected_customers_page(), inventory_page(), colleagues_page(),
                 purchase_request_page(), commission_page(), credit_page(),
-                theme_page(), update_page(), network_page(), rules_page(), about_page()
+                theme_page(), update_page(), network_page(), rules_page(), about_page(), گرمایش از کف_page()
             ]
             main_content = ft.Container(content=contents[tab_index], expand=True, width=400, margin=ft.margin.Margin(left=15, right=15))
             nav_bar = ft.Container(
@@ -382,12 +382,12 @@ def main(page: ft.Page):
     ]
 
     grid = ft.GridView(runs_count=2, max_extent=160, spacing=12, run_spacing=12, padding=15, expand=True)
-
+    
     for name, action in products:
         grid.controls.append(
             ft.Container(
                 content=ft.Column([
-                    ft.Text(ft.Icons.FLOORING if name == "گرمایش از کف" else ft.Icons.OTHER_HOUSES, 
+                    ft.Text(name, 
                            size=48, color="#1565C0"),
                     ft.Text(name, size=16, weight="bold", text_align=ft.TextAlign.CENTER)
                 ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=8),
