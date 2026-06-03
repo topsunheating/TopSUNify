@@ -439,7 +439,7 @@ def main(page: ft.Page):
             padding=10,
             expand=True
         )
-        for name in products:
+        for name , action in products:
             grid.controls.append(
                 ft.Container(
                     content=ft.Text(
@@ -458,7 +458,7 @@ def main(page: ft.Page):
                         blur_radius=6,
                         color="#e0e0e0"
                     ),
-                    on_click=lambda,
+                    on_click=action,
                     ink=True
                 )
             )
