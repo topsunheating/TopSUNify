@@ -1,3 +1,26 @@
+import flet as ft
+import os
+
+def main(page: ft.Page):
+    page.fonts = {"iranyekan": "fonts/iranyekan.ttf"}
+    page.theme = ft.Theme(font_family="iranyekan")
+    page.padding = 0
+    page.rtl = True
+    page.theme_mode = "light"
+    page.bgcolor = "#f5f5f5"
+    if not hasattr(page.session, "logged_in"):
+        page.session.logged_in = False
+        page.session.user_role = "عمومی"
+        page.session.username = "رضا تلچی"
+    def show_message(text: str, color="green"):
+        snack = ft.SnackBar(content=ft.Text(text), bgcolor=color, action="بستن", duration=3000)
+        page.snack_bar = snack
+        snack.open = True
+        page.update()
+    def toggle_theme(e):
+        page.theme_mode = "dark" if page.theme_mode == "light" else "light"
+        page.update()
+        show_message(f"تم تغییر کرد به: {page.theme_mode}", "blue")
     # ==================== صفحه گرمایش از کف ====================
     def floor_heating_page():
         file_picker = ft.FilePicker()
