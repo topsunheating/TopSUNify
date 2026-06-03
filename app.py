@@ -487,5 +487,12 @@ if __name__ == "__main__":
 
 
 if __name__ == "__main__":
+    # خواندن پورت از متغیر محیطی Railway
     port = int(os.environ.get("PORT", 8080))
-    ft.app(target=main, port=port, host="0.0.0.0", assets_dir="assets")
+    
+    # تنظیمات برای اجرای صحیح در سرور (وب)
+    ft.app(
+        target=main, 
+        port=port, 
+        view=ft.AppView.WEB_BROWSER
+    )
