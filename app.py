@@ -21,38 +21,11 @@ def main(page: ft.Page):
         snack.open = True
         page.update()
 
-        # ==================== صفحه گرمایش از کف ====================
+    # ==================== صفحه گرمایش از کف ====================
     def floor_heating_page():
-        file_picker = ft.FilePicker()
-        page.overlay.append(file_picker)
-
-        def on_file_picked(e):
-            if e.files:
-                file = e.files[0]
-                show_message(f"فایل {file.name} در حال پردازش...", "blue")
-                process_uploaded_file(file)
-
-        file_picker.on_result = on_file_picked
-
-        def process_uploaded_file(file):
-            try:
-                from main import generate_layout_plan
-                from Financial import calculate_tosunify_proforma, generate_proforma_pdf
-
-                # مثال (بعداً مقادیر واقعی از main.py گرفته می‌شود)
-                res = calculate_tosunify_proforma(45.5, 8.2, 12, 5, 9, 3)
-                pdf_bytes = generate_proforma_pdf(res, 45.5, 8.2, 65, 3, 1, page.session.username, 1001)
-
-                import tempfile
-                with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
-                    f.write(pdf_bytes)
-                    temp_path = f.name
-
-                page.download_file(temp_path)
-                show_message("پیش‌فاکتور و پلان چیدمان با موفقیت صادر شد", "green")
-
-            except Exception as ex:
-                show_message(f"خطا در پردازش: {ex}", "red")
+        def method1_upload(e):
+            show_message("در نسخه کامل: امکان آپلود فایل DWG/DXF فعال خواهد شد", "blue")
+            # بعداً: file_picker + main.py
 
         def method2_manual(e):
             show_message("ورود دستی ابعاد اتاق‌ها (در حال توسعه)", "blue")
@@ -62,6 +35,7 @@ def main(page: ft.Page):
 
         return ft.Container(
             content=ft.Column([
+                # هدر
                 ft.Container(
                     content=ft.Row([
                         ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
@@ -79,25 +53,27 @@ def main(page: ft.Page):
                 # روش 1
                 ft.Container(
                     content=ft.ElevatedButton(
-                        content=ft.Row([ft.Icon(ft.Icons.UPLOAD_FILE, color="white"), 
-                                      ft.Text("📂 آپلود فایل DWG / DXF", weight="bold")], 
-                                      alignment=ft.MainAxisAlignment.CENTER),
+                        content=ft.Row([
+                            ft.Icon(ft.Icons.UPLOAD_FILE, color="white"),
+                            ft.Text("📂 آپلود فایل DWG / DXF", size=16, weight="bold")
+                        ], alignment=ft.MainAxisAlignment.CENTER),
                         width=360,
                         height=75,
                         bgcolor="#1565C0",
                         color="white",
-                        on_click=lambda e: file_picker.pick_files(allow_multiple=False, allowed_extensions=["dwg", "dxf"]),
+                        on_click=method1_upload,
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     ),
-                    margin=ft.margin.Margin(bottom=12)   # اصلاح شده
+                    margin=ft.margin.Margin(bottom=12)
                 ),
 
                 # روش 2
                 ft.Container(
                     content=ft.ElevatedButton(
-                        content=ft.Row([ft.Icon(ft.Icons.EDIT_NOTE, color="white"), 
-                                      ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", weight="bold")], 
-                                      alignment=ft.MainAxisAlignment.CENTER),
+                        content=ft.Row([
+                            ft.Icon(ft.Icons.EDIT_NOTE, color="white"),
+                            ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", size=16, weight="bold")
+                        ], alignment=ft.MainAxisAlignment.CENTER),
                         width=360,
                         height=75,
                         bgcolor="#1565C0",
@@ -105,15 +81,16 @@ def main(page: ft.Page):
                         on_click=method2_manual,
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     ),
-                    margin=ft.margin.Margin(bottom=12)   # اصلاح شده
+                    margin=ft.margin.Margin(bottom=12)
                 ),
 
                 # روش 3
                 ft.Container(
                     content=ft.ElevatedButton(
-                        content=ft.Row([ft.Icon(ft.Icons.CALCULATOR, color="white"), 
-                                      ft.Text("✍️ مقادیر مستقیم (متراژ)", weight="bold")], 
-                                      alignment=ft.MainAxisAlignment.CENTER),
+                        content=ft.Row([
+                            ft.Icon(ft.Icons.CALCULATOR, color="white"),
+                            ft.Text("✍️ مقادیر مستقیم (متراژ)", size=16, weight="bold")
+                        ], alignment=ft.MainAxisAlignment.CENTER),
                         width=360,
                         height=75,
                         bgcolor="#1565C0",
@@ -124,7 +101,8 @@ def main(page: ft.Page):
                 ),
 
                 ft.Divider(height=30),
-                ft.Text("هسته main.py و Financial.py متصل شد", size=13, color="grey", text_align=ft.TextAlign.CENTER)
+                ft.Text("هسته main.py و Financial.py آماده اتصال است", 
+                       size=13, color="grey", text_align=ft.TextAlign.CENTER)
             ], scroll=ft.ScrollMode.AUTO, spacing=12, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400,
             expand=True,
