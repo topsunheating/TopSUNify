@@ -90,6 +90,7 @@ def main(page: ft.Page):
                 radiator_orientation.value = "-"
             else:
                 radiator_orientation.disabled = False
+                radiator_orientation.value = "افقی"
                 
             radiator_orientation.update()
         
