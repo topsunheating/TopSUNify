@@ -87,7 +87,7 @@ def main(page: ft.Page):
             ]
             if radiator_size.value in square_sizes:
                 radiator_orientation.disabled = True
-                radiator_orientation.value = "-"
+                
             else:
                 radiator_orientation.disabled = False
                 radiator_orientation.value = "افقی"
