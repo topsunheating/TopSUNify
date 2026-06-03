@@ -25,48 +25,16 @@ def main(page: ft.Page):
         page.update()
         show_message(f"تم تغییر کرد به: {page.theme_mode}", "blue")
 
-        # ==================== صفحه گرمایش از کف ====================
+    # ==================== صفحه گرمایش از کف ====================
     def floor_heating_page():
-        # ایجاد FilePicker
-        file_picker = ft.FilePicker()
-        page.overlay.append(file_picker)
-
-        def on_file_picked(e):
-            if e.files:
-                file = e.files[0]
-                show_message(f"فایل {file.name} انتخاب شد. در حال پردازش...", "blue")
-                # بعداً هسته main.py فراخوانی می‌شود
-                process_uploaded_file(file)
-
-        # تنظیم رویداد بعد از ایجاد
-        file_picker.on_result = on_file_picked
-
-        def process_uploaded_file(file):
-            try:
-                show_message("در حال تحلیل فایل توسط هسته main.py...", "blue")
-                # اینجا فایل main.py و Financial.py فراخوانی می‌شود (بعداً کامل می‌کنیم)
-                from main import generate_layout_plan
-                from Financial import calculate_tosunify_proforma, generate_proforma_pdf
-
-                res = calculate_tosunify_proforma(45.5, 8.2, 12, 5, 9, 3)
-                pdf_bytes = generate_proforma_pdf(res, 45.5, 8.2, 65, 3, 1, page.session.username)
-
-                import tempfile
-                with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
-                    f.write(pdf_bytes)
-                    temp_path = f.name
-
-                page.download_file(temp_path)
-                show_message("پیش‌فاکتور و پلان چیدمان صادر شد", "green")
-
-            except Exception as ex:
-                show_message(f"خطا در پردازش: {ex}", "red")
+        def method1_upload(e):
+            show_message("📂 آپلود فایل DWG/DXF\n(در نسخه کامل: فایل آپلود و تحلیل می‌شود)", "blue")
 
         def method2_manual(e):
-            show_message("ورود دستی ابعاد اتاق‌ها (در حال توسعه)", "blue")
+            show_message("⌨️ ورود دستی ابعاد اتاق‌ها\n(در نسخه کامل: فرم ابعاد فعال می‌شود)", "blue")
 
         def method3_direct(e):
-            show_message("روش مقادیر مستقیم (در حال توسعه)", "blue")
+            show_message("✍️ روش مقادیر مستقیم\n(در نسخه کامل: پیش‌فاکتور مستقیم صادر می‌شود)", "blue")
 
         return ft.Container(
             content=ft.Column([
@@ -85,7 +53,7 @@ def main(page: ft.Page):
                        size=18, weight="bold", text_align=ft.TextAlign.CENTER),
                 ft.Divider(height=25),
 
-                # روش 1 - آپلود فایل
+                # روش 1
                 ft.Container(
                     content=ft.ElevatedButton(
                         content=ft.Row([
@@ -96,7 +64,7 @@ def main(page: ft.Page):
                         height=75,
                         bgcolor="#1565C0",
                         color="white",
-                        on_click=lambda e: file_picker.pick_files(allow_multiple=False, allowed_extensions=["dwg", "dxf"]),
+                        on_click=method1_upload,
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     ),
                     margin=ft.margin.Margin(bottom=12)
@@ -123,7 +91,7 @@ def main(page: ft.Page):
                 ft.Container(
                     content=ft.ElevatedButton(
                         content=ft.Row([
-                            ft.Icon(ft.Icons.CALCULATE, color="white"),
+                            ft.Icon(ft.Icons.CALCULATOR, color="white"),
                             ft.Text("✍️ مقادیر مستقیم (متراژ)", size=16, weight="bold")
                         ], alignment=ft.MainAxisAlignment.CENTER),
                         width=360,
@@ -136,7 +104,8 @@ def main(page: ft.Page):
                 ),
 
                 ft.Divider(height=30),
-                ft.Text("هسته main.py و Financial.py آماده اتصال است", size=13, color="grey", text_align=ft.TextAlign.CENTER)
+                ft.Text("هسته main.py و Financial.py آماده اتصال کامل است", 
+                       size=13, color="grey", text_align=ft.TextAlign.CENTER)
             ], scroll=ft.ScrollMode.AUTO, spacing=12, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400,
             expand=True,
