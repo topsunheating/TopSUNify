@@ -25,63 +25,7 @@ def main(page: ft.Page):
         page.theme_mode = "dark" if page.theme_mode == "light" else "light"
         page.update()
 
-    # ==================== صفحه گرمایش از کف (سه روش) ====================
-    def floor_heating_page():
-        tabs = ft.Tabs(
-            selected_index=0,
-            tabs=[
-                ft.Tab(
-                    label="📂 آپلود فایل DWG/DXF",   # ← اینجا label به جای text
-                    content=ft.Column([
-                        ft.Text("فایل نقشه اتوکد را آپلود کنید", size=18, weight="bold"),
-                        ft.Text("در نسخه کامل: آپلود فایل → تحلیل خودکار → صدور پیش‌فاکتور و پلان", size=15),
-                        ft.ElevatedButton("شبیه‌سازی آپلود و پردازش", bgcolor="#1565C0", color="white", width=350, on_click=lambda e: show_message("فایل پردازش شد - پیش‌فاکتور آماده است", "green"))
-                    ], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=15)
-                ),
-                ft.Tab(
-                    label="⌨️ ورود دستی ابعاد",   # ← label
-                    content=ft.Column([
-                        ft.Text("ابعاد فضاها را وارد کنید", size=18, weight="bold"),
-                        ft.TextField(label="نام فضا", width=350),
-                        ft.Row([ft.TextField(label="عرض (متر)", width=170), ft.TextField(label="طول (متر)", width=170)]),
-                        ft.ElevatedButton("اضافه کردن اتاق", bgcolor="#1565C0", color="white", width=350),
-                        ft.Divider(),
-                        ft.Text("لیست اتاق‌ها (در نسخه کامل)", size=16, weight="bold"),
-                    ], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=15)
-                ),
-                ft.Tab(
-                    label="✍️ مقادیر مستقیم",   # ← label
-                    content=ft.Column([
-                        ft.Text("مقادیر را مستقیم وارد کنید", size=18, weight="bold"),
-                        ft.TextField(label="فیلم عرض ۸۰ متر", width=350),
-                        ft.TextField(label="فیلم عرض ۴۰ متر", width=350),
-                        ft.TextField(label="عایق (مترمربع)", width=350),
-                        ft.TextField(label="تعداد ترموستات", width=350),
-                        ft.TextField(label="تعداد تابلو فرمان", width=350),
-                        ft.ElevatedButton("صدور پیش‌فاکتور", bgcolor="#1565C0", color="white", width=350, on_click=lambda e: show_message("پیش‌فاکتور صادر شد", "green"))
-                    ], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=15)
-                ),
-            ],
-            expand=1
-        )
-
-        return ft.Container(
-            content=ft.Column([
-                ft.Container(
-                    content=ft.Row([
-                        ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
-                        ft.Text("گرمایش از کف (سیستم هوشمند)", size=20, weight="bold")
-                    ]),
-                    padding=10
-                ),
-                tabs
-            ], scroll=ft.ScrollMode.AUTO),
-            width=400,
-            expand=True,
-            padding=15
-        )
-
-    # ==================== صفحات اضافی (کاملاً از کد شما) ====================
+    # ==================== صفحات اضافی (همه قبل از render) ====================
     def account_request_page():
         return ft.Container(
             content=ft.Column([
@@ -152,10 +96,192 @@ def main(page: ft.Page):
             width=400, expand=True, padding=15
         )
 
-    # بقیه صفحات (selected_customers_page, colleagues_page, purchase_request_page, commission_page, credit_page, theme_page, update_page, network_page, rules_page, about_page) دقیقاً همان کد شما هستند. برای کوتاه شدن اینجا تکرار نشدند ولی در کد نهایی وجود دارند.
+    def selected_customers_page():
+        return ft.Container(
+            content=ft.Column([
+                ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("مشتریان منتخب", size=20, weight="bold")]), padding=10),
+                ft.DataTable(
+                    columns=[ft.DataColumn(ft.Text("کد")), ft.DataColumn(ft.Text("نام")), ft.DataColumn(ft.Text("شماره تماس")), ft.DataColumn(ft.Text("شهر"))],
+                    rows=[
+                        ft.DataRow(cells=[ft.DataCell(ft.Text("C1001")), ft.DataCell(ft.Text("شرکت آریا تهویه")), ft.DataCell(ft.Text("09123456789")), ft.DataCell(ft.Text("تهران"))]),
+                        ft.DataRow(cells=[ft.DataCell(ft.Text("C1002")), ft.DataCell(ft.Text("مهندس رضایی")), ft.DataCell(ft.Text("09129876543")), ft.DataCell(ft.Text("اصفهان"))])
+                    ]
+                )
+            ], scroll=ft.ScrollMode.AUTO),
+            width=400, expand=True, padding=15
+        )
 
+    def colleagues_page():
+        all_colleagues = [
+            {"code": "101", "name": "علی علوی", "company": "شرکت آلفا", "phone": "09120000000", "city": "تهران"},
+            {"code": "102", "name": "رضا رضایی", "company": "تکنو صنعت", "phone": "09130000000", "city": "اصفهان"}
+        ]
+        table = ft.DataTable(
+            columns=[ft.DataColumn(ft.Text("کد")), ft.DataColumn(ft.Text("نام")), ft.DataColumn(ft.Text("مجموعه")), ft.DataColumn(ft.Text("تماس")), ft.DataColumn(ft.Text("شهر"))],
+            rows=[ft.DataRow(cells=[ft.DataCell(ft.Text(c["code"])), ft.DataCell(ft.Text(c["name"])), ft.DataCell(ft.Text(c["company"])), ft.DataCell(ft.Text(c["phone"])), ft.DataCell(ft.Text(c["city"]))]) for c in all_colleagues]
+        )
+        return ft.Container(
+            content=ft.Column([
+                ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("همکاران منتخب", size=20, weight="bold")]), padding=10),
+                table
+            ], scroll=ft.ScrollMode.AUTO),
+            width=400, expand=True, padding=15
+        )
+
+    def purchase_request_page():
+        product_data = {
+            "گرمایش از کف": ["طول 1 متر", "طول 2 متر", "طول 3 متر"],
+            "رادیاتور": ["50×50", "50×90", "60×60", "90×150", "90×200"],
+            "حوله خشک کن": ["60×40", "80×50", "100×60"],
+            "گرمکن مخزن": ["100 لیتری", "200 لیتری", "500 لیتری"],
+            "عایق بازتابشی": ["3 مترمربع", "6 مترمربع", "10 مترمربع"]
+        }
+        product_name = ft.Dropdown(label="نام محصول", width=350, options=[ft.dropdown.Option(k) for k in product_data.keys()])
+        product_size = ft.Dropdown(label="ابعاد / مشخصات", width=350, options=[])
+        product_qty = ft.TextField(label="تعداد", width=100, keyboard_type=ft.KeyboardType.NUMBER)
+        table = ft.DataTable(columns=[ft.DataColumn(ft.Text("نام محصول")), ft.DataColumn(ft.Text("ابعاد")), ft.DataColumn(ft.Text("تعداد")), ft.DataColumn(ft.Text("حذف"))], rows=[])
+
+        def load_sizes(e):
+            if product_name.value:
+                selected = product_name.value
+                product_size.options = [ft.dropdown.Option(item) for item in product_data.get(selected, [])]
+                product_size.value = None
+                page.update()
+
+        def add_to_table(e):
+            if not product_name.value or not product_size.value or not product_qty.value:
+                show_message("لطفاً همه فیلدها را پر کنید", "red")
+                return
+            new_row = ft.DataRow(cells=[
+                ft.DataCell(ft.Text(product_name.value)),
+                ft.DataCell(ft.Text(product_size.value)),
+                ft.DataCell(ft.Text(product_qty.value)),
+                ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color="red", on_click=lambda _: (table.rows.remove(new_row), page.update())))
+            ])
+            table.rows.append(new_row)
+            product_qty.value = ""
+            page.update()
+
+        def generate_purchase_pdf(e):
+            if not table.rows:
+                show_message("ابتدا حداقل یک درخواست اضافه کنید", "red")
+                return
+            show_message("PDF درخواست خرید تولید و آماده دانلود شد", "green")
+            page.update()
+
+        return ft.Container(
+            content=ft.Column([
+                ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("ثبت درخواست خرید", size=20, weight="bold")]), padding=10),
+                product_name,
+                ft.ElevatedButton("بارگذاری ابعاد", on_click=load_sizes, bgcolor="#1565C0", color="white", width=350),
+                product_size,
+                product_qty,
+                ft.ElevatedButton("افزودن به لیست", on_click=add_to_table, bgcolor="green", color="white", width=350),
+                ft.Divider(),
+                table,
+                ft.ElevatedButton("ثبت نهایی درخواست خرید و دانلود PDF", on_click=generate_purchase_pdf, bgcolor="#1565C0", color="white", width=350, icon=ft.Icons.DOWNLOAD)
+            ], scroll=ft.ScrollMode.AUTO, spacing=15),
+            width=400, expand=True, padding=15
+        )
+
+    def commission_page():
+        return ft.Container(
+            content=ft.Column([
+                ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("محاسبه درصد همکاری", size=20, weight="bold")]), padding=10),
+                ft.Text("فاکتورهای تسویه شده این ماه: ۴۸,۵۰۰,۰۰۰ تومان", size=16),
+                ft.Text("درصد همکاری شما: ۱۲٪", size=22, weight="bold", color="blue"),
+                ft.Text("مبلغ قابل تسویه: ۵,۸۲۰,۰۰۰ تومان", size=18, weight="bold", color="green"),
+                ft.ElevatedButton("درخواست تسویه حساب", bgcolor="#1565C0", color="white", width=350, on_click=lambda e: show_message("درخواست تسویه ارسال شد", "green"))
+            ], scroll=ft.ScrollMode.AUTO, spacing=25, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            width=400, expand=True, padding=15
+        )
+
+    def credit_page():
+        return ft.Container(
+            content=ft.Column([
+                ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("مبلغ اعتبار", size=20, weight="bold")]), padding=10),
+                ft.Text("اعتبار فعلی شما: ۱۲۰,۰۰۰,۰۰۰ تومان", size=18, weight="bold", color="green"),
+                ft.TextField(label="مبلغ درخواستی افزایش اعتبار", width=350),
+                ft.Dropdown(label="نوع تضمین", width=350, options=[ft.dropdown.Option("چک"), ft.dropdown.Option("سفته"), ft.dropdown.Option("واریز نقدی")]),
+                ft.ElevatedButton("ارسال درخواست افزایش اعتبار", bgcolor="#1565C0", color="white", width=350, on_click=lambda e: show_message("درخواست افزایش اعتبار ارسال شد", "green"))
+            ], scroll=ft.ScrollMode.AUTO, spacing=20, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            width=400, expand=True, padding=15
+        )
+
+    def theme_page():
+        return ft.Container(
+            content=ft.Column([
+                ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("نمایش (تم)", size=20, weight="bold")]), padding=10),
+                ft.ListTile(leading=ft.Icon(ft.Icons.LIGHT_MODE), title=ft.Text("تم روشن"), on_click=lambda e: (setattr(page, 'theme_mode', 'light'), page.update(), show_message("تم روشن فعال شد", "blue"))),
+                ft.ListTile(leading=ft.Icon(ft.Icons.DARK_MODE), title=ft.Text("تم تیره"), on_click=lambda e: (setattr(page, 'theme_mode', 'dark'), page.update(), show_message("تم تیره فعال شد", "blue")))
+            ], scroll=ft.ScrollMode.AUTO, spacing=10),
+            width=400, expand=True, padding=15
+        )
+
+    def update_page():
+        return ft.Container(
+            content=ft.Column([
+                ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("بروزرسانی", size=20, weight="bold")]), padding=10),
+                ft.Text("نسخه فعلی: ۱.۴.۳", size=17, weight="bold"),
+                ft.Divider(),
+                ft.Text("نسخه ۱.۴.۵ - ۱۴۰۴/۰۳/۱۰", size=16, weight="bold"),
+                ft.Text("• بهبود سرعت بارگذاری\n• رفع باگ PDF\n• اضافه شدن صفحه درصد همکاری", size=15),
+                ft.Divider(),
+                ft.Text("نسخه ۱.۴.۴ - ۱۴۰۴/۰۲/۲۵", size=16, weight="bold"),
+                ft.Text("• بهینه‌سازی تم تیره", size=15),
+                ft.ElevatedButton("شما آخرین نسخه را دارید", bgcolor="green", color="white", width=350, on_click=lambda e: show_message("شما آخرین نسخه را نصب دارید", "green"))
+            ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            width=400, expand=True, padding=15
+        )
+
+    def network_page():
+        return ft.Container(
+            content=ft.Column([
+                ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("شبکه فروش و خدمات", size=20, weight="bold")]), padding=10),
+                ft.Text("نقشه شبکه فروش و خدمات همکاران\n\n(در نسخه کامل نقشه تعاملی نمایش داده خواهد شد)", size=16, text_align=ft.TextAlign.CENTER)
+            ], scroll=ft.ScrollMode.AUTO, spacing=20, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            width=400, expand=True, padding=15
+        )
+
+    def rules_page():
+        return ft.Container(
+            content=ft.Column([
+                ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("قوانین همکاری", size=20, weight="bold")]), padding=10),
+                ft.Text("متن کامل قوانین و شرایط همکاری\n\nدر نسخه کامل اینجا قرار خواهد گرفت.", size=16, text_align=ft.TextAlign.CENTER)
+            ], scroll=ft.ScrollMode.AUTO, spacing=20, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            width=400, expand=True, padding=15
+        )
+
+    def about_page():
+        return ft.Container(
+            content=ft.Column([
+                ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("درباره ما", size=20, weight="bold")]), padding=10),
+                ft.Text("شرکت تاپسان\nتولیدکننده سیستم‌های گرمایشی پیشرفته\n\nنسخه اپلیکیشن: ۱.۴.۳", size=16, text_align=ft.TextAlign.CENTER)
+            ], scroll=ft.ScrollMode.AUTO, spacing=20, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            width=400, expand=True, padding=15
+        )
+
+    # ==================== صفحه گرمایش از کف ====================
+    def floor_heating_page():
+        tabs = ft.Tabs(
+            selected_index=0,
+            tabs=[
+                ft.Tab(label="📂 آپلود فایل DWG/DXF", content=ft.Column([ft.Text("فایل نقشه اتوکد را آپلود کنید", size=18, weight="bold"), ft.ElevatedButton("شبیه‌سازی پردازش", bgcolor="#1565C0", color="white", width=350, on_click=lambda e: show_message("فایل پردازش شد", "green"))], horizontal_alignment=ft.CrossAxisAlignment.CENTER)),
+                ft.Tab(label="⌨️ ورود دستی ابعاد", content=ft.Column([ft.Text("ابعاد اتاق‌ها را وارد کنید", size=18, weight="bold")], horizontal_alignment=ft.CrossAxisAlignment.CENTER)),
+                ft.Tab(label="✍️ مقادیر مستقیم", content=ft.Column([ft.Text("مقادیر را مستقیم وارد کنید", size=18, weight="bold"), ft.ElevatedButton("صدور پیش‌فاکتور", bgcolor="#1565C0", color="white", width=350, on_click=lambda e: show_message("پیش‌فاکتور صادر شد", "green"))], horizontal_alignment=ft.CrossAxisAlignment.CENTER)),
+            ],
+            expand=1
+        )
+        return ft.Container(
+            content=ft.Column([
+                ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(1)), ft.Text("گرمایش از کف", size=20, weight="bold")]), padding=10),
+                tabs
+            ], scroll=ft.ScrollMode.AUTO),
+            width=400, expand=True, padding=15
+        )
+
+    # ==================== صفحه پروفایل ====================
     def profile_page():
-        # کد کامل پروفایل شما (بدون تغییر)
         return ft.Container(
             content=ft.Column([
                 ft.Container(content=ft.Column([ft.CircleAvatar(foreground_image_src="https://i.pravatar.cc/150?u=reza", radius=48), ft.Text("نام و نام خانوادگی | نام کاربری", size=20, weight="bold", text_align=ft.TextAlign.CENTER), ft.Text("شماره موبایل", size=16, color="grey", text_align=ft.TextAlign.CENTER), ft.Container(content=ft.Text(f"سطح دسترسی: {page.session.user_role}", size=15, color="blue", text_align=ft.TextAlign.CENTER), bgcolor="#f0f0f0", padding=12, border_radius=12, margin=ft.margin.Margin(top=12, bottom=8))], horizontal_alignment=ft.CrossAxisAlignment.CENTER), padding=20, bgcolor="#f8f9fa", border_radius=20, margin=ft.margin.Margin(bottom=20), width=380),
@@ -186,7 +312,6 @@ def main(page: ft.Page):
     def render(tab_index=0):
         page.controls.clear()
         if not page.session.logged_in:
-            # صفحه لاگین شما (بدون تغییر)
             page.add(
                 ft.Container(
                     content=ft.Column([
@@ -233,7 +358,7 @@ def main(page: ft.Page):
 
     # ==================== صفحات اصلی ====================
     def dashboard_page():
-        # کد کامل شما (بدون تغییر)
+        # کد شما بدون تغییر
         selected_ref = ft.Ref[ft.Container]()
         def select_period(e, year, month_num):
             if selected_ref.current:
@@ -260,7 +385,6 @@ def main(page: ft.Page):
         return ft.Container(content=ft.Column([ft.Container(content=ft.Dropdown(value="رضا تلچی", options=[ft.dropdown.Option("رضا تلچی"), ft.dropdown.Option("زیرمجموعه فروش")], width=320, border_radius=30, bgcolor="white"), margin=ft.margin.Margin(bottom=15)), ft.Text("انتخاب بازه زمانی", size=17, weight="bold", text_align=ft.TextAlign.CENTER), period_buttons, ft.Divider(height=10), view_button, ft.Divider(height=20), ft.Text("گزارش‌های مالی و عملیاتی", size=18, weight="bold", text_align=ft.TextAlign.CENTER), report_cards], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=15), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
 
     def pre_invoice_page():
-        # کد شما
         products = ["گرمایش از کف", "زیرفرشی", "رادیاتور", "حوله خشک کن", "یخ زدایی رمپ", "یخ زدایی پله", "گرمکن مخزن", "گرمکن صندلی", "رستورانی", "عایق بازتابشی"]
         grid = ft.GridView(runs_count=2, max_extent=120, spacing=10, run_spacing=12, padding=10, expand=True)
         for name in products:
