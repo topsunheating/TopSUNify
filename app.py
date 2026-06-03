@@ -26,37 +26,16 @@ def main(page: ft.Page):
         show_message(f"تم تغییر کرد به: {page.theme_mode}", "blue")
 
     # ==================== صفحه گرمایش از کف ====================
-    def floor_heating_page():
-        file_picker = ft.FilePicker()
+def floor_heating_page():
+        # 1. تعریف FilePicker و اضافه کردن به Overlay
+        file_picker = ft.FilePicker(on_result=lambda e: print("فایل انتخاب شد:", e.files))
         page.overlay.append(file_picker)
+        page.update()
 
-        def on_file_picked(e):
-            if e.files:
-                file = e.files[0]
-                show_message(f"فایل {file.name} در حال پردازش...", "blue")
-                process_uploaded_file(file)
-
-        file_picker.on_result = on_file_picked
-
-        def process_uploaded_file(file):
-            try:
-                from main import generate_layout_plan
-                from Financial import calculate_tosunify_proforma, generate_proforma_pdf
-
-                # مثال (بعداً مقادیر واقعی از main.py گرفته می‌شود)
-                res = calculate_tosunify_proforma(45.5, 8.2, 12, 5, 9, 3)
-                pdf_bytes = generate_proforma_pdf(res, 45.5, 8.2, 65, 3, 1, page.session.username, 1001)
-
-                import tempfile
-                with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
-                    f.write(pdf_bytes)
-                    temp_path = f.name
-
-                page.download_file(temp_path)
-                show_message("پیش‌فاکتور و پلان چیدمان با موفقیت صادر شد", "green")
-
-            except Exception as ex:
-                show_message(f"خطا در پردازش: {ex}", "red")
+        # توابع متدها
+        def method1_upload(e):
+            # باز کردن دیالوگ انتخاب فایل
+            file_picker.pick_files(allow_multiple=False, allowed_extensions=["dwg", "dxf"])
 
         def method2_manual(e):
             show_message("ورود دستی ابعاد اتاق‌ها (در حال توسعه)", "blue")
@@ -64,8 +43,10 @@ def main(page: ft.Page):
         def method3_direct(e):
             show_message("روش مقادیر مستقیم (در حال توسعه)", "blue")
 
+        # رابط کاربری
         return ft.Container(
             content=ft.Column([
+                # هدر
                 ft.Container(
                     content=ft.Row([
                         ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
@@ -75,64 +56,33 @@ def main(page: ft.Page):
                     bgcolor="#f8f9fa",
                     border_radius=12
                 ),
-
-                ft.Text("روش صدور پیش‌فاکتور را انتخاب کنید", 
-                       size=18, weight="bold", text_align=ft.TextAlign.CENTER),
+                
+                ft.Text("روش صدور پیش‌فاکتور را انتخاب کنید", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
                 ft.Divider(height=25),
 
-                # روش 1
-                ft.Container(
-                    content=ft.ElevatedButton(
-                        content=ft.Row([ft.Icon(ft.Icons.UPLOAD_FILE, color="white"), 
-                                      ft.Text("📂 آپلود فایل DWG / DXF", weight="bold")], 
-                                      alignment=ft.MainAxisAlignment.CENTER),
-                        width=360,
-                        height=75,
-                        bgcolor="#1565C0",
-                        color="white",
-                        on_click=lambda e: file_picker.pick_files(allow_multiple=False, allowed_extensions=["dwg", "dxf"]),
-                        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
-                    ),
-                    margin=ft.margin.Margin(bottom=12)   # اصلاح شده
+                # دکمه‌ها
+                ft.ElevatedButton(
+                    content=ft.Row([ft.Icon(ft.Icons.UPLOAD_FILE), ft.Text("📂 آپلود فایل DWG / DXF")], alignment=ft.MainAxisAlignment.CENTER),
+                    width=360, height=75, bgcolor="#1565C0", color="white",
+                    on_click=method1_upload,
+                    style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
+                ),
+                
+                ft.ElevatedButton(
+                    content=ft.Row([ft.Icon(ft.Icons.EDIT_NOTE), ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها")], alignment=ft.MainAxisAlignment.CENTER),
+                    width=360, height=75, bgcolor="#1565C0", color="white",
+                    on_click=method2_manual,
+                    style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                 ),
 
-                # روش 2
-                ft.Container(
-                    content=ft.ElevatedButton(
-                        content=ft.Row([ft.Icon(ft.Icons.EDIT_NOTE, color="white"), 
-                                      ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", weight="bold")], 
-                                      alignment=ft.MainAxisAlignment.CENTER),
-                        width=360,
-                        height=75,
-                        bgcolor="#1565C0",
-                        color="white",
-                        on_click=method2_manual,
-                        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
-                    ),
-                    margin=ft.margin.Margin(bottom=12)   # اصلاح شده
+                ft.ElevatedButton(
+                    content=ft.Row([ft.Icon(ft.Icons.CALCULATE), ft.Text("✍️ مقادیر مستقیم (متراژ)")], alignment=ft.MainAxisAlignment.CENTER),
+                    width=360, height=75, bgcolor="#1565C0", color="white",
+                    on_click=method3_direct,
+                    style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                 ),
-
-                # روش 3
-                ft.Container(
-                    content=ft.ElevatedButton(
-                        content=ft.Row([ft.Icon(ft.Icons.CALCULATOR, color="white"), 
-                                      ft.Text("✍️ مقادیر مستقیم (متراژ)", weight="bold")], 
-                                      alignment=ft.MainAxisAlignment.CENTER),
-                        width=360,
-                        height=75,
-                        bgcolor="#1565C0",
-                        color="white",
-                        on_click=method3_direct,
-                        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
-                    )
-                ),
-
-                ft.Divider(height=30),
-                ft.Text("هسته main.py و Financial.py متصل شد", size=13, color="grey", text_align=ft.TextAlign.CENTER)
             ], scroll=ft.ScrollMode.AUTO, spacing=12, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-            width=400,
-            expand=True,
-            padding=15
+            width=400, expand=True, padding=15
         )
     # ==================== صفحات اضافی ====================
     def account_request_page():
