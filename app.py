@@ -449,8 +449,8 @@ def main(page: ft.Page):
                         text_align=ft.TextAlign.CENTER,
                         color="#1565C0"
                     ),
-                    width=170,
-                    height=70,
+                    width=150,
+                    height=80,
                     bgcolor="#ffffff",
                     border_radius=12,
                     alignment=ft.Alignment(0, 0),
