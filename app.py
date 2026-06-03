@@ -132,13 +132,25 @@ def main(page: ft.Page):
         for name, action in products:
             grid.controls.append(
                 ft.Container(
-                    content=ft.Column([
-                        ft.Icon(ft.Icons.FLOORING if name == "گرمایش از کف" else ft.Icons.OTHER_HOUSES, size=48, color="#1565C0"),
-                        ft.Text(name, size=16, weight="bold", text_align=ft.TextAlign.CENTER)
-                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=8),
-                    width=170, height=110, bgcolor="#ffffff", border_radius=12,
-                    alignment=ft.Alignment(0, 0), shadow=ft.BoxShadow(blur_radius=8, color="#e0e0e0"),
-                    on_click=action, ink=True
+                    content=ft.Column(
+                        [
+                            ft.Text(
+                                name,
+                                size=16,
+                                weight="bold",
+                                text_align=ft.TextAlign.CENTER
+                            )
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                    ),
+                    width=170, height=110, bgcolor="#ffffff", border_radius=12, alignment=ft.Alignment(0, 0),
+                    shadow=ft.BoxShadow(
+                        blur_radius=8,
+                        color="#e0e0e0"
+                    ),
+                    on_click=action,
+                    ink=True
                 )
             )
 
