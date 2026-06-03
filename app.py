@@ -1,32 +1,3 @@
-import flet as ft
-import os
-import main
-import Financial
-
-def main(page: ft.Page):
-    page.fonts = {"iranyekan": "fonts/iranyekan.ttf"}
-    page.theme = ft.Theme(font_family="iranyekan")
-    page.padding = 0
-    page.rtl = True
-    page.theme_mode = "light"
-    page.bgcolor = "#f5f5f5"
-
-    if not hasattr(page.session, "logged_in"):
-        page.session.logged_in = False
-        page.session.user_role = "عمومی"
-        page.session.username = "رضا تلچی"
-
-    def show_message(text: str, color="green"):
-        snack = ft.SnackBar(content=ft.Text(text), bgcolor=color, action="بستن", duration=3000)
-        page.snack_bar = snack
-        snack.open = True
-        page.update()
-
-    def toggle_theme(e):
-        page.theme_mode = "dark" if page.theme_mode == "light" else "light"
-        page.update()
-        show_message(f"تم تغییر کرد به: {page.theme_mode}", "blue")
-
     # ==================== صفحه گرمایش از کف ====================
     def floor_heating_page():
         file_picker = ft.FilePicker()
@@ -35,21 +6,25 @@ def main(page: ft.Page):
         def on_file_picked(e):
             if e.files:
                 file = e.files[0]
-                show_message(f"فایل {file.name} در حال پردازش توسط هسته main.py...", "blue")
+                show_message(f"فایل {file.name} در حال پردازش...", "blue")
                 process_dwg_file(file)
 
         file_picker.on_result = on_file_picked
 
         def process_dwg_file(file):
             try:
-                # 1. فراخوانی هسته main.py برای تحلیل فایل و تولید پلان
+                # فقط توابع مورد نیاز را ایمپورت می‌کنیم
                 from main import generate_layout_plan
-                layout_pdf_bytes = generate_layout_plan(file.path if hasattr(file, 'path') else file.name)
-
-                # 2. فراخوانی هسته Financial.py برای صدور پیش‌فاکتور
                 from Financial import calculate_tosunify_proforma, generate_proforma_pdf
 
-                # مثال (بعداً مقادیر واقعی از خروجی main.py گرفته می‌شود)
+                show_message("در حال تحلیل فایل توسط هسته main.py...", "blue")
+
+                # تولید پلان چیدمان
+                layout_pdf_bytes = generate_layout_plan(
+                    file.path if hasattr(file, 'path') else file.name
+                )
+
+                # محاسبات مالی و صدور پیش‌فاکتور
                 res = calculate_tosunify_proforma(
                     width_80_m=45.5,
                     width_40_m=8.2,
@@ -70,17 +45,17 @@ def main(page: ft.Page):
                     doc_number=1001
                 )
 
-                # ذخیره و دانلود
+                # دانلود PDF
                 import tempfile
                 with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
                     f.write(financial_pdf_bytes)
                     temp_path = f.name
 
                 page.download_file(temp_path)
-                show_message("پیش‌فاکتور و پلان چیدمان با موفقیت صادر شد", "green")
+                show_message("✅ پیش‌فاکتور و پلان چیدمان با موفقیت صادر شد", "green")
 
             except Exception as ex:
-                show_message(f"خطا در پردازش: {ex}", "red")
+                show_message(f"❌ خطا در پردازش: {ex}", "red")
 
         def method2_manual(e):
             show_message("ورود دستی ابعاد اتاق‌ها (در حال توسعه)", "blue")
@@ -104,51 +79,36 @@ def main(page: ft.Page):
                        size=18, weight="bold", text_align=ft.TextAlign.CENTER),
                 ft.Divider(height=25),
 
-                # روش 1 - آپلود فایل
                 ft.Container(
                     content=ft.ElevatedButton(
-                        content=ft.Row([
-                            ft.Icon(ft.Icons.UPLOAD_FILE, color="white"),
-                            ft.Text("📂 آپلود فایل DWG / DXF", size=16, weight="bold")
-                        ], alignment=ft.MainAxisAlignment.CENTER),
-                        width=360,
-                        height=75,
-                        bgcolor="#1565C0",
-                        color="white",
+                        content=ft.Row([ft.Icon(ft.Icons.UPLOAD_FILE, color="white"), 
+                                      ft.Text("📂 آپلود فایل DWG / DXF", size=16, weight="bold")], 
+                                      alignment=ft.MainAxisAlignment.CENTER),
+                        width=360, height=75, bgcolor="#1565C0", color="white",
                         on_click=lambda e: file_picker.pick_files(allow_multiple=False, allowed_extensions=["dwg", "dxf"]),
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     ),
                     margin=ft.margin.Margin(bottom=12)
                 ),
 
-                # روش 2 - ابعاد دستی
                 ft.Container(
                     content=ft.ElevatedButton(
-                        content=ft.Row([
-                            ft.Icon(ft.Icons.EDIT_NOTE, color="white"),
-                            ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", size=16, weight="bold")
-                        ], alignment=ft.MainAxisAlignment.CENTER),
-                        width=360,
-                        height=75,
-                        bgcolor="#1565C0",
-                        color="white",
+                        content=ft.Row([ft.Icon(ft.Icons.EDIT_NOTE, color="white"), 
+                                      ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", size=16, weight="bold")], 
+                                      alignment=ft.MainAxisAlignment.CENTER),
+                        width=360, height=75, bgcolor="#1565C0", color="white",
                         on_click=method2_manual,
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     ),
                     margin=ft.margin.Margin(bottom=12)
                 ),
 
-                # روش 3 - مقادیر مستقیم
                 ft.Container(
                     content=ft.ElevatedButton(
-                        content=ft.Row([
-                            ft.Icon(ft.Icons.CALCULATOR, color="white"),
-                            ft.Text("✍️ مقادیر مستقیم (متراژ)", size=16, weight="bold")
-                        ], alignment=ft.MainAxisAlignment.CENTER),
-                        width=360,
-                        height=75,
-                        bgcolor="#1565C0",
-                        color="white",
+                        content=ft.Row([ft.Icon(ft.Icons.CALCULATOR, color="white"), 
+                                      ft.Text("✍️ مقادیر مستقیم (متراژ)", size=16, weight="bold")], 
+                                      alignment=ft.MainAxisAlignment.CENTER),
+                        width=360, height=75, bgcolor="#1565C0", color="white",
                         on_click=method3_direct,
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     )
