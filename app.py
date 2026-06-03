@@ -1,7 +1,5 @@
 import flet as ft
 import os
-import main 
-import Financial
 
 def main_app(page: ft.Page):
     page.fonts = {"iranyekan": "fonts/iranyekan.ttf"}
