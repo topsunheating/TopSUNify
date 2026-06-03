@@ -21,22 +21,18 @@ def main(page: ft.Page):
         snack.open = True
         page.update()
 
-    # ==================== صفحه گرمایش از کف ====================
-    def floor_heating_page():
-        # 1. تعریف FilePicker و اضافه کردن به Overlay
-        file_picker = ft.FilePicker()
-        
-        # اختصاص دادن هندلر به صورت جداگانه (اصلاح خطای پارامتر)
-        file_picker.on_result = lambda e: print("فایل انتخاب شد:", e.files)
-        
-        # اضافه کردن به overlay
-        page.overlay.append(file_picker)
-        page.update()
-
-        # توابع متدها
-        def method1_upload(e):
-            # باز کردن دیالوگ انتخاب فایل
-            file_picker.pick_files(allow_multiple=False, allowed_extensions=["dwg", "dxf"])
+    # این قسمت باید در سطح تابع اصلی (main_app) باشد، نه داخل floor_heating_page
+file_picker = ft.FilePicker()
+file_picker.on_result = lambda e: print("فایل انتخاب شد:", e.files)
+page.overlay.append(file_picker) 
+# ==================== صفحه گرمایش از کف ====================
+def floor_heating_page():
+    # حالا در این تابع فقط از همان file_picker قبلی استفاده کنید
+    def method1_upload(e):
+        # چون file_picker در scope بالاتر تعریف شده، اینجا در دسترس است
+        file_picker.pick_files(allow_multiple=False, allowed_extensions=["dwg", "dxf"])
+    
+    # ... بقیه کدهای UI
 
         def method2_manual(e):
             show_message("ورود دستی ابعاد اتاق‌ها (در حال توسعه)", "blue")
