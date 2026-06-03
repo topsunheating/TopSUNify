@@ -458,7 +458,7 @@ def main(page: ft.Page):
                         blur_radius=6,
                         color="#e0e0e0"
                     ),
-                    on_click=action,
+                    on_click=lambda,
                     ink=True
                 )
             )
