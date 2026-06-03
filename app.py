@@ -432,7 +432,7 @@ def main(page: ft.Page):
             ("عایق بازتابشی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
         ]
         grid = ft.GridView(
-            expand=True
+            expand=True,
             runs_count=2,
             spacing=12,
             run_spacing=12,
@@ -453,7 +453,7 @@ def main(page: ft.Page):
                     bgcolor="#ffffff",
                     border_radius=12,
                     height=70,
-                    ink=True
+                    ink=True,
                     shadow=ft.BoxShadow(blur_radius=6, color="#e0e0e0")                    
                 )
             )
