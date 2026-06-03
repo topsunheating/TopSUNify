@@ -128,7 +128,7 @@ def main(page: ft.Page):
 
                 ft.Container(
                     content=ft.ElevatedButton(
-                        content=ft.Row([ft.Icon(ft.Icons.CALCULATOR, color="white"), 
+                        content=ft.Row([ft.Icon(ft.Icons.CALCULATE, color="white"), 
                                       ft.Text("✍️ مقادیر مستقیم (متراژ)", size=16, weight="bold")], 
                                       alignment=ft.MainAxisAlignment.CENTER),
                         width=360, height=75, bgcolor="#1565C0", color="white",
