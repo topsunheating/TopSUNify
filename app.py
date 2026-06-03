@@ -434,10 +434,10 @@ def main(page: ft.Page):
         
         grid = ft.GridView(
             runs_count=2,
-            max_extent=160,
-            spacing=12,
+            max_extent=120,
+            spacing=10,
             run_spacing=12,
-            padding=15,
+            padding=10,
             expand=True
         )
         
@@ -451,8 +451,8 @@ def main(page: ft.Page):
                         text_align=ft.TextAlign.CENTER,
                         color="#1565C0"
                     ),
-                    width=160,
-                    height=80,
+                    width=170,
+                    height=70,
                     bgcolor="#ffffff",
                     border_radius=12,
                     alignment=ft.Alignment(0, 0),
