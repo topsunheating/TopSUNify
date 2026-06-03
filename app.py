@@ -1,97 +1,75 @@
 import flet as ft
 import os
-import datetime
+import main 
+import Financial
 
-def main(page: ft.Page):
-    # تنظیمات اولیه صفحه
+def main_app(page: ft.Page):
     page.fonts = {"iranyekan": "fonts/iranyekan.ttf"}
     page.theme = ft.Theme(font_family="iranyekan")
     page.padding = 0
     page.rtl = True
     page.theme_mode = "light"
-    page.bgcolor = "#f5f5f5"
 
     # مدیریت نشست (Session)
-    if not hasattr(page.session, "logged_in"):
-        page.session.logged_in = False
-        page.session.user_role = "عمومی"
-        page.session.inventory_list = []
+    if not hasattr(page.session, "manual_rooms"):
+        page.session.manual_rooms = []
+        page.session.logged_in = True 
 
-    # تابع نمایش پیام
-    def show_message(text: str, color="green"):
-        snack = ft.SnackBar(content=ft.Text(text), bgcolor=color, action="بستن", duration=3000)
+    # 1. تعریف FilePicker در سطح کلاس
+    file_picker = ft.FilePicker(on_result=lambda e: print("فایل انتخاب شد:", e.files))
+    page.overlay.append(file_picker)
+
+    def show_message(text, color="green"):
+        snack = ft.SnackBar(content=ft.Text(text), bgcolor=color)
         page.snack_bar = snack
         snack.open = True
         page.update()
 
-    # ==================== تعریف FilePicker در سطح main ====================
-    # این باید داخل تابع main باشد تا به page دسترسی داشته باشد
-    file_picker = ft.FilePicker(on_result=lambda e: print("فایل انتخاب شد:", e.files))
-    page.overlay.append(file_picker)
-    page.update()
-
-    # ==================== صفحه گرمایش از کف ====================
     def floor_heating_page():
-        # متدهای داخلی که به file_picker دسترسی دارند
+        # متدهای داخلی
         def method1_upload(e):
             file_picker.pick_files(allow_multiple=False, allowed_extensions=["dwg", "dxf"])
 
         def method2_manual(e):
-            show_message("ورود دستی ابعاد اتاق‌ها (در حال توسعه)", "blue")
+            show_message("ورود دستی ابعاد - در حال توسعه", "blue")
 
         def method3_direct(e):
-            show_message("روش مقادیر مستقیم (در حال توسعه)", "blue")
+            show_message("مقادیر مستقیم - در حال توسعه", "blue")
 
-        # رابط کاربری کامل
         return ft.Container(
             content=ft.Column([
-                # هدر
                 ft.Container(
                     content=ft.Row([
-                        ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: print("بازگشت")),
+                        ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: page.go("/")),
                         ft.Text("گرمایش از کف (سیستم هوشمند)", size=21, weight="bold")
                     ]),
-                    padding=15,
-                    bgcolor="#f8f9fa",
-                    border_radius=12
+                    padding=15, bgcolor="#f8f9fa", border_radius=12
                 ),
-                
-                ft.Text("روش صدور پیش‌فاکتور را انتخاب کنید", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
-                ft.Divider(height=25),
-
-                # دکمه آپلود فایل
-                ft.ElevatedButton(
-                    content=ft.Row([ft.Icon(ft.Icons.UPLOAD_FILE), ft.Text("📂 آپلود فایل DWG / DXF")], alignment=ft.MainAxisAlignment.CENTER),
-                    width=360, height=75, bgcolor="#1565C0", color="white",
-                    on_click=method1_upload,
-                    style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
-                ),
-                
-                # دکمه ورود دستی
-                ft.ElevatedButton(
-                    content=ft.Row([ft.Icon(ft.Icons.EDIT_NOTE), ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها")], alignment=ft.MainAxisAlignment.CENTER),
-                    width=360, height=75, bgcolor="#1565C0", color="white",
-                    on_click=method2_manual,
-                    style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
-                ),
-
-                # دکمه مقادیر مستقیم
-                ft.ElevatedButton(
-                    content=ft.Row([ft.Icon(ft.Icons.CALCULATE), ft.Text("✍️ مقادیر مستقیم (متراژ)")], alignment=ft.MainAxisAlignment.CENTER),
-                    width=360, height=75, bgcolor="#1565C0", color="white",
-                    on_click=method3_direct,
-                    style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
-                ),
-            ], scroll=ft.ScrollMode.AUTO, spacing=12, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-            width=400, expand=True, padding=15
+                ft.ElevatedButton("📂 آپلود فایل پلان", on_click=method1_upload, width=360, height=75),
+                ft.ElevatedButton("⌨️ ورود دستی ابعاد", on_click=method2_manual, width=360, height=75),
+                ft.ElevatedButton("✍️ مقادیر مستقیم", on_click=method3_direct, width=360, height=75),
+            ], spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            padding=15
         )
 
-    # نمایش صفحه در صفحه اصلی
-    page.add(floor_heating_page())
+    # سایر صفحات
+    def account_request_page():
+        return ft.Container(content=ft.Text("فرم درخواست همکاری"))
 
-# اجرای برنامه
+    # تنظیم روت‌ها
+    def route_change(route):
+        page.controls.clear()
+        if page.route == "/floor":
+            page.add(floor_heating_page())
+        else:
+            page.add(ft.Text("صفحه اصلی"))
+        page.update()
+
+    page.on_route_change = route_change
+    page.go("/")
+
 if __name__ == "__main__":
-    ft.app(target=main)
+    ft.app(target=main_app, assets_dir="assets")
     # ==================== صفحات اضافی ====================
     def account_request_page():
         return ft.Container(
