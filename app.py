@@ -421,11 +421,50 @@ def main(page: ft.Page):
         return ft.Container(content=ft.Column([ft.Container(content=ft.Dropdown(value="رضا تلچی", options=[ft.dropdown.Option("رضا تلچی"), ft.dropdown.Option("زیرمجموعه فروش")], width=320, border_radius=30, bgcolor="white"), margin=ft.margin.Margin(bottom=15)), ft.Text("انتخاب بازه زمانی", size=17, weight="bold", text_align=ft.TextAlign.CENTER), period_buttons, ft.Divider(height=10), view_button, ft.Divider(height=20), ft.Text("گزارش‌های مالی و عملیاتی", size=18, weight="bold", text_align=ft.TextAlign.CENTER), report_cards], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=15), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
 
     def pre_invoice_page():
-        products = ["گرمایش از کف", "زیرفرشی", "رادیاتور", "حوله خشک کن", "یخ زدایی رمپ", "یخ زدایی پله", "گرمکن مخزن", "گرمکن صندلی", "رستورانی", "عایق بازتابشی"]
-        grid = ft.GridView(runs_count=2, max_extent=120, spacing=10, run_spacing=12, padding=10, expand=True)
-        for name in products:
-            grid.controls.append(ft.Container(content=ft.Text(name, size=15, weight="bold", text_align=ft.TextAlign.CENTER, color="#1565C0"), width=170, height=70, bgcolor="#ffffff", border_radius=12, alignment=ft.Alignment(0, 0), shadow=ft.BoxShadow(blur_radius=6, color="#e0e0e0"), on_click=lambda e, n=name: show_message(f"پیش‌فاکتور {n}"), ink=True))
-        return ft.Container(content=ft.Column([ft.Text("نوع محصول مورد نظر را انتخاب کنید", size=18, weight="bold", text_align=ft.TextAlign.CENTER), ft.Divider(height=10), grid], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=10), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
+    products = [
+        ("گرمایش از کف", lambda e: render(18)),           # ← مهم: این یکی لینک داره
+        ("زیرفرشی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+        ("رادیاتور", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+        ("حوله خشک کن", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+        ("یخ زدایی رمپ", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+        ("یخ زدایی پله", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+        ("گرمکن مخزن", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+        ("گرمکن صندلی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+        ("رستورانی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+        ("عایق بازتابشی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+    ]
+
+    grid = ft.GridView(runs_count=2, max_extent=160, spacing=12, run_spacing=12, padding=15, expand=True)
+
+    for name, action in products:
+        grid.controls.append(
+            ft.Container(
+                content=ft.Column([
+                    ft.Icon(ft.Icons.FLOORING if name == "گرمایش از کف" else ft.Icons.OTHER_HOUSES, 
+                           size=48, color="#1565C0"),
+                    ft.Text(name, size=16, weight="bold", text_align=ft.TextAlign.CENTER)
+                ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=8),
+                width=170,
+                height=110,
+                bgcolor="#ffffff",
+                border_radius=12,
+                alignment=ft.Alignment(0, 0),
+                shadow=ft.BoxShadow(blur_radius=8, color="#e0e0e0"),
+                on_click=action,
+                ink=True
+            )
+        )
+
+    return ft.Container(
+        content=ft.Column([
+            ft.Text("نوع محصول مورد نظر را انتخاب کنید", 
+                   size=19, weight="bold", text_align=ft.TextAlign.CENTER),
+            grid
+        ], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=15),
+        width=400,
+        margin=ft.margin.Margin(left=15, right=15),
+        expand=True
+    )
 
     def home_page():
         return ft.Container(content=ft.Column([ft.Container(content=ft.Column([ft.Image(src="TopSUNify-1.png", width=80), ft.Text("خوش آمدید به TopSUNify", size=18, weight="bold", text_align=ft.TextAlign.CENTER), ft.Text("مرکز خدمات و پشتیبانی", size=16, color="grey", text_align=ft.TextAlign.CENTER)], horizontal_alignment=ft.CrossAxisAlignment.CENTER), margin=ft.margin.Margin(top=20, bottom=30)), ft.Container(content=ft.Column([ft.ListTile(leading=ft.Icon(ft.Icons.SHIELD, color="green"), title=ft.Text("ثبت گارانتی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.INSTALL_DESKTOP, color="blue"), title=ft.Text("درخواست نصب اولیه"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.SUPPORT_AGENT, color="orange"), title=ft.Text("درخواست خدمات فنی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.SHOPPING_CART_CHECKOUT, color="purple"), title=ft.Text("ثبت درخواست سفارشی و عمده"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.PRINT, color="red"), title=ft.Text("درخواست چاپ طرح سفارشی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20))], spacing=2), width=380)], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
