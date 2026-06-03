@@ -21,9 +21,60 @@ def main(page: ft.Page):
         snack.open = True
         page.update()
 
-    def toggle_theme(e):
-        page.theme_mode = "dark" if page.theme_mode == "light" else "light"
-        page.update()
+    # ==================== صفحه گرمایش از کف (بدون Tab - سازگار) ====================
+    def floor_heating_page():
+        return ft.Container(
+            content=ft.Column([
+                ft.Container(
+                    content=ft.Row([
+                        ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
+                        ft.Text("گرمایش از کف (سیستم هوشمند)", size=20, weight="bold")
+                    ]),
+                    padding=10
+                ),
+                ft.Text("نوع روش صدور پیش‌فاکتور را انتخاب کنید:", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
+                ft.Divider(),
+                
+                # روش 1
+                ft.Container(
+                    content=ft.ElevatedButton(
+                        "📂 آپلود فایل DWG/DXF",
+                        width=350,
+                        bgcolor="#1565C0",
+                        color="white",
+                        on_click=lambda e: show_message("در نسخه کامل: فایل آپلود و تحلیل می‌شود", "blue")
+                    ),
+                    padding=8
+                ),
+                
+                # روش 2
+                ft.Container(
+                    content=ft.ElevatedButton(
+                        "⌨️ ورود دستی ابعاد اتاق‌ها",
+                        width=350,
+                        bgcolor="#1565C0",
+                        color="white",
+                        on_click=lambda e: show_message("در نسخه کامل: ابعاد دستی وارد می‌شود", "blue")
+                    ),
+                    padding=8
+                ),
+                
+                # روش 3
+                ft.Container(
+                    content=ft.ElevatedButton(
+                        "✍️ مقادیر مستقیم",
+                        width=350,
+                        bgcolor="#1565C0",
+                        color="white",
+                        on_click=lambda e: show_message("پیش‌فاکتور مستقیم صادر شد", "green")
+                    ),
+                    padding=8
+                ),
+            ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            width=400,
+            expand=True,
+            padding=15
+        )
 
     # ==================== صفحات اضافی ====================
     def account_request_page():
@@ -313,7 +364,7 @@ def main(page: ft.Page):
                 profile_page(), settings_page(), account_request_page(),
                 selected_customers_page(), inventory_page(), colleagues_page(),
                 purchase_request_page(), commission_page(), credit_page(),
-                theme_page(), update_page(), network_page(), rules_page(), about_page(), گرمایش از کف_page()
+                theme_page(), update_page(), network_page(), rules_page(), about_page(), floor_heating_page()
             ]
             main_content = ft.Container(content=contents[tab_index], expand=True, width=400, margin=ft.margin.Margin(left=15, right=15))
             nav_bar = ft.Container(
@@ -368,22 +419,21 @@ def main(page: ft.Page):
         return ft.Container(content=ft.Column([ft.Container(content=ft.Dropdown(value="رضا تلچی", options=[ft.dropdown.Option("رضا تلچی"), ft.dropdown.Option("زیرمجموعه فروش")], width=320, border_radius=30, bgcolor="white"), margin=ft.margin.Margin(bottom=15)), ft.Text("انتخاب بازه زمانی", size=17, weight="bold", text_align=ft.TextAlign.CENTER), period_buttons, ft.Divider(height=10), view_button, ft.Divider(height=20), ft.Text("گزارش‌های مالی و عملیاتی", size=18, weight="bold", text_align=ft.TextAlign.CENTER), report_cards], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=15), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
 
     def pre_invoice_page():
-    products = [
-        ("گرمایش از کف", lambda e: render(18)),           # ← مهم: این یکی لینک داره
-        ("زیرفرشی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
-        ("رادیاتور", lambda e: show_message("به زودی فعال می‌شود", "blue")),
-        ("حوله خشک کن", lambda e: show_message("به زودی فعال می‌شود", "blue")),
-        ("یخ زدایی رمپ", lambda e: show_message("به زودی فعال می‌شود", "blue")),
-        ("یخ زدایی پله", lambda e: show_message("به زودی فعال می‌شود", "blue")),
-        ("گرمکن مخزن", lambda e: show_message("به زودی فعال می‌شود", "blue")),
-        ("گرمکن صندلی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
-        ("رستورانی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
-        ("عایق بازتابشی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
-    ]
+        products = [
+            ("گرمایش از کف", lambda e: render(18)),           # ← مهم: این یکی لینک داره
+            ("زیرفرشی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+            ("رادیاتور", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+            ("حوله خشک کن", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+            ("یخ زدایی رمپ", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+            ("یخ زدایی پله", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+            ("گرمکن مخزن", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+            ("گرمکن صندلی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+            ("رستورانی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+            ("عایق بازتابشی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+        ]
+        grid = ft.GridView(runs_count=2, max_extent=160, spacing=12, run_spacing=12, padding=15, expand=True)
 
-    grid = ft.GridView(runs_count=2, max_extent=160, spacing=12, run_spacing=12, padding=15, expand=True)
-    
-    for name, action in products:
+for name, action in products:
         grid.controls.append(
             ft.Container(
                 content=ft.Column([
