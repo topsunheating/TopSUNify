@@ -120,7 +120,7 @@ def main(page: ft.Page):
                 radiator_orientation,
                 radiator_qty,
                 ft.FilledButton("محاسبه پیش فاکتور", on_click=calculate_invoice, width=350, bgcolor="green"),
-                ft.Container(content=table, padding=ft.padding.only(top=10, bottom=10)),
+                ft.Container(content=table, padding=ft.padding.only),
                 total_text,
                 ft.FilledButton("صدور PDF", icon=ft.Icons.PICTURE_AS_PDF, width=350, on_click=lambda e: show_message("در حال آماده‌سازی...")),
             ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
