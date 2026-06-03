@@ -80,14 +80,18 @@ def main(page: ft.Page):
         total_text = ft.Text("جمع کل: 0 تومان", size=18, weight="bold")
         
         def update_orientation(e):
-            square_sizes = ["50×50 سانت", "60×60 سانت", "90×90 سانت"]
+            square_sizes = [
+                "50×50 سانت",
+                "60×60 سانت",
+                "90×90 سانت"
+            ]
             if radiator_size.value in square_sizes:
                 radiator_orientation.disabled = True
                 radiator_orientation.value = "-"
             else:
                 radiator_orientation.disabled = False
-                radiator_orientation.value = None
-            page.update()
+                
+            radiator_orientation.update()
         
         def calculate_invoice(e):
             try:
