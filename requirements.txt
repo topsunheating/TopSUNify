@@ -1,8 +1,1 @@
-flet>=0.25.0
-requests
-ezdxf
-pandas
-numpy
-arabic-reshaper
-python-bidi
-jdatetime
+flet
