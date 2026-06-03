@@ -432,30 +432,34 @@ def main(page: ft.Page):
             ("عایق بازتابشی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
         ]
         grid = ft.GridView(
-            expand=True,
             runs_count=2,
-            spacing=12,
+            max_extent=120,
+            spacing=10,
             run_spacing=12,
-            padding=15,
-            child_aspect_ratio=2.2
+            padding=10,
+            expand=True
         )
         for name, action in products:
             grid.controls.append(
                 ft.Container(
                     content=ft.Text(
                         name,
-                        size=16,
+                        size=15,
                         weight="bold",
                         text_align=ft.TextAlign.CENTER,
                         color="#1565C0"
                     ),
-                    alignment=ft.Alignment(0, 0),
+                    width=120,
+                    height=70,
                     bgcolor="#ffffff",
                     border_radius=12,
-                    height=70,
-                    ink=True,
-                    shadow=ft.BoxShadow(blur_radius=6, color="#e0e0e0"),
-                    on_click=action
+                    alignment=ft.Alignment(0, 0),
+                    shadow=ft.BoxShadow(
+                        blur_radius=6,
+                        color="#e0e0e0"
+                    ),
+                    on_click=action,
+                    ink=True
                 )
             )
             return ft.Container(
@@ -471,8 +475,8 @@ def main(page: ft.Page):
                         grid
                     ],
                     scroll=ft.ScrollMode.AUTO,
-                    spacing=10,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    spacing=10
                 ),
                 width=400,
                 margin=ft.margin.Margin(left=15, right=15),
