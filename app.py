@@ -69,11 +69,11 @@ def main(page: ft.Page):
         page.theme_mode = "dark" if page.theme_mode == "light" else "light"
         page.update()
         show_message(f"تم تغییر کرد به: {page.theme_mode}", "blue")
-# ==================== پیش فاکتور دستی زیرفرشی ====================
+# ==================== پیش فاکتور دستی رادیاتور ====================
     def radiator_manual_invoice_page():
         radiator_size = ft.Dropdown(label="ابعاد رادیاتور", width=350, options=[ft.dropdown.Option(x) for x in RADIATOR_PRODUCTS.keys()])
         radiator_color = ft.Dropdown(label="طرح رادیاتور", width=350, options=[ft.dropdown.Option(x) for x in RADIATOR_COLORS])
-        radiator_orientation = ft.Dropdown(label="نوع نصب", width=350, disabled=True, options=[ft.dropdown.Option("افقی"), ft.dropdown.Option("عمودی")])
+        radiator_orientation = ft.Dropdown(label="نوع نصب", width=350, disabled=True, options=[ft.dropdown.Option("افقی"), ft.dropdown.Option("عمودی"), ft.dropdown.Option("-")])
         radiator_qty = ft.TextField(label="تعداد", width=350, value="1", keyboard_type=ft.KeyboardType.NUMBER)
         
         table = ft.DataTable(columns=[ft.DataColumn(ft.Text("شرح")), ft.DataColumn(ft.Text("تعداد")), ft.DataColumn(ft.Text("قیمت"))], rows=[])
