@@ -21,7 +21,7 @@ def main(page: ft.Page):
         snack.open = True
         page.update()
 
-    # ==================== صفحه گرمایش از کف ====================
+        # ==================== صفحه گرمایش از کف ====================
     def floor_heating_page():
         file_picker = ft.FilePicker()
         page.overlay.append(file_picker)
@@ -36,38 +36,16 @@ def main(page: ft.Page):
 
         def process_uploaded_file(file):
             try:
-                # فراخوانی هسته main.py برای تحلیل فایل
                 from main import generate_layout_plan
-                layout_pdf_bytes = generate_layout_plan(file.path if hasattr(file, 'path') else file.name)
-
-                # فراخوانی هسته Financial.py برای صدور پیش‌فاکتور
                 from Financial import calculate_tosunify_proforma, generate_proforma_pdf
 
-                # مثال (بعداً مقادیر واقعی از خروجی main.py گرفته می‌شود)
-                res = calculate_tosunify_proforma(
-                    width_80_m=45.5,
-                    width_40_m=8.2,
-                    installation_pct=12,
-                    discount_pct=5,
-                    tax_pct=9,
-                    thermostats_count=3
-                )
+                # مثال (بعداً مقادیر واقعی از main.py گرفته می‌شود)
+                res = calculate_tosunify_proforma(45.5, 8.2, 12, 5, 9, 3)
+                pdf_bytes = generate_proforma_pdf(res, 45.5, 8.2, 65, 3, 1, page.session.username, 1001)
 
-                financial_pdf_bytes = generate_proforma_pdf(
-                    res=res,
-                    m80=45.5,
-                    m40=8.2,
-                    xps=65,
-                    thermostats=3,
-                    p_count=1,
-                    customer_name=page.session.username,
-                    doc_number=1001
-                )
-
-                # ذخیره و دانلود
                 import tempfile
                 with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
-                    f.write(financial_pdf_bytes)
+                    f.write(pdf_bytes)
                     temp_path = f.name
 
                 page.download_file(temp_path)
@@ -98,13 +76,12 @@ def main(page: ft.Page):
                        size=18, weight="bold", text_align=ft.TextAlign.CENTER),
                 ft.Divider(height=25),
 
-                # روش 1 - آپلود فایل
+                # روش 1
                 ft.Container(
                     content=ft.ElevatedButton(
-                        content=ft.Row([
-                            ft.Icon(ft.Icons.UPLOAD_FILE, color="white"),
-                            ft.Text("📂 آپلود فایل DWG / DXF", size=16, weight="bold")
-                        ], alignment=ft.MainAxisAlignment.CENTER),
+                        content=ft.Row([ft.Icon(ft.Icons.UPLOAD_FILE, color="white"), 
+                                      ft.Text("📂 آپلود فایل DWG / DXF", weight="bold")], 
+                                      alignment=ft.MainAxisAlignment.CENTER),
                         width=360,
                         height=75,
                         bgcolor="#1565C0",
@@ -112,16 +89,15 @@ def main(page: ft.Page):
                         on_click=lambda e: file_picker.pick_files(allow_multiple=False, allowed_extensions=["dwg", "dxf"]),
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     ),
-                    margin=ft.margin.only(bottom=12)
+                    margin=ft.margin.Margin(bottom=12)   # اصلاح شده
                 ),
 
-                # روش 2 - ابعاد دستی
+                # روش 2
                 ft.Container(
                     content=ft.ElevatedButton(
-                        content=ft.Row([
-                            ft.Icon(ft.Icons.EDIT_NOTE, color="white"),
-                            ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", size=16, weight="bold")
-                        ], alignment=ft.MainAxisAlignment.CENTER),
+                        content=ft.Row([ft.Icon(ft.Icons.EDIT_NOTE, color="white"), 
+                                      ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", weight="bold")], 
+                                      alignment=ft.MainAxisAlignment.CENTER),
                         width=360,
                         height=75,
                         bgcolor="#1565C0",
@@ -129,16 +105,15 @@ def main(page: ft.Page):
                         on_click=method2_manual,
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     ),
-                    margin=ft.margin.only(bottom=12)
+                    margin=ft.margin.Margin(bottom=12)   # اصلاح شده
                 ),
 
-                # روش 3 - مقادیر مستقیم
+                # روش 3
                 ft.Container(
                     content=ft.ElevatedButton(
-                        content=ft.Row([
-                            ft.Icon(ft.Icons.CALCULATE, color="white"),
-                            ft.Text("✍️ مقادیر مستقیم (متراژ)", size=16, weight="bold")
-                        ], alignment=ft.MainAxisAlignment.CENTER),
+                        content=ft.Row([ft.Icon(ft.Icons.CALCULATOR, color="white"), 
+                                      ft.Text("✍️ مقادیر مستقیم (متراژ)", weight="bold")], 
+                                      alignment=ft.MainAxisAlignment.CENTER),
                         width=360,
                         height=75,
                         bgcolor="#1565C0",
@@ -155,7 +130,6 @@ def main(page: ft.Page):
             expand=True,
             padding=15
         )
-
     # ==================== صفحات اضافی ====================
     def account_request_page():
         return ft.Container(
