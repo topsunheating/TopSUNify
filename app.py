@@ -418,7 +418,7 @@ def main(page: ft.Page):
 
         return ft.Container(content=ft.Column([ft.Container(content=ft.Dropdown(value="رضا تلچی", options=[ft.dropdown.Option("رضا تلچی"), ft.dropdown.Option("زیرمجموعه فروش")], width=320, border_radius=30, bgcolor="white"), margin=ft.margin.Margin(bottom=15)), ft.Text("انتخاب بازه زمانی", size=17, weight="bold", text_align=ft.TextAlign.CENTER), period_buttons, ft.Divider(height=10), view_button, ft.Divider(height=20), ft.Text("گزارش‌های مالی و عملیاتی", size=18, weight="bold", text_align=ft.TextAlign.CENTER), report_cards], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=15), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
 
-    def pre_invoice_page():
+        def pre_invoice_page():
         products = [
             ("گرمایش از کف", lambda e: render(18)),
             ("زیرفرشی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
@@ -432,29 +432,34 @@ def main(page: ft.Page):
             ("عایق بازتابشی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
         ]
         grid = ft.GridView(
-            expand=True,
             runs_count=2,
-            spacing=12,
+            max_extent=120,
+            spacing=10,
             run_spacing=12,
-            padding=15,
-            child_aspect_ratio=2.2
+            padding=10,
+            expand=True
         )
         for name, action in products:
             grid.controls.append(
                 ft.Container(
                     content=ft.Text(
                         name,
-                        size=16,
+                        size=15,
                         weight="bold",
                         text_align=ft.TextAlign.CENTER,
                         color="#1565C0"
                     ),
-                    alignment=ft.Alignment(0, 0),
+                    width=120,
+                    height=70,
                     bgcolor="#ffffff",
                     border_radius=12,
-                    height=70,
-                    ink=True,
-                    shadow=ft.BoxShadow(blur_radius=6, color="#e0e0e0")                    
+                    alignment=ft.Alignment(0, 0),
+                    shadow=ft.BoxShadow(
+                        blur_radius=6,
+                        color="#e0e0e0"
+                    ),
+                    on_click=action,
+                    ink=True
                 )
             )
             return ft.Container(
@@ -470,11 +475,12 @@ def main(page: ft.Page):
                         grid
                     ],
                     scroll=ft.ScrollMode.AUTO,
-                    expand=True,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     spacing=10
                 ),
-                expand=True,
-                padding=10,
+                width=400,
+                margin=ft.margin.Margin(left=15, right=15),
+                expand=True
             )
     def home_page():
         return ft.Container(content=ft.Column([ft.Container(content=ft.Column([ft.Image(src="TopSUNify-1.png", width=80), ft.Text("خوش آمدید به TopSUNify", size=18, weight="bold", text_align=ft.TextAlign.CENTER), ft.Text("مرکز خدمات و پشتیبانی", size=16, color="grey", text_align=ft.TextAlign.CENTER)], horizontal_alignment=ft.CrossAxisAlignment.CENTER), margin=ft.margin.Margin(top=20, bottom=30)), ft.Container(content=ft.Column([ft.ListTile(leading=ft.Icon(ft.Icons.SHIELD, color="green"), title=ft.Text("ثبت گارانتی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.INSTALL_DESKTOP, color="blue"), title=ft.Text("درخواست نصب اولیه"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.SUPPORT_AGENT, color="orange"), title=ft.Text("درخواست خدمات فنی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.SHOPPING_CART_CHECKOUT, color="purple"), title=ft.Text("ثبت درخواست سفارشی و عمده"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.PRINT, color="red"), title=ft.Text("درخواست چاپ طرح سفارشی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20))], spacing=2), width=380)], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
