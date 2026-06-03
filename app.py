@@ -23,44 +23,27 @@ def main(page: ft.Page):
 
     # ==================== صفحه گرمایش از کف ====================
     def floor_heating_page():
-        # File Picker برای روش 1
         file_picker = ft.FilePicker()
         page.overlay.append(file_picker)
 
-        def method1_upload(e):
-            file_picker.pick_files(
-                allow_multiple=False,
-                allowed_extensions=["dwg", "dxf"]
-            )
-
         def on_file_picked(e):
-            if not e.files:
-                return
-            file = e.files[0]
-            show_message(f"فایل {file.name} آپلود شد. در حال تحلیل...", "blue")
-            # اینجا هسته main.py را فراخوانی می‌کنیم (بعداً کامل پیاده می‌شود)
-            process_dwg_file(file.path if hasattr(file, 'path') else file.name)
+            if e.files:
+                file = e.files[0]
+                show_message(f"فایل {file.name} در حال پردازش...", "blue")
+                process_uploaded_file(file)
 
         file_picker.on_result = on_file_picked
 
-        def method2_manual(e):
-            show_message("ورود دستی ابعاد اتاق‌ها (در حال توسعه)", "blue")
-            # بعداً فرم ابعاد دستی
-
-        def method3_direct(e):
-            show_message("روش مقادیر مستقیم (در حال توسعه)", "blue")
-            # بعداً فرم مستقیم
-
-        def process_dwg_file(file_path):
+        def process_uploaded_file(file):
             try:
-                # فراخوانی هسته main.py
+                # فراخوانی هسته main.py برای تحلیل فایل
                 from main import generate_layout_plan
-                pdf_bytes = generate_layout_plan(file_path, include_overall=True)
-                
-                # فراخوانی هسته Financial.py
+                layout_pdf_bytes = generate_layout_plan(file.path if hasattr(file, 'path') else file.name)
+
+                # فراخوانی هسته Financial.py برای صدور پیش‌فاکتور
                 from Financial import calculate_tosunify_proforma, generate_proforma_pdf
-                
-                # مثال محاسبات (بعداً از خروجی main پر می‌شود)
+
+                # مثال (بعداً مقادیر واقعی از خروجی main.py گرفته می‌شود)
                 res = calculate_tosunify_proforma(
                     width_80_m=45.5,
                     width_40_m=8.2,
@@ -69,29 +52,35 @@ def main(page: ft.Page):
                     tax_pct=9,
                     thermostats_count=3
                 )
-                
-                pdf_financial = generate_proforma_pdf(
+
+                financial_pdf_bytes = generate_proforma_pdf(
                     res=res,
                     m80=45.5,
                     m40=8.2,
                     xps=65,
                     thermostats=3,
                     p_count=1,
-                    customer_name="مشتری تست",
+                    customer_name=page.session.username,
                     doc_number=1001
                 )
-                
+
                 # ذخیره و دانلود
                 import tempfile
                 with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
-                    f.write(pdf_financial)
+                    f.write(financial_pdf_bytes)
                     temp_path = f.name
-                
+
                 page.download_file(temp_path)
                 show_message("پیش‌فاکتور و پلان چیدمان با موفقیت صادر شد", "green")
-                
+
             except Exception as ex:
                 show_message(f"خطا در پردازش: {ex}", "red")
+
+        def method2_manual(e):
+            show_message("ورود دستی ابعاد اتاق‌ها (در حال توسعه)", "blue")
+
+        def method3_direct(e):
+            show_message("روش مقادیر مستقیم (در حال توسعه)", "blue")
 
         return ft.Container(
             content=ft.Column([
@@ -109,40 +98,58 @@ def main(page: ft.Page):
                        size=18, weight="bold", text_align=ft.TextAlign.CENTER),
                 ft.Divider(height=25),
 
-                # روش 1
+                # روش 1 - آپلود فایل
                 ft.Container(
                     content=ft.ElevatedButton(
-                        content=ft.Row([ft.Icon(ft.Icons.UPLOAD_FILE), ft.Text("📂 آپلود فایل DWG / DXF", weight="bold")], alignment=ft.MainAxisAlignment.CENTER),
-                        width=360, height=75, bgcolor="#1565C0", color="white",
-                        on_click=method1_upload,
+                        content=ft.Row([
+                            ft.Icon(ft.Icons.UPLOAD_FILE, color="white"),
+                            ft.Text("📂 آپلود فایل DWG / DXF", size=16, weight="bold")
+                        ], alignment=ft.MainAxisAlignment.CENTER),
+                        width=360,
+                        height=75,
+                        bgcolor="#1565C0",
+                        color="white",
+                        on_click=lambda e: file_picker.pick_files(allow_multiple=False, allowed_extensions=["dwg", "dxf"]),
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     ),
                     margin=ft.margin.only(bottom=12)
                 ),
 
-                # روش 2
+                # روش 2 - ابعاد دستی
                 ft.Container(
                     content=ft.ElevatedButton(
-                        content=ft.Row([ft.Icon(ft.Icons.EDIT_NOTE), ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", weight="bold")], alignment=ft.MainAxisAlignment.CENTER),
-                        width=360, height=75, bgcolor="#1565C0", color="white",
+                        content=ft.Row([
+                            ft.Icon(ft.Icons.EDIT_NOTE, color="white"),
+                            ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", size=16, weight="bold")
+                        ], alignment=ft.MainAxisAlignment.CENTER),
+                        width=360,
+                        height=75,
+                        bgcolor="#1565C0",
+                        color="white",
                         on_click=method2_manual,
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     ),
                     margin=ft.margin.only(bottom=12)
                 ),
 
-                # روش 3
+                # روش 3 - مقادیر مستقیم
                 ft.Container(
                     content=ft.ElevatedButton(
-                        content=ft.Row([ft.Icon(ft.Icons.CALCULATOR), ft.Text("✍️ مقادیر مستقیم (متراژ)", weight="bold")], alignment=ft.MainAxisAlignment.CENTER),
-                        width=360, height=75, bgcolor="#1565C0", color="white",
+                        content=ft.Row([
+                            ft.Icon(ft.Icons.CALCULATE, color="white"),
+                            ft.Text("✍️ مقادیر مستقیم (متراژ)", size=16, weight="bold")
+                        ], alignment=ft.MainAxisAlignment.CENTER),
+                        width=360,
+                        height=75,
+                        bgcolor="#1565C0",
+                        color="white",
                         on_click=method3_direct,
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     )
                 ),
 
                 ft.Divider(height=30),
-                ft.Text("هسته محاسباتی main.py + Financial.py متصل شد", size=13, color="grey", text_align=ft.TextAlign.CENTER)
+                ft.Text("هسته main.py و Financial.py متصل شد", size=13, color="grey", text_align=ft.TextAlign.CENTER)
             ], scroll=ft.ScrollMode.AUTO, spacing=12, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400,
             expand=True,
