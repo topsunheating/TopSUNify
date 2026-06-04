@@ -121,7 +121,7 @@ def main(page: ft.Page):
             else:
                 radiator_orientation.disabled = False
                 if radiator_orientation.value == "-":
-                    radiator_orientation.value = "افقی"
+                    radiator_orientation.value = "افقی, عمودی"
             radiator_orientation.update()
             page.update()
 
@@ -154,6 +154,8 @@ def main(page: ft.Page):
         # اتصال رویداد تغییر سایز
         radiator_size.on_change = update_orientation
 
+        update_orientation()
+        
         return ft.Container(
             content=ft.Column([
                 ft.Row([
