@@ -136,9 +136,8 @@ def main(page: ft.Page):
             except Exception as ex:
                 show_message(f"خطا: {ex}", "red")
 
-        # اتصال رویداد
         radiator_size.on_change = update_orientation
-        
+
         container = ft.Container(
             content=ft.Column([
                 ft.Row([
@@ -159,9 +158,11 @@ def main(page: ft.Page):
             width=400,
             expand=True
         )
-        update_orientation() 
 
-        return Container
+        # فراخوانی اولیه بعد از ساخت Container
+        update_orientation()
+
+        return container
 
     # ==================== پیش فاکتور دستی زیرفرشی ====================
     def floor_manual_invoice_page():
