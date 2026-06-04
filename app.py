@@ -80,7 +80,7 @@ def main(page: ft.Page):
             options=[
                 ft.dropdown.Option("افقی"),
                 ft.dropdown.Option("عمودی"),
-                ft.dropdown.Option("-")
+                ft.dropdown.Option("- | برای سایزهای مربعی")
             ],
             disabled=True,
             value="-"
@@ -107,10 +107,10 @@ def main(page: ft.Page):
         def update_orientation(e=None):
             if radiator_size.value in square_sizes:
                 radiator_orientation.disabled = True
-                radiator_orientation.value = "-"
+                radiator_orientation.value = "- | برای سایزهای مربعی"
             else:
                 radiator_orientation.disabled = False
-                if radiator_orientation.value == "-":
+                if radiator_orientation.value == "- | برای سایزهای مربعی":
                     radiator_orientation.value = "افقی"
             
             page.update()
@@ -135,9 +135,8 @@ def main(page: ft.Page):
                     "total": line_total
                 })
                 refresh_table()
-            
-        except Exception as ex:
-        show_message(f"خطا: {ex}", "red")
+            except Exception as ex:
+                show_message(f"خطا: {ex}", "red")
 
         # اتصال رویداد
         radiator_size.on_change = update_orientation
