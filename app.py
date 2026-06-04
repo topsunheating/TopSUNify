@@ -115,31 +115,29 @@ def main(page: ft.Page):
             
             page.update()
 
-        def calculate_invoice(e):
+        def add_item(e):
             try:
                 if not radiator_size.value:
                     show_message("ابعاد رادیاتور را انتخاب کنید", "red")
                     return
-
+                    
                 qty = int(radiator_qty.value or 0)
-                unit_price = RADIATOR_PRODUCTS.get(radiator_size.value, 0)
+                unit_price = RADIATOR_PRODUCTS[radiator_size.value]
                 line_total = qty * unit_price
-
                 description = f"{radiator_size.value} | {radiator_color.value or 'ساده'}"
-                if not radiator_orientation.disabled and radiator_orientation.value != "-":
+                
+                if not radiator_orientation.disabled:
                     description += f" | {radiator_orientation.value}"
-
-                table.rows = [ft.DataRow(cells=[
-                    ft.DataCell(ft.Text(description)),
-                    ft.DataCell(ft.Text(str(qty))),
-                    ft.DataCell(ft.Text(f"{line_total:,} تومان"))
-                ])]
-
-                total_text.value = f"جمع کل: {line_total:,} تومان"
-                page.update()
-
-            except Exception as ex:
-                show_message(f"خطا: {ex}", "red")
+                
+                invoice_items.append({
+                    "description": description,
+                    "qty": qty,
+                    "total": line_total
+                })
+                refresh_table()
+            
+        except Exception as ex:
+        show_message(f"خطا: {ex}", "red")
 
         # اتصال رویداد
         radiator_size.on_change = update_orientation
