@@ -160,7 +160,7 @@ def main(page: ft.Page):
         )
         update_orientation() 
 
-        return ft.Container(
+        return ft.Container
 
     # ==================== پیش فاکتور دستی زیرفرشی ====================
     def floor_manual_invoice_page():
