@@ -121,7 +121,7 @@ def main(page: ft.Page):
                 unit_price = RADIATOR_PRODUCTS.get(radiator_size.value, 0)
                 line_total = qty * unit_price
 
-                description = f"{radiator_size.value} | {radiator_color.valueor or 'ساده'}"
+                description = f"{radiator_size.value} | {radiator_color.value or 'ساده'}"
                 if not radiator_orientation.disabled and radiator_orientation.value:
                     description += f" | {radiator_orientation.value}"
 
@@ -136,8 +136,10 @@ def main(page: ft.Page):
             except Exception as ex:
                 show_message(f"خطا: {ex}", "red")
 
+        # اتصال رویداد
         radiator_size.on_change = update_orientation
 
+        # ساخت رابط کاربری
         container = ft.Container(
             content=ft.Column([
                 ft.Row([
@@ -159,183 +161,10 @@ def main(page: ft.Page):
             expand=True
         )
 
-        # فراخوانی اولیه بعد از ساخت Container
+        # فراخوانی اولیه بعد از ساخت UI
         update_orientation()
 
         return container
-
-    # ==================== پیش فاکتور دستی زیرفرشی ====================
-    def floor_manual_invoice_page():
-        product_size = ft.Dropdown(
-            label="سایز زیرفرشی",
-            width=350,
-            options=[ft.dropdown.Option(x) for x in FLOOR_PRODUCTS.keys()]
-        )
-
-        qty = ft.TextField(
-            label="تعداد",
-            width=150,
-            value="1"
-        )
-
-        insulation_switch = ft.Switch(
-            label="افزودن عایق بازتابشی"
-        )
-
-        insulation_area = ft.TextField(
-            label="متراژ عایق (متر مربع)",
-            width=250,
-            visible=False
-        )
-
-        dimmer_switch = ft.Switch(
-            label="افزودن دیمر"
-        )
-
-        dimmer_type = ft.Dropdown(
-            label="مدل دیمر",
-            width=350,
-            visible=False,
-            options=[ft.dropdown.Option(x) for x in DIMMERS.keys()]
-        )
-
-        dimmer_qty = ft.TextField(
-            label="تعداد دیمر",
-            width=150,
-            value="1",
-            visible=False
-        )
-
-        table = ft.DataTable(
-            columns=[
-                ft.DataColumn(ft.Text("شرح")),
-                ft.DataColumn(ft.Text("تعداد")),
-                ft.DataColumn(ft.Text("قیمت"))
-            ],
-            rows=[]
-        )
-
-        total_text = ft.Text(
-            "جمع کل: 0 تومان",
-            size=18,
-            weight="bold"
-        )
-
-        def toggle_insulation(e):
-            insulation_area.visible = insulation_switch.value
-            page.update()
-
-        def toggle_dimmer(e):
-            dimmer_type.visible = dimmer_switch.value
-            dimmer_qty.visible = dimmer_switch.value
-            page.update()
-
-        def add_item(e):
-            table.rows.clear()
-            total = 0
-            try:
-                if product_size.value:
-                    count = int(qty.value or 0)
-                    unit_price = FLOOR_PRODUCTS[product_size.value]
-                    row_total = count * unit_price
-                    total += row_total
-                    table.rows.append(
-                        ft.DataRow(
-                            cells=[
-                                ft.DataCell(ft.Text(product_size.value)),
-                                ft.DataCell(ft.Text(str(count))),
-                                ft.DataCell(ft.Text(f"{row_total:,}"))
-                            ]
-                        )
-                    )
-
-                if insulation_switch.value:
-                    area = float(insulation_area.value or 0)
-                    insulation_price = int(area * 1450000)
-                    total += insulation_price
-                    table.rows.append(
-                        ft.DataRow(
-                            cells=[
-                                ft.DataCell(ft.Text("عایق بازتابشی")),
-                                ft.DataCell(ft.Text(str(area))),
-                                ft.DataCell(ft.Text(f"{insulation_price:,}"))
-                            ]
-                        )
-                    )
-
-                if dimmer_switch.value and dimmer_type.value:
-                    dqty = int(dimmer_qty.value or 0)
-                    dprice = DIMMERS[dimmer_type.value]
-                    dimmer_total = dqty * dprice
-                    total += dimmer_total
-                    table.rows.append(
-                        ft.DataRow(
-                            cells=[
-                                ft.DataCell(ft.Text(dimmer_type.value)),
-                                ft.DataCell(ft.Text(str(dqty))),
-                                ft.DataCell(ft.Text(f"{dimmer_total:,}"))
-                            ]
-                        )
-                    )
-
-                total_text.value = f"جمع کل: {total:,} تومان"
-                page.update()
-            except Exception as ex:
-                show_message(f"خطا: {ex}", "red")
-
-        insulation_switch.on_change = toggle_insulation
-        dimmer_switch.on_change = toggle_dimmer
-
-        return ft.Container(
-            content=ft.Column(
-                [
-                    ft.Row(
-                        [
-                            ft.IconButton(
-                                icon=ft.Icons.ARROW_BACK,
-                                on_click=lambda e: render(1)
-                            ),
-                            ft.Text(
-                                "پیش فاکتور زیرفرشی",
-                                size=20,
-                                weight="bold"
-                            )
-                        ]
-                    ),
-                    product_size,
-                    qty,
-                    ft.Divider(),
-                    insulation_switch,
-                    insulation_area,
-                    ft.Divider(),
-                    dimmer_switch,
-                    dimmer_type,
-                    dimmer_qty,
-                    ft.Divider(),
-                    ft.ElevatedButton(
-                        "محاسبه پیش فاکتور",
-                        on_click=add_item,
-                        bgcolor="green",
-                        color="white"
-                    ),
-                    table,
-                    total_text,
-                    ft.ElevatedButton(
-                        "صدور PDF",
-                        bgcolor="#1565C0",
-                        color="white",
-                        icon=ft.Icons.PICTURE_AS_PDF,
-                        on_click=lambda e: show_message(
-                            "اتصال PDF در مرحله بعد انجام می‌شود"
-                        )
-                    )
-                ],
-                scroll=ft.ScrollMode.AUTO,
-                spacing=15
-            ),
-            padding=15,
-            expand=True
-        )
     # ==================== پیش فاکتور دستی زیرفرشی ====================
     def floor_manual_invoice_page():
 
