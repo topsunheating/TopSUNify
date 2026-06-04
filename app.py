@@ -70,108 +70,103 @@ def main(page: ft.Page):
         page.update()
         show_message(f"تم تغییر کرد به: {page.theme_mode}", "blue")
 # ==================== صفحه پیش فاکتور رادیاتور ====================
-def radiator_manual_invoice_page():
-    radiator_size = ft.Dropdown(
-        label="ابعاد رادیاتور",
-        width=350,
-        options=[ft.dropdown.Option(x) for x in RADIATOR_PRODUCTS.keys()]
-    )
-
-    radiator_color = ft.Dropdown(
-        label="طرح رادیاتور",
-        width=350,
-        options=[ft.dropdown.Option(x) for x in RADIATOR_COLORS]
-    )
-
-    radiator_orientation = ft.Dropdown(
-        label="نوع نصب",
-        width=350,
-        options=[
-            ft.dropdown.Option("افقی"),
-            ft.dropdown.Option("عمودی"),
-        ],
-        disabled=True,
-        value="افقی"
-    )
-
-    radiator_qty = ft.TextField(
-        label="تعداد",
-        width=350,
-        value="1",
-        keyboard_type=ft.KeyboardType.NUMBER
-    )
-
-    table = ft.DataTable(
-        columns=[
-            ft.DataColumn(ft.Text("شرح")),
-            ft.DataColumn(ft.Text("تعداد")),
-            ft.DataColumn(ft.Text("قیمت"))
-        ],
-        rows=[]
-    )
-
-    total_text = ft.Text("جمع کل: 0 تومان", size=18, weight="bold")
-
-    def update_orientation(e=None):   # ← اضافه کردن e=None
-        if radiator_size.value in square_sizes:
-            radiator_orientation.disabled = True
-            radiator_orientation.value = "افقی"   # یا "-" اگر نمی‌خوای مقدار داشته باشه
-        else:
-            radiator_orientation.disabled = False
-        radiator_orientation.update()
-        page.update()
-
-    def calculate_invoice(e):
-        try:
-            if not radiator_size.value:
-                show_message("ابعاد رادیاتور را انتخاب کنید", "red")
-                return
-
-            qty = int(radiator_qty.value or 0)
-            unit_price = RADIATOR_PRODUCTS.get(radiator_size.value, 0)
-            line_total = qty * unit_price
-
-            description = f"{radiator_size.value} | {radiator_color.value or 'ساده'}"
-            if not radiator_orientation.disabled and radiator_orientation.value:
-                description += f" | {radiator_orientation.value}"
-
-            table.rows = [ft.DataRow(cells=[
-                ft.DataCell(ft.Text(description)),
-                ft.DataCell(ft.Text(str(qty))),
-                ft.DataCell(ft.Text(f"{line_total:,} تومان"))
-            ])]
-
-            total_text.value = f"جمع کل: {line_total:,} تومان"
+    def radiator_manual_invoice_page():
+        radiator_size = ft.Dropdown(
+            label="ابعاد رادیاتور",
+            width=350,
+            options=[ft.dropdown.Option(x) for x in RADIATOR_PRODUCTS.keys()]
+        )
+        
+        radiator_color = ft.Dropdown(
+            label="طرح رادیاتور",
+            width=350,
+            options=[ft.dropdown.Option(x) for x in RADIATOR_COLORS]
+        )
+        
+        radiator_orientation = ft.Dropdown(
+            label="نوع نصب",
+            width=350,
+            options=[
+                ft.dropdown.Option("افقی"),
+                ft.dropdown.Option("عمودی"),
+            ],
+            disabled=True,
+            value="افقی"
+        )
+        
+        radiator_qty = ft.TextField(
+            label="تعداد",
+            width=350,
+            value="1",
+            keyboard_type=ft.KeyboardType.NUMBER
+        )
+        
+        table = ft.DataTable(
+            columns=[
+                ft.DataColumn(ft.Text("شرح")),
+                ft.DataColumn(ft.Text("تعداد")),
+                ft.DataColumn(ft.Text("قیمت"))
+            ],
+            rows=[]
+        )
+        total_text = ft.Text("جمع کل: 0 تومان", size=18, weight="bold")
+        
+        def update_orientation(e=None):   # ← اضافه کردن e=None
+            if radiator_size.value in square_sizes:
+                radiator_orientation.disabled = True
+                radiator_orientation.value = "افقی"   # یا "-" اگر نمی‌خوای مقدار داشته باشه
+            else:
+                radiator_orientation.disabled = False
+            radiator_orientation.update()
             page.update()
-        except Exception as ex:
-            show_message(f"خطا: {ex}", "red")
-
-    # اتصال رویداد
-    radiator_size.on_change = update_orientation
-
-    # فراخوانی اولیه
-    update_orientation()
-
-    return ft.Container(
-        content=ft.Column([
-            ft.Row([
-                ft.IconButton(ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
-                ft.Text("پیش فاکتور رادیاتور", size=20, weight="bold")
-            ]),
-            ft.Divider(),
-            radiator_size,
-            radiator_color,
-            radiator_orientation,
-            radiator_qty,
-            ft.FilledButton("محاسبه پیش فاکتور", on_click=calculate_invoice, width=350, bgcolor="green"),
-            ft.Container(content=table, padding=10),
-            total_text,
-            ft.FilledButton("صدور PDF", icon=ft.Icons.PICTURE_AS_PDF, width=350, on_click=lambda e: show_message("در حال آماده‌سازی PDF...", "blue")),
-        ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-        padding=20,
-        width=400,
-        expand=True
-    )
+        def calculate_invoice(e):
+            try:
+                if not radiator_size.value:
+                    show_message("ابعاد رادیاتور را انتخاب کنید", "red")
+                    return
+                
+                qty = int(radiator_qty.value or 0)
+                unit_price = RADIATOR_PRODUCTS.get(radiator_size.value, 0)
+                line_total = qty * unit_price
+                
+                description = f"{radiator_size.value} | {radiator_color.value}"
+                if not radiator_orientation.disabled and radiator_orientation.value:
+                    description += f" | {radiator_orientation.value}"
+                    
+                table.rows = [ft.DataRow(cells=[
+                    ft.DataCell(ft.Text(description)),
+                    ft.DataCell(ft.Text(str(qty))),
+                    ft.DataCell(ft.Text(f"{line_total:,} تومان"))
+                ])]
+                
+                total_text.value = f"جمع کل: {line_total:,} تومان"
+                page.update()
+            except Exception as ex:
+                show_message(f"خطا: {ex}", "red")
+            
+            radiator_size.on_change = update_orientation
+            update_orientation()
+            
+            return ft.Container(
+                content=ft.Column([
+                    ft.Row([
+                        ft.IconButton(ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
+                        ft.Text("پیش فاکتور رادیاتور", size=20, weight="bold")
+                    ]),
+                    ft.Divider(),
+                    radiator_size,
+                    radiator_color,
+                    radiator_orientation,
+                    radiator_qty,
+                    ft.FilledButton("محاسبه پیش فاکتور", on_click=calculate_invoice, width=350, bgcolor="green"),
+                    ft.Container(content=table, padding=10),
+                    total_text,
+                    ft.FilledButton("صدور PDF", icon=ft.Icons.PICTURE_AS_PDF, width=350, on_click=lambda e: show_message("در حال آماده‌سازی PDF...", "blue")),
+                ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+                padding=20,
+                width=400,
+                expand=True
+            )
     # ==================== پیش فاکتور دستی زیرفرشی ====================
     def floor_manual_invoice_page():
 
