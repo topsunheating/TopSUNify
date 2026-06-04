@@ -114,7 +114,7 @@ def main(page: ft.Page):
     )
     # ==================== پیش فاکتور دستی زیرفرشی ====================
     def floor_manual_invoice_page():
-    
+
         product_size = ft.Dropdown(
             label="سایز زیرفرشی",
             width=350,
@@ -314,7 +314,7 @@ def main(page: ft.Page):
             ),
             padding=15,
             expand=True
-        )  
+        ) 
     # ==================== صفحه گرمایش از کف ====================
     def floor_heating_page():
         file_picker = ft.FilePicker()
