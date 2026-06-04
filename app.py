@@ -121,7 +121,7 @@ def main(page: ft.Page):
                 unit_price = RADIATOR_PRODUCTS.get(radiator_size.value, 0)
                 line_total = qty * unit_price
 
-                description = f"{radiator_size.value} | {radiator_color.value or 'ساده'}"
+                description = f"{radiator_size.value} | {radiator_color.value}"
                 if not radiator_orientation.disabled and radiator_orientation.value:
                     description += f" | {radiator_orientation.value}"
 
@@ -138,9 +138,7 @@ def main(page: ft.Page):
 
         # اتصال رویداد
         radiator_size.on_change = update_orientation
-        update_orientation()  # فراخوانی اولیه
 
-        return ft.Container(
             content=ft.Column([
                 ft.Row([
                     ft.IconButton(ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
@@ -160,6 +158,9 @@ def main(page: ft.Page):
             width=400,
             expand=True
         )
+        update_orientation() 
+
+        return ft.Container(
 
     # ==================== پیش فاکتور دستی زیرفرشی ====================
     def floor_manual_invoice_page():
