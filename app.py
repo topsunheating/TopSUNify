@@ -113,7 +113,6 @@ def main(page: ft.Page):
                 if radiator_orientation.value == "-":
                     radiator_orientation.value = "افقی"
             
-            radiator_orientation.update()
             page.update()
 
         def calculate_invoice(e):
