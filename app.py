@@ -60,7 +60,6 @@ def main(page: ft.Page):
             columns=[
                 ft.DataColumn(ft.Text("شرح")),
                 ft.DataColumn(ft.Text("تعداد")),
-                ft.DataColumn(ft.Text("قیمت واحد")), # ستون جدید
                 ft.DataColumn(ft.Text("جمع (تومان)"))
             ],
             rows=[]
@@ -82,7 +81,6 @@ def main(page: ft.Page):
                 table.rows.append(ft.DataRow(cells=[
                     ft.DataCell(ft.Text(item["description"])),
                     ft.DataCell(ft.Text(str(item["qty"]))),
-                    ft.DataCell(ft.Text(f"{item['unit_price']:,}")),
                     ft.DataCell(ft.Text(f"{item['total']:,}"))
                 ]))
                 grand_total += item["total"]
@@ -103,7 +101,7 @@ def main(page: ft.Page):
                 if not radiator_orientation.disabled and radiator_orientation.value != "-":
                     description += f" | {radiator_orientation.value}"
                 
-                invoice_items.append({"description": description, "qty": qty, "unit_price": unit_price, "total": line_total})
+                invoice_items.append({"description": description, "qty": qty, "total": line_total})
                 
                 refresh_table()
                 show_message("به لیست اضافه شد", "green")
