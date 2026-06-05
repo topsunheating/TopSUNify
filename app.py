@@ -83,7 +83,6 @@ def main(page: ft.Page):
             for item in invoice_items:
                 def delete_item(e, item_id=item["id"]):
                     nonlocal invoice_items
-                    # حذف آیتم از لیست
                     invoice_items[:] = [x for x in invoice_items if x["id"] != item_id]
                     refresh_table()
                     
