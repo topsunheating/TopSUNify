@@ -95,22 +95,14 @@ def main(page: ft.Page):
                         )
                     )
                     
-                table.rows.append(
-                    ft.DataRow(
-                        cells=[
-                            ft.DataCell(ft.Text(item["description"])),
-                            ft.DataCell(ft.Text(str(item["qty"])),
-                            ft.DataCell(ft.Text(f"{item['total']:,}")),
-                            ft.DataCell(
-                                ft.IconButton(
-                                    ft.Icons.DELETE,
-                                    icon_color="red",
-                                    on_click=delete_item
-                                )
-                            )
-                        ]
-                    )
-                )        
+                table.rows.append(ft.DataRow(cells=[
+                    ft.DataCell(ft.Text(item["description"])),
+                    ft.DataCell(ft.Text(str(item["qty"]))),
+                    ft.DataCell(ft.Text(f"{item['unit_price']:,}")),
+                    ft.DataCell(ft.Text(f"{item['total']:,}")),
+                    ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color="red", on_click=delete_item))
+                ]))
+                grand_total += item["total"]        
 
                 grand_total += item["total"]
             total_text.value = f"جمع کل: {grand_total:,} تومان"
