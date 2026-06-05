@@ -68,6 +68,19 @@ def main(page: ft.Page):
                 if radiator_orientation.value == "-":
                     radiator_orientation.value = "افقی"
             page.update()
+        def refresh_table():
+            table.rows.clear()
+            grand_total = 0
+            for item in invoice_items:
+                table.rows.append(ft.DataRow(cells=[
+                    ft.DataCell(ft.Text(item["description"])),
+                    ft.DataCell(ft.Text(str(item["qty"]))),
+                    ft.DataCell(ft.Text(f"{item['unit_price']:,}")),
+                    ft.DataCell(ft.Text(f"{item['total']:,}"))
+                ]))
+                grand_total += item["total"]
+            total_text.value = f"جمع کل: {grand_total:,} تومان"
+            page.update()
 
         def add_to_invoice(e):
             if not radiator_size.value:
