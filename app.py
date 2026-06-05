@@ -58,11 +58,13 @@ def main(page: ft.Page):
 
         table = ft.DataTable(
             columns=[
-                ft.DataColumn(ft.Text("شرح")), ft.DataColumn(ft.Text("تعداد")), ft.DataColumn(ft.Text("قیمت"))
+                ft.DataColumn(ft.Text("شرح")),
+                ft.DataColumn(ft.Text("تعداد")),
+                ft.DataColumn(ft.Text("جمع (تومان)"))
             ],
             rows=[]
         )
-        total_text = ft.Text("جمع کل: 0 تومان", size=18, weight="bold")
+        total_text = ft.Text("جمع کل: 0 تومان", size=18, weight="bold", color="green")
 
         def update_orientation(e=None):
             if radiator_size.value in square_sizes:
