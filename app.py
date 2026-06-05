@@ -62,7 +62,7 @@ def main(page: ft.Page):
             columns=[
                 ft.DataColumn(ft.Text("شرح")),
                 ft.DataColumn(ft.Text("تعداد")),
-                ft.DataColumn(ft.Text("جمع (تومان)")),
+                ft.DataColumn(ft.Text("جمع (تومان)")), 
                 ft.DataColumn(ft.Text("حذف"))
             ],
             rows=[]
@@ -878,6 +878,6 @@ def main(page: ft.Page):
 
 if __name__ == "__main__":
 
-    port = int(os.environ.get("PORT", 8080))
+    port = int(os.environ.get("PORT", 10000))
 
     ft.app(target=main, port=port, host="0.0.0.0", assets_dir="assets")
