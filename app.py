@@ -60,7 +60,7 @@ def main(page: ft.Page):
         table = ft.DataTable(
             column_spacing=10,
             columns=[
-                ft.DataColumn(ft.Text("شرح")),
+                ft.DataColumn(ft.Text("شرح"), numeric=True),
                 ft.DataColumn(ft.Text("تعداد")),
                 ft.DataColumn(ft.Text("قیمت")), 
                 ft.DataColumn(ft.Text("حذف"))
