@@ -82,7 +82,7 @@ def main(page: ft.Page):
             grand_total = 0
             for item in invoice_items:
                 def delete_item(e, item_id=item["id"]):
-                    global invoice_items
+                    nonlocal invoice_items
                     # حذف آیتم از لیست
                     invoice_items[:] = [x for x in invoice_items if x["id"] != item_id]
                     refresh_table()
