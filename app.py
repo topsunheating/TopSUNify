@@ -47,7 +47,7 @@ def main(page: ft.Page):
             "50×90 سانت": 16800000, "50×110 سانت": 18500000, "50×150 سانت": 23500000,
             "60×80 سانت": 17500000, "90×110 سانت": 26500000, "90×200 سانت": 39500000,
         }
-        RADIATOR_COLORS = ["سفید", "مشکی", "طوسی", "طرح چوب", "طرح مرمر", "سفارشی"]
+        RADIATOR_COLORS = ["سفید", "مشکی", "طوسی", "نوک مدادی", "سفارشی"]
         square_sizes = ["50×50 سانت", "60×60 سانت", "90×90 سانت"]
 
         invoice_items = []
@@ -62,7 +62,7 @@ def main(page: ft.Page):
             columns=[
                 ft.DataColumn(ft.Text("شرح")),
                 ft.DataColumn(ft.Text("تعداد")),
-                ft.DataColumn(ft.Text("جمع (تومان)")), 
+                ft.DataColumn(ft.Text("قیمت")), 
                 ft.DataColumn(ft.Text("حذف"))
             ],
             rows=[]
@@ -90,14 +90,14 @@ def main(page: ft.Page):
                 table.rows.append(
                     ft.DataRow(
                         cells=[
-                            ft.DataCell(ft.Text(item["description"], size=10)),
-                            ft.DataCell(ft.Text(str(item["qty"]), size=10)),
-                            ft.DataCell(ft.Text(f"{item['total']:,}", size=10)),
+                            ft.DataCell(ft.Text(item["description"], size=12)),
+                            ft.DataCell(ft.Text(str(item["qty"]), size=12)),
+                            ft.DataCell(ft.Text(f"{item['total']:,}", size=12)),
                             ft.DataCell(
                                 ft.IconButton(
                                     ft.Icons.DELETE,
                                     icon_color="red",
-                                    icon_size=12,
+                                    icon_size=10,
                                     on_click=delete_item
                                 )
                             )
