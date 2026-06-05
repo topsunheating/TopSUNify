@@ -87,6 +87,14 @@ def main(page: ft.Page):
                     invoice_items[:] = [x for x in invoice_items if x["id"] != item_id]
                     refresh_table()
                     
+                def centered_cell(content):
+                    return ft.DataCell(
+                        ft.Container(
+                            content=content,
+                            alignment=ft.alignment.center
+                        )
+                    )
+                    
                 table.rows.append(
                     ft.DataRow(
                         cells=[
