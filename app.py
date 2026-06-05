@@ -149,12 +149,12 @@ def main(page: ft.Page):
         invoice_items = []
         
         product_size = ft.Dropdown(label="سایز زیرفرشی", width=350, options=[ft.dropdown.Option(x) for x in FLOOR_PRODUCTS.keys()])
-        qty = ft.TextField(label="تعداد", width=150, value="1", keyboard_type=ft.KeyboardType.NUMBER)
+        qty = ft.TextField(label="تعداد", width=350, value="1", keyboard_type=ft.KeyboardType.NUMBER)
         insulation_switch = ft.Switch(label="افزودن عایق بازتابشی")
-        insulation_area = ft.TextField(label="متراژ عایق (متر مربع)", width=250, visible=False, keyboard_type=ft.KeyboardType.NUMBER)
+        insulation_area = ft.TextField(label="متراژ عایق (متر مربع)", width=350, visible=False, keyboard_type=ft.KeyboardType.NUMBER)
         dimmer_switch = ft.Switch(label="افزودن دیمر")
         dimmer_type = ft.Dropdown(label="مدل دیمر", width=350, visible=False, options=[ft.dropdown.Option(x) for x in DIMMERS.keys()])
-        dimmer_qty = ft.TextField(label="تعداد دیمر", width=150, value="1", visible=False, keyboard_type=ft.KeyboardType.NUMBER)
+        dimmer_qty = ft.TextField(label="تعداد دیمر", width=1350, value="1", visible=False, keyboard_type=ft.KeyboardType.NUMBER)
         
         table = ft.DataTable(
             columns=[
@@ -231,14 +231,12 @@ def main(page: ft.Page):
                 product_size, qty, ft.Divider(),
                 insulation_switch, insulation_area, ft.Divider(),
                 dimmer_switch, dimmer_type, dimmer_qty, ft.Divider(),
-                ft.ElevatedButton("افزودن به لیست", on_click=add_item, bgcolor="#1565C0", color="white", width=350),
+                ft.FilledButton("افزودن به لیست", on_click=add_item, bgcolor="#1565C0", width=350),
                 table, total_text,
-                ft.ElevatedButton("صدور PDF نهایی", icon=ft.Icons.PICTURE_AS_PDF, bgcolor="green", color="white", width=350, on_click=lambda e: show_message("PDF صادر شد", "green"))
+                ft.FilledButton("صدور PDF نهایی", icon=ft.Icons.PICTURE_AS_PDF, bgcolor="green", color="white", width=350, on_click=lambda e: show_message("PDF صادر شد", "green"))
             ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             padding=15, width=400, expand=True
-        )
-                
-     
+        )    
     # ==================== صفحه گرمایش از کف ====================
     def floor_heating_page():
         file_picker = ft.FilePicker()
@@ -321,7 +319,7 @@ def main(page: ft.Page):
                 ft.Divider(height=25),
 
                 ft.Container(
-                    content=ft.ElevatedButton(
+                    content=ft.FilledButton(
                         content=ft.Row([ft.Icon(ft.Icons.UPLOAD_FILE, color="white"), 
                                       ft.Text("📂 آپلود فایل DWG / DXF", size=16, weight="bold")], 
                                       alignment=ft.MainAxisAlignment.CENTER),
@@ -333,7 +331,7 @@ def main(page: ft.Page):
                 ),
 
                 ft.Container(
-                    content=ft.ElevatedButton(
+                    content=ft.FilledButton(
                         content=ft.Row([ft.Icon(ft.Icons.EDIT_NOTE, color="white"), 
                                       ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", size=16, weight="bold")], 
                                       alignment=ft.MainAxisAlignment.CENTER),
@@ -345,7 +343,7 @@ def main(page: ft.Page):
                 ),
 
                 ft.Container(
-                    content=ft.ElevatedButton(
+                    content=ft.FilledButton(
                         content=ft.Row([ft.Icon(ft.Icons.CALCULATE, color="white"), 
                                       ft.Text("✍️ مقادیر مستقیم (متراژ)", size=16, weight="bold")], 
                                       alignment=ft.MainAxisAlignment.CENTER),
@@ -373,7 +371,7 @@ def main(page: ft.Page):
                 ft.TextField(label="شماره شناسنامه", text_align=ft.TextAlign.RIGHT),
                 ft.TextField(label="شماره ملی", text_align=ft.TextAlign.RIGHT),
                 ft.Dropdown(label="نوع درخواست", options=[ft.dropdown.Option(i) for i in ["نماینده فروش","عامل فروش","کارشناس فروش","نصاب فنی"]]),
-                ft.ElevatedButton("ثبت نهایی درخواست", bgcolor="#1565C0", color="white", on_click=lambda e: show_message("درخواست با موفقیت ثبت شد"))
+                ft.FilledButton("ثبت نهایی درخواست", bgcolor="#1565C0", color="white", on_click=lambda e: show_message("درخواست با موفقیت ثبت شد"))
             ], scroll=ft.ScrollMode.AUTO),
             padding=20, width=400, expand=True
         )
@@ -422,13 +420,13 @@ def main(page: ft.Page):
             content=ft.Column([
                 ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("اعلام موجودی انبار", size=20, weight="bold")]), padding=10),
                 product_name,
-                ft.ElevatedButton("بارگذاری ابعاد", on_click=load_sizes, bgcolor="#1565C0", color="white", width=350),
+                ft.FilledButton("بارگذاری ابعاد", on_click=load_sizes, bgcolor="#1565C0", color="white", width=350),
                 product_size,
                 product_qty,
-                ft.ElevatedButton("افزودن به لیست", on_click=add_to_table, bgcolor="green", color="white", width=350),
+                ft.FilledButton("افزودن به لیست", on_click=add_to_table, bgcolor="green", color="white", width=350),
                 ft.Divider(),
                 table,
-                ft.ElevatedButton("اعلام کل موجودی و دانلود PDF", on_click=generate_and_download_pdf, bgcolor="blue", color="white", width=350, icon=ft.Icons.DOWNLOAD)
+                ft.FilledButton("اعلام کل موجودی و دانلود PDF", on_click=generate_and_download_pdf, bgcolor="blue", color="white", width=350, icon=ft.Icons.DOWNLOAD)
             ], scroll=ft.ScrollMode.AUTO, spacing=15),
             width=400, expand=True, padding=15
         )
@@ -510,13 +508,13 @@ def main(page: ft.Page):
             content=ft.Column([
                 ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("ثبت درخواست خرید", size=20, weight="bold")]), padding=10),
                 product_name,
-                ft.ElevatedButton("بارگذاری ابعاد", on_click=load_sizes, bgcolor="#1565C0", color="white", width=350),
+                ft.FilledButton("بارگذاری ابعاد", on_click=load_sizes, bgcolor="#1565C0", color="white", width=350),
                 product_size,
                 product_qty,
-                ft.ElevatedButton("افزودن به لیست", on_click=add_to_table, bgcolor="green", color="white", width=350),
+                ft.FilledButton("افزودن به لیست", on_click=add_to_table, bgcolor="green", color="white", width=350),
                 ft.Divider(),
                 table,
-                ft.ElevatedButton("ثبت نهایی درخواست خرید و دانلود PDF", on_click=generate_purchase_pdf, bgcolor="#1565C0", color="white", width=350, icon=ft.Icons.DOWNLOAD)
+                ft.FilledButton("ثبت نهایی درخواست خرید و دانلود PDF", on_click=generate_purchase_pdf, bgcolor="#1565C0", color="white", width=350, icon=ft.Icons.DOWNLOAD)
             ], scroll=ft.ScrollMode.AUTO, spacing=15),
             width=400, expand=True, padding=15
         )
@@ -528,7 +526,7 @@ def main(page: ft.Page):
                 ft.Text("فاکتورهای تسویه شده این ماه: ۴۸,۵۰۰,۰۰۰ تومان", size=16),
                 ft.Text("درصد همکاری شما: ۱۲٪", size=22, weight="bold", color="blue"),
                 ft.Text("مبلغ قابل تسویه: ۵,۸۲۰,۰۰۰ تومان", size=18, weight="bold", color="green"),
-                ft.ElevatedButton("درخواست تسویه حساب", bgcolor="#1565C0", color="white", width=350, on_click=lambda e: show_message("درخواست تسویه ارسال شد", "green"))
+                ft.FilledButton("درخواست تسویه حساب", bgcolor="#1565C0", color="white", width=350, on_click=lambda e: show_message("درخواست تسویه ارسال شد", "green"))
             ], scroll=ft.ScrollMode.AUTO, spacing=25, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400, expand=True, padding=15
         )
@@ -540,7 +538,7 @@ def main(page: ft.Page):
                 ft.Text("اعتبار فعلی شما: ۱۲۰,۰۰۰,۰۰۰ تومان", size=18, weight="bold", color="green"),
                 ft.TextField(label="مبلغ درخواستی افزایش اعتبار", width=350),
                 ft.Dropdown(label="نوع تضمین", width=350, options=[ft.dropdown.Option("چک"), ft.dropdown.Option("سفته"), ft.dropdown.Option("واریز نقدی")]),
-                ft.ElevatedButton("ارسال درخواست افزایش اعتبار", bgcolor="#1565C0", color="white", width=350, on_click=lambda e: show_message("درخواست افزایش اعتبار ارسال شد", "green"))
+                ft.FilledButton("ارسال درخواست افزایش اعتبار", bgcolor="#1565C0", color="white", width=350, on_click=lambda e: show_message("درخواست افزایش اعتبار ارسال شد", "green"))
             ], scroll=ft.ScrollMode.AUTO, spacing=20, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400, expand=True, padding=15
         )
@@ -566,7 +564,7 @@ def main(page: ft.Page):
                 ft.Divider(),
                 ft.Text("نسخه ۱.۴.۴ - ۱۴۰۴/۰۲/۲۵", size=16, weight="bold"),
                 ft.Text("• بهینه‌سازی تم تیره", size=15),
-                ft.ElevatedButton("شما آخرین نسخه را دارید", bgcolor="green", color="white", width=350, on_click=lambda e: show_message("شما آخرین نسخه را نصب دارید", "green"))
+                ft.FilledButton("شما آخرین نسخه را دارید", bgcolor="green", color="white", width=350, on_click=lambda e: show_message("شما آخرین نسخه را نصب دارید", "green"))
             ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400, expand=True, padding=15
         )
@@ -636,7 +634,7 @@ def main(page: ft.Page):
                         ft.Container(content=ft.Image(src="TopSUNify.png", width=190), margin=ft.margin.Margin(top=40, bottom=40)),
                         ft.Container(content=ft.TextField(label="نام کاربری", width=340, border_radius=12, prefix_icon=ft.Icons.PERSON, text_align=ft.TextAlign.RIGHT), margin=ft.margin.Margin(bottom=20)),
                         ft.Container(content=ft.Row([ft.Container(content=ft.Icon(ft.Icons.FINGERPRINT, size=42, color="#FFCC00"), on_click=lambda e: show_message("احراز هویت بیومتریک", "orange"), padding=10, border_radius=12), ft.TextField(label="رمز عبور", password=True, width=270, border_radius=12, prefix_icon=ft.Icons.LOCK, text_align=ft.TextAlign.RIGHT)], alignment=ft.MainAxisAlignment.CENTER, spacing=12), margin=ft.margin.Margin(bottom=30)),
-                        ft.ElevatedButton("ورود به TopSUNify", width=340, bgcolor="#FFCC00", color="black", style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)), on_click=lambda e: (setattr(page.session, 'logged_in', True), render())),
+                        ft.FilledButton("ورود به TopSUNify", width=340, bgcolor="#FFCC00", color="black", style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)), on_click=lambda e: (setattr(page.session, 'logged_in', True), render())),
                         ft.TextButton("فعال‌سازی / فراموشی رمز", style=ft.ButtonStyle(color={"": "blue"})),
                         ft.Container(content=ft.Image(src="TopSUN-Powered.png", width=160), margin=ft.margin.Margin(top=50, bottom=30)),
                         ft.Container(content=ft.Image(src="landscape.jpg", width=400, height=220, fit="cover"), expand=True)
@@ -695,7 +693,7 @@ def main(page: ft.Page):
                 if is_selected: selected_ref.current = container
                 period_buttons.controls.append(container)
 
-        view_button = ft.ElevatedButton("مشاهده اطلاعات این بازه", width=250, bgcolor="#1565C0", color="white", style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)), on_click=lambda e: show_message("در حال بارگذاری گزارش‌های مالی و عملیاتی..."))
+        view_button = ft.FilledButton("مشاهده اطلاعات این بازه", width=250, bgcolor="#1565C0", color="white", style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=30)), on_click=lambda e: show_message("در حال بارگذاری گزارش‌های مالی و عملیاتی..."))
 
         report_cards = ft.GridView(runs_count=2, max_extent=120, spacing=10, run_spacing=12, padding=10, expand=True)
         cards_data = [("فاکتورهای تسویه شده", ft.Icons.CHECK_CIRCLE, "#1976D2"), ("فاکتورهای فروش", ft.Icons.SHOPPING_CART, "#388E3C"), ("پیش فاکتورها", ft.Icons.RECEIPT_LONG, "#1565C0"), ("پروژه‌های نصب شده", ft.Icons.HOME_WORK, "#7B1FA2"), ("فاکتورهای باز", ft.Icons.PENDING, "#F57C00")]
@@ -785,10 +783,9 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     
     # اجرای برنامه برای وب
-    ft.app(
+    ft.run_app(
         target=main,
-        port=port,
-        view=ft.AppView.WEB_BROWSER, # این برای اجرا در مرورگر ضروری است
-        host="0.0.0.0"
+        host="0.0.0.0",
+        port=port
     )
 
