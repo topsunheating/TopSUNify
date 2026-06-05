@@ -54,8 +54,8 @@ def main(page: ft.Page):
 
         radiator_size = ft.Dropdown(label="ابعاد رادیاتور", width=350, options=[ft.dropdown.Option(x) for x in RADIATOR_PRODUCTS.keys()])
         radiator_color = ft.Dropdown(label="طرح رادیاتور", width=350, options=[ft.dropdown.Option(x) for x in RADIATOR_COLORS])
-        radiator_orientation = ft.Dropdown(label="نوع نصب", width=250, options=[ft.dropdown.Option("افقی"), ft.dropdown.Option("عمودی"), ft.dropdown.Option("-")], value="-")
-        radiator_qty = ft.TextField(label="تعداد", width=150, value="1", keyboard_type=ft.KeyboardType.NUMBER)
+        radiator_orientation = ft.Dropdown(label="نوع نصب", width=350, options=[ft.dropdown.Option("افقی"), ft.dropdown.Option("عمودی"), ft.dropdown.Option("-")], value="-")
+        radiator_qty = ft.TextField(label="تعداد", width=350, value="1", keyboard_type=ft.KeyboardType.NUMBER)
 
         table = ft.DataTable(
             column_spacing=10,
