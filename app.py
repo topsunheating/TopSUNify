@@ -88,7 +88,7 @@ def main(page: ft.Page):
                     refresh_table()
                     
                 table.rows.append(ft.DataRow(cells=[
-                    ft.DataCell(ft.Text(item["description"])),
+                    ft.DataCell(ft.Container(ft.Text(item["description"]), width=150)),
                     ft.DataCell(ft.Text(str(item["qty"]))),
                     ft.DataCell(ft.Text(f"{item['total']:,}")),
                     ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color="red", on_click=delete_item))
