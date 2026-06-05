@@ -6,3 +6,4 @@ numpy
 arabic-reshaper
 python-bidi
 jdatetime
+uvicorn
