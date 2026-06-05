@@ -86,12 +86,24 @@ def main(page: ft.Page):
                     invoice_items[:] = [x for x in invoice_items if x["id"] != item_id]
                     refresh_table()
                     
-                table.rows.append(ft.DataRow(cells=[
-                    ft.DataCell(ft.Text(item["description"], size=10), width=150),
-                    ft.DataCell(ft.Text(str(item["qty"]), size=10),
-                    ft.DataCell(ft.Text(f"{item['total']:,}", size=10),
-                    ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color="red",icon_size=12, on_click=delete_item)
-                ]))
+                table.rows.append(
+                    ft.DataRow(
+                        cells=[
+                            ft.DataCell(ft.Text(item["description"], size=10, width=150)),
+                            ft.DataCell(ft.Text(str(item["qty"]), size=10)),
+                            ft.DataCell(ft.Text(f"{item['total']:,}", size=10),
+                            ft.DataCell(
+                                ft.IconButton(
+                                    ft.Icons.DELETE,
+                                    icon_color="red",
+                                    icon_size=12,
+                                    on_click=delete_item
+                                )
+                            )
+                        ]
+                    )
+                )        
+
                 grand_total += item["total"]
             total_text.value = f"جمع کل: {grand_total:,} تومان"
             page.update()
