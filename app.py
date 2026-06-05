@@ -146,8 +146,8 @@ def main(page: ft.Page):
         )
     # ==================== پیش فاکتور دستی زیرفرشی ====================
     def floor_manual_invoice_page():
-        invoice_items = []  # لیست اصلی برای ذخیره تمامی ردیف‌ها
-
+        state = {"items": []}
+        
         product_size = ft.Dropdown(label="سایز زیرفرشی", width=350, options=[ft.dropdown.Option(x) for x in FLOOR_PRODUCTS.keys()])
         qty = ft.TextField(label="تعداد", width=150, value="1", keyboard_type=ft.KeyboardType.NUMBER)
         insulation_switch = ft.Switch(label="افزودن عایق بازتابشی")
@@ -166,65 +166,58 @@ def main(page: ft.Page):
             rows=[]
         )
         total_text = ft.Text("جمع کل: 0 تومان", size=18, weight="bold", color="green")
-
-    def refresh_table():
-        nonlocal invoice_items
-        table.rows.clear()
-        grand_total = 0
-        for item in invoice_items:
-            def delete_row(e, item_id=item["id"]):
-                nonlocal invoice_items
-                invoice_items = [x for x in invoice_items if x["id"] != item_id]
+        
+        def refresh_table():
+            nonlocal invoice_items
+            table.rows.clear()
+            grand_total = 0
+            for item in invoice_items:
+                def delete_row(e, item_id=item["id"]):
+                    nonlocal invoice_items
+                    invoice_items = [x for x in invoice_items if x["id"] != item_id]
+                    refresh_table()
+                table.rows.append(ft.DataRow(cells=[ 
+                    ft.DataCell(ft.Text(item["desc"], size=12)),
+                    ft.DataCell(ft.Text(str(item["qty"]), size=12)),
+                    ft.DataCell(ft.Text(f"{item['total']:,}", size=12)),
+                    ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color="red", icon_size=16, on_click=delete_row))
+                ]))
+                grand_total += item["total"]
+            total_text.value = f"جمع کل: {grand_total:,} تومان"
+            page.update()
+        def add_item(e):
+            nonlocal invoice_items
+            try:
+                if product_size.value:
+                    count = int(qty.value or 0)
+                    price = FLOOR_PRODUCTS[product_size.value]
+                    invoice_items.append({"id": time.time(), "desc": product_size.value, "qty": count, "total": count * price})
+                if insulation_switch.value:
+                    area = float(insulation_area.value or 0)
+                    invoice_items.append({"id": time.time() + 0.1, "desc": "عایق بازتابشی", "qty": area, "total": int(area * 1450000)})
+                if dimmer_switch.value and dimmer_type.value:
+                    dqty = int(dimmer_qty.value or 0)
+                    dprice = DIMMERS[dimmer_type.value]
+                    invoice_items.append({"id": time.time() + 0.2, "desc": dimmer_type.value, "qty": dqty, "total": dqty * dprice})
                 refresh_table()
-            
-            table.rows.append(ft.DataRow(cells=[ 
-                ft.DataCell(ft.Text(item["desc"], size=12)),
-                ft.DataCell(ft.Text(str(item["qty"]), size=12)),
-                ft.DataCell(ft.Text(f"{item['total']:,}", size=12)),
-                ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color="red", icon_size=16, on_click=delete_row))
-            ]))
-            grand_total += item["total"]
-        total_text.value = f"جمع کل: {grand_total:,} تومان"
-        page.update()
-
-    def add_item(e):
-        nonlocal invoice_items
-        try:
-            # اضافه کردن زیرفرشی اصلی
-            if product_size.value:
-                count = int(qty.value or 0)
-                price = FLOOR_PRODUCTS[product_size.value]
-                invoice_items.append({"id": time.time(), "desc": product_size.value, "qty": count, "total": count * price})
-           
-            if insulation_switch.value:
-                area = float(insulation_area.value or 0)
-                invoice_items.append({"id": time.time() + 0.1, "desc": "عایق بازتابشی", "qty": area, "total": int(area * 1450000)})
-            
-            # اضافه کردن دیمر
-            if dimmer_switch.value and dimmer_type.value:
-                dqty = int(dimmer_qty.value or 0)
-                dprice = DIMMERS[dimmer_type.value]
-                invoice_items.append({"id": time.time() + 0.2, "desc": dimmer_type.value, "qty": dqty, "total": dqty * dprice})
-            
-            refresh_table()
-            show_message("به لیست اضافه شد", "green")
-        except Exception as ex:
-            show_message(f"خطا: {ex}", "red")
-    insulation_switch.on_change = lambda e: (setattr(insulation_area, "visible", insulation_switch.value), page.update())
-    dimmer_switch.on_change = lambda e: (setattr(dimmer_type, "visible", dimmer_switch.value), setattr(dimmer_qty, "visible", dimmer_switch.value), page.update())
-
-    return ft.Container(
-        content=ft.Column([
-            ft.Row([ft.IconButton(ft.Icons.ARROW_BACK, on_click=lambda e: render(1)), ft.Text("پیش فاکتور زیرفرشی", size=20, weight="bold")]),
-            product_size, qty, ft.Divider(),
-            insulation_switch, insulation_area, ft.Divider(),
-            dimmer_switch, dimmer_type, dimmer_qty, ft.Divider(),
-            ft.ElevatedButton("افزودن به لیست", on_click=add_item, bgcolor="#1565C0", color="white", width=350),
-            table, total_text,
-            ft.ElevatedButton("صدور PDF نهایی", icon=ft.Icons.PICTURE_AS_PDF, bgcolor="green", color="white", width=350, on_click=lambda e: show_message("PDF صادر شد", "green"))
-        ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-        padding=15, width=400, expand=True
-    )
+                show_message("به لیست اضافه شد", "green")
+            except Exception as ex:
+                show_message(f"خطا: {ex}", "red")
+        insulation_switch.on_change = lambda e: (setattr(insulation_area, "visible", insulation_switch.value), page.update())
+        dimmer_switch.on_change = lambda e: (setattr(dimmer_type, "visible", dimmer_switch.value), setattr(dimmer_qty, "visible", dimmer_switch.value), page.update())
+        
+        return ft.Container(
+            content=ft.Column([
+                ft.Row([ft.IconButton(ft.Icons.ARROW_BACK, on_click=lambda e: render(1)), ft.Text("پیش فاکتور زیرفرشی", size=20, weight="bold")]),
+                product_size, qty, ft.Divider(),
+                insulation_switch, insulation_area, ft.Divider(),
+                dimmer_switch, dimmer_type, dimmer_qty, ft.Divider(),
+                ft.ElevatedButton("افزودن به لیست", on_click=add_item, bgcolor="#1565C0", color="white", width=350),
+                table, total_text,
+                ft.ElevatedButton("صدور PDF نهایی", icon=ft.Icons.PICTURE_AS_PDF, bgcolor="green", color="white", width=350, on_click=lambda e: show_message("PDF صادر شد", "green"))
+            ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            padding=15, width=400, expand=True
+        )
                 
      
     # ==================== صفحه گرمایش از کف ====================
