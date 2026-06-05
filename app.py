@@ -187,19 +187,35 @@ def main(page: ft.Page):
             page.update()
         def add_item(e):
             try:
+                added = False
                 if product_size.value:
                     count = int(qty.value or 0)
                     price = FLOOR_PRODUCTS[product_size.value]
-                    invoice_items.append({"id": time.time(), "desc": product_size.value, "qty": count, "total": count * price})
+                    state["items"].append({"id": time.time(), "desc": product_size.value, "qty": count, "total": count * price})
+                    added = True
                 if insulation_switch.value:
                     area = float(insulation_area.value or 0)
-                    invoice_items.append({"id": time.time() + 0.1, "desc": "عایق بازتابشی", "qty": area, "total": int(area * 1450000)})
+                    state["items"].append({"id": time.time() + 0.1, "desc": "عایق بازتابشی", "qty": area, "total": int(area * 1450000)})
+                    added = True
                 if dimmer_switch.value and dimmer_type.value:
                     dqty = int(dimmer_qty.value or 0)
                     dprice = DIMMERS[dimmer_type.value]
-                    invoice_items.append({"id": time.time() + 0.2, "desc": dimmer_type.value, "qty": dqty, "total": dqty * dprice})
-                refresh_table()
-                show_message("به لیست اضافه شد", "green")
+                    state["items"].append({"id": time.time() + 0.2, "desc": dimmer_type.value, "qty": dqty, "total": dqty * dprice})
+                    added = True
+                if added:
+                    product_size.value = None
+                    qty.value = "1"
+                    insulation_switch.value = False
+                    insulation_area.visible = False
+                    dimmer_switch.value = False
+                    dimmer_type.visible = False
+                    dimmer_qty.visible = False
+
+                    refresh_table()
+                    show_message("به لیست اضافه شد", "green")
+                else:
+                    show_message(f"خطا: {ex}", "red")
+
             except Exception as ex:
                 show_message(f"خطا: {ex}", "red")
         insulation_switch.on_change = lambda e: (setattr(insulation_area, "visible", insulation_switch.value), page.update())
