@@ -10,3 +10,4 @@ jdatetime
 uvicorn
 reportlab
 shapely
+python-multipart
