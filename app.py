@@ -86,16 +86,21 @@ def main(page: ft.Page):
             if not radiator_size.value:
                 show_message("لطفاً ابعاد را انتخاب کنید", "red")
                 return
-            qty = int(radiator_qty.value or 1)
-            unit_price = RADIATOR_PRODUCTS.get(radiator_size.value, 0)
-            line_total = qty * unit_price
-            description = f"{radiator_size.value} | {radiator_color.value or 'سفید'}"
-            if not radiator_orientation.disabled:
-                description += f" | {radiator_orientation.value}"
+            try:
+                qty = int(radiator_qty.value or 1)
+                unit_price = RADIATOR_PRODUCTS.get(radiator_size.value, 0)
+                line_total = qty * unit_price
+                description = f"{radiator_size.value} | {radiator_color.value or 'سفید'}"
+                if not radiator_orientation.disabled:
+                    description += f" | {radiator_orientation.value}"
+                
+                invoice_items.append({"description": description, "qty": qty, "total": line_total})
+                
+                refresh_table()
+                show_message("به لیست اضافه شد", "green")
             
-            invoice_items.append({"description": description, "qty": qty, "total": line_total})
-            # refresh_table()  # بعداً اضافه کنید
-            show_message("به لیست اضافه شد", "green")
+            except Exception as ex:
+                show_message(f"خطا: {ex}", "red")
 
         radiator_size.on_change = update_orientation
 
