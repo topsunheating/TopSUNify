@@ -60,10 +60,10 @@ def main(page: ft.Page):
         table = ft.DataTable(
             column_spacing=10,
             columns=[
-                ft.DataColumn(ft.Text("شرح"), width=250),
-                ft.DataColumn(ft.Text("تعداد"), width=40),
-                ft.DataColumn(ft.Text("جمع (تومان)"), width=150),
-                ft.DataColumn(ft.Text("x"), width=10)
+                ft.DataColumn(ft.Text("شرح")),
+                ft.DataColumn(ft.Text("تعداد")),
+                ft.DataColumn(ft.Text("جمع (تومان)")),
+                ft.DataColumn(ft.Text("حذف"))
             ],
             rows=[]
         )
