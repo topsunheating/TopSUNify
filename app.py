@@ -98,14 +98,13 @@ def main(page: ft.Page):
                 table.rows.append(
                     ft.DataRow(
                         cells=[
-                            ft.DataCell(ft.Text(item["description"], size=12)),
-                            ft.DataCell(ft.Text(str(item["qty"]), size=12)),
-                            ft.DataCell(ft.Text(f"{item['total']:,}", size=12)),
+                            ft.DataCell(ft.Text(item["description"])),
+                            ft.DataCell(ft.Text(str(item["qty"])),
+                            ft.DataCell(ft.Text(f"{item['total']:,}")),
                             ft.DataCell(
                                 ft.IconButton(
                                     ft.Icons.DELETE,
                                     icon_color="red",
-                                    icon_size=10,
                                     on_click=delete_item
                                 )
                             )
