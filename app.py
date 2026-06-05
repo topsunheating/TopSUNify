@@ -56,7 +56,12 @@ def main(page: ft.Page):
         radiator_orientation = ft.Dropdown(label="نوع نصب", width=350, options=[ft.dropdown.Option("افقی"), ft.dropdown.Option("عمودی"), ft.dropdown.Option("-")], value="-")
         radiator_qty = ft.TextField(label="تعداد", width=350, value="1", keyboard_type=ft.KeyboardType.NUMBER)
 
-        table = ft.DataTable(columns=[ft.DataColumn(ft.Text("شرح")), ft.DataColumn(ft.Text("تعداد")), ft.DataColumn(ft.Text("قیمت"))], rows=[])
+        table = ft.DataTable(
+            columns=[
+                ft.DataColumn(ft.Text("شرح")), ft.DataColumn(ft.Text("تعداد")), ft.DataColumn(ft.Text("قیمت"))
+            ],
+            rows=[]
+        )
         total_text = ft.Text("جمع کل: 0 تومان", size=18, weight="bold")
 
         def update_orientation(e=None):
@@ -65,9 +70,8 @@ def main(page: ft.Page):
                 radiator_orientation.value = "-"
             else:
                 radiator_orientation.disabled = False
-                if radiator_orientation.value == "-":
-                    radiator_orientation.value = "افقی"
             page.update()
+            
         def refresh_table():
             table.rows.clear()
             grand_total = 0
