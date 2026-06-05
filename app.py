@@ -146,7 +146,7 @@ def main(page: ft.Page):
         )
     # ==================== پیش فاکتور دستی زیرفرشی ====================
     def floor_manual_invoice_page():
-        state = {"items": []}
+        invoice_items = []
         
         product_size = ft.Dropdown(label="سایز زیرفرشی", width=350, options=[ft.dropdown.Option(x) for x in FLOOR_PRODUCTS.keys()])
         qty = ft.TextField(label="تعداد", width=150, value="1", keyboard_type=ft.KeyboardType.NUMBER)
@@ -172,8 +172,10 @@ def main(page: ft.Page):
             grand_total = 0
             for item in invoice_items:
                 def delete_row(e, item_id=item["id"]):
-                    state["items"] = [x for x in state["items"] if x["id"] != item_id]
+                    nonlocal invoice_items
+                    invoice_items = [x for x in invoice_items if x["id"] != item_id]
                     refresh_table()
+            
                 table.rows.append(ft.DataRow(cells=[ 
                     ft.DataCell(ft.Text(item["desc"], size=12)),
                     ft.DataCell(ft.Text(str(item["qty"]), size=12)),
