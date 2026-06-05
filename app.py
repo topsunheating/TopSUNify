@@ -87,10 +87,10 @@ def main(page: ft.Page):
                     refresh_table()
                     
                 table.rows.append(ft.DataRow(cells=[
-                    ft.DataCell(ft.Container(ft.Text(item["description"]), width=200)),
-                    ft.DataCell(ft.Text(str(item["qty"]))),
-                    ft.DataCell(ft.Text(f"{item['total']:,}")),
-                    ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color="red", on_click=delete_item))
+                    ft.DataCell(ft.Text(item["description"], size=10), width=200)),
+                    ft.DataCell(ft.Textstr(item["qty"]), size=10)),
+                    ft.DataCell(ft.Text(f"{item['total']:,}", size=10)),
+                    ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color="red",icon_size=12, on_click=delete_item))
                 ]))
                 grand_total += item["total"]
             total_text.value = f"جمع کل: {grand_total:,} تومان"
