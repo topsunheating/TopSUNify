@@ -73,7 +73,7 @@ def main(page: ft.Page):
             else:
                 radiator_orientation.disabled = False
             page.update()
-            
+          
         def refresh_table():
             table.rows.clear()
             grand_total = 0
