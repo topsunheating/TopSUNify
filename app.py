@@ -168,13 +168,11 @@ def main(page: ft.Page):
         total_text = ft.Text("جمع کل: 0 تومان", size=18, weight="bold", color="green")
         
         def refresh_table():
-            nonlocal invoice_items
             table.rows.clear()
             grand_total = 0
             for item in invoice_items:
                 def delete_row(e, item_id=item["id"]):
-                    nonlocal invoice_items
-                    invoice_items = [x for x in invoice_items if x["id"] != item_id]
+                    state["items"] = [x for x in state["items"] if x["id"] != item_id]
                     refresh_table()
                 table.rows.append(ft.DataRow(cells=[ 
                     ft.DataCell(ft.Text(item["desc"], size=12)),
@@ -186,7 +184,6 @@ def main(page: ft.Page):
             total_text.value = f"جمع کل: {grand_total:,} تومان"
             page.update()
         def add_item(e):
-            nonlocal invoice_items
             try:
                 if product_size.value:
                     count = int(qty.value or 0)
