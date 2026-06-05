@@ -783,9 +783,10 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     
     # اجرای برنامه برای وب
-    ft.run_app(
+    ft.app(
         target=main,
-        host="0.0.0.0",
-        port=port
+        view=ft.AppView.WEB_BROWSER,
+        port=int(port), # اطمینان حاصل کنید که پورت عدد صحیح است
+        host="0.0.0.0"
     )
 
