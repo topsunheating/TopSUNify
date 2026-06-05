@@ -2,7 +2,6 @@ import flet as ft
 import os
 import datetime
 import time
-import uvicorn
 
 FLOOR_PRODUCTS = {
     "طول 1/2 متر": 1250000,
@@ -890,5 +889,14 @@ def main(page: ft.Page):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    # دریافت پورت از Render (اگر تنظیم نشده بود، پیش‌فرض 8080)
+    port = int(os.environ.get("PORT", 8000))
+    
+    # اجرای برنامه برای وب
+    ft.app(
+        target=main,
+        port=port,
+        view=ft.AppView.WEB_BROWSER, # این برای اجرا در مرورگر ضروری است
+        host="0.0.0.0"
+    )
 
