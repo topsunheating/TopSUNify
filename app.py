@@ -62,7 +62,8 @@ def main(page: ft.Page):
             columns=[
                 ft.DataColumn(ft.Text("شرح"), width=250),
                 ft.DataColumn(ft.Text("تعداد"), width=50),
-                ft.DataColumn(ft.Text("جمع (تومان)"), width=150)
+                ft.DataColumn(ft.Text("جمع (تومان)"), width=150),
+                ft.DataColumn(ft.Text("حذف"), width=50)
             ],
             rows=[]
         )
