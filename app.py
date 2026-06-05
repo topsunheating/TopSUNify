@@ -78,6 +78,7 @@ def main(page: ft.Page):
             page.update()
           
         def refresh_table():
+            nonlocal invoice_items
             table.rows.clear()
             grand_total = 0
             for item in invoice_items:
@@ -109,6 +110,7 @@ def main(page: ft.Page):
             page.update()
 
         def add_to_invoice(e):
+            nonlocal invoice_items
             if not radiator_size.value:
                 show_message("لطفاً ابعاد را انتخاب کنید", "red")
                 return
