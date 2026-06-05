@@ -1,6 +1,7 @@
 import flet as ft
 import os
 import datetime
+import time
 
 FLOOR_PRODUCTS = {
     "طول 1/2 متر": 1250000,
@@ -57,6 +58,7 @@ def main(page: ft.Page):
         radiator_qty = ft.TextField(label="تعداد", width=150, value="1", keyboard_type=ft.KeyboardType.NUMBER)
 
         table = ft.DataTable(
+            column_spacing=10,
             columns=[
                 ft.DataColumn(ft.Text("شرح"), width=150)
                 ft.DataColumn(ft.Text("تعداد"), width=50)
@@ -78,10 +80,17 @@ def main(page: ft.Page):
             table.rows.clear()
             grand_total = 0
             for item in invoice_items:
+                def delete_item(e, item_id=item["id"]):
+                    global invoice_items
+                    # حذف آیتم از لیست
+                    invoice_items[:] = [x for x in invoice_items if x["id"] != item_id]
+                    refresh_table()
+                    
                 table.rows.append(ft.DataRow(cells=[
                     ft.DataCell(ft.Text(item["description"])),
                     ft.DataCell(ft.Text(str(item["qty"]))),
                     ft.DataCell(ft.Text(f"{item['total']:,}"))
+                    ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color="red", on_click=delete_item))
                 ]))
                 grand_total += item["total"]
             total_text.value = f"جمع کل: {grand_total:,} تومان"
@@ -101,7 +110,7 @@ def main(page: ft.Page):
                 if not radiator_orientation.disabled and radiator_orientation.value != "-":
                     description += f" | {radiator_orientation.value}"
                 
-                invoice_items.append({"description": description, "qty": qty, "total": line_total})
+                invoice_items.append({"id": time.time(),"description": description, "qty": qty, "total": line_total})
                 
                 refresh_table()
                 show_message("به لیست اضافه شد", "green")
