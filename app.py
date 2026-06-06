@@ -267,20 +267,20 @@ def main(page: ft.Page):
                     bgcolor="#f8f9fa",
                     border_radius=12
                 ),
-                ft.Text("روش صدور پیش‌فاکتور را انتخاب کنید", 
+                ft.Text("روش صدور پیش‌فاکتور را انتخاب کنید",
                        size=18, weight="bold", text_align=ft.TextAlign.CENTER),
                 ft.Divider(height=30),
 
-                # روش ۱: آپلود فایل (ساده)
+                # روش ۱: آپلود فایل
                 ft.Container(
                     content=ft.FilledButton(
                         content=ft.Row([
                             ft.Icon(ft.Icons.UPLOAD_FILE, color="white"),
                             ft.Text("📂 آپلود فایل DWG / DXF", size=16, weight="bold")
                         ], alignment=ft.MainAxisAlignment.CENTER),
-                        width=360, 
-                        height=75, 
-                        bgcolor="#1565C0", 
+                        width=360,
+                        height=75,
+                        bgcolor="#1565C0",
                         color="white",
                         on_click=lambda e: show_message("در نسخه کامل: فایل DWG/DXF آپلود و توسط main.py تحلیل می‌شود", "blue"),
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
@@ -295,9 +295,9 @@ def main(page: ft.Page):
                             ft.Icon(ft.Icons.EDIT_NOTE, color="white"),
                             ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", size=16, weight="bold")
                         ], alignment=ft.MainAxisAlignment.CENTER),
-                        width=360, 
-                        height=75, 
-                        bgcolor="#1565C0", 
+                        width=360,
+                        height=75,
+                        bgcolor="#1565C0",
                         color="white",
                         on_click=lambda e: render(19),
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
@@ -312,9 +312,9 @@ def main(page: ft.Page):
                             ft.Icon(ft.Icons.CALCULATE, color="white"),
                             ft.Text("✍️ مقادیر مستقیم (متراژ)", size=16, weight="bold")
                         ], alignment=ft.MainAxisAlignment.CENTER),
-                        width=360, 
-                        height=75, 
-                        bgcolor="#1565C0", 
+                        width=360,
+                        height=75,
+                        bgcolor="#1565C0",
                         color="white",
                         on_click=lambda e: render(20),
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
@@ -322,11 +322,11 @@ def main(page: ft.Page):
                 ),
 
                 ft.Divider(height=30),
-                ft.Text("هسته main.py و Financial.py آماده اتصال است", 
+                ft.Text("هسته main.py و Financial.py آماده اتصال است",
                        size=13, color="grey", text_align=ft.TextAlign.CENTER)
-            ], 
-            scroll=ft.ScrollMode.AUTO, 
-            spacing=12, 
+            ],
+            scroll=ft.ScrollMode.AUTO,
+            spacing=12,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400,
             expand=True,
