@@ -221,8 +221,7 @@ def main(page: ft.Page):
 
                     refresh_table()
                     show_message("به لیست اضافه شد", "green")
-                else:
-                    show_message(f"خطا: {ex}", "red")
+                
 
             except Exception as ex:
                 show_message(f"خطا: {ex}", "red")
