@@ -892,13 +892,51 @@ def main(page: ft.Page):
         return ft.Container(content=ft.Column([ft.Container(content=ft.Column([ft.Image(src="TopSUNify-1.png", width=80), ft.Text("خوش آمدید به TopSUNify", size=18, weight="bold", text_align=ft.TextAlign.CENTER), ft.Text("مرکز خدمات و پشتیبانی", size=16, color="grey", text_align=ft.TextAlign.CENTER)], horizontal_alignment=ft.CrossAxisAlignment.CENTER), margin=ft.margin.Margin(top=20, bottom=30)), ft.Container(content=ft.Column([ft.ListTile(leading=ft.Icon(ft.Icons.SHIELD, color="green"), title=ft.Text("ثبت گارانتی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=lambda e: render(22)), ft.ListTile(leading=ft.Icon(ft.Icons.INSTALL_DESKTOP, color="blue"), title=ft.Text("درخواست نصب اولیه"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.SUPPORT_AGENT, color="orange"), title=ft.Text("درخواست خدمات فنی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.SHOPPING_CART_CHECKOUT, color="purple"), title=ft.Text("ثبت درخواست سفارشی و عمده"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.PRINT, color="red"), title=ft.Text("درخواست چاپ طرح سفارشی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20))], spacing=2), width=380)], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
     def warranty_page():
         name = ft.TextField(label="نام و نام خانوادگی", width=350)
+        father_name = ft.TextField(label="نام پدر", width=350)
+        birth_date = ft.TextField(label="تاریخ تولد (مثال: 1400/01/01)", width=350)
+        national_id = ft.TextField(label="کد ملی", width=350, keyboard_type=ft.KeyboardType.NUMBER)
+        id_number = ft.TextField(label="شماره شناسنامه", width=350)
         phone = ft.TextField(label="شماره موبایل", width=350, keyboard_type=ft.KeyboardType.PHONE)
         product_code = ft.TextField(label="کد محصول", width=350)
+        postal_code = ft.TextField(label="کد پستی (۱۰ رقم)", width=350, keyboard_type=ft.KeyboardType.NUMBER)
+
+        provinces = {"تهران": ["تهران", "شهریار", "کرج"], "اصفهان": ["اصفهان", "کاشان"]} # نمونه
+        province_dropdown = ft.Dropdown(label="استان", width=350, options=[ft.dropdown.Option(p) for p in provinces.keys()])
+        city_dropdown = ft.Dropdown(label="شهر", width=350, options=[])
+        address = ft.TextField(label="آدرس کامل", width=350, multiline=True)
+
+        def on_province_change(e):
+            city_dropdown.options = [ft.dropdown.Option(c) for c in provinces.get(province_dropdown.value, [])]
+            city_dropdown.update()
+        province_dropdown.on_change = on_province_change
+        
+        purchase_place = ft.Dropdown(label="محل خرید", width=350, options=[
+            ft.dropdown.Option("سایت شرکت"), ft.dropdown.Option("دفتر مرکزی"), ft.dropdown.Option("فروشگاه یا نمایندگی")
+        ])
+        shop_name = ft.TextField(label="نام فروشگاه یا نمایندگی", width=350, visible=False)
+        
+        def on_purchase_change(e):
+            shop_name.visible = (purchase_place.value == "فروشگاه یا نمایندگی")
+            shop_name.update()
+        
+        purchase_place.on_change = on_purchase_change
+        
+        def validate(e):
+            if len(national_id.value) != 10:
+                return "کد ملی باید ۱۰ رقم باشد"
+            if len(postal_code.value) != 10:
+                return "کد پستی باید ۱۰ رقم باشد"
+                return None
+        
         invoice_number = ft.TextField(label="شماره فاکتور", width=350)
         purchase_date = ft.TextField(label="تاریخ خرید", width=350)
         
         def submit(e):
-            print("اطلاعات ثبت شد")
+            err = validate(e)
+            if err:
+                print(err)
+                return
+            print("ثبت نهایی با موفقیت انجام شد")
         
         return ft.Container(
             content=ft.Column([
