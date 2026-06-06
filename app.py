@@ -255,83 +255,29 @@ def main(page: ft.Page):
         )    
     # ==================== صفحه گرمایش از کف ====================
     def floor_heating_page():
-        tabs = ft.Tabs(
-            selected_index=0,
-            tabs=[
-                # تب ۱: آپلود فایل
-                ft.Tab(
-                    label="📂 آپلود فایل DWG/DXF",
-                    content=ft.Column([
-                        ft.Text("فایل نقشه اتوکد را انتخاب کنید", size=18, weight="bold"),
-                        ft.ElevatedButton(
-                            "انتخاب فایل DWG یا DXF",
-                            width=350,
-                            bgcolor="#1565C0",
-                            color="white",
-                            on_click=lambda e: file_picker.pick_files(
-                                allow_multiple=False,
-                                allowed_extensions=["dwg", "dxf"]
-                            )
-                        ),
-                        ft.Text("پس از انتخاب فایل، به صورت خودکار تحلیل و پیش‌فاکتور صادر می‌شود", size=14, color="grey")
-                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=20)
-                ),
-                
-                # تب ۲: ورود دستی ابعاد
-                ft.Tab(
-                    label="⌨️ ورود دستی ابعاد اتاق‌ها",
-                    content=ft.Column([
-                        ft.Text("ابعاد اتاق‌ها را وارد کنید", size=18, weight="bold"),
-                        ft.TextField(label="نام فضا", width=350, value="پذیرایی"),
-                        ft.Row([
-                            ft.TextField(label="عرض (متر)", width=170, value="4.0"),
-                            ft.TextField(label="طول (متر)", width=170, value="5.0")
-                        ]),
-                        ft.ElevatedButton("اضافه کردن اتاق", width=350, bgcolor="#1565C0", color="white", on_click=lambda e: show_message("اتاق اضافه شد (در حال توسعه)", "blue")),
-                        ft.Divider(),
-                        ft.Text("لیست اتاق‌های اضافه شده", size=16, weight="bold")
-                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=15)
-                ),
-                
-                # تب ۳: مقادیر مستقیم
-                ft.Tab(
-                    label="✍️ مقادیر مستقیم",
-                    content=ft.Column([
-                        ft.Text("مقادیر را مستقیم وارد کنید", size=18, weight="bold"),
-                        ft.TextField(label="فیلم عرض ۸۰ متر", width=350),
-                        ft.TextField(label="فیلم عرض ۴۰ متر", width=350),
-                        ft.TextField(label="متراژ عایق", width=350),
-                        ft.TextField(label="تعداد ترموستات", width=350),
-                        ft.TextField(label="تعداد تابلو فرمان", width=350),
-                        ft.ElevatedButton("ثبت و صدور پیش‌فاکتور", width=350, bgcolor="#1565C0", color="white", on_click=lambda e: show_message("پیش‌فاکتور صادر شد", "green"))
-                    ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=15)
-                ),
-            ],
-            expand=1
-        )
-
-        # ایجاد FilePicker برای تب اول
         file_picker = ft.FilePicker()
         page.overlay.append(file_picker)
+        page.update()
 
         def on_file_picked(e):
             if e.files and len(e.files) > 0:
                 file = e.files[0]
-                show_message(f"فایل {file.name} انتخاب شد. در حال پردازش...", "blue")
-                # اینجا بعداً به main.py و Financial.py وصل می‌شود
+                show_message(f"فایل {file.name} انتخاب شد.\nدر حال پردازش...", "blue")
                 process_dwg_file(file)
+            else:
+                show_message("هیچ فایلی انتخاب نشد", "red")
 
         file_picker.on_result = on_file_picked
 
         def process_dwg_file(file):
             try:
-                show_message("در حال تحلیل فایل توسط هسته main.py ...", "blue")
-                # شبیه‌سازی
+                show_message("در حال ارسال فایل به هسته main.py ...", "blue")
+                # شبیه‌سازی پردازش (بعداً واقعی می‌شود)
                 import time
                 time.sleep(1.5)
-                show_message("✅ تحلیل کامل شد\nپیش‌فاکتور آماده دانلود است", "green")
+                show_message("✅ فایل با موفقیت تحلیل شد\nپیش‌فاکتور آماده دانلود است", "green")
             except Exception as ex:
-                show_message(f"خطا: {ex}", "red")
+                show_message(f"❌ خطا در پردازش: {ex}", "red")
 
         return ft.Container(
             content=ft.Column([
@@ -342,8 +288,50 @@ def main(page: ft.Page):
                     ]),
                     padding=15, bgcolor="#f8f9fa", border_radius=12
                 ),
-                tabs
-            ], scroll=ft.ScrollMode.AUTO),
+                ft.Text("روش صدور پیش‌فاکتور را انتخاب کنید", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
+                ft.Divider(height=30),
+
+                # دکمه ۱: آپلود فایل
+                ft.Container(
+                    content=ft.FilledButton(
+                        content=ft.Row([ft.Icon(ft.Icons.UPLOAD_FILE, color="white"),
+                                      ft.Text("📂 آپلود فایل DWG / DXF", size=16, weight="bold")],
+                                      alignment=ft.MainAxisAlignment.CENTER),
+                        width=360, height=75, bgcolor="#1565C0", color="white",
+                        on_click=lambda e: file_picker.pick_files(allow_multiple=False, allowed_extensions=["dwg", "dxf"]),
+                        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
+                    ),
+                    margin=ft.margin.Margin(bottom=15)
+                ),
+
+                # دکمه ۲: ورود دستی ابعاد
+                ft.Container(
+                    content=ft.FilledButton(
+                        content=ft.Row([ft.Icon(ft.Icons.EDIT_NOTE, color="white"),
+                                      ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", size=16, weight="bold")],
+                                      alignment=ft.MainAxisAlignment.CENTER),
+                        width=360, height=75, bgcolor="#1565C0", color="white",
+                        on_click=lambda e: render(19),
+                        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
+                    ),
+                    margin=ft.margin.Margin(bottom=15)
+                ),
+
+                # دکمه ۳: مقادیر مستقیم
+                ft.Container(
+                    content=ft.FilledButton(
+                        content=ft.Row([ft.Icon(ft.Icons.CALCULATE, color="white"),
+                                      ft.Text("✍️ مقادیر مستقیم (متراژ)", size=16, weight="bold")],
+                                      alignment=ft.MainAxisAlignment.CENTER),
+                        width=360, height=75, bgcolor="#1565C0", color="white",
+                        on_click=lambda e: render(20),
+                        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
+                    )
+                ),
+
+                ft.Divider(height=30),
+                ft.Text("هسته main.py و Financial.py آماده اتصال است", size=13, color="grey", text_align=ft.TextAlign.CENTER)
+            ], scroll=ft.ScrollMode.AUTO, spacing=12, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400,
             expand=True,
             padding=15
