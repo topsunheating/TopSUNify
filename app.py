@@ -171,54 +171,70 @@ def main(page: ft.Page):
             table.rows.clear()
             grand_total = 0
             for item in invoice_items:
-                def delete_row(e, item_id=item["id"]):
-                    state["items"] = [x for x in state["items"] if x["id"] != item_id]
+                def delete_item(e, item_id=item["id"]):
+                    nonlocal invoice_items
+                    invoice_items = [x for x in invoice_items if x["id"] != item_id]
                     refresh_table()
-            
-                table.rows.append(ft.DataRow(cells=[ 
+
+                table.rows.append(ft.DataRow(cells=[
                     ft.DataCell(ft.Text(item["desc"], size=12)),
                     ft.DataCell(ft.Text(str(item["qty"]), size=12)),
                     ft.DataCell(ft.Text(f"{item['total']:,}", size=12)),
-                    ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color="red", icon_size=16, on_click=delete_row))
+                    ft.DataCell(ft.IconButton(ft.Icons.DELETE, icon_color="red", icon_size=18, on_click=delete_item))
                 ]))
                 grand_total += item["total"]
+            
             total_text.value = f"جمع کل: {grand_total:,} تومان"
             page.update()
         def add_item(e):
             try:
-                something_added = False
-                
+                added = False
+               
                 if product_size.value:
                     count = int(qty.value or 0)
-                    price = FLOOR_PRODUCTS[product_size.value]
-                    state["items"].append({"id": time.time(), "desc": product_size.value, "qty": count, "total": count * price})
-                    something_added = True
-                    
-                if insulation_switch.value:
+                    if count > 0:
+                        price = FLOOR_PRODUCTS[product_size.value]
+                        invoice_items.append({
+                            "id": len(invoice_items) + 1,
+                            "desc": product_size.value,
+                            "qty": count,
+                            "total": count * price
+                        })
+                        added = True
+                   
+                if insulation_switch.value and insulation_area.value:
                     area = float(insulation_area.value or 0)
-                    state["items"].append({"id": time.time() + 0.1, "desc": "عایق بازتابشی", "qty": area, "total": int(area * 1450000)})
-                    something_added = True
-                    
+                    if area > 0:
+                        invoice_items.append({
+                            "id": len(invoice_items) + 1,
+                            "desc": "عایق بازتابشی",
+                            "qty": area,
+                            "total": int(area * 1450000)
+                        })
+                        added = True
+                   
                 if dimmer_switch.value and dimmer_type.value:
                     dqty = int(dimmer_qty.value or 0)
-                    dprice = DIMMERS[dimmer_type.value]
-                    state["items"].append({"id": time.time() + 0.2, "desc": dimmer_type.value, "qty": dqty, "total": dqty * dprice})
-                    something_added = True
-                    
-                if something_added:
-                    product_size.value = None
-                    qty.value = "1"
-                    insulation_switch.value = False
-                    insulation_area.visible = False
-                    dimmer_switch.value = False
-                    dimmer_type.visible = False
-                    dimmer_qty.visible = False
-                    
+                    if dqty > 0:
+                        dprice = DIMMERS[dimmer_type.value]
+                        invoice_items.append({
+                            "id": len(invoice_items) + 1,
+                            "desc": dimmer_type.value,
+                            "qty": dqty,
+                            "total": dqty * dprice
+                        })
+                        added = True
+                   
+                if added:
                     refresh_table()
                     show_message("به لیست اضافه شد", "green")
+                    # پاک کردن فیلدها
+                    qty.value = "1"
+                    insulation_area.value = ""
+                    dimmer_qty.value = "1"
+                    page.update()
                 else:
                     show_message("لطفاً یک مورد را انتخاب کنید", "orange")
-
             except Exception as ex:
                 show_message(f"خطا: {ex}", "red")
         insulation_switch.on_change = lambda e: (setattr(insulation_area, "visible", insulation_switch.value), page.update())
