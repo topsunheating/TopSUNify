@@ -316,7 +316,7 @@ def main(page: ft.Page):
                         height=75,
                         bgcolor="#1565C0",
                         color="white",
-                        on_click=lambda e: render(22),
+                        on_click=lambda e: render(21),
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     )
                 ),
