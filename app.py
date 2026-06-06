@@ -172,8 +172,7 @@ def main(page: ft.Page):
             grand_total = 0
             for item in invoice_items:
                 def delete_row(e, item_id=item["id"]):
-                    nonlocal invoice_items
-                    invoice_items = [x for x in invoice_items if x["id"] != item_id]
+                    state["items"] = [x for x in state["items"] if x["id"] != item_id]
                     refresh_table()
             
                 table.rows.append(ft.DataRow(cells=[ 
@@ -209,19 +208,16 @@ def main(page: ft.Page):
                 if something_added:
                     product_size.value = None
                     qty.value = "1"
-                    refresh_table()
-                    show_message("به لیست اضافه شد", "green")
-                else:
-                    show_message("لطفاً یک مورد را انتخاب کنید", "orange")
                     insulation_switch.value = False
                     insulation_area.visible = False
                     dimmer_switch.value = False
                     dimmer_type.visible = False
                     dimmer_qty.visible = False
-
+                    
                     refresh_table()
                     show_message("به لیست اضافه شد", "green")
-                
+                else:
+                    show_message("لطفاً یک مورد را انتخاب کنید", "orange")
 
             except Exception as ex:
                 show_message(f"خطا: {ex}", "red")
