@@ -259,62 +259,72 @@ def main(page: ft.Page):
         page.overlay.append(file_picker)
 
         def on_file_picked(e):
-            if e.files:
-                file = e.files[0]
-                show_message(f"فایل {file.name} در حال پردازش...", "blue")
-                process_dwg_file(file)
+            if not e.files:
+                return
+            file = e.files[0]
+            show_message(f"فایل {file.name} آپلود شد. در حال پردازش...", "blue")
+            process_dwg_file(file)
 
         file_picker.on_result = on_file_picked
 
         def process_dwg_file(file):
             try:
-                # فقط توابع مورد نیاز را ایمپورت می‌کنیم
-                from main import generate_layout_plan
+                # ایمپورت توابع
+                from main import get_total_meters_from_file, calculate_thermostats
                 from Financial import calculate_tosunify_proforma, generate_proforma_pdf
 
-                show_message("در حال تحلیل فایل توسط هسته main.py...", "blue")
+                show_message("در حال تحلیل فایل توسط هسته مهندسی...", "blue")
 
-                # تولید پلان چیدمان
-                layout_pdf_bytes = generate_layout_plan(
-                    file.path if hasattr(file, 'path') else file.name
-                )
+                # ۱. تحلیل فایل DWG/DXF
+                m80, m40 = get_total_meters_from_file(file.path if hasattr(file, 'path') else file.name)
+                
+                show_message(f"تحلیل فایل انجام شد → فیلم ۸۰: {m80} متر | فیلم ۴۰: {m40} متر", "blue")
 
-                # محاسبات مالی و صدور پیش‌فاکتور
+                # ۲. محاسبات فنی
+                xps = round((m80 + m40) * 1.1, 1)
+                thermostat_count = calculate_thermostats([{'w': m80 + m40, 'l': 1}])
+                panel_count = 1 if (m80 > 0 or m40 > 0) else 0
+
+                # ۳. محاسبات مالی
                 res = calculate_tosunify_proforma(
-                    width_80_m=45.5,
-                    width_40_m=8.2,
-                    installation_pct=12,
+                    width_80_m=m80,
+                    width_40_m=m40,
+                    installation_pct=15,
                     discount_pct=5,
                     tax_pct=9,
-                    thermostats_count=3
+                    thermostats_count=thermostat_count
                 )
 
+                # ۴. تولید PDF
                 financial_pdf_bytes = generate_proforma_pdf(
                     res=res,
-                    m80=45.5,
-                    m40=8.2,
-                    xps=65,
-                    thermostats=3,
-                    p_count=1,
-                    customer_name=page.session.username,
+                    m80=m80,
+                    m40=m40,
+                    xps=xps,
+                    thermostats=thermostat_count,
+                    p_count=panel_count,
+                    customer_name=page.session.get("username", "مشتری"),
                     doc_number=1001
                 )
 
-                # دانلود PDF
+                # ۵. دانلود فایل
                 import tempfile
-                with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
-                    f.write(financial_pdf_bytes)
-                    temp_path = f.name
+                with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
+                    tmp.write(financial_pdf_bytes)
+                    temp_path = tmp.name
 
-                page.download_file(temp_path)
-                show_message("✅ پیش‌فاکتور و پلان چیدمان با موفقیت صادر شد", "green")
+                page.download_file(temp_path, f"پیش_فاکتور_{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.pdf")
+                show_message("✅ پیش‌فاکتور و پلان با موفقیت صادر و دانلود شد", "green")
 
             except Exception as ex:
-                show_message(f"❌ خطا در پردازش: {ex}", "red")
+                show_message(f"❌ خطا در پردازش: {str(ex)}", "red")
 
+        # روش دوم: ورود دستی ابعاد
         def method2_manual(e):
             show_message("ورود دستی ابعاد اتاق‌ها (در حال توسعه)", "blue")
+            # بعداً می‌توانیم صفحه جداگانه بسازیم
 
+        # روش سوم: مقادیر مستقیم
         def method3_direct(e):
             show_message("روش مقادیر مستقیم (در حال توسعه)", "blue")
 
@@ -325,20 +335,14 @@ def main(page: ft.Page):
                         ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
                         ft.Text("گرمایش از کف (سیستم هوشمند)", size=21, weight="bold")
                     ]),
-                    padding=15,
-                    bgcolor="#f8f9fa",
-                    border_radius=12
+                    padding=15, bgcolor="#f8f9fa", border_radius=12
                 ),
-
-                ft.Text("روش صدور پیش‌فاکتور را انتخاب کنید", 
-                       size=18, weight="bold", text_align=ft.TextAlign.CENTER),
+                ft.Text("روش صدور پیش‌فاکتور را انتخاب کنید", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
                 ft.Divider(height=25),
 
                 ft.Container(
                     content=ft.FilledButton(
-                        content=ft.Row([ft.Icon(ft.Icons.UPLOAD_FILE, color="white"), 
-                                      ft.Text("📂 آپلود فایل DWG / DXF", size=16, weight="bold")], 
-                                      alignment=ft.MainAxisAlignment.CENTER),
+                        content=ft.Row([ft.Icon(ft.Icons.UPLOAD_FILE, color="white"), ft.Text("📂 آپلود فایل DWG / DXF", size=16, weight="bold")], alignment=ft.MainAxisAlignment.CENTER),
                         width=360, height=75, bgcolor="#1565C0", color="white",
                         on_click=lambda e: file_picker.pick_files(allow_multiple=False, allowed_extensions=["dwg", "dxf"]),
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
@@ -348,9 +352,7 @@ def main(page: ft.Page):
 
                 ft.Container(
                     content=ft.FilledButton(
-                        content=ft.Row([ft.Icon(ft.Icons.EDIT_NOTE, color="white"), 
-                                      ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", size=16, weight="bold")], 
-                                      alignment=ft.MainAxisAlignment.CENTER),
+                        content=ft.Row([ft.Icon(ft.Icons.EDIT_NOTE, color="white"), ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", size=16, weight="bold")], alignment=ft.MainAxisAlignment.CENTER),
                         width=360, height=75, bgcolor="#1565C0", color="white",
                         on_click=method2_manual,
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
@@ -360,9 +362,7 @@ def main(page: ft.Page):
 
                 ft.Container(
                     content=ft.FilledButton(
-                        content=ft.Row([ft.Icon(ft.Icons.CALCULATE, color="white"), 
-                                      ft.Text("✍️ مقادیر مستقیم (متراژ)", size=16, weight="bold")], 
-                                      alignment=ft.MainAxisAlignment.CENTER),
+                        content=ft.Row([ft.Icon(ft.Icons.CALCULATE, color="white"), ft.Text("✍️ مقادیر مستقیم (متراژ)", size=16, weight="bold")], alignment=ft.MainAxisAlignment.CENTER),
                         width=360, height=75, bgcolor="#1565C0", color="white",
                         on_click=method3_direct,
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
@@ -372,9 +372,7 @@ def main(page: ft.Page):
                 ft.Divider(height=30),
                 ft.Text("هسته main.py و Financial.py متصل شد", size=13, color="grey", text_align=ft.TextAlign.CENTER)
             ], scroll=ft.ScrollMode.AUTO, spacing=12, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-            width=400,
-            expand=True,
-            padding=15
+            width=400, expand=True, padding=15
         )
     # ==================== صفحات اضافی ====================
     def account_request_page():
