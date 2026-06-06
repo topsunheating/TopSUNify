@@ -213,6 +213,16 @@ def main(page: ft.Page):
                     show_message("به لیست اضافه شد", "green")
                 else:
                     show_message("لطفاً یک مورد را انتخاب کنید", "orange")
+                    insulation_switch.value = False
+                    insulation_area.visible = False
+                    dimmer_switch.value = False
+                    dimmer_type.visible = False
+                    dimmer_qty.visible = False
+
+                    refresh_table()
+                    show_message("به لیست اضافه شد", "green")
+                else:
+                    show_message(f"خطا: {ex}", "red")
 
             except Exception as ex:
                 show_message(f"خطا: {ex}", "red")
