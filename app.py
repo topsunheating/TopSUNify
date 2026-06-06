@@ -229,9 +229,9 @@ def main(page: ft.Page):
                 ft.Row([ft.IconButton(ft.Icons.ARROW_BACK, on_click=lambda e: render(1)), ft.Text("پیش فاکتور زیرفرشی", size=20, weight="bold")]),
                 product_size, qty, ft.Divider(),
                 ft.Row([insulation_switch], alignment=ft.MainAxisAlignment.START),
-                insulation_switch, insulation_area, ft.Divider(),
+                insulation_area, ft.Divider(),
                 ft.Row([dimmer_switch], alignment=ft.MainAxisAlignment.START),
-                dimmer_switch, dimmer_type, dimmer_qty, ft.Divider(),
+                dimmer_type, dimmer_qty, ft.Divider(),
                 ft.FilledButton("افزودن به لیست", on_click=add_item, bgcolor="#1565C0", width=350),
                 table, total_text,
                 ft.FilledButton("صدور PDF نهایی", icon=ft.Icons.PICTURE_AS_PDF, bgcolor="green", color="white", width=350, on_click=lambda e: show_message("PDF صادر شد", "green"))
