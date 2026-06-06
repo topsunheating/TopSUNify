@@ -332,6 +332,73 @@ def main(page: ft.Page):
             expand=True,
             padding=15
         )
+            # ==================== روش مقادیر مستقیم ====================
+    def direct_values_page():
+        m80 = ft.TextField(label="متراژ فیلم عرض ۸۰ (متر)", width=350, value="0", keyboard_type=ft.KeyboardType.NUMBER)
+        m40 = ft.TextField(label="متراژ فیلم عرض ۴۰ (متر)", width=350, value="0", keyboard_type=ft.KeyboardType.NUMBER)
+        xps = ft.TextField(label="متراژ عایق (مترمربع)", width=350, value="0", keyboard_type=ft.KeyboardType.NUMBER)
+        thermostat = ft.TextField(label="تعداد ترموستات", width=350, value="1", keyboard_type=ft.KeyboardType.NUMBER)
+        panel = ft.TextField(label="تعداد تابلو فرمان", width=350, value="1", keyboard_type=ft.KeyboardType.NUMBER)
+
+        total_text = ft.Text("جمع کل: 0 تومان", size=18, weight="bold", color="green")
+
+        def calculate(e):
+            try:
+                m80v = float(m80.value or 0)
+                m40v = float(m40.value or 0)
+                xpsv = float(xps.value or 0)
+                thv = int(thermostat.value or 1)
+                pv = int(panel.value or 1)
+
+                if m80v == 0 and m40v == 0:
+                    show_message("حداقل متراژ فیلم گرمایشی را وارد کنید", "red")
+                    return
+
+                from Financial import calculate_tosunify_proforma, generate_proforma_pdf
+
+                res = calculate_tosunify_proforma(
+                    width_80_m=m80v,
+                    width_40_m=m40v,
+                    installation_pct=15,
+                    discount_pct=5,
+                    tax_pct=9,
+                    thermostats_count=thv
+                )
+
+                pdf_bytes = generate_proforma_pdf(
+                    res=res,
+                    m80=m80v,
+                    m40=m40v,
+                    xps=xpsv,
+                    thermostats=thv,
+                    p_count=pv,
+                    customer_name=page.session.get("username", "مشتری"),
+                    doc_number=1001
+                )
+
+                import tempfile
+                with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
+                    tmp.write(pdf_bytes)
+                    temp_path = tmp.name
+
+                page.download_file(temp_path, f"پیش_فاکتور_مستقیم_{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.pdf")
+                show_message("✅ پیش‌فاکتور صادر و دانلود شد", "green")
+
+            except Exception as ex:
+                show_message(f"خطا: {ex}", "red")
+
+        return ft.Container(
+            content=ft.Column([
+                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(18)), 
+                       ft.Text("مقادیر مستقیم - پیش فاکتور", size=20, weight="bold")]),
+                ft.Divider(),
+                m80, m40, xps, thermostat, panel,
+                ft.Divider(height=20),
+                ft.FilledButton("محاسبه و صدور پیش‌فاکتور", width=350, bgcolor="#1565C0", color="white", on_click=calculate),
+                total_text
+            ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            width=400, expand=True, padding=15
+        )
     # ==================== صفحات اضافی ====================
     def account_request_page():
         return ft.Container(
@@ -620,7 +687,9 @@ def main(page: ft.Page):
                 profile_page(), settings_page(), account_request_page(),
                 selected_customers_page(), inventory_page(), colleagues_page(),
                 purchase_request_page(), commission_page(), credit_page(),
-                theme_page(), update_page(), network_page(), rules_page(), about_page(), floor_heating_page(), floor_manual_invoice_page(), radiator_manual_invoice_page()
+                theme_page(), update_page(), network_page(), rules_page(), 
+                about_page(), floor_heating_page(), floor_manual_invoice_page(), radiator_manual_invoice_page(),
+                direct_values_page()
             ]
             main_content = ft.Container(content=contents[tab_index], expand=True, width=400, margin=ft.margin.Margin(left=15, right=15))
             nav_bar = ft.Container(
