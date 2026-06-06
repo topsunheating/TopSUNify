@@ -154,7 +154,7 @@ def main(page: ft.Page):
         insulation_area = ft.TextField(label="متراژ عایق (متر مربع)", width=350, visible=False, keyboard_type=ft.KeyboardType.NUMBER)
         dimmer_switch = ft.Switch(label="افزودن دیمر")
         dimmer_type = ft.Dropdown(label="مدل دیمر", width=350, visible=False, options=[ft.dropdown.Option(x) for x in DIMMERS.keys()])
-        dimmer_qty = ft.TextField(label="تعداد دیمر", width=1350, value="1", visible=False, keyboard_type=ft.KeyboardType.NUMBER)
+        dimmer_qty = ft.TextField(label="تعداد دیمر", width=350, value="1", visible=False, keyboard_type=ft.KeyboardType.NUMBER)
         
         table = ft.DataTable(
             columns=[
@@ -228,7 +228,9 @@ def main(page: ft.Page):
             content=ft.Column([
                 ft.Row([ft.IconButton(ft.Icons.ARROW_BACK, on_click=lambda e: render(1)), ft.Text("پیش فاکتور زیرفرشی", size=20, weight="bold")]),
                 product_size, qty, ft.Divider(),
+                ft.Row([insulation_switch], alignment=ft.MainAxisAlignment.START),
                 insulation_switch, insulation_area, ft.Divider(),
+                ft.Row([dimmer_switch], alignment=ft.MainAxisAlignment.START),
                 dimmer_switch, dimmer_type, dimmer_qty, ft.Divider(),
                 ft.FilledButton("افزودن به لیست", on_click=add_item, bgcolor="#1565C0", width=350),
                 table, total_text,
