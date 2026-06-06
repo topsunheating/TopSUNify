@@ -2,6 +2,7 @@ import flet as ft
 import os
 import datetime
 import time
+import re
 
 FLOOR_PRODUCTS = {
     "طول 1/2 متر": 1250000,
@@ -890,7 +891,12 @@ def main(page: ft.Page):
         )
     def home_page():
         return ft.Container(content=ft.Column([ft.Container(content=ft.Column([ft.Image(src="TopSUNify-1.png", width=80), ft.Text("خوش آمدید به TopSUNify", size=18, weight="bold", text_align=ft.TextAlign.CENTER), ft.Text("مرکز خدمات و پشتیبانی", size=16, color="grey", text_align=ft.TextAlign.CENTER)], horizontal_alignment=ft.CrossAxisAlignment.CENTER), margin=ft.margin.Margin(top=20, bottom=30)), ft.Container(content=ft.Column([ft.ListTile(leading=ft.Icon(ft.Icons.SHIELD, color="green"), title=ft.Text("ثبت گارانتی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=lambda e: render(22)), ft.ListTile(leading=ft.Icon(ft.Icons.INSTALL_DESKTOP, color="blue"), title=ft.Text("درخواست نصب اولیه"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.SUPPORT_AGENT, color="orange"), title=ft.Text("درخواست خدمات فنی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.SHOPPING_CART_CHECKOUT, color="purple"), title=ft.Text("ثبت درخواست سفارشی و عمده"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.PRINT, color="red"), title=ft.Text("درخواست چاپ طرح سفارشی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20))], spacing=2), width=380)], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
-    def warranty_page():
+    def warranty_page(page: ft.Page, render_callback):
+        data = {
+            "تهران": ["تهران", "شهریار", "ورامین"],
+            "اصفهان": ["اصفهان", "کاشان", "خمینی‌شهر"],
+            "خراسان رضوی": ["مشهد", "نیشابور"]
+        }
         def check_national_id(id):
             if not re.match(r'^\d{10}$', id): return False
             check = int(id)
@@ -900,9 +906,11 @@ def main(page: ft.Page):
         father_name = ft.TextField(label="نام پدر", width=350)
         phone = ft.TextField(label="شماره موبایل", width=350, keyboard_type=ft.KeyboardType.PHONE)
             
-        date_picker = ft.DatePicker(on_change=lambda e: setattr(birth_date, "value", str(e.control.value).split()))
-        birth_date = ft.TextField(label="تاریخ تولد (انتخاب از تقویم)", width=350, read_only=True, 
-                                  icon=ft.Icons.CALENDAR_MONTH, on_click=lambda e: date_picker.pick_date())
+        birth_date_field = ft.TextField(label="تاریخ تولد (انتخاب کنید)", width=350, read_only=True)
+        date_picker = ft.DatePicker(on_change=lambda e: setattr(birth_date_field, "value", str(e.control.value).split()))
+        page.overlay.append(date_picker)
+        birth_date_field.on_click = lambda e: page.open(date_picker)
+
         national_id = ft.TextField(label="کد ملی", width=350, keyboard_type=ft.KeyboardType.NUMBER)
         province_label = ft.Text("استان محل صدور: نامشخص", color="blue")
             
@@ -921,11 +929,14 @@ def main(page: ft.Page):
         provinces = {"تهران": ["تهران", "شهریار", "کرج"], "اصفهان": ["اصفهان", "کاشان"]} # نمونه
         province_dropdown = ft.Dropdown(label="استان", width=350, options=[ft.dropdown.Option(p) for p in provinces.keys()])
         city_dropdown = ft.Dropdown(label="شهر", width=350, options=[])
-        def on_prov_change(e):
-            city_dropdown.options = [ft.dropdown.Option(c) for c in provinces.get(province_dropdown.value, [])]
-            city_dropdown.update()
-        province_dropdown.on_change = on_prov_change
+        def load_cities(e):
+            if province_dropdown.value in data:
+                city_dropdown.options = [ft.dropdown.Option(c) for c in data[province_dropdown.value]]
+                city_dropdown.update()
+        btn_load_cities = ft.OutlinedButton("بارگذاری شهرهای استان", on_click=load_cities)
+        
         address = ft.TextField(label="آدرس کامل", width=350, multiline=True)
+        postal_code = ft.TextField(label="کد پستی", width=350, keyboard_type=ft.KeyboardType.NUMBER)
         
         purchase_place = ft.Dropdown(label="محل خرید", width=350, options=[
             ft.dropdown.Option("سایت شرکت"), ft.dropdown.Option("دفتر مرکزی"), ft.dropdown.Option("فروشگاه یا نمایندگی")
@@ -942,9 +953,10 @@ def main(page: ft.Page):
         purchase_place.on_change = on_purchase_change
             
         def submit(e):
-            if len(postal_code.value) != 10:
+            if len(postal_code.value) != 10 or len(postal_code.value) != 10:
+                page.show_snack_bar(ft.SnackBar(ft.Text("کد ملی یا کد پستی اشتباه است!")))
                 return
-            print("ثبت نهایی با موفقیت انجام شد")
+            page.show_snack_bar(ft.SnackBar(ft.Text("اطلاعات با موفقیت ثبت شد.")))
                 
         return ft.Container(
             content=ft.Column([
