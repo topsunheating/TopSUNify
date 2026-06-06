@@ -333,14 +333,35 @@ def main(page: ft.Page):
             padding=15
         )
             # ==================== روش مقادیر مستقیم ====================
+        # ==================== روش مقادیر مستقیم ====================
     def direct_values_page():
+        # فیلدهای اصلی
         m80 = ft.TextField(label="متراژ فیلم عرض ۸۰ (متر)", width=350, value="0", keyboard_type=ft.KeyboardType.NUMBER)
         m40 = ft.TextField(label="متراژ فیلم عرض ۴۰ (متر)", width=350, value="0", keyboard_type=ft.KeyboardType.NUMBER)
         xps = ft.TextField(label="متراژ عایق (مترمربع)", width=350, value="0", keyboard_type=ft.KeyboardType.NUMBER)
         thermostat = ft.TextField(label="تعداد ترموستات", width=350, value="1", keyboard_type=ft.KeyboardType.NUMBER)
         panel = ft.TextField(label="تعداد تابلو فرمان", width=350, value="1", keyboard_type=ft.KeyboardType.NUMBER)
 
-        total_text = ft.Text("جمع کل: 0 تومان", size=18, weight="bold", color="green")
+        # گزینه‌های اضافی
+        install_pct = ft.Dropdown(
+            label="درصد هزینه نصب", width=350,
+            options=[ft.dropdown.Option("0"), ft.dropdown.Option("10"), ft.dropdown.Option("15"),
+                     ft.dropdown.Option("20"), ft.dropdown.Option("25")],
+            value="15"
+        )
+
+        travel_switch = ft.Switch(label="اضافه کردن هزینه ایاب و ذهاب", value=False)
+        travel_cost = ft.TextField(label="مبلغ ایاب و ذهاب (تومان)", width=350, value="0", visible=False, keyboard_type=ft.KeyboardType.NUMBER)
+
+        tax_switch = ft.Switch(label="اضافه کردن مالیات", value=True)
+        tax_pct = ft.TextField(label="درصد مالیات", width=350, value="10", keyboard_type=ft.KeyboardType.NUMBER)
+
+        discount_pct = ft.TextField(label="درصد تخفیف", width=350, value="5", keyboard_type=ft.KeyboardType.NUMBER)
+
+        other_switch = ft.Switch(label="سایر هزینه‌ها", value=False)
+        other_cost = ft.TextField(label="مبلغ سایر هزینه‌ها (تومان)", width=350, value="0", visible=False, keyboard_type=ft.KeyboardType.NUMBER)
+
+        total_text = ft.Text("جمع کل: 0 تومان", size=19, weight="bold", color="green")
 
         def calculate(e):
             try:
@@ -354,38 +375,60 @@ def main(page: ft.Page):
                     show_message("حداقل متراژ فیلم گرمایشی را وارد کنید", "red")
                     return
 
-                from Financial import calculate_tosunify_proforma, generate_proforma_pdf
+                # محاسبه پایه
+                base = m80v * 1250000 + m40v * 950000 + xpsv * 1450000 + thv * 1850000 + pv * 12500000
 
-                res = calculate_tosunify_proforma(
-                    width_80_m=m80v,
-                    width_40_m=m40v,
-                    installation_pct=15,
-                    discount_pct=5,
-                    tax_pct=9,
-                    thermostats_count=thv
-                )
+                # هزینه نصب
+                inst = base * (int(install_pct.value) / 100)
 
-                pdf_bytes = generate_proforma_pdf(
-                    res=res,
-                    m80=m80v,
-                    m40=m40v,
-                    xps=xpsv,
-                    thermostats=thv,
-                    p_count=pv,
-                    customer_name=page.session.get("username", "مشتری"),
-                    doc_number=1001
-                )
+                # ایاب و ذهاب
+                travel = float(travel_cost.value or 0) if travel_switch.value else 0
 
-                import tempfile
-                with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
-                    tmp.write(pdf_bytes)
-                    temp_path = tmp.name
+                # مالیات
+                tax = (base + inst + travel) * (float(tax_pct.value or 10) / 100) if tax_switch.value else 0
 
-                page.download_file(temp_path, f"پیش_فاکتور_مستقیم_{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.pdf")
-                show_message("✅ پیش‌فاکتور صادر و دانلود شد", "green")
+                # تخفیف
+                disc = (base + inst + travel) * (float(discount_pct.value or 0) / 100)
+
+                # سایر هزینه‌ها
+                other = float(other_cost.value or 0) if other_switch.value else 0
+
+                final_total = base + inst + travel + tax - disc + other
+
+                total_text.value = f"جمع کل: {final_total:,.0f} تومان"
+                page.update()
+
+                # تلاش برای استفاده از Financial.py
+                try:
+                    from Financial import calculate_tosunify_proforma, generate_proforma_pdf
+                    res = calculate_tosunify_proforma(
+                        width_80_m=m80v, width_40_m=m40v,
+                        installation_pct=int(install_pct.value),
+                        discount_pct=float(discount_pct.value),
+                        tax_pct=float(tax_pct.value),
+                        thermostats_count=thv
+                    )
+                    pdf_bytes = generate_proforma_pdf(
+                        res=res, m80=m80v, m40=m40v, xps=xpsv,
+                        thermostats=thv, p_count=pv,
+                        customer_name=page.session.get("username", "مشتری"),
+                        doc_number=1001
+                    )
+                    import tempfile
+                    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
+                        tmp.write(pdf_bytes)
+                        temp_path = tmp.name
+                    page.download_file(temp_path, f"پیش_فاکتور_مستقیم_{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.pdf")
+                    show_message("✅ پیش‌فاکتور صادر و دانلود شد", "green")
+                except Exception as ex:
+                    show_message("پیش‌فاکتور محاسبه شد (Financial.py در دسترس نبود)", "orange")
 
             except Exception as ex:
                 show_message(f"خطا: {ex}", "red")
+
+        # نمایش/مخفی کردن فیلدها
+        travel_switch.on_change = lambda e: (setattr(travel_cost, "visible", travel_switch.value), page.update())
+        other_switch.on_change = lambda e: (setattr(other_cost, "visible", other_switch.value), page.update())
 
         return ft.Container(
             content=ft.Column([
@@ -393,6 +436,15 @@ def main(page: ft.Page):
                        ft.Text("مقادیر مستقیم - پیش فاکتور", size=20, weight="bold")]),
                 ft.Divider(),
                 m80, m40, xps, thermostat, panel,
+                ft.Divider(),
+                install_pct, 
+                ft.Row([travel_switch], alignment=ft.MainAxisAlignment.START),
+                travel_cost,
+                ft.Row([tax_switch], alignment=ft.MainAxisAlignment.START),
+                tax_pct,
+                discount_pct,
+                ft.Row([other_switch], alignment=ft.MainAxisAlignment.START),
+                other_cost,
                 ft.Divider(height=20),
                 ft.FilledButton("محاسبه و صدور پیش‌فاکتور", width=350, bgcolor="#1565C0", color="white", on_click=calculate),
                 total_text
