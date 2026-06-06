@@ -254,31 +254,8 @@ def main(page: ft.Page):
             padding=15, width=400, expand=True
         )    
     # ==================== صفحه گرمایش از کف ====================
+        # ==================== صفحه گرمایش از کف ====================
     def floor_heating_page():
-        file_picker = ft.FilePicker()
-        page.overlay.append(file_picker)
-        page.update()
-
-        def on_file_picked(e):
-            if e.files and len(e.files) > 0:
-                file = e.files[0]
-                show_message(f"فایل {file.name} انتخاب شد.\nدر حال پردازش...", "blue")
-                process_dwg_file(file)
-            else:
-                show_message("هیچ فایلی انتخاب نشد", "red")
-
-        file_picker.on_result = on_file_picked
-
-        def process_dwg_file(file):
-            try:
-                show_message("در حال ارسال فایل به هسته main.py ...", "blue")
-                # شبیه‌سازی پردازش (بعداً واقعی می‌شود)
-                import time
-                time.sleep(1.5)
-                show_message("✅ فایل با موفقیت تحلیل شد\nپیش‌فاکتور آماده دانلود است", "green")
-            except Exception as ex:
-                show_message(f"❌ خطا در پردازش: {ex}", "red")
-
         return ft.Container(
             content=ft.Column([
                 ft.Container(
@@ -286,52 +263,71 @@ def main(page: ft.Page):
                         ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
                         ft.Text("گرمایش از کف (سیستم هوشمند)", size=21, weight="bold")
                     ]),
-                    padding=15, bgcolor="#f8f9fa", border_radius=12
+                    padding=15,
+                    bgcolor="#f8f9fa",
+                    border_radius=12
                 ),
-                ft.Text("روش صدور پیش‌فاکتور را انتخاب کنید", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
+                ft.Text("روش صدور پیش‌فاکتور را انتخاب کنید", 
+                       size=18, weight="bold", text_align=ft.TextAlign.CENTER),
                 ft.Divider(height=30),
 
-                # دکمه ۱: آپلود فایل
+                # روش ۱: آپلود فایل (ساده)
                 ft.Container(
                     content=ft.FilledButton(
-                        content=ft.Row([ft.Icon(ft.Icons.UPLOAD_FILE, color="white"),
-                                      ft.Text("📂 آپلود فایل DWG / DXF", size=16, weight="bold")],
-                                      alignment=ft.MainAxisAlignment.CENTER),
-                        width=360, height=75, bgcolor="#1565C0", color="white",
-                        on_click=lambda e: file_picker.pick_files(allow_multiple=False, allowed_extensions=["dwg", "dxf"]),
+                        content=ft.Row([
+                            ft.Icon(ft.Icons.UPLOAD_FILE, color="white"),
+                            ft.Text("📂 آپلود فایل DWG / DXF", size=16, weight="bold")
+                        ], alignment=ft.MainAxisAlignment.CENTER),
+                        width=360, 
+                        height=75, 
+                        bgcolor="#1565C0", 
+                        color="white",
+                        on_click=lambda e: show_message("در نسخه کامل: فایل DWG/DXF آپلود و توسط main.py تحلیل می‌شود", "blue"),
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     ),
                     margin=ft.margin.Margin(bottom=15)
                 ),
 
-                # دکمه ۲: ورود دستی ابعاد
+                # روش ۲: ورود دستی ابعاد
                 ft.Container(
                     content=ft.FilledButton(
-                        content=ft.Row([ft.Icon(ft.Icons.EDIT_NOTE, color="white"),
-                                      ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", size=16, weight="bold")],
-                                      alignment=ft.MainAxisAlignment.CENTER),
-                        width=360, height=75, bgcolor="#1565C0", color="white",
+                        content=ft.Row([
+                            ft.Icon(ft.Icons.EDIT_NOTE, color="white"),
+                            ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", size=16, weight="bold")
+                        ], alignment=ft.MainAxisAlignment.CENTER),
+                        width=360, 
+                        height=75, 
+                        bgcolor="#1565C0", 
+                        color="white",
                         on_click=lambda e: render(19),
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     ),
                     margin=ft.margin.Margin(bottom=15)
                 ),
 
-                # دکمه ۳: مقادیر مستقیم
+                # روش ۳: مقادیر مستقیم
                 ft.Container(
                     content=ft.FilledButton(
-                        content=ft.Row([ft.Icon(ft.Icons.CALCULATE, color="white"),
-                                      ft.Text("✍️ مقادیر مستقیم (متراژ)", size=16, weight="bold")],
-                                      alignment=ft.MainAxisAlignment.CENTER),
-                        width=360, height=75, bgcolor="#1565C0", color="white",
+                        content=ft.Row([
+                            ft.Icon(ft.Icons.CALCULATE, color="white"),
+                            ft.Text("✍️ مقادیر مستقیم (متراژ)", size=16, weight="bold")
+                        ], alignment=ft.MainAxisAlignment.CENTER),
+                        width=360, 
+                        height=75, 
+                        bgcolor="#1565C0", 
+                        color="white",
                         on_click=lambda e: render(20),
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     )
                 ),
 
                 ft.Divider(height=30),
-                ft.Text("هسته main.py و Financial.py آماده اتصال است", size=13, color="grey", text_align=ft.TextAlign.CENTER)
-            ], scroll=ft.ScrollMode.AUTO, spacing=12, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+                ft.Text("هسته main.py و Financial.py آماده اتصال است", 
+                       size=13, color="grey", text_align=ft.TextAlign.CENTER)
+            ], 
+            scroll=ft.ScrollMode.AUTO, 
+            spacing=12, 
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400,
             expand=True,
             padding=15
