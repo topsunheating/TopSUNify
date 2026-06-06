@@ -4,7 +4,7 @@ import datetime
 import time
 
 # این توابع را در بالاترین سطح فایل (کنار main) تعریف کنید
-def on_file_picked(e: ft.FilePickerResultEvent):
+def on_file_picked(e):
     if e.files and len(e.files) > 0:
         file = e.files
         # در اینجا می‌توانید به پیام‌رسان یا صفحه دسترسی داشته باشید
