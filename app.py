@@ -229,9 +229,8 @@ def main(page: ft.Page):
                     refresh_table()
                     show_message("به لیست اضافه شد", "green")
                     # پاک کردن فیلدها
+                    product_size.value = None
                     qty.value = "1"
-                    insulation_area.value = ""
-                    dimmer_qty.value = "1"
                     page.update()
                 else:
                     show_message("لطفاً یک مورد را انتخاب کنید", "orange")
