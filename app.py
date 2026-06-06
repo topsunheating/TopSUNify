@@ -332,8 +332,6 @@ def main(page: ft.Page):
             padding=15
         )
         # ==================== روش مقادیر مستقیم ====================
-        # ==================== روش مقادیر مستقیم ====================
-        # ==================== روش مقادیر مستقیم ====================
     def direct_values_page():
         # فیلدهای اصلی
         m80 = ft.TextField(label="متراژ فیلم عرض ۸۰ (متر)", width=350, value="0", keyboard_type=ft.KeyboardType.NUMBER)
@@ -384,6 +382,12 @@ def main(page: ft.Page):
 
         total_text = ft.Text("جمع کل: 0 تومان", size=20, weight="bold", color="green")
 
+        def update_panel_visibility(e):
+            panel_manual_price.visible = (panel_type.value == "سفارشی (دستی)")
+            page.update()
+
+        panel_type.on_change = update_panel_visibility
+
         def calculate(e):
             try:
                 m80v = float(m80.value or 0)
@@ -395,6 +399,17 @@ def main(page: ft.Page):
                 if m80v == 0 and m40v == 0:
                     show_message("حداقل متراژ فیلم گرمایشی را وارد کنید", "red")
                     return
+                # قیمت تابلو فرمان
+                if panel_type.value == "سفارشی (دستی)":
+                    panel_price = float(panel_manual_price.value or 0)
+                else:
+                    # استخراج قیمت از متن
+                    try:
+                        panel_price = float(panel_type.value.split("-")[-1].replace(",", "").replace("تومان", "").strip())
+                    except:
+                        panel_price = 15500000
+
+                panel_total = panel_price
 
                 # محاسبات
                 film80_total = m80v * 1250000
@@ -439,10 +454,10 @@ def main(page: ft.Page):
                         ft.DataCell(ft.Text(f"{thv} عدد")),
                         ft.DataCell(ft.Text(f"{thermostat_total:,.0f}"))
                     ]))
-                if pv > 0:
+                if panel_total > 0:
                     items_table.rows.append(ft.DataRow(cells=[
-                        ft.DataCell(ft.Text("تابلو فرمان")),
-                        ft.DataCell(ft.Text(f"{pv} عدد")),
+                        ft.DataCell(ft.Text("تابلو فرمان")), 
+                        ft.DataCell(ft.Text("1 عدد")), 
                         ft.DataCell(ft.Text(f"{panel_total:,.0f}"))
                     ]))
 
