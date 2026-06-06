@@ -621,7 +621,7 @@ def main(page: ft.Page):
                 profile_page(), settings_page(), account_request_page(),
                 selected_customers_page(), inventory_page(), colleagues_page(),
                 purchase_request_page(), commission_page(), credit_page(),
-                theme_page(), update_page(), network_page(), rules_page(), about_page(), floor_heating_page(), floor_manual_invoice_page(), radiator_manual_invoice_page(), open_file_picker_and_render(e)
+                theme_page(), update_page(), network_page(), rules_page(), about_page(), floor_heating_page(), floor_manual_invoice_page(), radiator_manual_invoice_page()
             ]
             main_content = ft.Container(content=contents[tab_index], expand=True, width=400, margin=ft.margin.Margin(left=15, right=15))
             nav_bar = ft.Container(
