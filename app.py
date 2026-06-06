@@ -907,7 +907,9 @@ def main(page: ft.Page):
         phone = ft.TextField(label="شماره موبایل", width=350, keyboard_type=ft.KeyboardType.PHONE)
             
         birth_date_field = ft.TextField(label="تاریخ تولد (انتخاب کنید)", width=350, read_only=True)
-        date_picker = ft.DatePicker(on_change=lambda e: setattr(birth_date_field, "value", str(e.control.value).split()))
+        date_picker = ft.DatePicker(
+            on_change=lambda e: setattr(birth_date_field, "value", str(e.control.value).split())
+        )
         page.overlay.append(date_picker)
         birth_date_field.on_click = lambda e: page.open(date_picker)
 
@@ -953,15 +955,24 @@ def main(page: ft.Page):
         purchase_place.on_change = on_purchase_change
             
         def submit(e):
-            if len(postal_code.value) != 10 or len(postal_code.value) != 10:
-                page.show_snack_bar(ft.SnackBar(ft.Text("کد ملی یا کد پستی اشتباه است!")))
+            if not birth_date_field.value:
+                page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تاریخ تولد را انتخاب کنید!")))
                 return
+                
+            if not check_national_id(national_id.value):
+                page.show_snack_bar(ft.SnackBar(ft.Text("کد ملی نامعتبر است!")))
+                return
+                
+            if len(postal_code.value) != 10:
+                page.show_snack_bar(ft.SnackBar(ft.Text("کد پستی باید ۱۰ رقم باشد!")))
+                return
+                
             page.show_snack_bar(ft.SnackBar(ft.Text("اطلاعات با موفقیت ثبت شد.")))
                 
         return ft.Container(
             content=ft.Column([
                 ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(18)), ft.Text("ثبت گارانتی", size=20)]),
-                name, father_name, birth_date, national_id, province_label, id_number,
+                name, father_name, birth_date_field, national_id, province_label, id_number,
                 province_dropdown, city_dropdown, address, postal_code,
                 purchase_place, shop_name, invoice_number, serial_number, purchase_date,
                 ft.FilledButton("ثبت نهایی", on_click=submit)
