@@ -255,30 +255,6 @@ def main(page: ft.Page):
         )    
     # ==================== صفحه گرمایش از کف ====================
     def floor_heating_page():
-        # ایجاد FilePicker یکبار
-        file_picker = ft.FilePicker()
-        page.overlay.append(file_picker)
-
-        def on_file_picked(e):
-            if e.files and len(e.files) > 0:
-                file = e.files[0]
-                show_message(f"فایل {file.name} انتخاب شد.\nدر حال پردازش...", "blue")
-                process_dwg_file(file)
-            else:
-                show_message("هیچ فایلی انتخاب نشد", "red")
-
-        file_picker.on_result = on_file_picked
-
-        def process_dwg_file(file):
-            try:
-                show_message("در حال ارسال فایل به هسته main.py ...", "blue")
-                # شبیه‌سازی پردازش (بعداً واقعی می‌شود)
-                import time
-                time.sleep(1.5)
-                show_message("✅ فایل با موفقیت تحلیل شد\nپیش‌فاکتور آماده دانلود است", "green")
-            except Exception as ex:
-                show_message(f"❌ خطا در پردازش: {ex}", "red")
-
         return ft.Container(
             content=ft.Column([
                 ft.Container(
@@ -291,30 +267,25 @@ def main(page: ft.Page):
                 ft.Text("روش صدور پیش‌فاکتور را انتخاب کنید", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
                 ft.Divider(height=25),
 
-                # روش 1: آپلود فایل
+                # روش 1: آپلود فایل (شبیه‌سازی موقت)
                 ft.Container(
                     content=ft.FilledButton(
-                        content=ft.Row([
-                            ft.Icon(ft.Icons.UPLOAD_FILE, color="white"),
-                            ft.Text("📂 آپلود فایل DWG / DXF", size=16, weight="bold")
-                        ], alignment=ft.MainAxisAlignment.CENTER),
-                        width=360, 
-                        height=75, 
-                        bgcolor="#1565C0", 
-                        color="white",
-                        on_click=lambda e: file_picker.pick_files(
-                            allow_multiple=False, 
-                            allowed_extensions=["dwg", "dxf"]
-                        ),
+                        content=ft.Row([ft.Icon(ft.Icons.UPLOAD_FILE, color="white"),
+                                      ft.Text("📂 آپلود فایل DWG / DXF", size=16, weight="bold")],
+                                      alignment=ft.MainAxisAlignment.CENTER),
+                        width=360, height=75, bgcolor="#1565C0", color="white",
+                        on_click=lambda e: show_message("در نسخه کامل: فایل DWG/DXF آپلود و تحلیل می‌شود", "blue"),
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     ),
                     margin=ft.margin.Margin(bottom=12)
                 ),
 
-                # روش 2 و 3
+                # روش 2: ورود دستی ابعاد
                 ft.Container(
                     content=ft.FilledButton(
-                        content=ft.Row([ft.Icon(ft.Icons.EDIT_NOTE, color="white"), ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", size=16, weight="bold")], alignment=ft.MainAxisAlignment.CENTER),
+                        content=ft.Row([ft.Icon(ft.Icons.EDIT_NOTE, color="white"),
+                                      ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", size=16, weight="bold")],
+                                      alignment=ft.MainAxisAlignment.CENTER),
                         width=360, height=75, bgcolor="#1565C0", color="white",
                         on_click=lambda e: render(19),
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
@@ -322,9 +293,12 @@ def main(page: ft.Page):
                     margin=ft.margin.Margin(bottom=12)
                 ),
 
+                # روش 3: مقادیر مستقیم
                 ft.Container(
                     content=ft.FilledButton(
-                        content=ft.Row([ft.Icon(ft.Icons.CALCULATE, color="white"), ft.Text("✍️ مقادیر مستقیم", size=16, weight="bold")], alignment=ft.MainAxisAlignment.CENTER),
+                        content=ft.Row([ft.Icon(ft.Icons.CALCULATE, color="white"),
+                                      ft.Text("✍️ مقادیر مستقیم", size=16, weight="bold")],
+                                      alignment=ft.MainAxisAlignment.CENTER),
                         width=360, height=75, bgcolor="#1565C0", color="white",
                         on_click=lambda e: render(20),
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
