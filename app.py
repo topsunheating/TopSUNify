@@ -394,29 +394,26 @@ def main(page: ft.Page):
                 m40v = float(m40.value or 0)
                 xpsv = float(xps.value or 0)
                 thv = int(thermostat.value or 1)
-                pv = int(panel.value or 1)
+                pv = 1
 
                 if m80v == 0 and m40v == 0:
                     show_message("حداقل متراژ فیلم گرمایشی را وارد کنید", "red")
                     return
                 # قیمت تابلو فرمان
                 if panel_type.value == "سفارشی (دستی)":
-                    panel_price = float(panel_manual_price.value or 0)
+                    panel_total = float(panel_manual_price.value or 0)
                 else:
                     # استخراج قیمت از متن
                     try:
-                        panel_price = float(panel_type.value.split("-")[-1].replace(",", "").replace("تومان", "").strip())
+                        panel_total = float(panel_type.value.split("-")[-1].replace(",", "").replace("تومان", "").strip())
                     except:
-                        panel_price = 15500000
-
-                panel_total = panel_price
+                        panel_total = 15500000
 
                 # محاسبات
                 film80_total = m80v * 1250000
                 film40_total = m40v * 950000
                 xps_total = xpsv * 1450000
                 thermostat_total = thv * 1850000
-                panel_total = pv * 12500000
 
                 base = film80_total + film40_total + xps_total + thermostat_total + panel_total
 
