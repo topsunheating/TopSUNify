@@ -42,6 +42,7 @@ def main(page: ft.Page):
     page.bgcolor = "#f5f5f5"
 
     if not hasattr(page.session, "logged_in"):
+        page.overlay.append(global_file_picker)
         page.session.logged_in = False
         page.session.user_role = "عمومی"
         page.session.username = "رضا تلچی"
@@ -273,12 +274,19 @@ def main(page: ft.Page):
         file_picker = ft.FilePicker(on_result=on_file_picked) # تابعی که باید در جای دیگری تعریف شده باشد
         page.overlay.append(file_picker)
         page.update()
+        def open_file_picker_and_render(e):
+            render(21)  # رفتن به صفحه مربوطه
+            global_file_picker.pick_files(
+                allow_multiple=False, 
+                allowed_extensions=["dwg", "dxf"]
+            )
 
         # دکمه آپلود فایل
         upload_btn = ft.FilledButton(
-            content=ft.Row([ft.Icon(ft.Icons.UPLOAD_FILE, color="white"),
-                            ft.Text("📂 آپلود فایل DWG / DXF", size=16, weight="bold")],
-                            alignment=ft.MainAxisAlignment.CENTER),
+            content=ft.Row([
+                ft.Icon(ft.Icons.UPLOAD_FILE, color="white"),
+                ft.Text("📂 آپلود فایل DWG / DXF", size=16, weight="bold")
+            ], alignment=ft.MainAxisAlignment.CENTER),
             width=360, height=75, bgcolor="#1565C0", color="white",
             # اصلاح: اینجا ابتدا به صفحه مربوطه برو و سپس فایل را پیک کن
             on_click=lambda e: (render(21), file_picker.pick_files(allowed_extensions=["dwg", "dxf"])),
@@ -606,7 +614,7 @@ def main(page: ft.Page):
                 profile_page(), settings_page(), account_request_page(),
                 selected_customers_page(), inventory_page(), colleagues_page(),
                 purchase_request_page(), commission_page(), credit_page(),
-                theme_page(), update_page(), network_page(), rules_page(), about_page(), floor_heating_page(), floor_manual_invoice_page(), radiator_manual_invoice_page()
+                theme_page(), update_page(), network_page(), rules_page(), about_page(), floor_heating_page(), floor_manual_invoice_page(), radiator_manual_invoice_page(), open_file_picker_and_render(e)
             ]
             main_content = ft.Container(content=contents[tab_index], expand=True, width=400, margin=ft.margin.Margin(left=15, right=15))
             nav_bar = ft.Container(
