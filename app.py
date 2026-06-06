@@ -254,15 +254,18 @@ def main(page: ft.Page):
             padding=15, width=400, expand=True
         )    
     # ==================== صفحه گرمایش از کف ====================
+        # ==================== صفحه گرمایش از کف ====================
     def floor_heating_page():
+        # ایجاد FilePicker
         file_picker = ft.FilePicker()
         page.overlay.append(file_picker)
-        page.update()   # ← این خط خیلی مهم است
+        page.update()   # خیلی مهم است
 
         def on_file_picked(e):
             if e.files and len(e.files) > 0:
                 file = e.files[0]
-                show_message(f"فایل {file.name} انتخاب شد.\nدر حال پردازش...", "blue")
+                show_message(f"فایل انتخاب شد: {file.name}", "blue")
+                # شبیه‌سازی پردازش
                 process_dwg_file(file)
             else:
                 show_message("هیچ فایلی انتخاب نشد", "red")
@@ -270,14 +273,11 @@ def main(page: ft.Page):
         file_picker.on_result = on_file_picked
 
         def process_dwg_file(file):
-            try:
-                show_message("در حال ارسال فایل به هسته main.py ...", "blue")
-                # شبیه‌سازی پردازش (بعداً واقعی می‌شود)
-                import time
-                time.sleep(1.2)
-                show_message("✅ فایل با موفقیت تحلیل شد\nپیش‌فاکتور آماده است", "green")
-            except Exception as ex:
-                show_message(f"خطا: {ex}", "red")
+            show_message("در حال پردازش فایل توسط هسته main.py ...", "blue")
+            # اینجا بعداً به main.py و Financial.py وصل می‌شود
+            import time
+            time.sleep(1)  # شبیه‌سازی
+            show_message("✅ فایل با موفقیت پردازش شد\nپیش‌فاکتور آماده دانلود است", "green")
 
         return ft.Container(
             content=ft.Column([
@@ -291,20 +291,23 @@ def main(page: ft.Page):
                 ft.Text("روش صدور پیش‌فاکتور را انتخاب کنید", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
                 ft.Divider(height=25),
 
-                # روش 1 - آپلود فایل
+                # روش 1: آپلود فایل
                 ft.Container(
                     content=ft.FilledButton(
                         content=ft.Row([ft.Icon(ft.Icons.UPLOAD_FILE, color="white"),
                                       ft.Text("📂 آپلود فایل DWG / DXF", size=16, weight="bold")],
                                       alignment=ft.MainAxisAlignment.CENTER),
                         width=360, height=75, bgcolor="#1565C0", color="white",
-                        on_click=lambda e: file_picker.pick_files(allow_multiple=False, allowed_extensions=["dwg", "dxf"]),
+                        on_click=lambda e: file_picker.pick_files(
+                            allow_multiple=False, 
+                            allowed_extensions=["dwg", "dxf"]
+                        ),
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     ),
                     margin=ft.margin.Margin(bottom=12)
                 ),
 
-                # روش 2 - دستی
+                # روش 2: ورود دستی ابعاد
                 ft.Container(
                     content=ft.FilledButton(
                         content=ft.Row([ft.Icon(ft.Icons.EDIT_NOTE, color="white"),
@@ -317,7 +320,7 @@ def main(page: ft.Page):
                     margin=ft.margin.Margin(bottom=12)
                 ),
 
-                # روش 3 - مقادیر مستقیم
+                # روش 3: مقادیر مستقیم
                 ft.Container(
                     content=ft.FilledButton(
                         content=ft.Row([ft.Icon(ft.Icons.CALCULATE, color="white"),
