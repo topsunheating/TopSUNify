@@ -3,6 +3,21 @@ import os
 import datetime
 import time
 
+# این توابع را در بالاترین سطح فایل (کنار main) تعریف کنید
+def on_file_picked(e: ft.FilePickerResultEvent):
+    if e.files and len(e.files) > 0:
+        file = e.files
+        # در اینجا می‌توانید به پیام‌رسان یا صفحه دسترسی داشته باشید
+        # یا از یک متغیر سراسری استفاده کنید
+        print(f"فایل انتخاب شد: {file.name}")
+        # شبیه‌سازی پردازش
+        # process_dwg_file(file) 
+    else:
+        print("هیچ فایلی انتخاب نشد")
+
+# یک نمونه سراسری از FilePicker ایجاد کنید
+global_file_picker = ft.FilePicker(on_result=on_file_picked)
+
 FLOOR_PRODUCTS = {
     "طول 1/2 متر": 1250000,
     "طول 1/5 متر": 1850000,
