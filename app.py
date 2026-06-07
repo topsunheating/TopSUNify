@@ -347,7 +347,7 @@ def main(page: ft.Page):
         layout_table = ft.DataTable(columns=[ft.DataColumn(ft.Text("شرح")), ft.DataColumn(ft.Text("مقدار"))], rows=[])
 
         # گزینه‌های جانبی
-        install_switch = ft.Switch(label="اضافه کردن هزینه نصب", value=True)
+        install_switch = ft.Switch(label="اضافه کردن هزینه نصب", value=False)
         install_pct = ft.Dropdown(label="درصد هزینه نصب", width=350, options=[ft.dropdown.Option(x) for x in ["0","10","15","20","25"]], value="15", visible=True)
 
         travel_switch = ft.Switch(label="اضافه کردن هزینه ایاب و ذهاب", value=False)
