@@ -1932,105 +1932,131 @@ def main(page: ft.Page):
         return ft.Container(content=ft.Column([ft.Container(content=ft.Column([ft.Image(src="TopSUNify-1.png", width=80), ft.Text("خوش آمدید به TopSUNify", size=18, weight="bold", text_align=ft.TextAlign.CENTER), ft.Text("مرکز خدمات و پشتیبانی", size=16, color="grey", text_align=ft.TextAlign.CENTER)], horizontal_alignment=ft.CrossAxisAlignment.CENTER), margin=ft.margin.Margin(top=20, bottom=30)), ft.Container(content=ft.Column([ft.ListTile(leading=ft.Icon(ft.Icons.SHIELD, color="green"), title=ft.Text("ثبت گارانتی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=lambda e: render(23)), ft.ListTile(leading=ft.Icon(ft.Icons.INSTALL_DESKTOP, color="blue"), title=ft.Text("درخواست نصب اولیه"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.SUPPORT_AGENT, color="orange"), title=ft.Text("درخواست خدمات فنی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.SHOPPING_CART_CHECKOUT, color="purple"), title=ft.Text("ثبت درخواست سفارشی و عمده"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.PRINT, color="red"), title=ft.Text("درخواست چاپ طرح سفارشی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20))], spacing=2), width=380)], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
     
     def warranty_page(page: ft.Page, render_callback):
-        data = {
-            "تهران": ["تهران", "شهریار", "ورامین"],
-            "اصفهان": ["اصفهان", "کاشان", "خمینی‌شهر"],
-            "خراسان رضوی": ["مشهد", "نیشابور"]
-        }
-        def check_national_id(id):
-            if not re.match(r'^\d{10}$', id): return False
-            check = int(id)
-            s = sum(int(id[i]) * (10 - i) for i in range(9)) % 11
-            return (s < 2 and check == s) or (s >= 2 and check == 11 - s)
-        name = ft.TextField(label="نام و نام خانوادگی", width=350)
-        father_name = ft.TextField(label="نام پدر", width=350)
-        phone = ft.TextField(label="شماره موبایل", width=350, keyboard_type=ft.KeyboardType.PHONE)
-            
-        birth_date_field = ft.TextField(label="تاریخ تولد (انتخاب کنید)", width=350, read_only=True)
-        date_picker = ft.DatePicker()
-        
-        def date_changed(e):
-            if e.control.value:
-                birth_date_field.value = str(e.control.value).split(" ")[0]
-                birth_date_field.update()
-                
-        date_picker.on_change = date_changed
-        
-        page.overlay.append(date_picker)
-        
-        def open_date_picker(e):
-            date_picker.open = True
-            page.update()
-        birth_date_field.on_click = open_date_picker
+    data = {
+        "تهران": ["تهران", "شهریار", "ورامین"],
+        "اصفهان": ["اصفهان", "کاشان", "خمینی‌شهر"],
+        "خراسان رضوی": ["مشهد", "نیشابور"]
+    }
 
-        national_id = ft.TextField(label="کد ملی", width=350, keyboard_type=ft.KeyboardType.NUMBER)
-        province_label = ft.Text("استان محل صدور: نامشخص", color="blue")
-            
-        def on_national_id_change(e):
-            if check_national_id(national_id.value):
-                province_label.value = "استان شناسایی شد: (مثال: تهران)"
-            else:
-                province_label.value = "کد ملی نامعتبر است"
-            province_label.update()
-        national_id.on_change = on_national_id_change
-            
-        id_number = ft.TextField(label="شماره شناسنامه", width=350)
-        product_code = ft.TextField(label="کد محصول", width=350)
-        postal_code = ft.TextField(label="کد پستی (۱۰ رقم)", width=350, keyboard_type=ft.KeyboardType.NUMBER)
-            
-        provinces = {"تهران": ["تهران", "شهریار", "کرج"], "اصفهان": ["اصفهان", "کاشان"]} # نمونه
-        province_dropdown = ft.Dropdown(label="استان", width=350, options=[ft.dropdown.Option(p) for p in provinces.keys()])
-        city_dropdown = ft.Dropdown(label="شهر", width=350, options=[])
-        def load_cities(e):
-            if province_dropdown.value in data:
-                city_dropdown.options = [ft.dropdown.Option(c) for c in data[province_dropdown.value]]
-                city_dropdown.update()
-        btn_load_cities = ft.OutlinedButton("بارگذاری شهرهای استان", on_click=load_cities)
+    def check_national_id(id):
+        if not re.match(r'^\d{10}$', id): 
+            return False
+        check = int(id[-1])
+        s = sum(int(id[i]) * (10 - i) for i in range(9)) % 11
+        return (s < 2 and check == s) or (s >= 2 and check == 11 - s)
+
+    # فیلدها
+    name = ft.TextField(label="نام و نام خانوادگی", width=350)
+    father_name = ft.TextField(label="نام پدر", width=350)
+    phone = ft.TextField(label="شماره موبایل", width=350, keyboard_type=ft.KeyboardType.PHONE)
+    
+    # ==================== تاریخ تولد شمسی ====================
+    # سال‌های رایج
+    years = [str(y) for y in range(1300, 1410)]
+    months = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+              "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"]
+    
+    birth_year = ft.Dropdown(label="سال تولد", width=110, options=[ft.dropdown.Option(y) for y in years], value="1370")
+    birth_month = ft.Dropdown(label="ماه", width=110, options=[ft.dropdown.Option(m) for m in months], value="فروردین")
+    birth_day = ft.Dropdown(label="روز", width=110, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="1")
+
+    def get_birth_date():
+        return f"{birth_year.value}/{birth_month.value}/{birth_day.value}"
+
+    birth_date_display = ft.TextField(
+        label="تاریخ تولد شمسی", 
+        width=350, 
+        value="1370/فروردین/1",
+        read_only=True
+    )
+
+    def update_birth_display(e):
+        birth_date_display.value = get_birth_date()
+        birth_date_display.update()
+
+    birth_year.on_change = update_birth_display
+    birth_month.on_change = update_birth_display
+    birth_day.on_change = update_birth_display
+
+    # ==================== بقیه فیلدها ====================
+    national_id = ft.TextField(label="کد ملی", width=350, keyboard_type=ft.KeyboardType.NUMBER)
+    province_label = ft.Text("استان محل صدور: نامشخص", color="blue")
+    
+    def on_national_id_change(e):
+        if check_national_id(national_id.value):
+            province_label.value = "✅ کد ملی معتبر است"
+        else:
+            province_label.value = "❌ کد ملی نامعتبر است"
+        province_label.update()
+    
+    national_id.on_change = on_national_id_change
+
+    id_number = ft.TextField(label="شماره شناسنامه", width=350)
+    product_code = ft.TextField(label="کد محصول", width=350)
+    postal_code = ft.TextField(label="کد پستی (۱۰ رقم)", width=350, keyboard_type=ft.KeyboardType.NUMBER)
+    
+    province_dropdown = ft.Dropdown(label="استان", width=350, options=[ft.dropdown.Option(p) for p in data.keys()])
+    city_dropdown = ft.Dropdown(label="شهر", width=350, options=[])
+
+    def load_cities(e):
+        if province_dropdown.value in data:
+            city_dropdown.options = [ft.dropdown.Option(c) for c in data[province_dropdown.value]]
+            city_dropdown.update()
+
+    btn_load_cities = ft.OutlinedButton("بارگذاری شهرها", on_click=load_cities)
+
+    address = ft.TextField(label="آدرس کامل", width=350, multiline=True)
+    postal_code = ft.TextField(label="کد پستی", width=350, keyboard_type=ft.KeyboardType.NUMBER)
+
+    purchase_place = ft.Dropdown(label="محل خرید", width=350, options=[
+        ft.dropdown.Option("سایت شرکت"), 
+        ft.dropdown.Option("دفتر مرکزی"), 
+        ft.dropdown.Option("فروشگاه یا نمایندگی")
+    ])
+    shop_name = ft.TextField(label="نام فروشگاه یا نمایندگی", width=350, visible=False)
+
+    def on_purchase_change(e):
+        shop_name.visible = (purchase_place.value == "فروشگاه یا نمایندگی")
+        shop_name.update()
+
+    purchase_place.on_change = on_purchase_change
+
+    invoice_number = ft.TextField(label="شماره فاکتور", width=350)
+    serial_number = ft.TextField(label="شماره سریال محصول", width=350)
+    purchase_date = ft.TextField(label="تاریخ خرید", width=350)
+
+    def submit(e):
+        if not birth_year.value or not birth_month.value or not birth_day.value:
+            page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تاریخ تولد را وارد کنید")))
+            return
+        if not check_national_id(national_id.value):
+            page.show_snack_bar(ft.SnackBar(ft.Text("کد ملی نامعتبر است!")))
+            return
+        page.show_snack_bar(ft.SnackBar(ft.Text("اطلاعات با موفقیت ثبت شد ✅")))
         
-        address = ft.TextField(label="آدرس کامل", width=350, multiline=True)
-        
-        purchase_place = ft.Dropdown(label="محل خرید", width=350, options=[
-            ft.dropdown.Option("سایت شرکت"), ft.dropdown.Option("دفتر مرکزی"), ft.dropdown.Option("فروشگاه یا نمایندگی")
-        ])
-        shop_name = ft.TextField(label="نام فروشگاه یا نمایندگی", width=350, visible=False)
-        
-        invoice_number = ft.TextField(label="شماره فاکتور", width=350)
-        serial_number = ft.TextField(label="شماره سریال محصول", width=350)
-        purchase_date = ft.TextField(label="تاریخ خرید", width=350)  
-        
-        def on_purchase_change(e):
-            shop_name.visible = (purchase_place.value == "فروشگاه یا نمایندگی")
-            shop_name.update()
-        purchase_place.on_change = on_purchase_change
+    # نمایش صفحه
+    return ft.Container(
+        content=ft.Column([
+            ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(2)),
+                    ft.Text("ثبت گارانتی", size=20, weight="bold")]),
+            ft.Divider(),
+            name, father_name, phone,
             
-        def submit(e):
-            if not birth_date_field.value:
-                page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تاریخ تولد را انتخاب کنید!")))
-                return
-                
-            if not check_national_id(national_id.value):
-                page.show_snack_bar(ft.SnackBar(ft.Text("کد ملی نامعتبر است!")))
-                return
-                
-            if len(postal_code.value) != 10:
-                page.show_snack_bar(ft.SnackBar(ft.Text("کد پستی باید ۱۰ رقم باشد!")))
-                return
-                
-            page.show_snack_bar(ft.SnackBar(ft.Text("اطلاعات با موفقیت ثبت شد.")))
-                
-        return ft.Container(
-            content=ft.Column([
-                ft.Row([
-                    ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(2)),
-                    ft.Text("ثبت گارانتی", size=20, weight="bold")
-                ]),
-                name, father_name, birth_date_field, national_id, province_label, id_number,
-                province_dropdown, city_dropdown, address, postal_code,
-                purchase_place, shop_name, invoice_number, serial_number, purchase_date,
-                ft.FilledButton("ثبت نهایی", on_click=submit)
-            ], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-            padding=15
-        )
+            # تاریخ تولد شمسی
+            ft.Text("تاریخ تولد شمسی", weight="bold"),
+            ft.Row([birth_year, birth_month, birth_day], spacing=10),
+            birth_date_display,
+            
+            national_id, province_label, id_number,
+            province_dropdown, city_dropdown, btn_load_cities,
+            address, postal_code,
+            purchase_place, shop_name,
+            invoice_number, serial_number, purchase_date,
+            
+            ft.FilledButton("ثبت نهایی گارانتی", on_click=submit, width=350)
+        ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+        padding=15
+    )
     def technical_page():
         return ft.Container(content=ft.Column([ft.Container(content=ft.Text("اطلاعات فنی", size=18, weight="bold", text_align=ft.TextAlign.CENTER), padding=20, margin=ft.margin.Margin(bottom=15)), ft.Container(content=ft.Column([ft.ListTile(leading=ft.Icon(ft.Icons.BOOK, color="blue"), title=ft.Text("کاتالوگ محصولات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.PRICE_CHANGE, color="green"), title=ft.Text("لیست قیمت"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.WORK_HISTORY, color="purple"), title=ft.Text("رزومه شرکت"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.DESCRIPTION, color="orange"), title=ft.Text("پروپوزال و گزارش فنی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.IMAGE, color="pink"), title=ft.Text("تصاویر و فیلم پروژه‌ها"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.VIDEO_LIBRARY, color="red"), title=ft.Text("فیلم‌های تبلیغاتی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20))], spacing=2), width=380)], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
 
