@@ -357,7 +357,7 @@ def main(page: ft.Page):
         )
 
         # گزینه‌های جانبی با سوئیچ
-        install_switch = ft.Switch(label="اضافه کردن هزینه نصب", value=True)
+        install_switch = ft.Switch(label="اضافه کردن هزینه نصب", value=False)
         install_pct = ft.Dropdown(label="درصد هزینه نصب", width=350, options=[
             ft.dropdown.Option("0"), ft.dropdown.Option("10"), ft.dropdown.Option("15"),
             ft.dropdown.Option("20"), ft.dropdown.Option("25")
