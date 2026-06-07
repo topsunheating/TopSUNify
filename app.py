@@ -1953,10 +1953,7 @@ def main(page: ft.Page):
         birth_year = ft.Dropdown(label="سال تولد", width=110, options=[ft.dropdown.Option(y) for y in years], value="1370")
         birth_month = ft.Dropdown(label="ماه", width=110, options=[ft.dropdown.Option(m) for m in months], value="فروردین")
         birth_day = ft.Dropdown(label="روز", width=110, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="1")
-        
-        def get_birth_date():
-            return f"{birth_year.value}/{birth_month.value}/{birth_day.value}"
-        
+               
         birth_date_display = ft.TextField(
             label="تاریخ تولد شمسی", 
             width=350, 
@@ -1968,9 +1965,9 @@ def main(page: ft.Page):
             birth_date_display.value = get_birth_date()
             birth_date_display.update()
             
-            birth_year.on_change = update_birth_display
-            birth_month.on_change = update_birth_display
-            birth_day.on_change = update_birth_display
+        birth_year.on_change = update_birth_display
+        birth_month.on_change = update_birth_display
+        birth_day.on_change = update_birth_display
 
         national_id = ft.TextField(label="کد ملی", width=350, keyboard_type=ft.KeyboardType.NUMBER)
         province_label = ft.Text("استان محل صدور: نامشخص", color="blue")
