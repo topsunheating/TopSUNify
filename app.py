@@ -332,7 +332,120 @@ def main(page: ft.Page):
             expand=True,
             padding=15
         )
+    # ==================== روش دوم: ورود دستی ابعاد اتاق‌ها ====================
+    def floor_manual_invoice_page():
+        rooms = []  # لیست اتاق‌ها: [{"name": "اتاق ۱", "length": 4.5, "width": 3.2}, ...]
 
+        room_name = ft.TextField(label="نام اتاق (اختیاری)", width=350, value="اتاق")
+        room_length = ft.TextField(label="طول اتاق (متر)", width=350, value="", keyboard_type=ft.KeyboardType.NUMBER)
+        room_width = ft.TextField(label="عرض اتاق (متر)", width=350, value="", keyboard_type=ft.KeyboardType.NUMBER)
+
+        rooms_list = ft.Column(scroll=ft.ScrollMode.AUTO, height=200)
+
+        # نتایج محاسباتی
+        result_text = ft.Text("نتایج محاسباتی:", size=16, weight="bold")
+        calc_table = ft.DataTable(columns=[
+            ft.DataColumn(ft.Text("شرح")),
+            ft.DataColumn(ft.Text("مقدار"))
+        ], rows=[])
+
+        items_table = ft.DataTable(columns=[
+            ft.DataColumn(ft.Text("شرح کالا")),
+            ft.DataColumn(ft.Text("مقدار")),
+            ft.DataColumn(ft.Text("مبلغ"))
+        ], rows=[])
+
+        total_text = ft.Text("جمع کل: 0 تومان", size=20, weight="bold", color="green")
+        download_btn = ft.FilledButton("دانلود پیش‌فاکتور PDF", width=350, bgcolor="green", color="white", visible=False, icon=ft.Icons.DOWNLOAD)
+
+        def add_room(e):
+            if not room_length.value or not room_width.value:
+                show_message("لطفاً طول و عرض اتاق را وارد کنید", "red")
+                return
+            try:
+                length = float(room_length.value)
+                width = float(room_width.value)
+                area = length * width
+                name = room_name.value or f"اتاق {len(rooms)+1}"
+
+                rooms.append({"name": name, "length": length, "width": width, "area": area})
+
+                # نمایش در لیست
+                rooms_list.controls.append(ft.Text(f"• {name} → {length} × {width} متر (مساحت: {area:.1f} م²)"))
+                page.update()
+
+                # پاک کردن فیلدها
+                room_length.value = ""
+                room_width.value = ""
+                page.update()
+
+            except:
+                show_message("مقادیر وارد شده نامعتبر است", "red")
+
+        def calculate_layout(e):
+            if not rooms:
+                show_message("ابتدا حداقل یک اتاق اضافه کنید", "red")
+                return
+
+            total_area = sum(r["area"] for r in rooms)
+
+            # محاسبات تقریبی (قابل تنظیم)
+            film80 = total_area * 0.7   # مثلاً ۷۰٪ فیلم ۸۰
+            film40 = total_area * 0.3   # ۳۰٪ فیلم ۴۰
+            insulation = total_area * 1.1
+            thermostats = len(rooms) + 1   # یک ترموستات به ازای هر اتاق + یکی اضافه
+
+            # پیشنهاد تابلو فرمان
+            if thermostats <= 4:
+                panel_suggestion = "تابلو ۴ خروجی - ۱۲,۵۰۰,۰۰۰ تومان"
+                panel_price = 12500000
+            elif thermostats <= 6:
+                panel_suggestion = "تابلو ۶ خروجی - ۱۵,۵۰۰,۰۰۰ تومان"
+                panel_price = 15500000
+            else:
+                panel_suggestion = "تابلو ۱۰ خروجی - ۲۲,۰۰۰,۰۰۰ تومان"
+                panel_price = 22000000
+
+            # پر کردن جدول نتایج
+            calc_table.rows.clear()
+            calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("مساحت کل")), ft.DataCell(ft.Text(f"{total_area:.1f} مترمربع"))]))
+            calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم ۸۰")), ft.DataCell(ft.Text(f"{film80:.1f} متر"))]))
+            calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم ۴۰")), ft.DataCell(ft.Text(f"{film40:.1f} متر"))]))
+            calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("عایق")), ft.DataCell(ft.Text(f"{insulation:.1f} مترمربع"))]))
+            calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("ترموستات")), ft.DataCell(ft.Text(f"{thermostats} عدد"))]))
+            calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("تابلو فرمان")), ft.DataCell(ft.Text(panel_suggestion))]))
+
+            # محاسبه مالی (مشابه صفحه قبلی)
+            base = film80*1250000 + film40*950000 + insulation*1450000 + thermostats*1850000 + panel_price
+            # ... (می‌توانی هزینه‌های جانبی را هم مثل صفحه قبل اضافه کنی)
+
+            total_text.value = f"جمع کل تقریبی: {base:,.0f} تومان"
+            download_btn.visible = True
+            page.update()
+            show_message("محاسبات انجام شد", "green")
+
+        return ft.Container(
+            content=ft.Column([
+                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(24)),
+                       ft.Text("ورود دستی ابعاد اتاق‌ها", size=20, weight="bold")]),
+                ft.Divider(),
+                room_name, room_length, room_width,
+                ft.FilledButton("اضافه کردن اتاق", width=350, bgcolor="#1565C0", on_click=add_room),
+                ft.Divider(),
+                ft.Text("اتاق‌های اضافه شده:", size=16, weight="bold"),
+                rooms_list,
+                ft.FilledButton("محاسبه چیدمان و پیش‌فاکتور", width=350, bgcolor="#00A651", on_click=calculate_layout),
+                ft.Divider(),
+                result_text,
+                calc_table,
+                ft.Divider(),
+                ft.Text("ریز اقلام فاکتور:", size=16, weight="bold"),
+                items_table,
+                total_text,
+                download_btn
+            ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            width=400, expand=True, padding=15
+        )
         # ==================== روش مقادیر مستقیم ====================
     def direct_values_page():
         m80 = ft.TextField(label="متراژ فیلم عرض ۸۰ (متر)", width=350, value="0", keyboard_type=ft.KeyboardType.NUMBER)
@@ -765,7 +878,7 @@ def main(page: ft.Page):
                 purchase_request_page(), commission_page(), credit_page(),
                 theme_page(), update_page(), network_page(), rules_page(), 
                 about_page(), floor_heating_page(), floor_manual_invoice_page(), radiator_manual_invoice_page(),
-                direct_values_page(), warranty_page(page, render)
+                direct_values_page(), warranty_page(page, render), floor_manual_invoice_page()
             ]
             main_content = ft.Container(content=contents[tab_index], expand=True, width=400, margin=ft.margin.Margin(left=15, right=15))
             nav_bar = ft.Container(
