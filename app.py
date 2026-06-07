@@ -1234,7 +1234,7 @@ def main(page: ft.Page):
                 show_message("فایل در حال پردازش توسط هسته main.py ...", "blue")
                 # شبیه‌سازی پردازش
                 layout_table.rows.clear()
-                layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("متراژ گرمکن رمپ")), ft.DataCell(ft.Text("۴۸.۵ متر"))]))
+                layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("متراژ گرمکن پله")), ft.DataCell(ft.Text("۴۸.۵ متر"))]))
                 layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("عایق")), ft.DataCell(ft.Text("۵۲ م²"))]))
                 page.update()
                 show_message("پردازش فایل با موفقیت انجام شد", "green")
@@ -1252,7 +1252,7 @@ def main(page: ft.Page):
         return ft.Container(
             content=ft.Column([
                 ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(29)),
-                       ft.Text("یخ زدایی رمپ - آپلود فایل", size=20, weight="bold")]),
+                       ft.Text("یخ زدایی پله - آپلود فایل", size=20, weight="bold")]),
                 ft.Divider(),
                 ft.FilledButton("انتخاب فایل DWG یا DXF", width=350, bgcolor="#1565C0", on_click=lambda e: file_picker.pick_files(allowed_extensions=["dwg", "dxf"])),
                 uploaded_file_info,
