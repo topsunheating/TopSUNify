@@ -1871,7 +1871,7 @@ def main(page: ft.Page):
             ("رادیاتور", lambda e: render(22)),
             ("حوله خشک کن", lambda e: show_message("به زودی فعال می‌شود", "blue")),
             ("یخ زدایی رمپ", lambda e: render(25)),
-            ("یخ زدایی پله", lambda e: render(22)),
+            ("یخ زدایی پله", lambda e: render(29)),
             ("گرمکن مخزن", lambda e: show_message("به زودی فعال می‌شود", "blue")),
             ("گرمکن صندلی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
             ("رستورانی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
