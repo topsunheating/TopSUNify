@@ -135,7 +135,7 @@ def main(page: ft.Page):
 
         return ft.Container(
             content=ft.Column([
-                ft.Row([ft.IconButton(ft.Icons.ARROW_BACK, on_click=lambda e: render(22)), ft.Text("پیش فاکتور رادیاتور", size=20, weight="bold")]),
+                ft.Row([ft.IconButton(ft.Icons.ARROW_BACK, on_click=lambda e: render(1)), ft.Text("پیش فاکتور رادیاتور", size=20, weight="bold")]),
                 ft.Divider(),
                 radiator_size, radiator_color, radiator_orientation, radiator_qty,
                 ft.FilledButton("افزودن به لیست", on_click=add_to_invoice, width=350, bgcolor="#1565C0"),
@@ -242,7 +242,7 @@ def main(page: ft.Page):
         
         return ft.Container(
             content=ft.Column([
-                ft.Row([ft.IconButton(ft.Icons.ARROW_BACK, on_click=lambda e: render(20)), ft.Text("پیش فاکتور زیرفرشی", size=20, weight="bold")]),
+                ft.Row([ft.IconButton(ft.Icons.ARROW_BACK, on_click=lambda e: render(1)), ft.Text("پیش فاکتور زیرفرشی", size=20, weight="bold")]),
                 product_size, qty, ft.Divider(),
                 ft.Row([insulation_switch], alignment=ft.MainAxisAlignment.START),
                 insulation_area, ft.Divider(),
@@ -260,7 +260,7 @@ def main(page: ft.Page):
             content=ft.Column([
                 ft.Container(
                     content=ft.Row([
-                        ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(18)),
+                        ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
                         ft.Text("گرمایش از کف (سیستم هوشمند)", size=21, weight="bold")
                     ]),
                     padding=15,
