@@ -390,14 +390,17 @@ def main(page: ft.Page):
 
         panel_type.on_change = update_panel_visibility
 
+        # فراخوانی اولیه
+        update_panel_visibility()
+
         def calculate(e):
+            # ... (بقیه کد calculate همان قبلی بدون تغییر بماند)
             try:
                 m80v = float(m80.value or 0)
                 m40v = float(m40.value or 0)
                 xpsv = float(xps.value or 0)
                 thv = int(thermostat.value or 1)
 
-                # قیمت تابلو فرمان
                 if panel_type.value == "سفارشی (دستی)":
                     panel_price = float(panel_manual_price.value or 0)
                 else:
