@@ -1939,12 +1939,18 @@ def main(page: ft.Page):
         }
         def check_national_id(id):
             if not re.match(r'^\d{10}$', id): return False
-            check = int(id)
-            s = sum(int(id[i]) * (10 - i) for i in range(9)) % 11
-            return (s < 2 and check == s) or (s >= 2 and check == 11 - s)
+            check = int(id_str[-1])
+            s = sum(int(id_str[i]) * (10 - i) for i in range(9)) % 11
+            valid = (s < 2 and check == s) or (s >= 2 and check == 11 - s)
+            return valid, None
+        def check_mobile(phone):
+            phone = str(phone).strip()
+            if len(phone) != 11 or not phone.startswith("09"):
+                return False
+            return True   
         name = ft.TextField(label="نام و نام خانوادگی", width=350)
         father_name = ft.TextField(label="نام پدر", width=350)
-        phone = ft.TextField(label="شماره موبایل", width=350, keyboard_type=ft.KeyboardType.PHONE)
+        phone = ft.TextField(label="شماره موبایل (09xxxxxxxxx)", width=350, keyboard_type=ft.KeyboardType.PHONE)        
         
         years = [str(y) for y in range(1300, 1410)]
         months = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
@@ -1953,18 +1959,15 @@ def main(page: ft.Page):
         birth_year = ft.Dropdown(label="سال تولد", width=110, options=[ft.dropdown.Option(y) for y in years], value="1370")
         birth_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="فروردین")
         birth_day = ft.Dropdown(label="روز", width=80, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="1")
-
+        
+        # تاریخ خرید شمسی
+        purchase_year = ft.Dropdown(label="سال خرید", width=110, options=[ft.dropdown.Option(y) for y in years], value="1403")
+        purchase_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="خرداد")
+        purchase_day = ft.Dropdown(label="روز", width=80, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="15")
+        
         national_id = ft.TextField(label="کد ملی", width=350, keyboard_type=ft.KeyboardType.NUMBER)
-        province_label = ft.Text("استان محل صدور: نامشخص", color="blue")
-            
-        def on_national_id_change(e):
-            if check_national_id(national_id.value):
-                province_label.value = "استان شناسایی شد: (مثال: تهران)"
-            else:
-                province_label.value = "کد ملی نامعتبر است"
-            province_label.update()
-        national_id.on_change = on_national_id_change
-            
+        national_status = ft.Text("", color="blue", size=14)
+                     
         id_number = ft.TextField(label="شماره شناسنامه", width=350)
         postal_code = ft.TextField(label="کد پستی (۱۰ رقم)", width=350, keyboard_type=ft.KeyboardType.NUMBER)
             
@@ -1972,10 +1975,12 @@ def main(page: ft.Page):
         city_dropdown = ft.Dropdown(label="شهر", width=350, options=[])
         
         def load_cities(e):
+            city_dropdown.options.clear()
             if province_dropdown.value in data:
                 city_dropdown.options = [ft.dropdown.Option(c) for c in data[province_dropdown.value]]
                 city_dropdown.update()
-        btn_load_cities = ft.OutlinedButton("بارگذاری شهرهای استان", on_click=load_cities)
+                
+        province_dropdown.on_change = load_cities
         
         address = ft.TextField(label="آدرس کامل", width=350, multiline=True)
         
@@ -1984,60 +1989,48 @@ def main(page: ft.Page):
         ])
         shop_name = ft.TextField(label="نام فروشگاه یا نمایندگی", width=350, visible=False)
         
-        invoice_number = ft.TextField(label="شماره فاکتور", width=350)
-        serial_number = ft.TextField(label="شماره سریال محصول", width=350)
-        # ==================== تاریخ خرید شمسی ====================
-        purchase_year = ft.Dropdown(label="سال خرید", width=110, options=[ft.dropdown.Option(y) for y in years], value="1403")
-        purchase_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="خرداد")
-        purchase_day = ft.Dropdown(label="روز", width=80, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="15")
-        purchase_date = ft.TextField(label="تاریخ خرید", width=350)  
-        
-        def on_purchase_change(e):
-            shop_name.visible = (purchase_place.value == "فروشگاه یا نمایندگی")
-            shop_name.update()
-        purchase_place.on_change = on_purchase_change
-        
-        invoice_number = ft.TextField(label="شماره فاکتور", width=350)
-        serial_number = ft.TextField(label="شماره سریال محصول", width=350)
-            
         def submit(e):
+            if not check_mobile(phone.value):
+                page.show_snack_bar(ft.SnackBar(ft.Text("شماره موبایل نامعتبر است! باید با 09 شروع شود و ۱۱ رقم باشد."), bgcolor="red"))
+                return
             if not birth_year.value:
                 page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تاریخ تولد را انتخاب کنید")))
                 return
-                
-            if not check_national_id(national_id.value):
-                page.show_snack_bar(ft.SnackBar(ft.Text("کد ملی نامعتبر است!")))
+            
+            valid_national, _ = check_national_id(national_id.value)    
+            if not valid_national:
+                page.show_snack_bar(ft.SnackBar(ft.Text("کد ملی نامعتبر است!"), bgcolor="red"))
                 return
                 
-            if len(postal_code.value) != 10:
-                page.show_snack_bar(ft.SnackBar(ft.Text("کد پستی باید ۱۰ رقم باشد!")))
+            if len(str(postal_code.value).strip()) != 10:
+                page.show_snack_bar(ft.SnackBar(ft.Text("کد پستی باید دقیقاً ۱۰ رقم باشد!"), bgcolor="red"))
                 return
                 
-            page.show_snack_bar(ft.SnackBar(ft.Text("اطلاعات با موفقیت ثبت شد.")))
+            page.show_snack_bar(ft.SnackBar(ft.Text("اطلاعات با موفقیت ثبت شد."), bgcolor="green"))
                 
         return ft.Container(
             content=ft.Column([
-                ft.Row([
-                    ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(2)),
-                    ft.Text("ثبت گارانتی", size=20, weight="bold")
-                ]),
+                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(2)),
+                        ft.Text("ثبت گارانتی", size=20, weight="bold")]),
+                ft.Divider(),
+                
                 name, father_name, phone,
                 
-                ft.Text("تاریخ تولد", weight="bold", size=16),
+                ft.Text("تاریخ تولد", weight="bold", size=16, text_align=ft.TextAlign.RIGHT),
                 ft.Row([birth_year, birth_month, birth_day], spacing=8),
+                
+                national_id, national_status, id_number,
 
                 ft.Text("تاریخ خرید", weight="bold", size=16, text_align=ft.TextAlign.RIGHT),
                 ft.Row([purchase_year, purchase_month, purchase_day], spacing=8),
                 
-                national_id, province_label, id_number,
-                province_dropdown, city_dropdown, address, postal_code,
-                purchase_place, shop_name, invoice_number, serial_number,
+                province_dropdown, city_dropdown, 
+                address, postal_code,
+                purchase_place, shop_name,
+                invoice_number, serial_number,
                 
                 ft.FilledButton("ثبت نهایی گارانتی", width=350, on_click=submit)
-            ], 
-            scroll=ft.ScrollMode.AUTO, 
-            spacing=15,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             padding=20
         )
     def technical_page():
