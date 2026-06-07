@@ -339,6 +339,7 @@ def main(page: ft.Page):
         m40 = ft.TextField(label="متراژ فیلم عرض ۴۰ (متر)", width=350, value="0", keyboard_type=ft.KeyboardType.NUMBER)
         xps = ft.TextField(label="متراژ عایق (مترمربع)", width=350, value="0", keyboard_type=ft.KeyboardType.NUMBER)
         thermostat = ft.TextField(label="تعداد ترموستات", width=350, value="1", keyboard_type=ft.KeyboardType.NUMBER)
+
         # تابلو فرمان بهبود یافته
         panel_type = ft.Dropdown(
             label="نوع تابلو فرمان",
@@ -395,21 +396,15 @@ def main(page: ft.Page):
                 m40v = float(m40.value or 0)
                 xpsv = float(xps.value or 0)
                 thv = int(thermostat.value or 1)
+
                 # قیمت تابلو فرمان
                 if panel_type.value == "سفارشی (دستی)":
                     panel_price = float(panel_manual_price.value or 0)
                 else:
-                    # استخراج قیمت از متن
                     try:
                         panel_price = float(panel_type.value.split("-")[-1].replace(",", "").replace("تومان", "").strip())
                     except:
                         panel_price = 15500000
-
-                panel_total = panel_price
-
-                if m80v == 0 and m40v == 0:
-                    show_message("حداقل متراژ فیلم گرمایشی را وارد کنید", "red")
-                    return
 
                 # محاسبات
                 film80_total = m80v * 1250000
@@ -428,42 +423,25 @@ def main(page: ft.Page):
 
                 final_total = base + inst + travel + tax - disc + other
 
-                # پر کردن جدول ریز اقلام
+                # پر کردن جدول
                 items_table.rows.clear()
                 if m80v > 0:
-                    items_table.rows.append(ft.DataRow(cells=[
-                        ft.DataCell(ft.Text("فیلم گرمایشی ۸۰")),
-                        ft.DataCell(ft.Text(f"{m80v} متر")),
-                        ft.DataCell(ft.Text(f"{film80_total:,.0f}"))
-                    ]))
+                    items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم گرمایشی ۸۰")), ft.DataCell(ft.Text(f"{m80v} متر")), ft.DataCell(ft.Text(f"{film80_total:,.0f}"))]))
                 if m40v > 0:
-                    items_table.rows.append(ft.DataRow(cells=[
-                        ft.DataCell(ft.Text("فیلم گرمایشی ۴۰")),
-                        ft.DataCell(ft.Text(f"{m40v} متر")),
-                        ft.DataCell(ft.Text(f"{film40_total:,.0f}"))
-                    ]))
+                    items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم گرمایشی ۴۰")), ft.DataCell(ft.Text(f"{m40v} متر")), ft.DataCell(ft.Text(f"{film40_total:,.0f}"))]))
                 if xpsv > 0:
-                    items_table.rows.append(ft.DataRow(cells=[
-                        ft.DataCell(ft.Text("عایق بازتابشی")),
-                        ft.DataCell(ft.Text(f"{xpsv} مترمربع")),
-                        ft.DataCell(ft.Text(f"{xps_total:,.0f}"))
-                    ]))
+                    items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("عایق بازتابشی")), ft.DataCell(ft.Text(f"{xpsv} مترمربع")), ft.DataCell(ft.Text(f"{xps_total:,.0f}"))]))
                 if thv > 0:
-                    items_table.rows.append(ft.DataRow(cells=[
-                        ft.DataCell(ft.Text("ترموستات")),
-                        ft.DataCell(ft.Text(f"{thv} عدد")),
-                        ft.DataCell(ft.Text(f"{thermostat_total:,.0f}"))
-                    ]))
-                if panel_total > 0:
-                    items_table.rows.append(ft.DataRow(cells=[
-                        ft.DataCell(ft.Text("تابلو فرمان")), 
-                        ft.DataCell(ft.Text("1 عدد")), 
-                        ft.DataCell(ft.Text(f"{panel_total:,.0f}"))
-                    ]))
+                    items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("ترموستات")), ft.DataCell(ft.Text(f"{thv} عدد")), ft.DataCell(ft.Text(f"{thermostat_total:,.0f}"))]))
+                items_table.rows.append(ft.DataRow(cells=[
+                    ft.DataCell(ft.Text("تابلو فرمان")), 
+                    ft.DataCell(ft.Text("۱ عدد")), 
+                    ft.DataCell(ft.Text(f"{panel_total:,.0f}"))
+                ]))
 
                 # هزینه‌های جانبی
                 if inst > 0:
-                    items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("هزینه نصب")), ft.DataCell(ft.Text(f"{int(install_pct.value)}%")), ft.DataCell(ft.Text(f"{inst:,.0f}"))]))
+                    items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("هزینه نصب")), ft.DataCell(ft.Text(f"{install_pct.value}%")), ft.DataCell(ft.Text(f"{inst:,.0f}"))]))
                 if travel > 0:
                     items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("ایاب و ذهاب")), ft.DataCell(ft.Text("")), ft.DataCell(ft.Text(f"{travel:,.0f}"))]))
                 if tax > 0:
@@ -480,25 +458,22 @@ def main(page: ft.Page):
             except Exception as ex:
                 show_message(f"خطا در محاسبه: {ex}", "red")
 
-        # نمایش/مخفی کردن فیلدها
+        # نمایش/مخفی کردن
         travel_switch.on_change = lambda e: (setattr(travel_cost, "visible", travel_switch.value), page.update())
         other_switch.on_change = lambda e: (setattr(other_cost, "visible", other_switch.value), page.update())
 
         return ft.Container(
             content=ft.Column([
-                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(18)), 
+                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(18)),
                        ft.Text("مقادیر مستقیم - پیش فاکتور", size=20, weight="bold")]),
                 ft.Divider(),
-                m80, m40, xps, thermostat, panel,
+                m80, m40, xps, thermostat, panel_type, panel_manual_price,
                 ft.Divider(),
                 install_pct,
-                ft.Row([travel_switch], alignment=ft.MainAxisAlignment.START),
-                travel_cost,
-                ft.Row([tax_switch], alignment=ft.MainAxisAlignment.START),
-                tax_pct,
+                ft.Row([travel_switch], alignment=ft.MainAxisAlignment.START), travel_cost,
+                ft.Row([tax_switch], alignment=ft.MainAxisAlignment.START), tax_pct,
                 discount_pct,
-                ft.Row([other_switch], alignment=ft.MainAxisAlignment.START),
-                other_cost,
+                ft.Row([other_switch], alignment=ft.MainAxisAlignment.START), other_cost,
                 ft.Divider(height=20),
                 ft.FilledButton("محاسبه و نمایش ریز فاکتور", width=350, bgcolor="#1565C0", color="white", on_click=calculate),
                 ft.Divider(),
