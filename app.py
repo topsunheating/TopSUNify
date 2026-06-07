@@ -1947,68 +1947,22 @@ def main(page: ft.Page):
         phone = ft.TextField(label="شماره موبایل", width=350, keyboard_type=ft.KeyboardType.PHONE)
             
         birth_date_field = ft.TextField(label="تاریخ تولد (انتخاب کنید)", width=350, read_only=True)
-        birth_year = ft.Dropdown(
-            label="سال",
-            width=110,
-            options=[
-                ft.dropdown.Option(str(y))
-                for y in range(1380, 1411)
-            ]
-        )
+        date_picker = ft.DatePicker()
         
-        birth_month = ft.Dropdown(
-            label="ماه",
-            width=110,
-            options=[
-                ft.dropdown.Option(str(m))
-                for m in range(1, 13)
-            ]
-        )
-        
-        birth_day = ft.Dropdown(
-            label="روز",
-            width=110,
-            options=[
-                ft.dropdown.Option(str(d))
-                for d in range(1, 32)
-            ]
-        )
-
-        def save_birth_date(e):
-            if (
-                birth_year.value
-                and birth_month.value
-                and birth_day.value
-            ):
-                birth_date_field.value = (
-                    f"{birth_year.value}/"
-                    f"{birth_month.value.zfill(2)}/"
-                    f"{birth_day.value.zfill(2)}"
-
-                )
-                
+        def date_changed(e):
+            if e.control.value:
+                birth_date_field.value = str(e.control.value).split(" ")[0]
                 birth_date_field.update()
-                show_message(
-                    "تاریخ تولد انتخاب شد",
-                    "green"
-                )
                 
-                birth_date_field,
-                
-                ft.Row(
-                    [
-                        birth_year,
-                        birth_month,
-                        birth_day
-                    ],
-                    alignment=ft.MainAxisAlignment.CENTER
-                ),
-                
-                ft.ElevatedButton(
-                    "ثبت تاریخ تولد",
-                    on_click=save_birth_date
-                ),
+        date_picker.on_change = date_changed
         
+        page.overlay.append(date_picker)
+        
+        def open_date_picker(e):
+            date_picker.open = True
+            page.update()
+        birth_date_field.on_click = open_date_picker
+
         national_id = ft.TextField(label="کد ملی", width=350, keyboard_type=ft.KeyboardType.NUMBER)
         province_label = ft.Text("استان محل صدور: نامشخص", color="blue")
             
