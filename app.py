@@ -1094,7 +1094,7 @@ def main(page: ft.Page):
                     width=400, margin=ft.margin.Margin(left=15, right=15), expand=True
                 )
             )
-                else:
+        else:
             contents = [
                 dashboard_page(),           # 0
                 pre_invoice_page(),         # 1
