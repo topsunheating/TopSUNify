@@ -1953,11 +1953,6 @@ def main(page: ft.Page):
         birth_year = ft.Dropdown(label="سال تولد", width=110, options=[ft.dropdown.Option(y) for y in years], value="1370")
         birth_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="فروردین")
         birth_day = ft.Dropdown(label="روز", width=80, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="1")
-        
-        # ==================== تاریخ خرید شمسی ====================
-        purchase_year = ft.Dropdown(label="سال خرید", width=110, options=[ft.dropdown.Option(y) for y in years], value="1403")
-        purchase_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="خرداد")
-        purchase_day = ft.Dropdown(label="روز", width=80, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="15")
 
         national_id = ft.TextField(label="کد ملی", width=350, keyboard_type=ft.KeyboardType.NUMBER)
         province_label = ft.Text("استان محل صدور: نامشخص", color="blue")
@@ -1991,6 +1986,10 @@ def main(page: ft.Page):
         
         invoice_number = ft.TextField(label="شماره فاکتور", width=350)
         serial_number = ft.TextField(label="شماره سریال محصول", width=350)
+        # ==================== تاریخ خرید شمسی ====================
+        purchase_year = ft.Dropdown(label="سال خرید", width=110, options=[ft.dropdown.Option(y) for y in years], value="1403")
+        purchase_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="خرداد")
+        purchase_day = ft.Dropdown(label="روز", width=80, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="15")
         purchase_date = ft.TextField(label="تاریخ خرید", width=350)  
         
         def on_purchase_change(e):
