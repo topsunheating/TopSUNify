@@ -1930,6 +1930,7 @@ def main(page: ft.Page):
         )
     def home_page():
         return ft.Container(content=ft.Column([ft.Container(content=ft.Column([ft.Image(src="TopSUNify-1.png", width=80), ft.Text("خوش آمدید به TopSUNify", size=18, weight="bold", text_align=ft.TextAlign.CENTER), ft.Text("مرکز خدمات و پشتیبانی", size=16, color="grey", text_align=ft.TextAlign.CENTER)], horizontal_alignment=ft.CrossAxisAlignment.CENTER), margin=ft.margin.Margin(top=20, bottom=30)), ft.Container(content=ft.Column([ft.ListTile(leading=ft.Icon(ft.Icons.SHIELD, color="green"), title=ft.Text("ثبت گارانتی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=lambda e: render(23)), ft.ListTile(leading=ft.Icon(ft.Icons.INSTALL_DESKTOP, color="blue"), title=ft.Text("درخواست نصب اولیه"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.SUPPORT_AGENT, color="orange"), title=ft.Text("درخواست خدمات فنی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.SHOPPING_CART_CHECKOUT, color="purple"), title=ft.Text("ثبت درخواست سفارشی و عمده"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.PRINT, color="red"), title=ft.Text("درخواست چاپ طرح سفارشی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20))], spacing=2), width=380)], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
+    
     def warranty_page(page: ft.Page, render_callback):
         data = {
             "تهران": ["تهران", "شهریار", "ورامین"],
@@ -1946,11 +1947,21 @@ def main(page: ft.Page):
         phone = ft.TextField(label="شماره موبایل", width=350, keyboard_type=ft.KeyboardType.PHONE)
             
         birth_date_field = ft.TextField(label="تاریخ تولد (انتخاب کنید)", width=350, read_only=True)
-        date_picker = ft.DatePicker(
-            on_change=lambda e: setattr(birth_date_field, "value", str(e.control.value).split())
-        )
+        date_picker = ft.DatePicker()
+        
+        def date_changed(e):
+            if e.control.value:
+                birth_date_field.value = str(e.control.value).split(" ")[0]
+                birth_date_field.update()
+                
+        date_picker.on_change = date_changed
+        
         page.overlay.append(date_picker)
-        birth_date_field.on_click = lambda e: page.open(date_picker)
+        
+        def open_date_picker(e):
+            date_picker.open = True
+            page.update()
+        birth_date_field.on_click = open_date_picker
 
         national_id = ft.TextField(label="کد ملی", width=350, keyboard_type=ft.KeyboardType.NUMBER)
         province_label = ft.Text("استان محل صدور: نامشخص", color="blue")
@@ -1977,7 +1988,6 @@ def main(page: ft.Page):
         btn_load_cities = ft.OutlinedButton("بارگذاری شهرهای استان", on_click=load_cities)
         
         address = ft.TextField(label="آدرس کامل", width=350, multiline=True)
-        postal_code = ft.TextField(label="کد پستی", width=350, keyboard_type=ft.KeyboardType.NUMBER)
         
         purchase_place = ft.Dropdown(label="محل خرید", width=350, options=[
             ft.dropdown.Option("سایت شرکت"), ft.dropdown.Option("دفتر مرکزی"), ft.dropdown.Option("فروشگاه یا نمایندگی")
