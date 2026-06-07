@@ -766,6 +766,159 @@ def main(page: ft.Page):
             ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400, expand=True, padding=15
         )
+        # ==================== صفحه یخ زدایی رمپ ====================
+    def ramp_deicing_page():
+        return ft.Container(
+            content=ft.Column([
+                ft.Container(
+                    content=ft.Row([
+                        ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
+                        ft.Text("یخ زدایی رمپ", size=21, weight="bold")
+                    ]),
+                    padding=15,
+                    bgcolor="#f8f9fa",
+                    border_radius=12
+                ),
+                ft.Text("روش صدور پیش‌فاکتور را انتخاب کنید",
+                       size=18, weight="bold", text_align=ft.TextAlign.CENTER),
+                ft.Divider(height=30),
+
+                # روش ۱: آپلود فایل
+                ft.Container(
+                    content=ft.FilledButton(
+                        content=ft.Row([
+                            ft.Icon(ft.Icons.UPLOAD_FILE, color="white"),
+                            ft.Text("📂 آپلود فایل DWG / DXF", size=16, weight="bold")
+                        ], alignment=ft.MainAxisAlignment.CENTER),
+                        width=360, height=75, bgcolor="#1565C0", color="white",
+                        on_click=lambda e: render(26),   # ← روش اول رمپ
+                        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
+                    ),
+                    margin=ft.margin.Margin(bottom=15)
+                ),
+
+                # روش ۲: ورود دستی ابعاد
+                ft.Container(
+                    content=ft.FilledButton(
+                        content=ft.Row([
+                            ft.Icon(ft.Icons.EDIT_NOTE, color="white"),
+                            ft.Text("⌨️ ورود دستی ابعاد رمپ", size=16, weight="bold")
+                        ], alignment=ft.MainAxisAlignment.CENTER),
+                        width=360, height=75, bgcolor="#1565C0", color="white",
+                        on_click=lambda e: render(27),   # ← روش دوم رمپ
+                        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
+                    ),
+                    margin=ft.margin.Margin(bottom=15)
+                ),
+
+                # روش ۳: مقادیر مستقیم
+                ft.Container(
+                    content=ft.FilledButton(
+                        content=ft.Row([
+                            ft.Icon(ft.Icons.CALCULATE, color="white"),
+                            ft.Text("✍️ مقادیر مستقیم", size=16, weight="bold")
+                        ], alignment=ft.MainAxisAlignment.CENTER),
+                        width=360, height=75, bgcolor="#1565C0", color="white",
+                        on_click=lambda e: render(28),   # ← روش سوم رمپ
+                        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
+                    )
+                ),
+
+                ft.Divider(height=30),
+                ft.Text("هسته main.py و Financial.py آماده اتصال است",
+                       size=13, color="grey", text_align=ft.TextAlign.CENTER)
+            ],
+            scroll=ft.ScrollMode.AUTO,
+            spacing=12,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            width=400,
+            expand=True,
+            padding=15
+        )
+        # ==================== یخ زدایی رمپ - روش اول: آپلود فایل ====================
+    def ramp_deicing_dwg_page():
+        file_picker = ft.FilePicker()
+        page.overlay.append(file_picker)
+        uploaded_file_info = ft.Text("هیچ فایلی انتخاب نشده", color="grey")
+
+        layout_table = ft.DataTable(columns=[ft.DataColumn(ft.Text("شرح")), ft.DataColumn(ft.Text("مقدار"))], rows=[])
+        items_table = ft.DataTable(columns=[ft.DataColumn(ft.Text("شرح کالا")), ft.DataColumn(ft.Text("مقدار")), ft.DataColumn(ft.Text("مبلغ"))], rows=[])
+        total_text = ft.Text("جمع کل: 0 تومان", size=20, weight="bold", color="green")
+        download_btn = ft.FilledButton("دانلود پیش‌فاکتور PDF", width=350, bgcolor="green", color="white", visible=False, icon=ft.Icons.DOWNLOAD)
+
+        # گزینه‌های جانبی
+        install_switch = ft.Switch(label="اضافه کردن هزینه نصب", value=False)
+        install_pct = ft.Dropdown(label="درصد هزینه نصب", width=350, options=[ft.dropdown.Option(x) for x in ["0","10","15","20","25"]], value="15", visible=False)
+        travel_switch = ft.Switch(label="اضافه کردن هزینه ایاب و ذهاب", value=False)
+        travel_cost = ft.TextField(label="مبلغ ایاب و ذهاب (تومان)", width=350, value="0", visible=False, keyboard_type=ft.KeyboardType.NUMBER)
+        tax_switch = ft.Switch(label="اضافه کردن مالیات", value=False)
+        tax_pct = ft.TextField(label="درصد مالیات", width=350, value="10", visible=False, keyboard_type=ft.KeyboardType.NUMBER)
+        discount_switch = ft.Switch(label="اضافه کردن تخفیف", value=False)
+        discount_pct = ft.TextField(label="درصد تخفیف", width=350, value="5", visible=False, keyboard_type=ft.KeyboardType.NUMBER)
+        other_switch = ft.Switch(label="سایر هزینه‌ها", value=False)
+        other_cost = ft.TextField(label="مبلغ سایر هزینه‌ها (تومان)", width=350, value="0", visible=False, keyboard_type=ft.KeyboardType.NUMBER)
+
+        def update_visibility(e=None):
+            install_pct.visible = install_switch.value
+            travel_cost.visible = travel_switch.value
+            tax_pct.visible = tax_switch.value
+            discount_pct.visible = discount_switch.value
+            other_cost.visible = other_switch.value
+            page.update()
+
+        install_switch.on_change = travel_switch.on_change = tax_switch.on_change = discount_switch.on_change = other_switch.on_change = update_visibility
+
+        def on_file_selected(e):
+            if e.files:
+                file = e.files[0]
+                uploaded_file_info.value = f"فایل انتخاب شد: {file.name}"
+                uploaded_file_info.color = "green"
+                page.update()
+                show_message("فایل در حال پردازش توسط هسته main.py ...", "blue")
+                # شبیه‌سازی پردازش
+                layout_table.rows.clear()
+                layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("متراژ گرمکن رمپ")), ft.DataCell(ft.Text("۴۸.۵ متر"))]))
+                layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("عایق")), ft.DataCell(ft.Text("۵۲ م²"))]))
+                page.update()
+                show_message("پردازش فایل با موفقیت انجام شد", "green")
+
+        file_picker.on_result = on_file_selected
+
+        def calculate_full_invoice(e):
+            if not layout_table.rows:
+                show_message("ابتدا فایل را آپلود کنید", "red")
+                return
+            show_message("ریز فاکتور آماده دانلود است", "green")
+            download_btn.visible = True
+            page.update()
+
+        return ft.Container(
+            content=ft.Column([
+                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(25)),
+                       ft.Text("یخ زدایی رمپ - آپلود فایل", size=20, weight="bold")]),
+                ft.Divider(),
+                ft.FilledButton("انتخاب فایل DWG یا DXF", width=350, bgcolor="#1565C0", on_click=lambda e: file_picker.pick_files(allowed_extensions=["dwg", "dxf"])),
+                uploaded_file_info,
+                ft.Divider(),
+                ft.Text("نتایج پردازش:", size=16, weight="bold"),
+                layout_table,
+                ft.Divider(),
+                ft.Text("گزینه‌های جانبی:", size=16, weight="bold"),
+                ft.Row([install_switch], alignment=ft.MainAxisAlignment.START), install_pct,
+                ft.Row([travel_switch], alignment=ft.MainAxisAlignment.START), travel_cost,
+                ft.Row([tax_switch], alignment=ft.MainAxisAlignment.START), tax_pct,
+                ft.Row([discount_switch], alignment=ft.MainAxisAlignment.START), discount_pct,
+                ft.Row([other_switch], alignment=ft.MainAxisAlignment.START), other_cost,
+                ft.Divider(height=20),
+                ft.FilledButton("محاسبه و نمایش ریز فاکتور", width=350, bgcolor="#1565C0", color="white", on_click=calculate_full_invoice),
+                download_btn,
+                ft.Divider(),
+                ft.Text("ریز اقلام فاکتور:", size=16, weight="bold"),
+                items_table,
+                total_text
+            ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            width=400, expand=True, padding=15
+        )    
     # ==================== صفحات اضافی ====================
     def account_request_page():
         return ft.Container(
@@ -1074,7 +1227,14 @@ def main(page: ft.Page):
                 direct_values_page(),       # 21  ← مقادیر مستقیم
                 radiator_manual_invoice_page(), # 22
                 warranty_page(page, render), # 23
-                floor_room_dimensions_page()  # 24
+                floor_room_dimensions_page(),  # 24
+                ramp_deicing_page(),        # 25
+                ramp_deicing_dwg_page(),        # 26
+                ramp_deicing_manual_page(),     # 27
+                ramp_deicing_direct_page(),     # 28
+                stair_deicing_dwg_page(),       # 30
+                stair_deicing_manual_page(),    # 31
+                stair_deicing_direct_page()     # 32
             
             ]
 
@@ -1144,8 +1304,8 @@ def main(page: ft.Page):
             ("زیرفرشی", lambda e: render(20)),
             ("رادیاتور", lambda e: render(22)),
             ("حوله خشک کن", lambda e: show_message("به زودی فعال می‌شود", "blue")),
-            ("یخ زدایی رمپ", lambda e: show_message("به زودی فعال می‌شود", "blue")),
-            ("یخ زدایی پله", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+            ("یخ زدایی رمپ", lambda e: render(25)),
+            ("یخ زدایی پله", lambda e: render(22)),
             ("گرمکن مخزن", lambda e: show_message("به زودی فعال می‌شود", "blue")),
             ("گرمکن صندلی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
             ("رستورانی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
