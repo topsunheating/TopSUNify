@@ -640,9 +640,6 @@ def main(page: ft.Page):
                 page.update()
                 show_message("ریز فاکتور کامل آماده شد", "green")
 
-            except Exception as ex:
-                show_message(f"خطا: {ex}", "red"
-
         return ft.Container(
             content=ft.Column([
                 ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(25)),
