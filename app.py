@@ -332,7 +332,6 @@ def main(page: ft.Page):
             expand=True,
             padding=15
         )
-        # ==================== روش مقادیر مستقیم ====================
        # ==================== روش مقادیر مستقیم ====================
     def direct_values_page():
         # فیلدهای اصلی
@@ -340,7 +339,20 @@ def main(page: ft.Page):
         m40 = ft.TextField(label="متراژ فیلم عرض ۴۰ (متر)", width=350, value="0", keyboard_type=ft.KeyboardType.NUMBER)
         xps = ft.TextField(label="متراژ عایق (مترمربع)", width=350, value="0", keyboard_type=ft.KeyboardType.NUMBER)
         thermostat = ft.TextField(label="تعداد ترموستات", width=350, value="1", keyboard_type=ft.KeyboardType.NUMBER)
-        panel = ft.TextField(label="تعداد تابلو فرمان", width=350, value="1", keyboard_type=ft.KeyboardType.NUMBER)
+        # تابلو فرمان بهبود یافته
+        panel_type = ft.Dropdown(
+            label="نوع تابلو فرمان",
+            width=350,
+            options=[
+                ft.dropdown.Option("تابلو ۴ خروجی - ۱۲,۵۰۰,۰۰۰ تومان"),
+                ft.dropdown.Option("تابلو ۶ خروجی - ۱۵,۵۰۰,۰۰۰ تومان"),
+                ft.dropdown.Option("تابلو ۸ خروجی - ۱۸,۵۰۰,۰۰۰ تومان"),
+                ft.dropdown.Option("تابلو ۱۰ خروجی - ۲۲,۰۰۰,۰۰۰ تومان"),
+                ft.dropdown.Option("سفارشی (دستی)"),
+            ],
+            value="تابلو ۶ خروجی - ۱۵,۵۰۰,۰۰۰ تومان"
+        )
+        panel_manual_price = ft.TextField(label="مبلغ تابلو فرمان (تومان) - دستی", width=350, value="0", visible=False, keyboard_type=ft.KeyboardType.NUMBER)
 
         # گزینه‌های اضافی
         install_pct = ft.Dropdown(label="درصد هزینه نصب", width=350, options=[
@@ -371,13 +383,29 @@ def main(page: ft.Page):
 
         total_text = ft.Text("جمع کل: 0 تومان", size=20, weight="bold", color="green")
 
+        def update_panel_visibility(e):
+            panel_manual_price.visible = (panel_type.value == "سفارشی (دستی)")
+            page.update()
+
+        panel_type.on_change = update_panel_visibility
+
         def calculate(e):
             try:
                 m80v = float(m80.value or 0)
                 m40v = float(m40.value or 0)
                 xpsv = float(xps.value or 0)
                 thv = int(thermostat.value or 1)
-                pv = int(panel.value or 1)
+                # قیمت تابلو فرمان
+                if panel_type.value == "سفارشی (دستی)":
+                    panel_price = float(panel_manual_price.value or 0)
+                else:
+                    # استخراج قیمت از متن
+                    try:
+                        panel_price = float(panel_type.value.split("-")[-1].replace(",", "").replace("تومان", "").strip())
+                    except:
+                        panel_price = 15500000
+
+                panel_total = panel_price
 
                 if m80v == 0 and m40v == 0:
                     show_message("حداقل متراژ فیلم گرمایشی را وارد کنید", "red")
@@ -388,7 +416,7 @@ def main(page: ft.Page):
                 film40_total = m40v * 950000
                 xps_total = xpsv * 1450000
                 thermostat_total = thv * 1850000
-                panel_total = pv * 12500000
+                panel_total = panel_price
 
                 base = film80_total + film40_total + xps_total + thermostat_total + panel_total
 
@@ -426,10 +454,10 @@ def main(page: ft.Page):
                         ft.DataCell(ft.Text(f"{thv} عدد")),
                         ft.DataCell(ft.Text(f"{thermostat_total:,.0f}"))
                     ]))
-                if pv > 0:
+                if panel_total > 0:
                     items_table.rows.append(ft.DataRow(cells=[
-                        ft.DataCell(ft.Text("تابلو فرمان")),
-                        ft.DataCell(ft.Text(f"{pv} عدد")),
+                        ft.DataCell(ft.Text("تابلو فرمان")), 
+                        ft.DataCell(ft.Text("1 عدد")), 
                         ft.DataCell(ft.Text(f"{panel_total:,.0f}"))
                     ]))
 
@@ -447,7 +475,6 @@ def main(page: ft.Page):
 
                 total_text.value = f"جمع کل: {final_total:,.0f} تومان"
                 page.update()
-
                 show_message("ریز فاکتور محاسبه شد", "green")
 
             except Exception as ex:
