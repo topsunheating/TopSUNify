@@ -2026,7 +2026,6 @@ def main(page: ft.Page):
                 
                 ft.Text("تاریخ تولد", weight="bold", size=16),
                 ft.Row([birth_year, birth_month, birth_day], spacing=8),
-                birth_date_display,
 
                 ft.Text("تاریخ خرید", weight="bold", size=16, text_align=ft.TextAlign.RIGHT),
                 ft.Row([purchase_year, purchase_month, purchase_day], spacing=8),
