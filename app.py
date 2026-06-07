@@ -2011,7 +2011,7 @@ def main(page: ft.Page):
         return ft.Container(
             content=ft.Column([
                 ft.Row([
-                    ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(18)),
+                    ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(2)),
                     ft.Text("ثبت گارانتی", size=20, weight="bold")
                 ]),
                 name, father_name, birth_date_field, national_id, province_label, id_number,
