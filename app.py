@@ -2010,8 +2010,8 @@ def main(page: ft.Page):
         purchase_place.on_change = on_purchase_change
             
         def submit(e):
-            if not birth_date_field.value:
-                page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تاریخ تولد را انتخاب کنید!")))
+            if not birth_year.value:
+                page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تاریخ تولد را انتخاب کنید")))
                 return
                 
             if not check_national_id(national_id.value):
@@ -2030,12 +2030,22 @@ def main(page: ft.Page):
                     ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(2)),
                     ft.Text("ثبت گارانتی", size=20, weight="bold")
                 ]),
-                name, father_name, birth_date_field, national_id, province_label, id_number,
+                name, father_name, phone,
+                
+                ft.Text("تاریخ تولد شمسی", weight="bold", size=16),
+                ft.Row([birth_year, birth_month, birth_day], spacing=8),
+                birth_date_display,
+                
+                national_id, province_label, id_number,
                 province_dropdown, city_dropdown, address, postal_code,
                 purchase_place, shop_name, invoice_number, serial_number, purchase_date,
-                ft.FilledButton("ثبت نهایی", on_click=submit)
-            ], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-            padding=15
+                
+                ft.FilledButton("ثبت نهایی گارانتی", width=350, on_click=submit)
+            ], 
+            scroll=ft.ScrollMode.AUTO, 
+            spacing=15,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            padding=20
         )
     def technical_page():
         return ft.Container(content=ft.Column([ft.Container(content=ft.Text("اطلاعات فنی", size=18, weight="bold", text_align=ft.TextAlign.CENTER), padding=20, margin=ft.margin.Margin(bottom=15)), ft.Container(content=ft.Column([ft.ListTile(leading=ft.Icon(ft.Icons.BOOK, color="blue"), title=ft.Text("کاتالوگ محصولات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.PRICE_CHANGE, color="green"), title=ft.Text("لیست قیمت"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.WORK_HISTORY, color="purple"), title=ft.Text("رزومه شرکت"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.DESCRIPTION, color="orange"), title=ft.Text("پروپوزال و گزارش فنی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.IMAGE, color="pink"), title=ft.Text("تصاویر و فیلم پروژه‌ها"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.VIDEO_LIBRARY, color="red"), title=ft.Text("فیلم‌های تبلیغاتی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20))], spacing=2), width=380)], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
