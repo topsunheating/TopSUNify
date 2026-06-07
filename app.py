@@ -506,20 +506,22 @@ def main(page: ft.Page):
         )
 
         # ==================== روش اول: آپلود فایل DWG/DXF ====================
+        # ==================== روش اول: آپلود فایل DWG/DXF ====================
     def floor_dwg_upload_page():
         file_picker = ft.FilePicker()
         page.overlay.append(file_picker)
 
         uploaded_file_info = ft.Text("هیچ فایلی انتخاب نشده", color="grey")
+        
+        # جدول نتایج چیدمان
         layout_table = ft.DataTable(columns=[ft.DataColumn(ft.Text("شرح")), ft.DataColumn(ft.Text("مقدار"))], rows=[])
-        items_table = ft.DataTable(columns=[ft.DataColumn(ft.Text("شرح کالا")), ft.DataColumn(ft.Text("مقدار")), ft.DataColumn(ft.Text("مبلغ"))], rows=[])
-
-        total_text = ft.Text("جمع کل: 0 تومان", size=20, weight="bold", color="green")
-        download_btn = ft.FilledButton("دانلود پیش‌فاکتور PDF", width=350, bgcolor="green", color="white", visible=False, icon=ft.Icons.DOWNLOAD)
 
         # گزینه‌های جانبی (کاملاً مشابه روش دوم)
         install_switch = ft.Switch(label="اضافه کردن هزینه نصب", value=False)
-        install_pct = ft.Dropdown(label="درصد هزینه نصب", width=350, options=[ft.dropdown.Option(x) for x in ["0","10","15","20","25"]], value="15", visible=False)
+        install_pct = ft.Dropdown(label="درصد هزینه نصب", width=350, options=[
+            ft.dropdown.Option("0"), ft.dropdown.Option("10"), ft.dropdown.Option("15"),
+            ft.dropdown.Option("20"), ft.dropdown.Option("25")
+        ], value="15", visible=False)
 
         travel_switch = ft.Switch(label="اضافه کردن هزینه ایاب و ذهاب", value=False)
         travel_cost = ft.TextField(label="مبلغ ایاب و ذهاب (تومان)", width=350, value="0", visible=False, keyboard_type=ft.KeyboardType.NUMBER)
@@ -532,6 +534,11 @@ def main(page: ft.Page):
 
         other_switch = ft.Switch(label="سایر هزینه‌ها", value=False)
         other_cost = ft.TextField(label="مبلغ سایر هزینه‌ها (تومان)", width=350, value="0", visible=False, keyboard_type=ft.KeyboardType.NUMBER)
+
+        # جدول ریز اقلام فاکتور
+        items_table = ft.DataTable(columns=[ft.DataColumn(ft.Text("شرح کالا")), ft.DataColumn(ft.Text("مقدار")), ft.DataColumn(ft.Text("مبلغ"))], rows=[])
+        total_text = ft.Text("جمع کل: 0 تومان", size=20, weight="bold", color="green")
+        download_btn = ft.FilledButton("دانلود پیش‌فاکتور PDF", width=350, bgcolor="green", color="white", visible=False, icon=ft.Icons.DOWNLOAD)
 
         def update_visibility(e=None):
             install_pct.visible = install_switch.value
@@ -554,62 +561,57 @@ def main(page: ft.Page):
                 page.update()
 
                 try:
-                    # شبیه‌سازی پردازش واقعی فایل
+                    # شبیه‌سازی فراخوانی واقعی main.py
                     from main import process_dwg_file
-                    result = process_dwg_file(file)  # تابع واقعی از main.py
+                    result = process_dwg_file(file)
 
                     film80 = result.get("film_80", 45.5)
                     film40 = result.get("film_40", 12.3)
                     insulation = result.get("insulation", 68.0)
                     thermostats = result.get("thermostats", 5)
 
-                    # پیشنهاد تابلو
-                    if thermostats <= 4:
-                        panel_text = "تابلو ۴ خروجی - ۱۲,۵۰۰,۰۰۰ تومان"
-                        panel_price = 12500000
-                    elif thermostats <= 6:
-                        panel_text = "تابلو ۶ خروجی - ۱۵,۵۰۰,۰۰۰ تومان"
-                        panel_price = 15500000
-                    else:
-                        panel_text = "تابلو ۱۰ خروجی - ۲۲,۰۰۰,۰۰۰ تومان"
-                        panel_price = 22000000
-
-                    # پر کردن جدول چیدمان
-                    layout_table.rows.clear()
-                    layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم ۸۰")), ft.DataCell(ft.Text(f"{film80:.1f} متر"))]))
-                    layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم ۴۰")), ft.DataCell(ft.Text(f"{film40:.1f} متر"))]))
-                    layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("عایق")), ft.DataCell(ft.Text(f"{insulation:.1f} م²"))]))
-                    layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("ترموستات")), ft.DataCell(ft.Text(f"{thermostats} عدد"))]))
-                    layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("تابلو فرمان")), ft.DataCell(ft.Text(panel_text))]))
-
-                    page.update()
-                    show_message("پردازش فایل با موفقیت انجام شد", "green")
-
                 except Exception as ex:
                     show_message(f"خطا در پردازش فایل: {ex}\n(از مقادیر تقریبی استفاده شد)", "orange")
-                    # مقادیر تقریبی پشتیبان
-                    layout_table.rows.clear()
-                    layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم ۸۰")), ft.DataCell(ft.Text("۴۵.۵ متر"))]))
-                    layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم ۴۰")), ft.DataCell(ft.Text("۱۲.۳ متر"))]))
-                    layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("عایق")), ft.DataCell(ft.Text("۶۸.۰ م²"))]))
-                    layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("ترموستات")), ft.DataCell(ft.Text("۵ عدد"))]))
-                    layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("تابلو فرمان")), ft.DataCell(ft.Text("تابلو ۶ خروجی"))]))
+                    film80 = 45.5
+                    film40 = 12.3
+                    insulation = 68.0
+                    thermostats = 5
 
-                    page.update()
+                # پیشنهاد تابلو فرمان
+                if thermostats <= 4:
+                    panel_text = "تابلو ۴ خروجی - ۱۲,۵۰۰,۰۰۰ تومان"
+                    panel_price = 12500000
+                elif thermostats <= 6:
+                    panel_text = "تابلو ۶ خروجی - ۱۵,۵۰۰,۰۰۰ تومان"
+                    panel_price = 15500000
+                else:
+                    panel_text = "تابلو ۱۰ خروجی - ۲۲,۰۰۰,۰۰۰ تومان"
+                    panel_price = 22000000
+
+                # پر کردن جدول نتایج چیدمان
+                layout_table.rows.clear()
+                layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم ۸۰")), ft.DataCell(ft.Text(f"{film80:.1f} متر"))]))
+                layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم ۴۰")), ft.DataCell(ft.Text(f"{film40:.1f} متر"))]))
+                layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("عایق")), ft.DataCell(ft.Text(f"{insulation:.1f} م²"))]))
+                layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("ترموستات")), ft.DataCell(ft.Text(f"{thermostats} عدد"))]))
+                layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("تابلو فرمان")), ft.DataCell(ft.Text(panel_text))]))
+
+                page.update()
+                show_message("پردازش فایل با موفقیت انجام شد", "green")
 
         file_picker.on_result = on_file_selected
 
         def calculate_full_invoice(e):
             if not layout_table.rows:
-                show_message("ابتدا چیدمان را محاسبه کنید", "red")
+                show_message("ابتدا فایل را آپلود و پردازش کنید", "red")
                 return
 
             try:
-                total_area = float(layout_table.rows[0].cells[1].content.value.split()[0])
-                film80 = float(layout_table.rows[1].cells[1].content.value.split()[0])
-                film40 = float(layout_table.rows[2].cells[1].content.value.split()[0])
-                insulation = float(layout_table.rows[3].cells[1].content.value.split()[0])
-                thermostats = int(layout_table.rows[4].cells[1].content.value.split()[0])
+                # استخراج مقادیر از جدول چیدمان
+                film80 = float(layout_table.rows[0].cells[1].content.value.split()[0])
+                film40 = float(layout_table.rows[1].cells[1].content.value.split()[0])
+                insulation = float(layout_table.rows[2].cells[1].content.value.split()[0])
+                thermostats = int(layout_table.rows[3].cells[1].content.value.split()[0])
                 panel_price = 15500000
 
                 base = film80*1250000 + film40*950000 + insulation*1450000 + thermostats*1850000 + panel_price
@@ -621,7 +623,7 @@ def main(page: ft.Page):
 
                 final_total = base + inst + travel + tax - disc + other
 
-                # پر کردن جدول ریز فاکتور
+                # پر کردن جدول ریز اقلام
                 items_table.rows.clear()
                 items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم ۸۰")), ft.DataCell(ft.Text(f"{film80:.1f} م")), ft.DataCell(ft.Text(f"{film80*1250000:,.0f}"))]))
                 items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم ۴۰")), ft.DataCell(ft.Text(f"{film40:.1f} م")), ft.DataCell(ft.Text(f"{film40*950000:,.0f}"))]))
@@ -638,14 +640,18 @@ def main(page: ft.Page):
                 total_text.value = f"جمع کل: {final_total:,.0f} تومان"
                 download_btn.visible = True
                 page.update()
-                show_message("ریز فاکتور کامل آماده شد", "green")
+                show_message("ریز فاکتور کامل محاسبه شد", "green")
+
+            except Exception as ex:
+                show_message(f"خطا در محاسبه نهایی: {ex}", "red")
 
         return ft.Container(
             content=ft.Column([
-                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(25)),
+                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(18)),
                        ft.Text("آپلود فایل DWG / DXF", size=20, weight="bold")]),
                 ft.Divider(),
-                ft.FilledButton("انتخاب فایل DWG یا DXF", width=350, bgcolor="#1565C0", on_click=lambda e: file_picker.pick_files(allowed_extensions=["dwg", "dxf"])),
+                ft.FilledButton("انتخاب فایل DWG یا DXF", width=350, bgcolor="#1565C0", 
+                               on_click=lambda e: file_picker.pick_files(allowed_extensions=["dwg", "dxf"])),
                 uploaded_file_info,
                 ft.Divider(),
                 ft.Text("نتایج پردازش پلان:", size=16, weight="bold"),
