@@ -242,7 +242,7 @@ def main(page: ft.Page):
         
         return ft.Container(
             content=ft.Column([
-                ft.Row([ft.IconButton(ft.Icons.ARROW_BACK, on_click=lambda e: render(1)), ft.Text("پیش فاکتور زیرفرشی", size=20, weight="bold")]),
+                ft.Row([ft.IconButton(ft.Icons.ARROW_BACK, on_click=lambda e: render(20)), ft.Text("پیش فاکتور زیرفرشی", size=20, weight="bold")]),
                 product_size, qty, ft.Divider(),
                 ft.Row([insulation_switch], alignment=ft.MainAxisAlignment.START),
                 insulation_area, ft.Divider(),
@@ -1141,8 +1141,8 @@ def main(page: ft.Page):
     def pre_invoice_page():
         products = [
             ("گرمایش از کف", lambda e: render(18)),
-            ("زیرفرشی", lambda e: render(19)),
-            ("رادیاتور", lambda e: render(20)),
+            ("زیرفرشی", lambda e: render(20)),
+            ("رادیاتور", lambda e: render(22)),
             ("حوله خشک کن", lambda e: show_message("به زودی فعال می‌شود", "blue")),
             ("یخ زدایی رمپ", lambda e: show_message("به زودی فعال می‌شود", "blue")),
             ("یخ زدایی پله", lambda e: show_message("به زودی فعال می‌شود", "blue")),
