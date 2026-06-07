@@ -1118,7 +1118,7 @@ def main(page: ft.Page):
                 floor_dwg_upload_page(),    # 19  ← روش اول: آپلود فایل DWG/DXF
                 floor_manual_invoice_page(),# 20  ← روش دوم: ورود دستی ابعاد اتاق‌ها
                 direct_values_page(),       # 21  ← روش سوم: مقادیر مستقیم
-                radiator_manual_invoice_page()  # 22 
+                radiator_manual_invoice_page(),  # 22 
                 warranty_page(page, render) # 23            
             ]
             main_content = ft.Container(content=contents[tab_index], expand=True, width=400, margin=ft.margin.Margin(left=15, right=15))
