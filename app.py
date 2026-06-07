@@ -1094,8 +1094,8 @@ def main(page: ft.Page):
                     width=400, margin=ft.margin.Margin(left=15, right=15), expand=True
                 )
             )
-        else:
-                        contents = [
+                else:
+            contents = [
                 dashboard_page(),           # 0
                 pre_invoice_page(),         # 1
                 home_page(),                # 2
@@ -1114,14 +1114,22 @@ def main(page: ft.Page):
                 network_page(),             # 15
                 rules_page(),               # 16
                 about_page(),               # 17
-                floor_heating_page(),       # 18  ← صفحه انتخاب روش (گرمایش از کف)
-                floor_dwg_upload_page(),    # 19  ← روش اول: آپلود فایل DWG/DXF
-                floor_manual_invoice_page(),# 20  ← روش دوم: ورود دستی ابعاد اتاق‌ها
-                direct_values_page(),       # 21  ← روش سوم: مقادیر مستقیم
-                radiator_manual_invoice_page(),  # 22 
-                warranty_page(page, render) # 23            
+                floor_heating_page(),       # 18
+                floor_dwg_upload_page(),    # 19  ← آپلود فایل
+                floor_manual_invoice_page(),# 20  ← ابعاد دستی
+                direct_values_page(),       # 21  ← مقادیر مستقیم
+                radiator_manual_invoice_page(), # 22
+                warranty_page(page, render) # 23,
+            
             ]
-            main_content = ft.Container(content=contents[tab_index], expand=True, width=400, margin=ft.margin.Margin(left=15, right=15))
+
+            main_content = ft.Container(
+                content=contents[tab_index], 
+                expand=True, 
+                width=400, 
+                margin=ft.margin.Margin(left=15, right=15)
+            )
+
             nav_bar = ft.Container(
                 content=ft.Row([
                     ft.Container(content=ft.Image(src="dashboard.png", width=32, height=32), on_click=lambda _: render(0), padding=8),
@@ -1130,8 +1138,10 @@ def main(page: ft.Page):
                     ft.Container(content=ft.Image(src="technical.png", width=32, height=32), on_click=lambda _: render(3), padding=8),
                     ft.Container(content=ft.Image(src="profile.png", width=32, height=32), on_click=lambda _: render(4), padding=8),
                 ], alignment=ft.MainAxisAlignment.CENTER, spacing=15),
-                bgcolor="white", padding=12
+                bgcolor="white", 
+                padding=12
             )
+
             page.add(
                 ft.Column([
                     ft.Container(content=ft.Image(src="TopSUNify.png", width=80), margin=ft.margin.Margin(top=10, bottom=10)),
