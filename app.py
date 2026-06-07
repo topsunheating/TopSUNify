@@ -1951,23 +1951,13 @@ def main(page: ft.Page):
                   "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"]
         
         birth_year = ft.Dropdown(label="سال تولد", width=110, options=[ft.dropdown.Option(y) for y in years], value="1370")
-        birth_month = ft.Dropdown(label="ماه", width=110, options=[ft.dropdown.Option(m) for m in months], value="فروردین")
-        birth_day = ft.Dropdown(label="روز", width=110, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="1")
-               
-        birth_date_display = ft.TextField(
-            label="تاریخ تولد شمسی", 
-            width=350, 
-            value="1370/فروردین/1",
-            read_only=True
-        )
+        birth_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="فروردین")
+        birth_day = ft.Dropdown(label="روز", width=80, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="1")
         
-        def update_birth_display(e):
-            birth_date_display.value = get_birth_date()
-            birth_date_display.update()
-            
-        birth_year.on_change = update_birth_display
-        birth_month.on_change = update_birth_display
-        birth_day.on_change = update_birth_display
+        # ==================== تاریخ خرید شمسی ====================
+        purchase_year = ft.Dropdown(label="سال خرید", width=110, options=[ft.dropdown.Option(y) for y in years], value="1403")
+        purchase_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="خرداد")
+        purchase_day = ft.Dropdown(label="روز", width=80, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="15")
 
         national_id = ft.TextField(label="کد ملی", width=350, keyboard_type=ft.KeyboardType.NUMBER)
         province_label = ft.Text("استان محل صدور: نامشخص", color="blue")
@@ -1981,12 +1971,11 @@ def main(page: ft.Page):
         national_id.on_change = on_national_id_change
             
         id_number = ft.TextField(label="شماره شناسنامه", width=350)
-        product_code = ft.TextField(label="کد محصول", width=350)
         postal_code = ft.TextField(label="کد پستی (۱۰ رقم)", width=350, keyboard_type=ft.KeyboardType.NUMBER)
             
-        provinces = {"تهران": ["تهران", "شهریار", "کرج"], "اصفهان": ["اصفهان", "کاشان"]} # نمونه
-        province_dropdown = ft.Dropdown(label="استان", width=350, options=[ft.dropdown.Option(p) for p in provinces.keys()])
+        province_dropdown = ft.Dropdown(label="استان", width=350, options=[ft.dropdown.Option(p) for p in data.keys()])
         city_dropdown = ft.Dropdown(label="شهر", width=350, options=[])
+        
         def load_cities(e):
             if province_dropdown.value in data:
                 city_dropdown.options = [ft.dropdown.Option(c) for c in data[province_dropdown.value]]
@@ -2008,6 +1997,9 @@ def main(page: ft.Page):
             shop_name.visible = (purchase_place.value == "فروشگاه یا نمایندگی")
             shop_name.update()
         purchase_place.on_change = on_purchase_change
+        
+        invoice_number = ft.TextField(label="شماره فاکتور", width=350)
+        serial_number = ft.TextField(label="شماره سریال محصول", width=350)
             
         def submit(e):
             if not birth_year.value:
@@ -2032,13 +2024,16 @@ def main(page: ft.Page):
                 ]),
                 name, father_name, phone,
                 
-                ft.Text("تاریخ تولد شمسی", weight="bold", size=16),
+                ft.Text("تاریخ تولد", weight="bold", size=16),
                 ft.Row([birth_year, birth_month, birth_day], spacing=8),
                 birth_date_display,
+
+                ft.Text("تاریخ خرید", weight="bold", size=16, text_align=ft.TextAlign.RIGHT),
+                ft.Row([purchase_year, purchase_month, purchase_day], spacing=8),
                 
                 national_id, province_label, id_number,
                 province_dropdown, city_dropdown, address, postal_code,
-                purchase_place, shop_name, invoice_number, serial_number, purchase_date,
+                purchase_place, shop_name, invoice_number, serial_number,
                 
                 ft.FilledButton("ثبت نهایی گارانتی", width=350, on_click=submit)
             ], 
