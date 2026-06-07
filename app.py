@@ -384,7 +384,7 @@ def main(page: ft.Page):
 
         total_text = ft.Text("جمع کل: 0 تومان", size=20, weight="bold", color="green")
 
-        def update_panel_visibility(e):
+        def update_panel_visibility(e=None):
             panel_manual_price.visible = (panel_type.value == "سفارشی (دستی)")
             page.update()
 
