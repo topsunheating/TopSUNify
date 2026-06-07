@@ -344,13 +344,16 @@ def main(page: ft.Page):
             label="نوع تابلو فرمان",
             width=350,
             options=[
-                ft.dropdown.Option("تابلو ۴ خروجی - ۱۲,۵۰۰,۰۰۰ تومان"),
-                ft.dropdown.Option("تابلو ۶ خروجی - ۱۵,۵۰۰,۰۰۰ تومان"),
-                ft.dropdown.Option("تابلو ۸ خروجی - ۱۸,۵۰۰,۰۰۰ تومان"),
-                ft.dropdown.Option("تابلو ۱۰ خروجی - ۲۲,۰۰۰,۰۰۰ تومان"),
-                ft.dropdown.Option("سفارشی (دستی) - ۲۵,۰۰۰,۰۰۰ تومان"),
+                ft.dropdown.Option("بدون تاابلو - ۱۲,۵۰۰,۰۰۰ تومان"),
+                ft.dropdown.Option("تابلو تیپ 1 - ۱۲,۵۰۰,۰۰۰ تومان"),
+                ft.dropdown.Option("تابلو تیپ 2 - ۱۵,۵۰۰,۰۰۰ تومان"),
+                ft.dropdown.Option("تابلو تیپ 3 - ۱۸,۵۰۰,۰۰۰ تومان"),
+                ft.dropdown.Option("تابلو تیپ 4 - ۲۲,۰۰۰,۰۰۰ تومان"),
+                ft.dropdown.Option("تابلو تیپ 5 - ۲۲,۰۰۰,۰۰۰ تومان"),
+                ft.dropdown.Option("تابلو تیپ 6 - ۲۲,۰۰۰,۰۰۰ تومان"),
+                ft.dropdown.Option("تابلو سفارشی - ۲۵,۰۰۰,۰۰۰ تومان"),
             ],
-            value="تابلو ۶ خروجی - ۱۵,۵۰۰,۰۰۰ تومان"
+            value="تابلو تیپ 2 - ۱۵,۵۰۰,۰۰۰ تومان"
         )
 
         # گزینه‌های جانبی با سوئیچ
