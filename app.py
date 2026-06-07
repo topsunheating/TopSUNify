@@ -601,13 +601,47 @@ def main(page: ft.Page):
 
         def calculate_full_invoice(e):
             if not layout_table.rows:
-                show_message("ابتدا فایل را آپلود و پردازش کنید", "red")
+                show_message("ابتدا چیدمان را محاسبه کنید", "red")
                 return
-            # بقیه کد محاسبه نهایی مثل روش دوم (کپی از قبل)
-            # ... (برای کوتاه شدن، همان منطق calculate_full_invoice روش دوم را اینجا هم استفاده می‌کنیم)
-            show_message("ریز فاکتور آماده دانلود است", "green")
-            download_btn.visible = True
-            page.update()
+
+            try:
+                total_area = float(layout_table.rows[0].cells[1].content.value.split()[0])
+                film80 = float(layout_table.rows[1].cells[1].content.value.split()[0])
+                film40 = float(layout_table.rows[2].cells[1].content.value.split()[0])
+                insulation = float(layout_table.rows[3].cells[1].content.value.split()[0])
+                thermostats = int(layout_table.rows[4].cells[1].content.value.split()[0])
+                panel_price = 15500000
+
+                base = film80*1250000 + film40*950000 + insulation*1450000 + thermostats*1850000 + panel_price
+                inst = base * (int(install_pct.value) / 100) if install_switch.value else 0
+                travel = float(travel_cost.value or 0) if travel_switch.value else 0
+                tax = (base + inst + travel) * (float(tax_pct.value or 10) / 100) if tax_switch.value else 0
+                disc = (base + inst + travel) * (float(discount_pct.value or 0) / 100) if discount_switch.value else 0
+                other = float(other_cost.value or 0) if other_switch.value else 0
+
+                final_total = base + inst + travel + tax - disc + other
+
+                # پر کردن جدول ریز فاکتور
+                items_table.rows.clear()
+                items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم ۸۰")), ft.DataCell(ft.Text(f"{film80:.1f} م")), ft.DataCell(ft.Text(f"{film80*1250000:,.0f}"))]))
+                items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم ۴۰")), ft.DataCell(ft.Text(f"{film40:.1f} م")), ft.DataCell(ft.Text(f"{film40*950000:,.0f}"))]))
+                items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("عایق")), ft.DataCell(ft.Text(f"{insulation:.1f} م²")), ft.DataCell(ft.Text(f"{insulation*1450000:,.0f}"))]))
+                items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("ترموستات")), ft.DataCell(ft.Text(f"{thermostats}")), ft.DataCell(ft.Text(f"{thermostats*1850000:,.0f}"))]))
+                items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("تابلو فرمان")), ft.DataCell(ft.Text("۱")), ft.DataCell(ft.Text(f"{panel_price:,.0f}"))]))
+
+                if inst > 0: items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("هزینه نصب")), ft.DataCell(ft.Text(f"{install_pct.value}%")), ft.DataCell(ft.Text(f"{inst:,.0f}"))]))
+                if travel > 0: items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("ایاب و ذهاب")), ft.DataCell(ft.Text("")), ft.DataCell(ft.Text(f"{travel:,.0f}"))]))
+                if tax > 0: items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("مالیات")), ft.DataCell(ft.Text(f"{tax_pct.value}%")), ft.DataCell(ft.Text(f"{tax:,.0f}"))]))
+                if disc > 0: items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("تخفیف")), ft.DataCell(ft.Text(f"{discount_pct.value}%")), ft.DataCell(ft.Text(f"-{disc:,.0f}"))]))
+                if other > 0: items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("سایر")), ft.DataCell(ft.Text("")), ft.DataCell(ft.Text(f"{other:,.0f}"))]))
+
+                total_text.value = f"جمع کل: {final_total:,.0f} تومان"
+                download_btn.visible = True
+                page.update()
+                show_message("ریز فاکتور کامل آماده شد", "green")
+
+            except Exception as ex:
+                show_message(f"خطا: {ex}", "red"
 
         return ft.Container(
             content=ft.Column([
