@@ -271,35 +271,29 @@ def main(page: ft.Page):
                        size=18, weight="bold", text_align=ft.TextAlign.CENTER),
                 ft.Divider(height=30),
 
-                # روش ۱: آپلود فایل
+                                # روش ۱: آپلود فایل DWG / DXF
                 ft.Container(
                     content=ft.FilledButton(
                         content=ft.Row([
                             ft.Icon(ft.Icons.UPLOAD_FILE, color="white"),
                             ft.Text("📂 آپلود فایل DWG / DXF", size=16, weight="bold")
                         ], alignment=ft.MainAxisAlignment.CENTER),
-                        width=360,
-                        height=75,
-                        bgcolor="#1565C0",
-                        color="white",
-                        on_click=lambda e: show_message("در نسخه کامل: فایل DWG/DXF آپلود و توسط main.py تحلیل می‌شود", "blue"),
+                        width=360, height=75, bgcolor="#1565C0", color="white",
+                        on_click=lambda e: render(19),   # ← روش اول
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     ),
                     margin=ft.margin.Margin(bottom=15)
                 ),
 
-                # روش ۲: ورود دستی ابعاد
+                # روش ۲: ورود دستی ابعاد اتاق‌ها
                 ft.Container(
                     content=ft.FilledButton(
                         content=ft.Row([
                             ft.Icon(ft.Icons.EDIT_NOTE, color="white"),
                             ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", size=16, weight="bold")
                         ], alignment=ft.MainAxisAlignment.CENTER),
-                        width=360,
-                        height=75,
-                        bgcolor="#1565C0",
-                        color="white",
-                        on_click=lambda e: render(19),
+                        width=360, height=75, bgcolor="#1565C0", color="white",
+                        on_click=lambda e: render(20),   # ← روش دوم
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     ),
                     margin=ft.margin.Margin(bottom=15)
@@ -312,11 +306,8 @@ def main(page: ft.Page):
                             ft.Icon(ft.Icons.CALCULATE, color="white"),
                             ft.Text("✍️ مقادیر مستقیم (متراژ)", size=16, weight="bold")
                         ], alignment=ft.MainAxisAlignment.CENTER),
-                        width=360,
-                        height=75,
-                        bgcolor="#1565C0",
-                        color="white",
-                        on_click=lambda e: render(21),
+                        width=360, height=75, bgcolor="#1565C0", color="white",
+                        on_click=lambda e: render(21),   # ← روش سوم
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     )
                 ),
