@@ -332,8 +332,7 @@ def main(page: ft.Page):
             expand=True,
             padding=15
         )
-    # ==================== روش دوم: ورود دستی ابعاد اتاق‌ها ====================
-        # ==================== روش دوم: ورود دستی ابعاد اتاق‌ها ====================
+ 
         # ==================== روش دوم: ورود دستی ابعاد اتاق‌ها ====================
     def floor_manual_invoice_page():
         rooms = []
@@ -342,15 +341,41 @@ def main(page: ft.Page):
         room_length = ft.TextField(label="طول اتاق (متر)", width=350, keyboard_type=ft.KeyboardType.NUMBER)
         room_width = ft.TextField(label="عرض اتاق (متر)", width=350, keyboard_type=ft.KeyboardType.NUMBER)
 
-        rooms_list = ft.Column(scroll=ft.ScrollMode.AUTO, height=180)
+        rooms_list = ft.Column(scroll=ft.ScrollMode.AUTO, height=150)
 
-        result_text = ft.Text("نتایج محاسباتی:", size=16, weight="bold")
-        calc_table = ft.DataTable(columns=[ft.DataColumn(ft.Text("شرح")), ft.DataColumn(ft.Text("مقدار"))], rows=[])
+        # جدول نتایج چیدمان
+        layout_table = ft.DataTable(columns=[ft.DataColumn(ft.Text("شرح")), ft.DataColumn(ft.Text("مقدار"))], rows=[])
 
+        # گزینه‌های جانبی
+        install_switch = ft.Switch(label="اضافه کردن هزینه نصب", value=True)
+        install_pct = ft.Dropdown(label="درصد هزینه نصب", width=350, options=[ft.dropdown.Option(x) for x in ["0","10","15","20","25"]], value="15", visible=True)
+
+        travel_switch = ft.Switch(label="اضافه کردن هزینه ایاب و ذهاب", value=False)
+        travel_cost = ft.TextField(label="مبلغ ایاب و ذهاب (تومان)", width=350, value="0", visible=False, keyboard_type=ft.KeyboardType.NUMBER)
+
+        tax_switch = ft.Switch(label="اضافه کردن مالیات", value=False)
+        tax_pct = ft.TextField(label="درصد مالیات", width=350, value="10", visible=False, keyboard_type=ft.KeyboardType.NUMBER)
+
+        discount_switch = ft.Switch(label="اضافه کردن تخفیف", value=False)
+        discount_pct = ft.TextField(label="درصد تخفیف", width=350, value="5", visible=False, keyboard_type=ft.KeyboardType.NUMBER)
+
+        other_switch = ft.Switch(label="سایر هزینه‌ها", value=False)
+        other_cost = ft.TextField(label="مبلغ سایر هزینه‌ها (تومان)", width=350, value="0", visible=False, keyboard_type=ft.KeyboardType.NUMBER)
+
+        # جدول ریز اقلام فاکتور
         items_table = ft.DataTable(columns=[ft.DataColumn(ft.Text("شرح کالا")), ft.DataColumn(ft.Text("مقدار")), ft.DataColumn(ft.Text("مبلغ"))], rows=[])
-
         total_text = ft.Text("جمع کل: 0 تومان", size=20, weight="bold", color="green")
         download_btn = ft.FilledButton("دانلود پیش‌فاکتور PDF", width=350, bgcolor="green", color="white", visible=False, icon=ft.Icons.DOWNLOAD)
+
+        def update_visibility(e=None):
+            install_pct.visible = install_switch.value
+            travel_cost.visible = travel_switch.value
+            tax_pct.visible = tax_switch.value
+            discount_pct.visible = discount_switch.value
+            other_cost.visible = other_switch.value
+            page.update()
+
+        install_switch.on_change = travel_switch.on_change = tax_switch.on_change = discount_switch.on_change = other_switch.on_change = update_visibility
 
         def add_room(e):
             if not room_length.value or not room_width.value:
@@ -363,7 +388,7 @@ def main(page: ft.Page):
                 name = room_name.value or f"اتاق {len(rooms)+1}"
 
                 rooms.append({"name": name, "length": length, "width": width, "area": area})
-                rooms_list.controls.append(ft.Text(f"• {name}: {length} × {width} متر (مساحت: {area:.1f} م²)"))
+                rooms_list.controls.append(ft.Text(f"• {name}: {length} × {width} متر ({area:.1f} م²)"))
                 
                 room_length.value = ""
                 room_width.value = ""
@@ -376,29 +401,12 @@ def main(page: ft.Page):
                 show_message("ابتدا حداقل یک اتاق اضافه کنید", "red")
                 return
 
-            show_message("در حال محاسبه چیدمان...", "blue")
-            page.update()
-
             total_area = sum(r["area"] for r in rooms)
+            film80 = total_area * 0.7
+            film40 = total_area * 0.3
+            insulation = total_area * 1.1
+            thermostats = len(rooms) + 1
 
-            # محاسبات (اول سعی می‌کند از main استفاده کند، بعد تقریبی)
-            try:
-                from main import calculate_materials_from_rooms
-                room_data = [{"length": r["length"], "width": r["width"]} for r in rooms]
-                result = calculate_materials_from_rooms(room_data)
-                
-                film80 = result.get("film_80_m", total_area * 0.7)
-                film40 = result.get("film_40_m", total_area * 0.3)
-                insulation = result.get("insulation_m2", total_area * 1.1)
-                thermostats = result.get("thermostats", len(rooms) + 1)
-            except:
-                # محاسبات تقریبی (همیشه کار می‌کند)
-                film80 = total_area * 0.7
-                film40 = total_area * 0.3
-                insulation = total_area * 1.1
-                thermostats = len(rooms) + 1
-
-            # پیشنهاد تابلو فرمان
             if thermostats <= 4:
                 panel_text = "تابلو ۴ خروجی - ۱۲,۵۰۰,۰۰۰ تومان"
                 panel_price = 12500000
@@ -409,22 +417,61 @@ def main(page: ft.Page):
                 panel_text = "تابلو ۱۰ خروجی - ۲۲,۰۰۰,۰۰۰ تومان"
                 panel_price = 22000000
 
-            # پر کردن جدول نتایج
-            calc_table.rows.clear()
-            calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("مساحت کل")), ft.DataCell(ft.Text(f"{total_area:.1f} مترمربع"))]))
-            calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم گرمایشی ۸۰")), ft.DataCell(ft.Text(f"{film80:.1f} متر"))]))
-            calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم گرمایشی ۴۰")), ft.DataCell(ft.Text(f"{film40:.1f} متر"))]))
-            calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("عایق بازتابشی")), ft.DataCell(ft.Text(f"{insulation:.1f} مترمربع"))]))
-            calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("تعداد ترموستات")), ft.DataCell(ft.Text(f"{thermostats} عدد"))]))
-            calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("تابلو فرمان")), ft.DataCell(ft.Text(panel_text))]))
-
-            # محاسبه مالی پایه
-            base = film80*1250000 + film40*950000 + insulation*1450000 + thermostats*1850000 + panel_price
-            total_text.value = f"جمع کل تقریبی: {base:,.0f} تومان"
-            download_btn.visible = True
+            layout_table.rows.clear()
+            layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("مساحت کل")), ft.DataCell(ft.Text(f"{total_area:.1f} م²"))]))
+            layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم ۸۰")), ft.DataCell(ft.Text(f"{film80:.1f} متر"))]))
+            layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم ۴۰")), ft.DataCell(ft.Text(f"{film40:.1f} متر"))]))
+            layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("عایق")), ft.DataCell(ft.Text(f"{insulation:.1f} م²"))]))
+            layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("ترموستات")), ft.DataCell(ft.Text(f"{thermostats} عدد"))]))
+            layout_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("تابلو فرمان")), ft.DataCell(ft.Text(panel_text))]))
 
             page.update()
-            show_message("محاسبات چیدمان انجام شد", "green")
+            show_message("چیدمان محاسبه شد. حالا گزینه‌های جانبی را تنظیم کنید", "green")
+
+        def calculate_full_invoice(e):
+            if not layout_table.rows:
+                show_message("ابتدا چیدمان را محاسبه کنید", "red")
+                return
+
+            try:
+                # استخراج مقادیر از جدول چیدمان (ساده)
+                total_area = float(layout_table.rows[0].cells[1].content.value.split()[0])
+                film80 = float(layout_table.rows[1].cells[1].content.value.split()[0])
+                film40 = float(layout_table.rows[2].cells[1].content.value.split()[0])
+                insulation = float(layout_table.rows[3].cells[1].content.value.split()[0])
+                thermostats = int(layout_table.rows[4].cells[1].content.value.split()[0])
+                panel_price = 15500000  # پیش‌فرض
+
+                base = film80*1250000 + film40*950000 + insulation*1450000 + thermostats*1850000 + panel_price
+                inst = base * (int(install_pct.value) / 100) if install_switch.value else 0
+                travel = float(travel_cost.value or 0) if travel_switch.value else 0
+                tax = (base + inst + travel) * (float(tax_pct.value or 10) / 100) if tax_switch.value else 0
+                disc = (base + inst + travel) * (float(discount_pct.value or 0) / 100) if discount_switch.value else 0
+                other = float(other_cost.value or 0) if other_switch.value else 0
+
+                final_total = base + inst + travel + tax - disc + other
+
+                # پر کردن جدول ریز فاکتور
+                items_table.rows.clear()
+                items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم ۸۰")), ft.DataCell(ft.Text(f"{film80:.1f} م")), ft.DataCell(ft.Text(f"{film80*1250000:,.0f}"))]))
+                items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم ۴۰")), ft.DataCell(ft.Text(f"{film40:.1f} م")), ft.DataCell(ft.Text(f"{film40*950000:,.0f}"))]))
+                items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("عایق")), ft.DataCell(ft.Text(f"{insulation:.1f} م²")), ft.DataCell(ft.Text(f"{insulation*1450000:,.0f}"))]))
+                items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("ترموستات")), ft.DataCell(ft.Text(f"{thermostats}")), ft.DataCell(ft.Text(f"{thermostats*1850000:,.0f}"))]))
+                items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("تابلو فرمان")), ft.DataCell(ft.Text("۱")), ft.DataCell(ft.Text(f"{panel_price:,.0f}"))]))
+
+                if inst > 0: items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("هزینه نصب")), ft.DataCell(ft.Text(f"{install_pct.value}%")), ft.DataCell(ft.Text(f"{inst:,.0f}"))]))
+                if travel > 0: items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("ایاب و ذهاب")), ft.DataCell(ft.Text("")), ft.DataCell(ft.Text(f"{travel:,.0f}"))]))
+                if tax > 0: items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("مالیات")), ft.DataCell(ft.Text(f"{tax_pct.value}%")), ft.DataCell(ft.Text(f"{tax:,.0f}"))]))
+                if disc > 0: items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("تخفیف")), ft.DataCell(ft.Text(f"{discount_pct.value}%")), ft.DataCell(ft.Text(f"-{disc:,.0f}"))]))
+                if other > 0: items_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("سایر")), ft.DataCell(ft.Text("")), ft.DataCell(ft.Text(f"{other:,.0f}"))]))
+
+                total_text.value = f"جمع کل: {final_total:,.0f} تومان"
+                download_btn.visible = True
+                page.update()
+                show_message("ریز فاکتور کامل محاسبه شد", "green")
+
+            except Exception as ex:
+                show_message(f"خطا: {ex}", "red")
 
         return ft.Container(
             content=ft.Column([
@@ -436,15 +483,24 @@ def main(page: ft.Page):
                 ft.Divider(),
                 ft.Text("اتاق‌های اضافه شده:", size=16, weight="bold"),
                 rooms_list,
-                ft.FilledButton("محاسبه چیدمان و پیش‌فاکتور", width=350, bgcolor="#00A651", on_click=calculate_layout),
+                ft.FilledButton("محاسبه چیدمان", width=350, bgcolor="#00A651", on_click=calculate_layout),
                 ft.Divider(),
-                result_text,
-                calc_table,
+                ft.Text("نتایج چیدمان:", size=16, weight="bold"),
+                layout_table,
+                ft.Divider(),
+                ft.Text("گزینه‌های جانبی:", size=16, weight="bold"),
+                ft.Row([install_switch], alignment=ft.MainAxisAlignment.START), install_pct,
+                ft.Row([travel_switch], alignment=ft.MainAxisAlignment.START), travel_cost,
+                ft.Row([tax_switch], alignment=ft.MainAxisAlignment.START), tax_pct,
+                ft.Row([discount_switch], alignment=ft.MainAxisAlignment.START), discount_pct,
+                ft.Row([other_switch], alignment=ft.MainAxisAlignment.START), other_cost,
+                ft.Divider(height=20),
+                ft.FilledButton("محاسبه و نمایش ریز فاکتور", width=350, bgcolor="#1565C0", color="white", on_click=calculate_full_invoice),
+                download_btn,
                 ft.Divider(),
                 ft.Text("ریز اقلام فاکتور:", size=16, weight="bold"),
                 items_table,
-                total_text,
-                download_btn
+                total_text
             ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400, expand=True, padding=15
         )
