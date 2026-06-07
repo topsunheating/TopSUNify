@@ -1119,7 +1119,7 @@ def main(page: ft.Page):
                 floor_manual_invoice_page(),# 20  ← ابعاد دستی
                 direct_values_page(),       # 21  ← مقادیر مستقیم
                 radiator_manual_invoice_page(), # 22
-                warranty_page(page, render) # 23,
+                warranty_page(page, render) # 23
             
             ]
 
