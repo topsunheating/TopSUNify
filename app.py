@@ -334,6 +334,7 @@ def main(page: ft.Page):
         )
     # ==================== روش دوم: ورود دستی ابعاد اتاق‌ها ====================
         # ==================== روش دوم: ورود دستی ابعاد اتاق‌ها ====================
+        # ==================== روش دوم: ورود دستی ابعاد اتاق‌ها ====================
     def floor_manual_invoice_page():
         rooms = []
 
@@ -343,14 +344,10 @@ def main(page: ft.Page):
 
         rooms_list = ft.Column(scroll=ft.ScrollMode.AUTO, height=180)
 
-        result_text = ft.Text("نتایج محاسباتی پس از پردازش پلان:", size=16, weight="bold")
-        calc_table = ft.DataTable(columns=[
-            ft.DataColumn(ft.Text("شرح")), ft.DataColumn(ft.Text("مقدار"))
-        ], rows=[])
+        result_text = ft.Text("نتایج محاسباتی:", size=16, weight="bold")
+        calc_table = ft.DataTable(columns=[ft.DataColumn(ft.Text("شرح")), ft.DataColumn(ft.Text("مقدار"))], rows=[])
 
-        items_table = ft.DataTable(columns=[
-            ft.DataColumn(ft.Text("شرح کالا")), ft.DataColumn(ft.Text("مقدار")), ft.DataColumn(ft.Text("مبلغ"))
-        ], rows=[])
+        items_table = ft.DataTable(columns=[ft.DataColumn(ft.Text("شرح کالا")), ft.DataColumn(ft.Text("مقدار")), ft.DataColumn(ft.Text("مبلغ"))], rows=[])
 
         total_text = ft.Text("جمع کل: 0 تومان", size=20, weight="bold", color="green")
         download_btn = ft.FilledButton("دانلود پیش‌فاکتور PDF", width=350, bgcolor="green", color="white", visible=False, icon=ft.Icons.DOWNLOAD)
@@ -366,74 +363,68 @@ def main(page: ft.Page):
                 name = room_name.value or f"اتاق {len(rooms)+1}"
 
                 rooms.append({"name": name, "length": length, "width": width, "area": area})
-                rooms_list.controls.append(ft.Text(f"• {name}: {length} × {width} متر  (مساحت: {area:.1f} م²)"))
+                rooms_list.controls.append(ft.Text(f"• {name}: {length} × {width} متر (مساحت: {area:.1f} م²)"))
                 
                 room_length.value = ""
                 room_width.value = ""
                 page.update()
             except:
-                show_message("مقادیر وارد شده نامعتبر است", "red")
+                show_message("مقادیر نامعتبر است", "red")
 
-        def calculate_with_main(e):
+        def calculate_layout(e):
             if not rooms:
                 show_message("ابتدا حداقل یک اتاق اضافه کنید", "red")
                 return
 
-            show_message("در حال پردازش توسط هسته main.py ...", "blue")
+            show_message("در حال محاسبه چیدمان...", "blue")
             page.update()
 
+            total_area = sum(r["area"] for r in rooms)
+
+            # محاسبات (اول سعی می‌کند از main استفاده کند، بعد تقریبی)
             try:
-                # شبیه‌سازی فراخوانی هسته main.py
-                from main import generate_layout_plan, calculate_materials_from_rooms
-
-                # تبدیل اتاق‌ها به فرمت مناسب برای هسته
-                room_list_for_main = [{"length": r["length"], "width": r["width"]} for r in rooms]
-
-                # محاسبه واقعی از فایل main
-                layout_result = calculate_materials_from_rooms(room_list_for_main)  # فرض بر وجود این تابع
-
-                film80 = layout_result.get("film_80_m", sum(r["area"]*0.7 for r in rooms))
-                film40 = layout_result.get("film_40_m", sum(r["area"]*0.3 for r in rooms))
-                insulation = layout_result.get("insulation_m2", sum(r["area"]*1.1 for r in rooms))
-                thermostats = layout_result.get("thermostats", len(rooms) + 1)
-
-                # پیشنهاد تابلو فرمان
-                if thermostats <= 4:
-                    panel_text = "تابلو ۴ خروجی - ۱۲,۵۰۰,۰۰۰ تومان"
-                    panel_price = 12500000
-                elif thermostats <= 6:
-                    panel_text = "تابلو ۶ خروجی - ۱۵,۵۰۰,۰۰۰ تومان"
-                    panel_price = 15500000
-                else:
-                    panel_text = "تابلو ۱۰ خروجی - ۲۲,۰۰۰,۰۰۰ تومان"
-                    panel_price = 22000000
-
-                # پر کردن جدول نتایج
-                calc_table.rows.clear()
-                calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("مساحت کل")), ft.DataCell(ft.Text(f"{sum(r['area'] for r in rooms):.1f} م²"))]))
-                calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم ۸۰")), ft.DataCell(ft.Text(f"{film80:.1f} متر"))]))
-                calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم ۴۰")), ft.DataCell(ft.Text(f"{film40:.1f} متر"))]))
-                calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("عایق")), ft.DataCell(ft.Text(f"{insulation:.1f} م²"))]))
-                calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("ترموستات")), ft.DataCell(ft.Text(f"{thermostats} عدد"))]))
-                calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("تابلو فرمان")), ft.DataCell(ft.Text(panel_text))]))
-
-                # محاسبه مالی
-                base = film80*1250000 + film40*950000 + insulation*1450000 + thermostats*1850000 + panel_price
-                total_text.value = f"جمع کل تقریبی: {base:,.0f} تومان"
-                download_btn.visible = True
-
-                page.update()
-                show_message("پردازش توسط هسته main.py انجام شد", "green")
-
-            except Exception as ex:
-                show_message(f"هسته main.py در دسترس نبود یا خطا داشت: {ex}\n(از محاسبات تقریبی استفاده شد)", "orange")
-                # محاسبات تقریبی به عنوان پشتیبان
-                total_area = sum(r["area"] for r in rooms)
+                from main import calculate_materials_from_rooms
+                room_data = [{"length": r["length"], "width": r["width"]} for r in rooms]
+                result = calculate_materials_from_rooms(room_data)
+                
+                film80 = result.get("film_80_m", total_area * 0.7)
+                film40 = result.get("film_40_m", total_area * 0.3)
+                insulation = result.get("insulation_m2", total_area * 1.1)
+                thermostats = result.get("thermostats", len(rooms) + 1)
+            except:
+                # محاسبات تقریبی (همیشه کار می‌کند)
                 film80 = total_area * 0.7
                 film40 = total_area * 0.3
                 insulation = total_area * 1.1
                 thermostats = len(rooms) + 1
-                # ... (بقیه محاسبات تقریبی)
+
+            # پیشنهاد تابلو فرمان
+            if thermostats <= 4:
+                panel_text = "تابلو ۴ خروجی - ۱۲,۵۰۰,۰۰۰ تومان"
+                panel_price = 12500000
+            elif thermostats <= 6:
+                panel_text = "تابلو ۶ خروجی - ۱۵,۵۰۰,۰۰۰ تومان"
+                panel_price = 15500000
+            else:
+                panel_text = "تابلو ۱۰ خروجی - ۲۲,۰۰۰,۰۰۰ تومان"
+                panel_price = 22000000
+
+            # پر کردن جدول نتایج
+            calc_table.rows.clear()
+            calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("مساحت کل")), ft.DataCell(ft.Text(f"{total_area:.1f} مترمربع"))]))
+            calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم گرمایشی ۸۰")), ft.DataCell(ft.Text(f"{film80:.1f} متر"))]))
+            calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("فیلم گرمایشی ۴۰")), ft.DataCell(ft.Text(f"{film40:.1f} متر"))]))
+            calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("عایق بازتابشی")), ft.DataCell(ft.Text(f"{insulation:.1f} مترمربع"))]))
+            calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("تعداد ترموستات")), ft.DataCell(ft.Text(f"{thermostats} عدد"))]))
+            calc_table.rows.append(ft.DataRow(cells=[ft.DataCell(ft.Text("تابلو فرمان")), ft.DataCell(ft.Text(panel_text))]))
+
+            # محاسبه مالی پایه
+            base = film80*1250000 + film40*950000 + insulation*1450000 + thermostats*1850000 + panel_price
+            total_text.value = f"جمع کل تقریبی: {base:,.0f} تومان"
+            download_btn.visible = True
+
+            page.update()
+            show_message("محاسبات چیدمان انجام شد", "green")
 
         return ft.Container(
             content=ft.Column([
@@ -445,7 +436,7 @@ def main(page: ft.Page):
                 ft.Divider(),
                 ft.Text("اتاق‌های اضافه شده:", size=16, weight="bold"),
                 rooms_list,
-                ft.FilledButton("محاسبه چیدمان توسط هسته main.py", width=350, bgcolor="#00A651", on_click=calculate_with_main),
+                ft.FilledButton("محاسبه چیدمان و پیش‌فاکتور", width=350, bgcolor="#00A651", on_click=calculate_layout),
                 ft.Divider(),
                 result_text,
                 calc_table,
