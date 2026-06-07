@@ -293,7 +293,7 @@ def main(page: ft.Page):
                             ft.Text("⌨️ ورود دستی ابعاد اتاق‌ها", size=16, weight="bold")
                         ], alignment=ft.MainAxisAlignment.CENTER),
                         width=360, height=75, bgcolor="#1565C0", color="white",
-                        on_click=lambda e: render(20),   # ← روش دوم
+                        on_click=lambda e: render(24),   # ← روش دوم
                         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))
                     ),
                     margin=ft.margin.Margin(bottom=15)
@@ -428,7 +428,7 @@ def main(page: ft.Page):
 
         return ft.Container(
             content=ft.Column([
-                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(24)), 
+                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(18)), 
                        ft.Text("ورود دستی ابعاد اتاق‌ها", size=20, weight="bold")]),
                 ft.Divider(),
                 room_name, room_length, room_width,
@@ -598,7 +598,7 @@ def main(page: ft.Page):
 
         return ft.Container(
             content=ft.Column([
-                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(19)),
+                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(18)),
                        ft.Text("آپلود فایل DWG / DXF", size=20, weight="bold")]),
                 ft.Divider(),
                 ft.FilledButton("انتخاب فایل DWG یا DXF", width=350, bgcolor="#1565C0", 
@@ -746,7 +746,7 @@ def main(page: ft.Page):
 
         return ft.Container(
             content=ft.Column([
-                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(21)),
+                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(18)),
                        ft.Text("مقادیر مستقیم - پیش فاکتور", size=20, weight="bold")]),
                 ft.Divider(),
                 m80, m40, xps, thermostat, panel_type,
