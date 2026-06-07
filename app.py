@@ -344,7 +344,7 @@ def main(page: ft.Page):
             label="نوع تابلو فرمان",
             width=350,
             options=[
-                ft.dropdown.Option("بدون تاابلو - ۱۲,۵۰۰,۰۰۰ تومان"),
+                ft.dropdown.Option("بدون تابلو - ۱۲,۵۰۰,۰۰۰ تومان"),
                 ft.dropdown.Option("تابلو تیپ 1 - ۱۲,۵۰۰,۰۰۰ تومان"),
                 ft.dropdown.Option("تابلو تیپ 2 - ۱۵,۵۰۰,۰۰۰ تومان"),
                 ft.dropdown.Option("تابلو تیپ 3 - ۱۸,۵۰۰,۰۰۰ تومان"),
