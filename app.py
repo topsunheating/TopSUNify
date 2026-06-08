@@ -2058,11 +2058,11 @@ def main(page: ft.Page):
         def update_checklist():
             checklist.controls.clear()
             items = [
-                ("📸 عکس محصول نصب شده", uploaded_files["product_photo"]),
-                ("📸 عکس نمای دورتر", uploaded_files["wide_photo"]),
-                ("🎥 فیلم محصول نصب شده", uploaded_files["video"]),
-                ("📄 فاکتور خرید", uploaded_files["invoice"]),
-                ("🔢 عکس شماره سریال", uploaded_files["serial_photo"])
+                ("عکس محصول نصب شده", uploaded_files["product_photo"]),
+                ("عکس نمای دورتر", uploaded_files["wide_photo"]),
+                ("فیلم محصول نصب شده", uploaded_files["video"]),
+                ("فاکتور خرید", uploaded_files["invoice"]),
+                ("عکس شماره سریال", uploaded_files["serial_photo"])
             ]
             for label, file in items:
                 icon = ft.Icon(ft.Icons.CHECK_CIRCLE, color="green") if file else ft.Icon(ft.Icons.CIRCLE_OUTLINED, color="grey")
@@ -2082,11 +2082,11 @@ def main(page: ft.Page):
                 file_picker.pick_files(allowed_extensions=["jpg", "jpeg", "png", "pdf"], allow_multiple=False)
 
         upload_buttons = ft.Column([
-            ft.ElevatedButton("📸 عکس محصول نصب شده", on_click=lambda e: pick_file("product_photo"), width=350),
-            ft.ElevatedButton("📸 عکس نمای دورتر", on_click=lambda e: pick_file("wide_photo"), width=350),
-            ft.ElevatedButton("🎥 فیلم محصول نصب شده", on_click=lambda e: pick_file("video"), width=350),
-            ft.ElevatedButton("📄 فاکتور خرید", on_click=lambda e: pick_file("invoice"), width=350),
-            ft.ElevatedButton("🔢 عکس شماره سریال", on_click=lambda e: pick_file("serial_photo"), width=350),
+            ft.ElevatedButton("عکس محصول نصب شده", on_click=lambda e: pick_file("product_photo"), width=350),
+            ft.ElevatedButton("عکس نمای دورتر", on_click=lambda e: pick_file("wide_photo"), width=350),
+            ft.ElevatedButton("فیلم محصول نصب شده", on_click=lambda e: pick_file("video"), width=350),
+            ft.ElevatedButton("فاکتور خرید", on_click=lambda e: pick_file("invoice"), width=350),
+            ft.ElevatedButton("عکس شماره سریال", on_click=lambda e: pick_file("serial_photo"), width=350),
         ], spacing=8)
         
         terms_text = ft.Text(
@@ -2098,6 +2098,7 @@ def main(page: ft.Page):
             "5- ثبت این تأییدیه به منزله اطلاع کامل و پذیرش بی‌قید و شرط کلیه مقررات خدمات پس از فروش و گارانتی محصولات تاپسان است.",
             size=13
         )
+        
         agree_checkbox = ft.Checkbox(label="من با شرایط و ضوابط گارانتی موافقم", value=False)
         recaptcha_checkbox = ft.Checkbox(label="من ربات نیستم", value=False)
             
@@ -2150,6 +2151,7 @@ def main(page: ft.Page):
                     
                 province_dropdown, city_dropdown,
                 address, postal_code,
+                
                 purchase_place, shop_name,
                 invoice_number, serial_number,
                 
