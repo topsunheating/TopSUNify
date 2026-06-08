@@ -1975,12 +1975,12 @@ def main(page: ft.Page):
         
         birth_year = ft.Dropdown(label="سال تولد", width=110, options=[ft.dropdown.Option(y) for y in years], value="1370")
         birth_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="فروردین")
-        birth_day = ft.Dropdown(label="روز", width=110, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="1")
+        birth_day = ft.Dropdown(label="روز", width=100, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="1")
         
         # تاریخ خرید شمسی
         purchase_year = ft.Dropdown(label="سال خرید", width=110, options=[ft.dropdown.Option(y) for y in years], value="1403")
         purchase_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="خرداد")
-        purchase_day = ft.Dropdown(label="روز", width=110, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="15")
+        purchase_day = ft.Dropdown(label="روز", width=100, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="15")
         
         national_id = ft.TextField(label="کد ملی", width=350, keyboard_type=ft.KeyboardType.NUMBER, max_length=12,on_change=format_national_id)
         national_status = ft.Text("", color="blue", size=14)
@@ -2004,7 +2004,7 @@ def main(page: ft.Page):
         purchase_place = ft.Dropdown(label="محل خرید", width=350, options=[
             ft.dropdown.Option("سایت شرکت"), ft.dropdown.Option("دفتر مرکزی"), ft.dropdown.Option("فروشگاه یا نمایندگی")
         ])
-        shop_name = ft.TextField(label="نام فروشگاه یا نمایندگی", width=350, visible=True)
+        shop_name = ft.TextField(label="نام فروشگاه یا نمایندگی", width=350, visible=False)
 
         def on_purchase_change(e):
             shop_name.visible = (purchase_place.value == "فروشگاه یا نمایندگی")
