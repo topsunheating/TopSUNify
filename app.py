@@ -2015,24 +2015,42 @@ def main(page: ft.Page):
         invoice_number = ft.TextField(label="شماره فاکتور", width=350)
         serial_number = ft.TextField(label="شماره سریال محصول", width=350)
         
+            # ==================== تابع ارسال نهایی (ادغام شده) ====================
         def submit(e):
+            # 1. چک شماره موبایل
             if not check_mobile(phone.value):
-                page.show_snack_bar(ft.SnackBar(ft.Text("شماره موبایل نامعتبر است! باید با 09 شروع شود و ۱۱ رقم باشد."), bgcolor="red"))
+                page.show_snack_bar(ft.SnackBar(ft.Text("شماره موبایل باید ۱۱ رقم و با ۰۹ شروع شود!"), bgcolor="red"))
                 return
+            # 2. چک تاریخ تولد
             if not birth_year.value:
-                page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تاریخ تولد را انتخاب کنید")))
+                page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تاریخ تولد را انتخاب کنید"), bgcolor="red"))
                 return
-            
-            valid_national, _ = check_national_id(national_id.value)    
+            # 3. چک کد ملی
             if not check_national_id(national_id.value.replace("-", "")):
                 page.show_snack_bar(ft.SnackBar(ft.Text("کد ملی نامعتبر است!"), bgcolor="red"))
                 return
-                
+            # 4. چک کد پستی
             if len(str(postal_code.value).strip()) != 10:
                 page.show_snack_bar(ft.SnackBar(ft.Text("کد پستی باید دقیقاً ۱۰ رقم باشد!"), bgcolor="red"))
                 return
-                
-            page.show_snack_bar(ft.SnackBar(ft.Text("اطلاعات با موفقیت ثبت شد."), bgcolor="green"))
+            # 5. چک موافقت با شرایط
+            if not agree_checkbox.value:
+                page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً با شرایط و ضوابط موافقت کنید"), bgcolor="red"))
+                return
+            # 6. چک آپلود فایل‌ها 
+            if not all(uploaded_files.values()):
+                page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تمام فایل‌های مورد نیاز را آپلود کنید"), bgcolor="orange"))
+                return
+            # 7. reCAPTCHA (در حال حاضر شبیه‌سازی شده)
+            if not recaptcha_checkbox.value:
+                page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تأیید کنید که ربات نیستید"), bgcolor="red"))
+                return
+            # ==================== ثبت موفق ====================
+            page.show_snack_bar(ft.SnackBar(ft.Text("ثبت گارانتی با موفقیت انجام شد ✅"), bgcolor="green"))
+                    # اینجا می‌توانید اطلاعات را به سرور ارسال کنید
+
+            # ==================== reCAPTCHA (شبیه‌سازی) ====================
+            recaptcha_checkbox = ft.Checkbox(label="من ربات نیستم (reCAPTCHA)", value=False)
                 
         return ft.Container(
             content=ft.Column([
@@ -2054,6 +2072,107 @@ def main(page: ft.Page):
                 address, postal_code,
                 purchase_place, shop_name,
                 invoice_number, serial_number,
+    # ==================== متغیرهای آپلود ====================
+        uploaded_files = {
+            "product_photo": None, "wide_photo": None, "video": None, "invoice": None, "serial_photo": None
+        }
+        file_picker = ft.FilePicker()
+        page.overlay.append(file_picker)
+        
+        # چک‌لیست آپلود
+        checklist = ft.Column(spacing=5)
+                 
+        def update_checklist():
+            checklist.controls.clear()
+            items = [
+                ("عکس محصول نصب شده", uploaded_files["product_photo"]),
+                ("عکس نمای دورتر", uploaded_files["wide_photo"]),
+                ("فیلم محصول نصب شده", uploaded_files["video"]),
+                ("فاکتور خرید", uploaded_files["invoice"]),
+                ("عکس شماره سریال", uploaded_files["serial_photo"])
+            ]
+            for label, file in items:
+                 icon = ft.Icon(ft.Icons.CHECK_CIRCLE, color="green") if file else ft.Icon(ft.Icons.CIRCLE_OUTLINED, color="grey")
+                 checklist.controls.append(ft.Row([icon, ft.Text(label)], spacing=10))
+            page.update()
+            
+        def on_file_selected(e, key):
+            if e.files:
+                   uploaded_files[key] = e.files[0]
+                   update_checklist()
+    # ==================== شرایط و ضوابط ====================
+        terms_text = ft.Text(
+            "اینجانب، به عنوان خریدار و کاربر محصول تاپسان، بدین‌وسیله اعلام می‌نمایم که راهنمای نصب، راه‌اندازی و استفاده از محصول خریداری‌شده را به‌صورت کامل مطالعه کرده‌ام...\n\n"
+            "1- رعایت دقیق دستورالعمل‌های مندرج در دفترچه راهنما، شرط لازم برای حفظ اعتبار گارانتی است.\n"
+            "2- هرگونه نصب، جابجایی یا استفاده ناصحیح برخلاف دستورالعمل‌های فنی، موجب لغو تعهدات گارانتی خواهد شد.\n"
+            "3- مسئولیت اطمینان از نصب صحیح توسط افراد واجد صلاحیت بر عهده خریدار می‌باشد.\n"
+            "4- شرکت تاپسان در صورت تشخیص عدم رعایت شرایط فنی یا استفاده غیرمجاز از محصول، مجاز به عدم پذیرش درخواست گارانتی خواهد بود.\n"
+            "5- ثبت این تأییدیه به منزله اطلاع کامل و پذیرش بی‌قید و شرط کلیه مقررات خدمات پس از فروش و گارانتی محصولات تاپسان است.",
+            size=13,
+            color="black"
+        )
+        agree_checkbox = ft.Checkbox(label="من با شرایط و ضوابط گارانتی موافقم", value=False)
+
+    # ==================== آپلود فایل‌ها ====================
+        def pick_file(key):
+            file_picker.on_result = lambda e: on_file_selected(e, key)
+            if key in ["video"]:
+                file_picker.pick_files(allowed_extensions=["mp4", "mov"], allow_multiple=False)
+            else:
+                file_picker.pick_files(allowed_extensions=["jpg", "jpeg", "png", "pdf"], allow_multiple=False)
+        upload_buttons = ft.Column([
+            ft.ElevatedButton("📸 عکس محصول نصب شده", on_click=lambda e: pick_file("product_photo")),
+            ft.ElevatedButton("📸 عکس نمای دورتر", on_click=lambda e: pick_file("wide_photo")),
+            ft.ElevatedButton("🎥 فیلم محصول نصب شده", on_click=lambda e: pick_file("video")),
+            ft.ElevatedButton("📄 فاکتور خرید", on_click=lambda e: pick_file("invoice")),
+            ft.ElevatedButton("🔢 عکس شماره سریال", on_click=lambda e: pick_file("serial_photo")),
+        ], spacing=8)
+
+    # ==================== ارسال ====================
+    def submit(e):
+        if not agree_checkbox.value:
+            page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً با شرایط و ضوابط موافقت کنید"), bgcolor="red"))
+            return
+
+        # چک اجباری بودن فایل‌ها (اختیاری - می‌توانید کامنت کنید)
+        if not all(uploaded_files.values()):
+            page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تمام فایل‌های مورد نیاز را آپلود کنید"), bgcolor="orange"))
+            return
+
+        page.show_snack_bar(ft.SnackBar(ft.Text("ثبت گارانتی با موفقیت انجام شد ✅"), bgcolor="green"))
+
+    # ==================== صفحه نهایی ====================
+    return ft.Container(
+        content=ft.Column([
+            ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(2)),
+                    ft.Text("ثبت گارانتی", size=22, weight="bold")]),
+
+            ft.Divider(),
+            name, father_name, phone,
+
+            ft.Text("تاریخ تولد شمسی", weight="bold", size=16, text_align=ft.TextAlign.RIGHT),
+            ft.Row([birth_year, birth_month, birth_day], spacing=8),
+
+            national_id, national_status, id_number,
+
+            ft.Text("تاریخ خرید شمسی", weight="bold", size=16, text_align=ft.TextAlign.RIGHT),
+            ft.Row([purchase_year, purchase_month, purchase_day], spacing=8),
+
+            province_dropdown, city_dropdown,
+            address, postal_code,
+
+            purchase_place, shop_name,
+            invoice_number, serial_number,
+
+            ft.Divider(),
+            ft.Text("آپلود مدارک", size=18, weight="bold"),
+            upload_buttons,
+            checklist,
+
+            ft.Divider(),
+            ft.Text("شرایط و ضوابط گارانتی", size=18, weight="bold"),
+            terms_text,
+            agree_checkbox,
                 
                 ft.FilledButton("ثبت نهایی گارانتی", width=350, on_click=submit)
             ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER), padding=20
