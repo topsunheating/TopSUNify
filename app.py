@@ -2047,7 +2047,11 @@ def main(page: ft.Page):
     id_number = ft.TextField(label="شماره شناسنامه", width=350)
     postal_code = ft.TextField(label="کد پستی (۱۰ رقمی)", width=350, max_length=10, keyboard_type=ft.KeyboardType.NUMBER)
 
-    province_dropdown = ft.Dropdown(label="استان", width=350, options=[ft.dropdown.Option(p) for p in data.keys()])
+    province_dropdown = ft.Dropdown(
+        label="استان",
+        width=350,
+        options=[ft.dropdown.Option(p) for p in data.keys()]
+    )
     city_dropdown = ft.Dropdown(label="شهر", width=350, options=[])
 
     address = ft.TextField(label="آدرس کامل", width=350, multiline=True)
