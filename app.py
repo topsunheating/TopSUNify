@@ -2028,8 +2028,8 @@ def main(page: ft.Page):
     # ==================== همه فیلدها را اینجا تعریف کن ====================
     name = ft.TextField(label="نام و نام خانوادگی", width=350)
     father_name = ft.TextField(label="نام پدر", width=350)
-    # تاریخ تولد شمسی
     phone = ft.TextField(label="شماره موبایل (۰۹xxxxxxxxx)", width=350, max_length=11, keyboard_type=ft.KeyboardType.PHONE)
+    # تاریخ تولد شمسی
     birth_year = ft.Dropdown(label="سال تولد", width=110, options=[ft.dropdown.Option(y) for y in years], value="1370")
     birth_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="فروردین")
     birth_day = ft.Dropdown(label="روز", width=80, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="1")
