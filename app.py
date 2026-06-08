@@ -1962,6 +1962,7 @@ def main(page: ft.Page):
                 text = national_id.value.replace("-", "")
                 if len(text) > 10:
                     text = text[:10]
+                # فرمت xxx-xxxxxx-x
                 if len(text) > 9:
                     formatted = f"{text[:3]}-{text[3:9]}-{text[9]}"
                     national_id.value = formatted
@@ -1973,7 +1974,8 @@ def main(page: ft.Page):
             def check_mobile(phone):
                 phone = str(phone).strip()
                 return len(phone) == 11 and phone.startswith("09")
-            
+                
+            # ==================== فیلدها ====================
             name = ft.TextField(label="نام و نام خانوادگی", width=350)
             father_name = ft.TextField(label="نام پدر", width=350)
             phone = ft.TextField(
@@ -1984,18 +1986,20 @@ def main(page: ft.Page):
                 input_filter=ft.InputFilter(regex_string=r"^[0-9]*$", allow=True)
             )
             
-            years = [str(y) for y in range(1300, 1410)]
-            months = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
-                  "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"]
+            # تاریخ تولد شمسی
+            years = [str(y) for y in range(1310, 1410)]
+            months = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور","مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"]
             
             birth_year = ft.Dropdown(label="سال تولد", width=110, options=[ft.dropdown.Option(y) for y in years], value="1370")
             birth_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="فروردین")
-            birth_day = ft.Dropdown(label="روز", width=100, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="1")
+            birth_day = ft.Dropdown(label="روز", width=110, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="1")
 
+            # تاریخ خرید شمسی
             purchase_year = ft.Dropdown(label="سال خرید", width=110, options=[ft.dropdown.Option(y) for y in years], value="1403")
             purchase_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="خرداد")purchase_day = ft.Dropdown(label="روز", width=80, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="15")
-            purchase_day = ft.Dropdown(label="روز", width=100, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="15")
+            purchase_day = ft.Dropdown(label="روز", width=110, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="15")
     
+            # کد ملی با اعتبارسنجی واقعی
             national_id = ft.TextField(
                 label="کد ملی",
                 width=350,
@@ -2010,24 +2014,28 @@ def main(page: ft.Page):
             
             province_dropdown = ft.Dropdown(label="استان", width=350, options=[ft.dropdown.Option(p) for p in provinces_data.keys()])
             city_dropdown = ft.Dropdown(label="شهر", width=350, options=[])
-       
-        def load_cities(e):
-            city_dropdown.options.clear()
-            if province_dropdown.value in provinces_data:
-                city_dropdown.options = [ft.dropdown.Option(c) for c in provinces_data[province_dropdown.value]]
-            city_dropdown.update()
+            
+            def load_cities(e):
+                city_dropdown.options.clear()
+                if province_dropdown.value in provinces_data:
+                    city_dropdown.options = [ft.dropdown.Option(c) for c in provinces_data[province_dropdown.value]]
+                city_dropdown.update()
+            
             btn_load_cities = ft.OutlinedButton("بارگذاری شهرهای استان", on_click=load_cities)
             
             address = ft.TextField(label="آدرس کامل", width=350, multiline=True)
             
             purchase_place = ft.Dropdown(label="محل خرید", width=350, options=[
-            ft.dropdown.Option("سایت شرکت"), ft.dropdown.Option("دفتر مرکزی"), ft.dropdown.Option("فروشگاه یا نمایندگی")
+                ft.dropdown.Option("سایت شرکت"),
+                ft.dropdown.Option("دفتر مرکزی"),
+                ft.dropdown.Option("فروشگاه یا نمایندگی")
             ])
             shop_name = ft.TextField(label="نام فروشگاه یا نمایندگی", width=350, visible=False)
             
             def on_purchase_change(e):
                 shop_name.visible = (purchase_place.value == "فروشگاه یا نمایندگی")
                 shop_name.update()
+            
             purchase_place.on_change = on_purchase_change
             
             invoice_number = ft.TextField(label="شماره فاکتور", width=350)
