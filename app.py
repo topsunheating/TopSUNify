@@ -4,6 +4,12 @@ import datetime
 import time
 import re
 
+DATA_CITIES = {
+    "تهران": ["تهران", "شهریار", "ورامین"],
+    "اصفهان": ["اصفهان", "کاشان", "خمینی‌شهر"],
+    "خراسان رضوی": ["مشهد", "نیشابور"]
+}
+
 FLOOR_PRODUCTS = {
     "طول 1/2 متر": 1250000,
     "طول 1/5 متر": 1850000,
@@ -1932,11 +1938,6 @@ def main(page: ft.Page):
         return ft.Container(content=ft.Column([ft.Container(content=ft.Column([ft.Image(src="TopSUNify-1.png", width=80), ft.Text("خوش آمدید به TopSUNify", size=18, weight="bold", text_align=ft.TextAlign.CENTER), ft.Text("مرکز خدمات و پشتیبانی", size=16, color="grey", text_align=ft.TextAlign.CENTER)], horizontal_alignment=ft.CrossAxisAlignment.CENTER), margin=ft.margin.Margin(top=20, bottom=30)), ft.Container(content=ft.Column([ft.ListTile(leading=ft.Icon(ft.Icons.SHIELD, color="green"), title=ft.Text("ثبت گارانتی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=lambda e: render(23)), ft.ListTile(leading=ft.Icon(ft.Icons.INSTALL_DESKTOP, color="blue"), title=ft.Text("درخواست نصب اولیه"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.SUPPORT_AGENT, color="orange"), title=ft.Text("درخواست خدمات فنی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.SHOPPING_CART_CHECKOUT, color="purple"), title=ft.Text("ثبت درخواست سفارشی و عمده"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.PRINT, color="red"), title=ft.Text("درخواست چاپ طرح سفارشی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20))], spacing=2), width=380)], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
     
     def warranty_page(page: ft.Page, render_callback):
-        data = {
-            "تهران": ["تهران", "شهریار", "ورامین"],
-            "اصفهان": ["اصفهان", "کاشان", "خمینی‌شهر"],
-            "خراسان رضوی": ["مشهد", "نیشابور"]
-        }
         def check_national_id(id_str):
             id_str = str(id_str).strip()
             if len(id_str) != 10 or not id_str.isdigit():
@@ -1967,8 +1968,8 @@ def main(page: ft.Page):
                            
         def load_cities(e):
             city_dropdown.options.clear()
-            if province_dropdown.value in data:
-                city_dropdown.options = [ft.dropdown.Option(c) for c in data[province_dropdown.value]]
+            if province_dropdown.value in DATA_CITIES:
+                city_dropdown.options = [ft.dropdown.Option(c) for c in DATA_CITIES[province_dropdown.value]]
             city_dropdown.update()
                 
         province_dropdown.on_change = load_cities
@@ -2050,7 +2051,7 @@ def main(page: ft.Page):
     province_dropdown = ft.Dropdown(
         label="استان",
         width=350,
-        options=[ft.dropdown.Option(p) for p in data.keys()]
+        options=[ft.dropdown.Option(p) for p in DATA_CITIES.keys()]
     )
     city_dropdown = ft.Dropdown(label="شهر", width=350, options=[])
 
