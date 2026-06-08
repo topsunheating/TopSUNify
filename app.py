@@ -2052,7 +2052,7 @@ def main(page: ft.Page):
             # ==================== reCAPTCHA (شبیه‌سازی) ====================
             recaptcha_checkbox = ft.Checkbox(label="من ربات نیستم (reCAPTCHA)", value=False)
                         
-        return ft.Container(
+    return ft.Container(
         content=ft.Column([
             ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(2)),
                     ft.Text("ثبت گارانتی", size=22, weight="bold")]),
@@ -2116,6 +2116,22 @@ def main(page: ft.Page):
             if e.files:
                    uploaded_files[key] = e.files[0]
                    update_checklist()
+        def pick_file(key):
+            file_picker.on_result = lambda e: on_file_selected(e, key)
+            if key == "video":
+                file_picker.pick_files(allowed_extensions=["mp4", "mov"], allow_multiple=False)
+            else:
+                file_picker.pick_files(allowed_extensions=["jpg", "jpeg", "png", "pdf"], allow_multiple=False)
+        
+        # ==================== آپلود فایل‌ها ====================
+        upload_buttons = ft.Column([
+            ft.ElevatedButton("📸 عکس محصول نصب شده", on_click=lambda e: pick_file("product_photo")),
+            ft.ElevatedButton("📸 عکس نمای دورتر", on_click=lambda e: pick_file("wide_photo")),
+            ft.ElevatedButton("🎥 فیلم محصول نصب شده", on_click=lambda e: pick_file("video")),
+            ft.ElevatedButton("📄 فاکتور خرید", on_click=lambda e: pick_file("invoice")),
+            ft.ElevatedButton("🔢 عکس شماره سریال", on_click=lambda e: pick_file("serial_photo")),
+        ], spacing=8)
+
     # ==================== شرایط و ضوابط ====================
         terms_text = ft.Text(
             "اینجانب، به عنوان خریدار و کاربر محصول تاپسان، بدین‌وسیله اعلام می‌نمایم که راهنمای نصب، راه‌اندازی و استفاده از محصول خریداری‌شده را به‌صورت کامل مطالعه کرده‌ام...\n\n"
@@ -2125,25 +2141,11 @@ def main(page: ft.Page):
             "4- شرکت تاپسان در صورت تشخیص عدم رعایت شرایط فنی یا استفاده غیرمجاز از محصول، مجاز به عدم پذیرش درخواست گارانتی خواهد بود.\n"
             "5- ثبت این تأییدیه به منزله اطلاع کامل و پذیرش بی‌قید و شرط کلیه مقررات خدمات پس از فروش و گارانتی محصولات تاپسان است.",
             size=13,
-            color="black"
         )
         agree_checkbox = ft.Checkbox(label="من با شرایط و ضوابط گارانتی موافقم", value=False)
+        recaptcha_checkbox = ft.Checkbox(label="من ربات نیستم", value=False)
 
-    # ==================== آپلود فایل‌ها ====================
-        def pick_file(key):
-            file_picker.on_result = lambda e: on_file_selected(e, key)
-            if key in ["video"]:
-                file_picker.pick_files(allowed_extensions=["mp4", "mov"], allow_multiple=False)
-            else:
-                file_picker.pick_files(allowed_extensions=["jpg", "jpeg", "png", "pdf"], allow_multiple=False)
-        upload_buttons = ft.Column([
-            ft.ElevatedButton("📸 عکس محصول نصب شده", on_click=lambda e: pick_file("product_photo")),
-            ft.ElevatedButton("📸 عکس نمای دورتر", on_click=lambda e: pick_file("wide_photo")),
-            ft.ElevatedButton("🎥 فیلم محصول نصب شده", on_click=lambda e: pick_file("video")),
-            ft.ElevatedButton("📄 فاکتور خرید", on_click=lambda e: pick_file("invoice")),
-            ft.ElevatedButton("🔢 عکس شماره سریال", on_click=lambda e: pick_file("serial_photo")),
-        ], spacing=8)
-
+    
     # ==================== اطلاعات فنی ====================
     
     def technical_page():
