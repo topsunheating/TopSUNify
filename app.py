@@ -2040,6 +2040,54 @@ def main(page: ft.Page):
             
         invoice_number = ft.TextField(label="شماره فاکتور", width=350)
         serial_number = ft.TextField(label="شماره سریال محصول", width=350)
+
+        # ==================== آپلود فایل‌ها ====================
+        uploaded_files = {
+            "product_photo": None,
+            "wide_photo": None,
+            "video": None,
+            "invoice": None,
+            "serial_photo": None
+        }
+
+        file_picker = ft.FilePicker()
+        page.overlay.append(file_picker)
+
+        checklist = ft.Column(spacing=5)
+
+        def update_checklist():
+            checklist.controls.clear()
+            items = [
+                ("📸 عکس محصول نصب شده", uploaded_files["product_photo"]),
+                ("📸 عکس نمای دورتر", uploaded_files["wide_photo"]),
+                ("🎥 فیلم محصول نصب شده", uploaded_files["video"]),
+                ("📄 فاکتور خرید", uploaded_files["invoice"]),
+                ("🔢 عکس شماره سریال", uploaded_files["serial_photo"])
+            ]
+            for label, file in items:
+                icon = ft.Icon(ft.Icons.CHECK_CIRCLE, color="green") if file else ft.Icon(ft.Icons.CIRCLE_OUTLINED, color="grey")
+                checklist.controls.append(ft.Row([icon, ft.Text(label, size=14)], spacing=10))
+            page.update()
+
+        def on_file_selected(e, key):
+            if e.files:
+                uploaded_files[key] = e.files[0]
+                update_checklist()
+
+        def pick_file(key):
+            file_picker.on_result = lambda e: on_file_selected(e, key)
+            if key == "video":
+                file_picker.pick_files(allowed_extensions=["mp4", "mov"], allow_multiple=False)
+            else:
+                file_picker.pick_files(allowed_extensions=["jpg", "jpeg", "png", "pdf"], allow_multiple=False)
+
+        upload_buttons = ft.Column([
+            ft.ElevatedButton("📸 عکس محصول نصب شده", on_click=lambda e: pick_file("product_photo"), width=350),
+            ft.ElevatedButton("📸 عکس نمای دورتر", on_click=lambda e: pick_file("wide_photo"), width=350),
+            ft.ElevatedButton("🎥 فیلم محصول نصب شده", on_click=lambda e: pick_file("video"), width=350),
+            ft.ElevatedButton("📄 فاکتور خرید", on_click=lambda e: pick_file("invoice"), width=350),
+            ft.ElevatedButton("🔢 عکس شماره سریال", on_click=lambda e: pick_file("serial_photo"), width=350),
+        ], spacing=8)
             
         def submit(e):
             if not check_mobile(phone.value):
@@ -2056,6 +2104,11 @@ def main(page: ft.Page):
                     
             if not check_national_id(national_id.value):
                 page.show_snack_bar(ft.SnackBar(ft.Text("کد ملی نامعتبر است!"), bgcolor="red"))
+                return
+
+            # چک فایل‌ها 
+            if not all(uploaded_files.values()):
+                page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تمام فایل‌های مورد نیاز را آپلود کنید"), bgcolor="orange"))
                 return
                 
             page.show_snack_bar(ft.SnackBar(ft.Text("اطلاعات با موفقیت ثبت شد.")))
@@ -2080,6 +2133,15 @@ def main(page: ft.Page):
                 address, postal_code,
                 purchase_place, shop_name,
                 invoice_number, serial_number,
+                
+                ft.Text("آپلود مدارک", size=18, weight="bold"),
+                upload_buttons,
+                checklist,
+                
+                ft.Divider(),
+                ft.Text("شرایط و ضوابط گارانتی", size=18, weight="bold"),
+                terms_text,   # اگر قبلاً تعریف کردی
+                agree_checkbox,
                     
                 ft.FilledButton("ثبت نهایی گارانتی", width=350, on_click=submit)
             ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
