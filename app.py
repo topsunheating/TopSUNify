@@ -2105,34 +2105,51 @@ def main(page: ft.Page):
         def submit(e):
             if not check_mobile(phone.value):
                 page.show_snack_bar(ft.SnackBar(ft.Text("شماره موبایل باید ۱۱ رقم و با ۰۹ شروع شود!"), bgcolor="red"))
+                page.snack_bar = snack
+                page.update()
                 return
                     
             if not birth_year.value:
                 page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تاریخ تولد را انتخاب کنید")))
+                page.snack_bar = snack
+                page.update()
                 return
 
             if not check_national_id(national_id.value):
                 page.show_snack_bar(ft.SnackBar(ft.Text("کد ملی نامعتبر است!"), bgcolor="red"))
+                page.snack_bar = snack
+                page.update()
                 return
             
             if len(str(postal_code.value).strip()) != 10:
                 page.show_snack_bar(ft.SnackBar(ft.Text("کد پستی باید دقیقاً ۱۰ رقم باشد!"), bgcolor="red"))
+                page.snack_bar = snack
+                page.update()
                 return
 
             if not agree_checkbox.value:
                 page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً با شرایط و ضوابط موافقت کنید"), bgcolor="red"))
+                page.snack_bar = snack
+                page.update()
                 return
             
             if not recaptcha_checkbox.value:
                 page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تأیید کنید که ربات نیستید"), bgcolor="red"))
+                page.snack_bar = snack
+                page.update()
                 return
                 
             if not all(uploaded_files.values()):
                 page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تمام فایل‌های مورد نیاز را آپلود کنید"), bgcolor="orange"))
+                page.snack_bar = snack
+                page.update()
                 return
-                
-            page.show_snack_bar(ft.SnackBar(ft.Text("اطلاعات با موفقیت ثبت شد.")))
             
+            # ثبت موفق
+            snack = ft.SnackBar(ft.Text("ثبت گارانتی با موفقیت انجام شد ✅"), bgcolor="green")
+            page.snack_bar = snack
+            page.update()
+                            
         return ft.Container(
             content=ft.Column([
                 ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(2)),
