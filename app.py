@@ -1964,33 +1964,7 @@ def main(page: ft.Page):
         def check_mobile(phone):
             phone = str(phone).strip()
             return len(phone) == 11 and phone.startswith("09")
-                   
-        name = ft.TextField(label="نام و نام خانوادگی", width=350)
-        father_name = ft.TextField(label="نام پدر", width=350)
-        phone = ft.TextField(label="شماره موبایل (09xxxxxxxxx)", width=350, keyboard_type=ft.KeyboardType.PHONE, max_length=11,input_filter=ft.InputFilter(allow=True, regex_string=r"^[0-9]*$"))        
-        
-        years = [str(y) for y in range(1300, 1410)]
-        months = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
-                  "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"]
-        
-        birth_year = ft.Dropdown(label="سال تولد", width=110, options=[ft.dropdown.Option(y) for y in years], value="1370")
-        birth_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="فروردین")
-        birth_day = ft.Dropdown(label="روز", width=100, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="1")
-        
-        # تاریخ خرید شمسی
-        purchase_year = ft.Dropdown(label="سال خرید", width=110, options=[ft.dropdown.Option(y) for y in years], value="1403")
-        purchase_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="خرداد")
-        purchase_day = ft.Dropdown(label="روز", width=100, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="15")
-        
-        national_id = ft.TextField(label="کد ملی", width=350, keyboard_type=ft.KeyboardType.NUMBER, max_length=12,on_change=format_national_id)
-        national_status = ft.Text("", color="blue", size=14)
-                     
-        id_number = ft.TextField(label="شماره شناسنامه", width=350)
-        postal_code = ft.TextField(label="کد پستی", width=350,max_length=10, keyboard_type=ft.KeyboardType.NUMBER)
-            
-        province_dropdown = ft.Dropdown(label="استان", width=350, options=[ft.dropdown.Option(p) for p in data.keys()])
-        city_dropdown = ft.Dropdown(label="شهر", width=350, options=[])
-        
+                           
         def load_cities(e):
             city_dropdown.options.clear()
             if province_dropdown.value in data:
@@ -2051,28 +2025,72 @@ def main(page: ft.Page):
 
             # ==================== reCAPTCHA (شبیه‌سازی) ====================
             recaptcha_checkbox = ft.Checkbox(label="من ربات نیستم (reCAPTCHA)", value=False)
-                        
+    # ==================== همه فیلدها را اینجا تعریف کن ====================
+    name = ft.TextField(label="نام و نام خانوادگی", width=350)
+    father_name = ft.TextField(label="نام پدر", width=350)
+    # تاریخ تولد شمسی
+    phone = ft.TextField(label="شماره موبایل (۰۹xxxxxxxxx)", width=350, max_length=11, keyboard_type=ft.KeyboardType.PHONE)
+    birth_year = ft.Dropdown(label="سال تولد", width=110, options=[ft.dropdown.Option(y) for y in years], value="1370")
+    birth_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="فروردین")
+    birth_day = ft.Dropdown(label="روز", width=80, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="1")
+    # تاریخ خرید شمسی
+    purchase_year = ft.Dropdown(label="سال خرید", width=110, options=[ft.dropdown.Option(y) for y in years], value="1403")
+    purchase_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="خرداد")
+    purchase_day = ft.Dropdown(label="روز", width=80, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="15")
+
+    national_id = ft.TextField(label="کد ملی (۱۰ رقمی)", width=350, max_length=12, keyboard_type=ft.KeyboardType.NUMBER)
+    national_status = ft.Text("", color="blue", size=14)
+
+    id_number = ft.TextField(label="شماره شناسنامه", width=350)
+    postal_code = ft.TextField(label="کد پستی (۱۰ رقمی)", width=350, max_length=10, keyboard_type=ft.KeyboardType.NUMBER)
+
+    province_dropdown = ft.Dropdown(label="استان", width=350, options=[ft.dropdown.Option(p) for p in data.keys()])
+    city_dropdown = ft.Dropdown(label="شهر", width=350, options=[])
+
+    address = ft.TextField(label="آدرس کامل", width=350, multiline=True)
+
+    purchase_place = ft.Dropdown(label="محل خرید", width=350, options=[
+        ft.dropdown.Option("سایت شرکت"), 
+        ft.dropdown.Option("دفتر مرکزی"), 
+        ft.dropdown.Option("فروشگاه یا نمایندگی")
+    ])
+    shop_name = ft.TextField(label="نام فروشگاه یا نمایندگی", width=350, visible=False)
+
+    invoice_number = ft.TextField(label="شماره فاکتور", width=350)
+    serial_number = ft.TextField(label="شماره سریال محصول", width=350)
+    # ==================== نمایش صفحه ====================                    
     return ft.Container(
         content=ft.Column([
-            ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(2)),
-                    ft.Text("ثبت گارانتی", size=22, weight="bold")]),
-
+            ft.Row([
+                ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(2)),
+                ft.Text("ثبت گارانتی", size=22, weight="bold")
+            ]),
             ft.Divider(),
-            name, father_name, phone,
+
+            # اینجا فیلدها رو به ترتیب درست بنویس
+            name, 
+            father_name, 
+            phone,
 
             ft.Text("تاریخ تولد شمسی", weight="bold", size=16, text_align=ft.TextAlign.RIGHT),
             ft.Row([birth_year, birth_month, birth_day], spacing=8),
 
-            national_id, national_status, id_number,
+            national_id, 
+            national_status, 
+            id_number,
 
             ft.Text("تاریخ خرید شمسی", weight="bold", size=16, text_align=ft.TextAlign.RIGHT),
             ft.Row([purchase_year, purchase_month, purchase_day], spacing=8),
 
-            province_dropdown, city_dropdown,
-            address, postal_code,
+            province_dropdown, 
+            city_dropdown,
+            address, 
+            postal_code,
 
-            purchase_place, shop_name,
-            invoice_number, serial_number,
+            purchase_place, 
+            shop_name,
+            invoice_number, 
+            serial_number,
 
             ft.Divider(),
             ft.Text("آپلود مدارک", size=18, weight="bold"),
@@ -2083,10 +2101,16 @@ def main(page: ft.Page):
             ft.Text("شرایط و ضوابط گارانتی", size=18, weight="bold"),
             terms_text,
             agree_checkbox,
-                
-                ft.FilledButton("ثبت نهایی گارانتی", width=350, on_click=submit)
-            ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER), padding=20
-        )
+            recaptcha_checkbox,
+
+            ft.Divider(height=20),
+            ft.FilledButton("ثبت نهایی گارانتی", width=350, bgcolor="#1565C0", color="white", on_click=submit)
+        ], 
+        scroll=ft.ScrollMode.AUTO, 
+        spacing=15, 
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+        padding=20
+    )
     # ==================== متغیرهای آپلود ====================
     uploaded_files = {
         "product_photo": None,
