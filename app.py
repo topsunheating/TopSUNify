@@ -4,12 +4,6 @@ import datetime
 import time
 import re
 
-DATA_CITIES = {
-    "تهران": ["تهران", "شهریار", "ورامین"],
-    "اصفهان": ["اصفهان", "کاشان", "خمینی‌شهر"],
-    "خراسان رضوی": ["مشهد", "نیشابور"]
-}
-
 FLOOR_PRODUCTS = {
     "طول 1/2 متر": 1250000,
     "طول 1/5 متر": 1850000,
@@ -1938,41 +1932,50 @@ def main(page: ft.Page):
         return ft.Container(content=ft.Column([ft.Container(content=ft.Column([ft.Image(src="TopSUNify-1.png", width=80), ft.Text("خوش آمدید به TopSUNify", size=18, weight="bold", text_align=ft.TextAlign.CENTER), ft.Text("مرکز خدمات و پشتیبانی", size=16, color="grey", text_align=ft.TextAlign.CENTER)], horizontal_alignment=ft.CrossAxisAlignment.CENTER), margin=ft.margin.Margin(top=20, bottom=30)), ft.Container(content=ft.Column([ft.ListTile(leading=ft.Icon(ft.Icons.SHIELD, color="green"), title=ft.Text("ثبت گارانتی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20), on_click=lambda e: render(23)), ft.ListTile(leading=ft.Icon(ft.Icons.INSTALL_DESKTOP, color="blue"), title=ft.Text("درخواست نصب اولیه"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.SUPPORT_AGENT, color="orange"), title=ft.Text("درخواست خدمات فنی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.SHOPPING_CART_CHECKOUT, color="purple"), title=ft.Text("ثبت درخواست سفارشی و عمده"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.PRINT, color="red"), title=ft.Text("درخواست چاپ طرح سفارشی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20))], spacing=2), width=380)], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
     
     def warranty_page(page: ft.Page, render_callback):
-        def check_national_id(id_str):
-            id_str = str(id_str).strip()
-            if len(id_str) != 10 or not id_str.isdigit():
-                return False
-            digits = [int(d) for d in id_str]
-            check_digit = digits[9]
-            weighted_sum = sum(digits[i] * (10 - i) for i in range(9))
-            remainder = weighted_sum % 11
-            
-            calculated_check = remainder if remainder < 2 else 11 - remainder
-            
-            return check_digit == calculated_check
-        def format_national_id(e):
-            text = national_id.value.replace("-", "")
-            if len(text) > 10:
-                text = text[:10]
-            if len(text) > 9:
-                formatted = f"{text[:3]}-{text[3:9]}-{text[9]}"
-                national_id.value = formatted
-            elif len(text) > 3:
-                formatted = f"{text[:3]}-{text[3:]}"
-                national_id.value = formatted
-            national_id.update()         
+        data = {
+            "تهران": ["تهران", "شهریار", "ورامین"],
+            "اصفهان": ["اصفهان", "کاشان", "خمینی‌شهر"],
+            "خراسان رضوی": ["مشهد", "نیشابور"]
+        }
+        def check_national_id(id):
+            if not re.match(r'^\d{10}$', id): return False
+            check = int(id)
+            s = sum(int(id[i]) * (10 - i) for i in range(9)) % 11
+            return (s < 2 and check == s) or (s >= 2 and check == 11 - s)
+        name = ft.TextField(label="نام و نام خانوادگی", width=350)
+        father_name = ft.TextField(label="نام پدر", width=350)
+        phone = ft.TextField(label="شماره موبایل", width=350, keyboard_type=ft.KeyboardType.PHONE)
         
-        def check_mobile(phone):
-            phone = str(phone).strip()
-            return len(phone) == 11 and phone.startswith("09")
-                           
+        years = [str(y) for y in range(1300, 1410)]
+        months = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+                  "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"]
+        
+        birth_year = ft.Dropdown(label="سال تولد", width=110, options=[ft.dropdown.Option(y) for y in years], value="1370")
+        birth_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="فروردین")
+        birth_day = ft.Dropdown(label="روز", width=80, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="1")
+
+        national_id = ft.TextField(label="کد ملی", width=350, keyboard_type=ft.KeyboardType.NUMBER)
+        province_label = ft.Text("استان محل صدور: نامشخص", color="blue")
+            
+        def on_national_id_change(e):
+            if check_national_id(national_id.value):
+                province_label.value = "استان شناسایی شد: (مثال: تهران)"
+            else:
+                province_label.value = "کد ملی نامعتبر است"
+            province_label.update()
+        national_id.on_change = on_national_id_change
+            
+        id_number = ft.TextField(label="شماره شناسنامه", width=350)
+        postal_code = ft.TextField(label="کد پستی (۱۰ رقم)", width=350, keyboard_type=ft.KeyboardType.NUMBER)
+            
+        province_dropdown = ft.Dropdown(label="استان", width=350, options=[ft.dropdown.Option(p) for p in data.keys()])
+        city_dropdown = ft.Dropdown(label="شهر", width=350, options=[])
+        
         def load_cities(e):
-            city_dropdown.options.clear()
-            if province_dropdown.value in DATA_CITIES:
-                city_dropdown.options = [ft.dropdown.Option(c) for c in DATA_CITIES[province_dropdown.value]]
-            city_dropdown.update()
-                
-        province_dropdown.on_change = load_cities
+            if province_dropdown.value in data:
+                city_dropdown.options = [ft.dropdown.Option(c) for c in data[province_dropdown.value]]
+                city_dropdown.update()
+        btn_load_cities = ft.OutlinedButton("بارگذاری شهرهای استان", on_click=load_cities)
         
         address = ft.TextField(label="آدرس کامل", width=350, multiline=True)
         
@@ -1980,283 +1983,63 @@ def main(page: ft.Page):
             ft.dropdown.Option("سایت شرکت"), ft.dropdown.Option("دفتر مرکزی"), ft.dropdown.Option("فروشگاه یا نمایندگی")
         ])
         shop_name = ft.TextField(label="نام فروشگاه یا نمایندگی", width=350, visible=False)
-
+        
+        invoice_number = ft.TextField(label="شماره فاکتور", width=350)
+        serial_number = ft.TextField(label="شماره سریال محصول", width=350)
+        # ==================== تاریخ خرید شمسی ====================
+        purchase_year = ft.Dropdown(label="سال خرید", width=110, options=[ft.dropdown.Option(y) for y in years], value="1403")
+        purchase_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="خرداد")
+        purchase_day = ft.Dropdown(label="روز", width=80, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="15")
+        purchase_date = ft.TextField(label="تاریخ خرید", width=350)  
+        
         def on_purchase_change(e):
             shop_name.visible = (purchase_place.value == "فروشگاه یا نمایندگی")
             shop_name.update()
-        
         purchase_place.on_change = on_purchase_change
         
         invoice_number = ft.TextField(label="شماره فاکتور", width=350)
         serial_number = ft.TextField(label="شماره سریال محصول", width=350)
-        
-            # ==================== تابع ارسال نهایی (ادغام شده) ====================
+            
         def submit(e):
-            # 1. چک شماره موبایل
-            if not check_mobile(phone.value):
-                page.show_snack_bar(ft.SnackBar(ft.Text("شماره موبایل باید ۱۱ رقم و با ۰۹ شروع شود!"), bgcolor="red"))
-                return
-            # 2. چک تاریخ تولد
             if not birth_year.value:
-                page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تاریخ تولد را انتخاب کنید"), bgcolor="red"))
+                page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تاریخ تولد را انتخاب کنید")))
                 return
-            # 3. چک کد ملی
-            if not check_national_id(national_id.value.replace("-", "")):
-                page.show_snack_bar(ft.SnackBar(ft.Text("کد ملی نامعتبر است!"), bgcolor="red"))
+                
+            if not check_national_id(national_id.value):
+                page.show_snack_bar(ft.SnackBar(ft.Text("کد ملی نامعتبر است!")))
                 return
-            # 4. چک کد پستی
-            if len(str(postal_code.value).strip()) != 10:
-                page.show_snack_bar(ft.SnackBar(ft.Text("کد پستی باید دقیقاً ۱۰ رقم باشد!"), bgcolor="red"))
+                
+            if len(postal_code.value) != 10:
+                page.show_snack_bar(ft.SnackBar(ft.Text("کد پستی باید ۱۰ رقم باشد!")))
                 return
-            # 5. چک موافقت با شرایط
-            if not agree_checkbox.value:
-                page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً با شرایط و ضوابط موافقت کنید"), bgcolor="red"))
-                return
-            # 6. چک آپلود فایل‌ها 
-            if not all(uploaded_files.values()):
-                page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تمام فایل‌های مورد نیاز را آپلود کنید"), bgcolor="orange"))
-                return
-            # 7. reCAPTCHA (در حال حاضر شبیه‌سازی شده)
-            if not recaptcha_checkbox.value:
-                page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تأیید کنید که ربات نیستید"), bgcolor="red"))
-                return
-            # ==================== ثبت موفق ====================
-            page.show_snack_bar(ft.SnackBar(ft.Text("ثبت گارانتی با موفقیت انجام شد ✅"), bgcolor="green"))
-                    # اینجا می‌توانید اطلاعات را به سرور ارسال کنید
+                
+            page.show_snack_bar(ft.SnackBar(ft.Text("اطلاعات با موفقیت ثبت شد.")))
+                
+        return ft.Container(
+            content=ft.Column([
+                ft.Row([
+                    ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(2)),
+                    ft.Text("ثبت گارانتی", size=20, weight="bold")
+                ]),
+                name, father_name, phone,
+                
+                ft.Text("تاریخ تولد", weight="bold", size=16),
+                ft.Row([birth_year, birth_month, birth_day], spacing=8),
 
-            # ==================== reCAPTCHA (شبیه‌سازی) ====================
-            recaptcha_checkbox = ft.Checkbox(label="من ربات نیستم (reCAPTCHA)", value=False)
-    # ==================== همه فیلدها را اینجا تعریف کن ====================
-    name = ft.TextField(label="نام و نام خانوادگی", width=350)
-    father_name = ft.TextField(label="نام پدر", width=350)
-    phone = ft.TextField(label="شماره موبایل (۰۹xxxxxxxxx)", width=350, max_length=11, keyboard_type=ft.KeyboardType.PHONE)
-    # تاریخ تولد شمسی
-    years = [str(y) for y in range(1300, 1410)]
-    months = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"]
-    
-    birth_year = ft.Dropdown(label="سال تولد", width=110, options=[ft.dropdown.Option(y) for y in years], value="1370")
-    birth_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="فروردین")
-    birth_day = ft.Dropdown(label="روز", width=80, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="1")
-    # تاریخ خرید شمسی
-    purchase_year = ft.Dropdown(label="سال خرید", width=110, options=[ft.dropdown.Option(y) for y in years], value="1403")
-    purchase_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="خرداد")
-    purchase_day = ft.Dropdown(label="روز", width=80, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="15")
-
-    national_id = ft.TextField(label="کد ملی (۱۰ رقمی)", width=350, max_length=12, keyboard_type=ft.KeyboardType.NUMBER)
-    national_status = ft.Text("", color="blue", size=14)
-
-    id_number = ft.TextField(label="شماره شناسنامه", width=350)
-    postal_code = ft.TextField(label="کد پستی (۱۰ رقمی)", width=350, max_length=10, keyboard_type=ft.KeyboardType.NUMBER)
-
-    province_dropdown = ft.Dropdown(
-        label="استان",
-        width=350,
-        options=[ft.dropdown.Option(p) for p in DATA_CITIES.keys()]
-    )
-    city_dropdown = ft.Dropdown(label="شهر", width=350, options=[])
-
-    address = ft.TextField(label="آدرس کامل", width=350, multiline=True)
-
-    purchase_place = ft.Dropdown(label="محل خرید", width=350, options=[
-        ft.dropdown.Option("سایت شرکت"), 
-        ft.dropdown.Option("دفتر مرکزی"), 
-        ft.dropdown.Option("فروشگاه یا نمایندگی")
-    ])
-    shop_name = ft.TextField(label="نام فروشگاه یا نمایندگی", width=350, visible=False)
-
-    invoice_number = ft.TextField(label="شماره فاکتور", width=350)
-    serial_number = ft.TextField(label="شماره سریال محصول", width=350)
-    # ==================== نمایش صفحه ====================                    
-    return ft.Container(
-        content=ft.Column([
-            ft.Row([
-                ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(2)),
-                ft.Text("ثبت گارانتی", size=22, weight="bold")
-            ]),
-            ft.Divider(),
-
-            # اینجا فیلدها رو به ترتیب درست بنویس
-            name, 
-            father_name, 
-            phone,
-
-            ft.Text("تاریخ تولد شمسی", weight="bold", size=16, text_align=ft.TextAlign.RIGHT),
-            ft.Row([birth_year, birth_month, birth_day], spacing=8),
-
-            national_id, 
-            national_status, 
-            id_number,
-
-            ft.Text("تاریخ خرید شمسی", weight="bold", size=16, text_align=ft.TextAlign.RIGHT),
-            ft.Row([purchase_year, purchase_month, purchase_day], spacing=8),
-
-            province_dropdown, 
-            city_dropdown,
-            address, 
-            postal_code,
-
-            purchase_place, 
-            shop_name,
-            invoice_number, 
-            serial_number,
-
-            ft.Divider(),
-            ft.Text("آپلود مدارک", size=18, weight="bold"),
-            upload_buttons,
-            checklist,
-
-            ft.Divider(),
-            ft.Text("شرایط و ضوابط گارانتی", size=18, weight="bold"),
-            terms_text,
-            agree_checkbox,
-            recaptcha_checkbox,
-
-            ft.Divider(height=20),
-            ft.FilledButton("ثبت نهایی گارانتی", width=350, bgcolor="#1565C0", color="white", on_click=submit)
-        ], 
-        scroll=ft.ScrollMode.AUTO, 
-        spacing=15, 
-        horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-        padding=20
-    )
-    # ==================== متغیرهای آپلود ====================
-    uploaded_files = {
-        "product_photo": None,
-        "wide_photo": None,
-        "video": None,
-        "invoice": None,
-        "serial_photo": None
-    }
-
-    file_picker = ft.FilePicker()
-    page.overlay.append(file_picker)
-
-    checklist = ft.Column(spacing=5)
-
-    def update_checklist():
-        checklist.controls.clear()
-        items = [
-            ("📸 عکس محصول نصب شده", uploaded_files["product_photo"]),
-            ("📸 عکس نمای دورتر", uploaded_files["wide_photo"]),
-            ("🎥 فیلم محصول نصب شده", uploaded_files["video"]),
-            ("📄 فاکتور خرید", uploaded_files["invoice"]),
-            ("🔢 عکس شماره سریال", uploaded_files["serial_photo"])
-        ]
-        for label, file in items:
-            icon = ft.Icon(ft.Icons.CHECK_CIRCLE, color="green") if file else ft.Icon(ft.Icons.CIRCLE_OUTLINED, color="grey")
-            checklist.controls.append(ft.Row([icon, ft.Text(label, size=14)], spacing=10))
-        page.update()
-
-    def on_file_selected(e, key):
-        if e.files:
-            uploaded_files[key] = e.files[0]
-            update_checklist()
-
-    def pick_file(key):
-        file_picker.on_result = lambda e: on_file_selected(e, key)
-        if key == "video":
-            file_picker.pick_files(allowed_extensions=["mp4", "mov"], allow_multiple=False)
-        else:
-            file_picker.pick_files(allowed_extensions=["jpg", "jpeg", "png", "pdf"], allow_multiple=False)
-
-    # ==================== دکمه‌های آپلود ====================
-    upload_buttons = ft.Column([
-        ft.ElevatedButton("📸 عکس محصول نصب شده", on_click=lambda e: pick_file("product_photo"), width=350),
-        ft.ElevatedButton("📸 عکس نمای دورتر", on_click=lambda e: pick_file("wide_photo"), width=350),
-        ft.ElevatedButton("🎥 فیلم محصول نصب شده", on_click=lambda e: pick_file("video"), width=350),
-        ft.ElevatedButton("📄 فاکتور خرید", on_click=lambda e: pick_file("invoice"), width=350),
-        ft.ElevatedButton("🔢 عکس شماره سریال", on_click=lambda e: pick_file("serial_photo"), width=350),
-    ], spacing=8)
-
-
-
-    # ==================== شرایط و ضوابط ====================
-    terms_text = ft.Text(
-        "اینجانب، به عنوان خریدار و کاربر محصول تاپسان، بدین‌وسیله اعلام می‌نمایم که راهنمای نصب، راه‌اندازی و استفاده از محصول خریداری‌شده را به‌صورت کامل مطالعه کرده‌ام...\n\n"
-        "1- رعایت دقیق دستورالعمل‌های مندرج در دفترچه راهنما، شرط لازم برای حفظ اعتبار گارانتی است.\n"
-        "2- هرگونه نصب، جابجایی یا استفاده ناصحیح برخلاف دستورالعمل‌های فنی، موجب لغو تعهدات گارانتی خواهد شد.\n"
-        "3- مسئولیت اطمینان از نصب صحیح توسط افراد واجد صلاحیت بر عهده خریدار می‌باشد.\n"
-        "4- شرکت تاپسان در صورت تشخیص عدم رعایت شرایط فنی یا استفاده غیرمجاز از محصول، مجاز به عدم پذیرش درخواست گارانتی خواهد بود.\n"
-        "5- ثبت این تأییدیه به منزله اطلاع کامل و پذیرش بی‌قید و شرط کلیه مقررات خدمات پس از فروش و گارانتی محصولات تاپسان است.",
-        size=13
-    )
-
-    agree_checkbox = ft.Checkbox(label="من با شرایط و ضوابط گارانتی موافقم", value=False)
-    recaptcha_checkbox = ft.Checkbox(label="من ربات نیستم", value=False)
-
-    # ==================== ارسال نهایی ====================
-    def submit(e):
-        if not check_mobile(phone.value):
-            page.show_snack_bar(ft.SnackBar(ft.Text("شماره موبایل باید ۱۱ رقم و با ۰۹ شروع شود!"), bgcolor="red"))
-            return
-        if not birth_year.value:
-            page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تاریخ تولد را انتخاب کنید"), bgcolor="red"))
-            return
-        if not check_national_id(national_id.value.replace("-", "")):
-            page.show_snack_bar(ft.SnackBar(ft.Text("کد ملی نامعتبر است!"), bgcolor="red"))
-            return
-        if len(str(postal_code.value).strip()) != 10:
-            page.show_snack_bar(ft.SnackBar(ft.Text("کد پستی باید دقیقاً ۱۰ رقم باشد!"), bgcolor="red"))
-            return
-        if not agree_checkbox.value:
-            page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً با شرایط و ضوابط موافقت کنید"), bgcolor="red"))
-            return
-        if not recaptcha_checkbox.value:
-            page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تأیید کنید که ربات نیستید"), bgcolor="red"))
-            return
-        if not all(uploaded_files.values()):
-            page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تمام فایل‌های مورد نیاز را آپلود کنید"), bgcolor="orange"))
-            return
-
-        page.show_snack_bar(ft.SnackBar(ft.Text("ثبت گارانتی با موفقیت انجام شد ✅"), bgcolor="green"))
-
-    # ==================== نمایش صفحه ====================
-    return ft.Container(
-        content=ft.Column([
-            ft.Row([
-                ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(2)),
-                ft.Text("ثبت گارانتی", size=22, weight="bold")
-            ]),
-            ft.Divider(),
-
-            name, father_name, phone,
-
-            ft.Text("تاریخ تولد شمسی", weight="bold", size=16, text_align=ft.TextAlign.RIGHT),
-            ft.Row([birth_year, birth_month, birth_day], spacing=8),
-
-            national_id, national_status, id_number,
-
-            ft.Text("تاریخ خرید شمسی", weight="bold", size=16, text_align=ft.TextAlign.RIGHT),
-            ft.Row([purchase_year, purchase_month, purchase_day], spacing=8),
-
-            province_dropdown, city_dropdown,
-            address, postal_code,
-
-            purchase_place, shop_name,
-            invoice_number, serial_number,
-
-            ft.Divider(),
-            ft.Text("آپلود مدارک", size=18, weight="bold"),
-            upload_buttons,
-            checklist,
-
-            ft.Divider(),
-            ft.Text("شرایط و ضوابط گارانتی", size=18, weight="bold"),
-            terms_text,
-            agree_checkbox,
-            recaptcha_checkbox,
-
-            ft.Divider(height=20),
-            ft.FilledButton("ثبت نهایی گارانتی", width=350, bgcolor="#1565C0", color="white", on_click=submit)
-        ], 
-        scroll=ft.ScrollMode.AUTO, 
-        spacing=15, 
-        horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-        padding=20
-    )
-    
-    # ==================== اطلاعات فنی ====================
-    
+                ft.Text("تاریخ خرید", weight="bold", size=16, text_align=ft.TextAlign.RIGHT),
+                ft.Row([purchase_year, purchase_month, purchase_day], spacing=8),
+                
+                national_id, province_label, id_number,
+                province_dropdown, city_dropdown, address, postal_code,
+                purchase_place, shop_name, invoice_number, serial_number,
+                
+                ft.FilledButton("ثبت نهایی گارانتی", width=350, on_click=submit)
+            ], 
+            scroll=ft.ScrollMode.AUTO, 
+            spacing=15,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            padding=20
+        )
     def technical_page():
         return ft.Container(content=ft.Column([ft.Container(content=ft.Text("اطلاعات فنی", size=18, weight="bold", text_align=ft.TextAlign.CENTER), padding=20, margin=ft.margin.Margin(bottom=15)), ft.Container(content=ft.Column([ft.ListTile(leading=ft.Icon(ft.Icons.BOOK, color="blue"), title=ft.Text("کاتالوگ محصولات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.PRICE_CHANGE, color="green"), title=ft.Text("لیست قیمت"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.WORK_HISTORY, color="purple"), title=ft.Text("رزومه شرکت"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.DESCRIPTION, color="orange"), title=ft.Text("پروپوزال و گزارش فنی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.IMAGE, color="pink"), title=ft.Text("تصاویر و فیلم پروژه‌ها"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.VIDEO_LIBRARY, color="red"), title=ft.Text("فیلم‌های تبلیغاتی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20))], spacing=2), width=380)], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
 
