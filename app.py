@@ -2088,12 +2088,13 @@ def main(page: ft.Page):
             ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER), padding=20
         )
     # ==================== متغیرهای آپلود ====================
-    uploaded_files = 
+    uploaded_files = {
         "product_photo": None,
         "wide_photo": None,
         "video": None,
         "invoice": None,
         "serial_photo": None
+    }
 
         file_picker = ft.FilePicker()
         page.overlay.append(file_picker)
