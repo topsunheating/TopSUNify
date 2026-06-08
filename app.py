@@ -2096,59 +2096,58 @@ def main(page: ft.Page):
         "serial_photo": None
     }
 
-        file_picker = ft.FilePicker()
-        page.overlay.append(file_picker)
+    file_picker = ft.FilePicker()
+    page.overlay.append(file_picker)
         
         # چک‌لیست آپلود
-        checklist = ft.Column(spacing=5)
+    checklist = ft.Column(spacing=5)
                  
-        def update_checklist():
-            checklist.controls.clear()
-            items = [
-                ("عکس محصول نصب شده", uploaded_files["product_photo"]),
-                ("عکس نمای دورتر", uploaded_files["wide_photo"]),
-                ("فیلم محصول نصب شده", uploaded_files["video"]),
-                ("فاکتور خرید", uploaded_files["invoice"]),
-                ("عکس شماره سریال", uploaded_files["serial_photo"])
-            ]
-            for label, file in items:
-                 icon = ft.Icon(ft.Icons.CHECK_CIRCLE, color="green") if file else ft.Icon(ft.Icons.CIRCLE_OUTLINED, color="grey")
-                 checklist.controls.append(ft.Row([icon, ft.Text(label)], spacing=10))
-            page.update()
+    def update_checklist():
+        checklist.controls.clear()
+        items = [
+            ("عکس محصول نصب شده", uploaded_files["product_photo"]),
+            ("عکس نمای دورتر", uploaded_files["wide_photo"]),
+            ("فیلم محصول نصب شده", uploaded_files["video"]),
+            ("فاکتور خرید", uploaded_files["invoice"]),
+            ("عکس شماره سریال", uploaded_files["serial_photo"])
+        ]
+        for label, file in items:
+            icon = ft.Icon(ft.Icons.CHECK_CIRCLE, color="green") if file else ft.Icon(ft.Icons.CIRCLE_OUTLINED, color="grey")
+            checklist.controls.append(ft.Row([icon, ft.Text(label)], spacing=10))
+        page.update()
             
-        def on_file_selected(e, key):
-            if e.files:
-                   uploaded_files[key] = e.files[0]
-                   update_checklist()
-        def pick_file(key):
-            file_picker.on_result = lambda e: on_file_selected(e, key)
-            if key == "video":
-                file_picker.pick_files(allowed_extensions=["mp4", "mov"], allow_multiple=False)
-            else:
-                file_picker.pick_files(allowed_extensions=["jpg", "jpeg", "png", "pdf"], allow_multiple=False)
+    def on_file_selected(e, key):
+        if e.files:
+            uploaded_files[key] = e.files[0]
+            update_checklist()
+    def pick_file(key):
+        file_picker.on_result = lambda e: on_file_selected(e, key)
+        if key == "video":
+            file_picker.pick_files(allowed_extensions=["mp4", "mov"], allow_multiple=False)
+        else:
+            file_picker.pick_files(allowed_extensions=["jpg", "jpeg", "png", "pdf"], allow_multiple=False)
         
         # ==================== آپلود فایل‌ها ====================
-        upload_buttons = ft.Column([
-            ft.ElevatedButton("📸 عکس محصول نصب شده", on_click=lambda e: pick_file("product_photo")),
-            ft.ElevatedButton("📸 عکس نمای دورتر", on_click=lambda e: pick_file("wide_photo")),
-            ft.ElevatedButton("🎥 فیلم محصول نصب شده", on_click=lambda e: pick_file("video")),
-            ft.ElevatedButton("📄 فاکتور خرید", on_click=lambda e: pick_file("invoice")),
-            ft.ElevatedButton("🔢 عکس شماره سریال", on_click=lambda e: pick_file("serial_photo")),
-        ], spacing=8)
+    upload_buttons = ft.Column([
+        ft.ElevatedButton("📸 عکس محصول نصب شده", on_click=lambda e: pick_file("product_photo")),
+        ft.ElevatedButton("📸 عکس نمای دورتر", on_click=lambda e: pick_file("wide_photo")),
+        ft.ElevatedButton("🎥 فیلم محصول نصب شده", on_click=lambda e: pick_file("video")),
+        ft.ElevatedButton("📄 فاکتور خرید", on_click=lambda e: pick_file("invoice")),
+        ft.ElevatedButton("🔢 عکس شماره سریال", on_click=lambda e: pick_file("serial_photo")),
+    ], spacing=8)
 
     # ==================== شرایط و ضوابط ====================
-        terms_text = ft.Text(
-            "اینجانب، به عنوان خریدار و کاربر محصول تاپسان، بدین‌وسیله اعلام می‌نمایم که راهنمای نصب، راه‌اندازی و استفاده از محصول خریداری‌شده را به‌صورت کامل مطالعه کرده‌ام...\n\n"
-            "1- رعایت دقیق دستورالعمل‌های مندرج در دفترچه راهنما، شرط لازم برای حفظ اعتبار گارانتی است.\n"
-            "2- هرگونه نصب، جابجایی یا استفاده ناصحیح برخلاف دستورالعمل‌های فنی، موجب لغو تعهدات گارانتی خواهد شد.\n"
-            "3- مسئولیت اطمینان از نصب صحیح توسط افراد واجد صلاحیت بر عهده خریدار می‌باشد.\n"
-            "4- شرکت تاپسان در صورت تشخیص عدم رعایت شرایط فنی یا استفاده غیرمجاز از محصول، مجاز به عدم پذیرش درخواست گارانتی خواهد بود.\n"
-            "5- ثبت این تأییدیه به منزله اطلاع کامل و پذیرش بی‌قید و شرط کلیه مقررات خدمات پس از فروش و گارانتی محصولات تاپسان است.",
-            size=13,
-        )
-        agree_checkbox = ft.Checkbox(label="من با شرایط و ضوابط گارانتی موافقم", value=False)
-        recaptcha_checkbox = ft.Checkbox(label="من ربات نیستم", value=False)
-
+    terms_text = ft.Text(
+        "اینجانب، به عنوان خریدار و کاربر محصول تاپسان، بدین‌وسیله اعلام می‌نمایم که راهنمای نصب، راه‌اندازی و استفاده از محصول خریداری‌شده را به‌صورت کامل مطالعه کرده‌ام...\n\n"
+        "1- رعایت دقیق دستورالعمل‌های مندرج در دفترچه راهنما، شرط لازم برای حفظ اعتبار گارانتی است.\n"
+        "2- هرگونه نصب، جابجایی یا استفاده ناصحیح برخلاف دستورالعمل‌های فنی، موجب لغو تعهدات گارانتی خواهد شد.\n"
+        "3- مسئولیت اطمینان از نصب صحیح توسط افراد واجد صلاحیت بر عهده خریدار می‌باشد.\n"
+        "4- شرکت تاپسان در صورت تشخیص عدم رعایت شرایط فنی یا استفاده غیرمجاز از محصول، مجاز به عدم پذیرش درخواست گارانتی خواهد بود.\n"
+        "5- ثبت این تأییدیه به منزله اطلاع کامل و پذیرش بی‌قید و شرط کلیه مقررات خدمات پس از فروش و گارانتی محصولات تاپسان است.",
+        size=13,
+    )
+    agree_checkbox = ft.Checkbox(label="من با شرایط و ضوابط گارانتی موافقم", value=False)
+    recaptcha_checkbox = ft.Checkbox(label="من ربات نیستم", value=False)
     
     # ==================== اطلاعات فنی ====================
     
