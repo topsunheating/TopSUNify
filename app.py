@@ -2088,6 +2088,18 @@ def main(page: ft.Page):
             ft.ElevatedButton("📄 فاکتور خرید", on_click=lambda e: pick_file("invoice"), width=350),
             ft.ElevatedButton("🔢 عکس شماره سریال", on_click=lambda e: pick_file("serial_photo"), width=350),
         ], spacing=8)
+        
+        terms_text = ft.Text(
+            "اینجانب، به عنوان خریدار و کاربر محصول تاپسان، بدین‌وسیله اعلام می‌نمایم که راهنمای نصب، راه‌اندازی و استفاده از محصول خریداری‌شده را به‌صورت کامل مطالعه کرده‌ام...\n\n"
+            "1- رعایت دقیق دستورالعمل‌های مندرج در دفترچه راهنما، شرط لازم برای حفظ اعتبار گارانتی است.\n"
+            "2- هرگونه نصب، جابجایی یا استفاده ناصحیح برخلاف دستورالعمل‌های فنی، موجب لغو تعهدات گارانتی خواهد شد.\n"
+            "3- مسئولیت اطمینان از نصب صحیح توسط افراد واجد صلاحیت بر عهده خریدار می‌باشد.\n"
+            "4- شرکت تاپسان در صورت تشخیص عدم رعایت شرایط فنی یا استفاده غیرمجاز از محصول، مجاز به عدم پذیرش درخواست گارانتی خواهد بود.\n"
+            "5- ثبت این تأییدیه به منزله اطلاع کامل و پذیرش بی‌قید و شرط کلیه مقررات خدمات پس از فروش و گارانتی محصولات تاپسان است.",
+            size=13
+        )
+        agree_checkbox = ft.Checkbox(label="من با شرایط و ضوابط گارانتی موافقم", value=False)
+        recaptcha_checkbox = ft.Checkbox(label="من ربات نیستم", value=False)
             
         def submit(e):
             if not check_mobile(phone.value):
@@ -2097,16 +2109,23 @@ def main(page: ft.Page):
             if not birth_year.value:
                 page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تاریخ تولد را انتخاب کنید")))
                 return
-                    
-            if len(str(postal_code.value).strip()) != 10:
-                page.show_snack_bar(ft.SnackBar(ft.Text("کد پستی باید دقیقاً ۱۰ رقم باشد!"), bgcolor="red"))
-                return
-                    
+
             if not check_national_id(national_id.value):
                 page.show_snack_bar(ft.SnackBar(ft.Text("کد ملی نامعتبر است!"), bgcolor="red"))
                 return
+            
+            if len(str(postal_code.value).strip()) != 10:
+                page.show_snack_bar(ft.SnackBar(ft.Text("کد پستی باید دقیقاً ۱۰ رقم باشد!"), bgcolor="red"))
+                return
 
-            # چک فایل‌ها 
+            if not agree_checkbox.value:
+                page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً با شرایط و ضوابط موافقت کنید"), bgcolor="red"))
+                return
+            
+            if not recaptcha_checkbox.value:
+                page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تأیید کنید که ربات نیستید"), bgcolor="red"))
+                return
+                
             if not all(uploaded_files.values()):
                 page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تمام فایل‌های مورد نیاز را آپلود کنید"), bgcolor="orange"))
                 return
@@ -2134,16 +2153,19 @@ def main(page: ft.Page):
                 purchase_place, shop_name,
                 invoice_number, serial_number,
                 
+                ft.Divider(),
                 ft.Text("آپلود مدارک", size=18, weight="bold"),
                 upload_buttons,
                 checklist,
                 
                 ft.Divider(),
                 ft.Text("شرایط و ضوابط گارانتی", size=18, weight="bold"),
-                terms_text,   # اگر قبلاً تعریف کردی
+                terms_text,   
                 agree_checkbox,
-                    
-                ft.FilledButton("ثبت نهایی گارانتی", width=350, on_click=submit)
+                recaptcha_checkbox,
+
+                ft.Divider(height=20),    
+                ft.FilledButton("ثبت نهایی گارانتی", width=350, bgcolor="#1565C0", color="white", on_click=submit)
             ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             padding=20
         )
