@@ -1937,20 +1937,29 @@ def main(page: ft.Page):
             "اصفهان": ["اصفهان", "کاشان", "خمینی‌شهر"],
             "خراسان رضوی": ["مشهد", "نیشابور"]
         }
-        def check_national_id(id):
-            if not re.match(r'^\d{10}$', id): return False
+        def check_national_id(id_str):
+            id_str = str(id_str).strip()
+            if len(id_str) != 10 or not id_str.isdigit():
+                return False
             check = int(id_str[-1])
             s = sum(int(id_str[i]) * (10 - i) for i in range(9)) % 11
-            valid = (s < 2 and check == s) or (s >= 2 and check == 11 - s)
-            return valid, None
+            return (s < 2 and check == s) or (s >= 2 and check == 11 - s)
+        def format_national_id(e):
+            text = national_id.value.replace("-", "")
+            if len(text) > 10:
+                text = text[:10]
+            if len(text) > 3:
+                formatted = text[:3] + "-" + text[3:9] + "-" + text[9:] if len(text) == 10 else text
+                national_id.value = formatted
+            national_id.update()
+        
         def check_mobile(phone):
             phone = str(phone).strip()
-            if len(phone) != 11 or not phone.startswith("09"):
-                return False
-            return True   
+            return len(phone) == 11 and phone.startswith("09")
+                   
         name = ft.TextField(label="نام و نام خانوادگی", width=350)
         father_name = ft.TextField(label="نام پدر", width=350)
-        phone = ft.TextField(label="شماره موبایل (09xxxxxxxxx)", width=350, keyboard_type=ft.KeyboardType.PHONE)        
+        phone = ft.TextField(label="شماره موبایل (09xxxxxxxxx)", width=350, keyboard_type=ft.KeyboardType.PHONE, max_length=11,input_filter=ft.InputFilter(allow=True, regex_string=r"^[0-9]*$"))        
         
         years = [str(y) for y in range(1300, 1410)]
         months = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
@@ -1958,18 +1967,18 @@ def main(page: ft.Page):
         
         birth_year = ft.Dropdown(label="سال تولد", width=110, options=[ft.dropdown.Option(y) for y in years], value="1370")
         birth_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="فروردین")
-        birth_day = ft.Dropdown(label="روز", width=80, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="1")
+        birth_day = ft.Dropdown(label="روز", width=110, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="1")
         
         # تاریخ خرید شمسی
         purchase_year = ft.Dropdown(label="سال خرید", width=110, options=[ft.dropdown.Option(y) for y in years], value="1403")
         purchase_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="خرداد")
-        purchase_day = ft.Dropdown(label="روز", width=80, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="15")
+        purchase_day = ft.Dropdown(label="روز", width=110, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="15")
         
-        national_id = ft.TextField(label="کد ملی", width=350, keyboard_type=ft.KeyboardType.NUMBER)
+        national_id = ft.TextField(label="کد ملی", width=350, keyboard_type=ft.KeyboardType.NUMBER, max_length=12,on_change=format_national_id)
         national_status = ft.Text("", color="blue", size=14)
                      
         id_number = ft.TextField(label="شماره شناسنامه", width=350)
-        postal_code = ft.TextField(label="کد پستی (۱۰ رقم)", width=350, keyboard_type=ft.KeyboardType.NUMBER)
+        postal_code = ft.TextField(label="کد پستی", width=350,max_length=10, keyboard_type=ft.KeyboardType.NUMBER)
             
         province_dropdown = ft.Dropdown(label="استان", width=350, options=[ft.dropdown.Option(p) for p in data.keys()])
         city_dropdown = ft.Dropdown(label="شهر", width=350, options=[])
@@ -1987,7 +1996,7 @@ def main(page: ft.Page):
         purchase_place = ft.Dropdown(label="محل خرید", width=350, options=[
             ft.dropdown.Option("سایت شرکت"), ft.dropdown.Option("دفتر مرکزی"), ft.dropdown.Option("فروشگاه یا نمایندگی")
         ])
-        shop_name = ft.TextField(label="نام فروشگاه یا نمایندگی", width=350, visible=False)
+        shop_name = ft.TextField(label="نام فروشگاه یا نمایندگی", width=350, visible=True)
 
         def on_purchase_change(e):
             shop_name.visible = (purchase_place.value == "فروشگاه یا نمایندگی")
@@ -2007,7 +2016,7 @@ def main(page: ft.Page):
                 return
             
             valid_national, _ = check_national_id(national_id.value)    
-            if not valid_national:
+            if not check_national_id(national_id.value.replace("-", "")):
                 page.show_snack_bar(ft.SnackBar(ft.Text("کد ملی نامعتبر است!"), bgcolor="red"))
                 return
                 
@@ -2039,11 +2048,7 @@ def main(page: ft.Page):
                 invoice_number, serial_number,
                 
                 ft.FilledButton("ثبت نهایی گارانتی", width=350, on_click=submit)
-            ], 
-            scroll=ft.ScrollMode.AUTO, 
-            spacing=15, 
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-            padding=20
+            ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER), padding=20
         )
     def technical_page():
         return ft.Container(content=ft.Column([ft.Container(content=ft.Text("اطلاعات فنی", size=18, weight="bold", text_align=ft.TextAlign.CENTER), padding=20, margin=ft.margin.Margin(bottom=15)), ft.Container(content=ft.Column([ft.ListTile(leading=ft.Icon(ft.Icons.BOOK, color="blue"), title=ft.Text("کاتالوگ محصولات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.PRICE_CHANGE, color="green"), title=ft.Text("لیست قیمت"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.WORK_HISTORY, color="purple"), title=ft.Text("رزومه شرکت"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.DESCRIPTION, color="orange"), title=ft.Text("پروپوزال و گزارش فنی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.IMAGE, color="pink"), title=ft.Text("تصاویر و فیلم پروژه‌ها"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.VIDEO_LIBRARY, color="red"), title=ft.Text("فیلم‌های تبلیغاتی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20))], spacing=2), width=380)], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
