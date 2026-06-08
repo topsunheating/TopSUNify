@@ -1978,7 +1978,7 @@ def main(page: ft.Page):
             city_dropdown.options.clear()
             if province_dropdown.value in data:
                 city_dropdown.options = [ft.dropdown.Option(c) for c in data[province_dropdown.value]]
-                city_dropdown.update()
+            city_dropdown.update()
                 
         province_dropdown.on_change = load_cities
         
@@ -1988,6 +1988,15 @@ def main(page: ft.Page):
             ft.dropdown.Option("سایت شرکت"), ft.dropdown.Option("دفتر مرکزی"), ft.dropdown.Option("فروشگاه یا نمایندگی")
         ])
         shop_name = ft.TextField(label="نام فروشگاه یا نمایندگی", width=350, visible=False)
+
+        def on_purchase_change(e):
+            shop_name.visible = (purchase_place.value == "فروشگاه یا نمایندگی")
+            shop_name.update()
+        
+        purchase_place.on_change = on_purchase_change
+        
+        invoice_number = ft.TextField(label="شماره فاکتور", width=350)
+        serial_number = ft.TextField(label="شماره سریال محصول", width=350)
         
         def submit(e):
             if not check_mobile(phone.value):
@@ -2030,7 +2039,10 @@ def main(page: ft.Page):
                 invoice_number, serial_number,
                 
                 ft.FilledButton("ثبت نهایی گارانتی", width=350, on_click=submit)
-            ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            ], 
+            scroll=ft.ScrollMode.AUTO, 
+            spacing=15, 
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             padding=20
         )
     def technical_page():
