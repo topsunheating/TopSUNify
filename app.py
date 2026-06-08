@@ -1941,17 +1941,25 @@ def main(page: ft.Page):
             id_str = str(id_str).strip()
             if len(id_str) != 10 or not id_str.isdigit():
                 return False
-            check = int(id_str[-1])
-            s = sum(int(id_str[i]) * (10 - i) for i in range(9)) % 11
-            return (s < 2 and check == s) or (s >= 2 and check == 11 - s)
+            digits = [int(d) for d in id_str]
+            check_digit = digits[9]
+            weighted_sum = sum(digits[i] * (10 - i) for i in range(9))
+            remainder = weighted_sum % 11
+            
+            calculated_check = remainder if remainder < 2 else 11 - remainder
+            
+            return check_digit == calculated_check
         def format_national_id(e):
             text = national_id.value.replace("-", "")
             if len(text) > 10:
                 text = text[:10]
-            if len(text) > 3:
-                formatted = text[:3] + "-" + text[3:9] + "-" + text[9:] if len(text) == 10 else text
+            if len(text) > 9:
+                formatted = f"{text[:3]}-{text[3:9]}-{text[9]}"
                 national_id.value = formatted
-            national_id.update()
+            elif len(text) > 3:
+                formatted = f"{text[:3]}-{text[3:]}"
+                national_id.value = formatted
+            national_id.update()         
         
         def check_mobile(phone):
             phone = str(phone).strip()
