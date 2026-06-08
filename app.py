@@ -2051,27 +2051,43 @@ def main(page: ft.Page):
 
             # ==================== reCAPTCHA (شبیه‌سازی) ====================
             recaptcha_checkbox = ft.Checkbox(label="من ربات نیستم (reCAPTCHA)", value=False)
-                
+                        
         return ft.Container(
-            content=ft.Column([
-                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(2)),
-                        ft.Text("ثبت گارانتی", size=20, weight="bold")]),
-                ft.Divider(),
-                
-                name, father_name, phone,
-                
-                ft.Text("تاریخ تولد", weight="bold", size=16, text_align=ft.TextAlign.RIGHT),
-                ft.Row([birth_year, birth_month, birth_day], spacing=8),
-                
-                national_id, national_status, id_number,
+        content=ft.Column([
+            ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(2)),
+                    ft.Text("ثبت گارانتی", size=22, weight="bold")]),
 
-                ft.Text("تاریخ خرید", weight="bold", size=16, text_align=ft.TextAlign.RIGHT),
-                ft.Row([purchase_year, purchase_month, purchase_day], spacing=8),
+            ft.Divider(),
+            name, father_name, phone,
+
+            ft.Text("تاریخ تولد شمسی", weight="bold", size=16, text_align=ft.TextAlign.RIGHT),
+            ft.Row([birth_year, birth_month, birth_day], spacing=8),
+
+            national_id, national_status, id_number,
+
+            ft.Text("تاریخ خرید شمسی", weight="bold", size=16, text_align=ft.TextAlign.RIGHT),
+            ft.Row([purchase_year, purchase_month, purchase_day], spacing=8),
+
+            province_dropdown, city_dropdown,
+            address, postal_code,
+
+            purchase_place, shop_name,
+            invoice_number, serial_number,
+
+            ft.Divider(),
+            ft.Text("آپلود مدارک", size=18, weight="bold"),
+            upload_buttons,
+            checklist,
+
+            ft.Divider(),
+            ft.Text("شرایط و ضوابط گارانتی", size=18, weight="bold"),
+            terms_text,
+            agree_checkbox,
                 
-                province_dropdown, city_dropdown, 
-                address, postal_code,
-                purchase_place, shop_name,
-                invoice_number, serial_number,
+                ft.FilledButton("ثبت نهایی گارانتی", width=350, on_click=submit)
+            ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER), padding=20
+        )
+                
     # ==================== متغیرهای آپلود ====================
         uploaded_files = {
             "product_photo": None, "wide_photo": None, "video": None, "invoice": None, "serial_photo": None
@@ -2128,55 +2144,8 @@ def main(page: ft.Page):
             ft.ElevatedButton("🔢 عکس شماره سریال", on_click=lambda e: pick_file("serial_photo")),
         ], spacing=8)
 
-    # ==================== ارسال ====================
-    def submit(e):
-        if not agree_checkbox.value:
-            page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً با شرایط و ضوابط موافقت کنید"), bgcolor="red"))
-            return
-
-        # چک اجباری بودن فایل‌ها (اختیاری - می‌توانید کامنت کنید)
-        if not all(uploaded_files.values()):
-            page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تمام فایل‌های مورد نیاز را آپلود کنید"), bgcolor="orange"))
-            return
-
-        page.show_snack_bar(ft.SnackBar(ft.Text("ثبت گارانتی با موفقیت انجام شد ✅"), bgcolor="green"))
-
-    # ==================== صفحه نهایی ====================
-    return ft.Container(
-        content=ft.Column([
-            ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(2)),
-                    ft.Text("ثبت گارانتی", size=22, weight="bold")]),
-
-            ft.Divider(),
-            name, father_name, phone,
-
-            ft.Text("تاریخ تولد شمسی", weight="bold", size=16, text_align=ft.TextAlign.RIGHT),
-            ft.Row([birth_year, birth_month, birth_day], spacing=8),
-
-            national_id, national_status, id_number,
-
-            ft.Text("تاریخ خرید شمسی", weight="bold", size=16, text_align=ft.TextAlign.RIGHT),
-            ft.Row([purchase_year, purchase_month, purchase_day], spacing=8),
-
-            province_dropdown, city_dropdown,
-            address, postal_code,
-
-            purchase_place, shop_name,
-            invoice_number, serial_number,
-
-            ft.Divider(),
-            ft.Text("آپلود مدارک", size=18, weight="bold"),
-            upload_buttons,
-            checklist,
-
-            ft.Divider(),
-            ft.Text("شرایط و ضوابط گارانتی", size=18, weight="bold"),
-            terms_text,
-            agree_checkbox,
-                
-                ft.FilledButton("ثبت نهایی گارانتی", width=350, on_click=submit)
-            ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER), padding=20
-        )
+    # ==================== اطلاعات فنی ====================
+    
     def technical_page():
         return ft.Container(content=ft.Column([ft.Container(content=ft.Text("اطلاعات فنی", size=18, weight="bold", text_align=ft.TextAlign.CENTER), padding=20, margin=ft.margin.Margin(bottom=15)), ft.Container(content=ft.Column([ft.ListTile(leading=ft.Icon(ft.Icons.BOOK, color="blue"), title=ft.Text("کاتالوگ محصولات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.PRICE_CHANGE, color="green"), title=ft.Text("لیست قیمت"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.WORK_HISTORY, color="purple"), title=ft.Text("رزومه شرکت"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.DESCRIPTION, color="orange"), title=ft.Text("پروپوزال و گزارش فنی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.IMAGE, color="pink"), title=ft.Text("تصاویر و فیلم پروژه‌ها"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.VIDEO_LIBRARY, color="red"), title=ft.Text("فیلم‌های تبلیغاتی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20))], spacing=2), width=380)], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
 
