@@ -2316,11 +2316,11 @@ def main(page: ft.Page):
                                     color="white",
                                     on_click=lambda e, u=item["url"]: download_file(u)
                                 )
-                            ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+                            ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN, vertical_alignment=ft.CrossAxisAlignment.CENTER),
                             padding=15,
-                            border=ft.border.all(1, "#dddddd"),
+                            border=ft.border.all(1, "#e0e0e0"),
                             border_radius=10,
-                            margin=ft.margin.only(bottom=10)
+                            margin=ft.margin.only(bottom=12)
                         )
                     )
                 return ft.Container(
@@ -2332,10 +2332,18 @@ def main(page: ft.Page):
                         ft.Divider(),
                         ft.Text("فایل‌های قابل دانلود", size=18, weight="bold"),
                         *items,
-                        ft.Text("نکته: لینک‌های بالا را با آدرس واقعی فایل‌های خودتان جایگزین کنید.", 
-                                size=13, color="grey", text_align=ft.TextAlign.CENTER)
-                    ], scroll=ft.ScrollMode.AUTO, spacing=10),
-                    padding=20
+                        ft.Text(
+                            "نکته: لینک‌های بالا را با آدرس واقعی فایل‌های خودتان جایگزین کنید.", 
+                            size=13,
+                            color="grey",
+                            text_align=ft.TextAlign.CENTER
+                        )
+                    ], 
+                    scroll=ft.ScrollMode.AUTO,
+                    spacing=10),
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+                    padding=20,
+                    expand=True
                 ) 
     def settings_page():
         return ft.Container(content=ft.Column([ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("تنظیمات", size=24, weight="bold")]), padding=15, bgcolor="#f8f9fa", border_radius=20, margin=ft.margin.Margin(bottom=20)), ft.Column([ft.ListTile(leading=ft.Icon(ft.Icons.PERSON), title=ft.Text("تغییر نام کاربری"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.SAVE), title=ft.Text("ذخیره نام کاربری"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.FINGERPRINT), title=ft.Text("ورود با اثر انگشت"), trailing=ft.Switch(value=False)), ft.ListTile(leading=ft.Icon(ft.Icons.LOCK), title=ft.Text("تغییر رمز ورود"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.PHONE), title=ft.Text("تغییر شماره تلفن همراه"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.DEVICES), title=ft.Text("دستگاه‌های فعال"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.Divider(height=20), ft.ListTile(leading=ft.Icon(ft.Icons.DELETE_FOREVER, color="red"), title=ft.Text("حذف تنظیمات و خروج از نرم‌افزار", color="red"), on_click=lambda e: (setattr(page.session, 'logged_in', False), render()))], spacing=2, horizontal_alignment=ft.CrossAxisAlignment.CENTER)]), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
