@@ -1801,7 +1801,7 @@ def main(page: ft.Page):
                 stair_deicing_dwg_page(),       # 30
                 stair_deicing_manual_page(),    # 31
                 stair_deicing_direct_page(),     # 32
-                catalog_page(page: ft.Page, render_callback) #33
+                catalog_page(page:ft.Page, render_callback) #33
             
             ]
 
@@ -2251,7 +2251,7 @@ def main(page: ft.Page):
                     
                     )], spacing=2), width=380)], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
 
-    def catalog_page(page: ft.Page, render_callback):
+    def catalog_page(page:ft.Page, render_callback):
     catalog_items = [
         {
             "title": "کاتالوگ کامل محصولات تاپسان ۱۴۰۴",
