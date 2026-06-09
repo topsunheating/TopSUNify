@@ -1800,7 +1800,8 @@ def main(page: ft.Page):
                 stair_deicing_page(),     # 29
                 stair_deicing_dwg_page(),       # 30
                 stair_deicing_manual_page(),    # 31
-                stair_deicing_direct_page()     # 32
+                stair_deicing_direct_page(),     # 32
+                catalog_page(page: ft.Page, render_callback) #33
             
             ]
 
@@ -2207,8 +2208,117 @@ def main(page: ft.Page):
             padding=20
         )
     def technical_page():
-        return ft.Container(content=ft.Column([ft.Container(content=ft.Text("اطلاعات فنی", size=18, weight="bold", text_align=ft.TextAlign.CENTER), padding=20, margin=ft.margin.Margin(bottom=15)), ft.Container(content=ft.Column([ft.ListTile(leading=ft.Icon(ft.Icons.BOOK, color="blue"), title=ft.Text("کاتالوگ محصولات"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.PRICE_CHANGE, color="green"), title=ft.Text("لیست قیمت"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.WORK_HISTORY, color="purple"), title=ft.Text("رزومه شرکت"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.DESCRIPTION, color="orange"), title=ft.Text("پروپوزال و گزارش فنی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.IMAGE, color="pink"), title=ft.Text("تصاویر و فیلم پروژه‌ها"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.VIDEO_LIBRARY, color="red"), title=ft.Text("فیلم‌های تبلیغاتی"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20))], spacing=2), width=380)], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
+        return ft.Container(content=ft.Column([
+            ft.Container(
+                content=ft.Text("اطلاعات فنی", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
+                padding=20,
+                margin=ft.margin.Margin(bottom=15)
+            ),
+            ft.Container(
+                content=ft.Column([
+                    ft.ListTile(
+                        leading=ft.Icon(ft.Icons.BOOK, color="blue"),
+                        title=ft.Text("کاتالوگ محصولات", weight="bold"),
+                        subtitle=ft.Text("دانلود کاتالوگ کامل و مشخصات فنی", size=13, color="grey"),
+                        trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
+                        on_click=lambda e: render(33),   # رفتن به صفحه کاتالوگ
+                        padding=ft.padding.symmetric(vertical=12)
+                    ),
+                    ft.ListTile(
+                        leading=ft.Icon(ft.Icons.PRICE_CHANGE, color="green"),
+                        title=ft.Text("لیست قیمت"),
+                        trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                    ), 
+                    ft.ListTile(
+                        leading=ft.Icon(ft.Icons.WORK_HISTORY, color="purple"),
+                        title=ft.Text("رزومه شرکت"),
+                        trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                    ), 
+                    ft.ListTile(
+                        leading=ft.Icon(ft.Icons.DESCRIPTION, color="orange"),
+                        title=ft.Text("پروپوزال و گزارش فنی"),
+                        trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                    ), 
+                    ft.ListTile(
+                        leading=ft.Icon(ft.Icons.IMAGE, color="pink"),
+                        title=ft.Text("تصاویر و فیلم پروژه‌ها"),
+                        trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                    ), 
+                    ft.ListTile(
+                        leading=ft.Icon(ft.Icons.VIDEO_LIBRARY, color="red"),
+                        title=ft.Text("فیلم‌های تبلیغاتی"),
+                        trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                    
+                    )], spacing=2), width=380)], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
 
+    def catalog_page(page: ft.Page, render_callback):
+    catalog_items = [
+        {
+            "title": "کاتالوگ کامل محصولات تاپسان ۱۴۰۴",
+            "file_name": "catalog_topsun_1404.pdf",
+            "url": "https://yourdomain.com/files/catalog_topsun_1404.pdf",   # لینک واقعی فایل
+            "size": "۴.۸ مگابایت"
+        },
+        {
+            "title": "مشخصات فنی فیلم گرمایشی ۸۰ سانت",
+            "file_name": "tech_spec_80cm.pdf",
+            "url": "https://yourdomain.com/files/tech_spec_80cm.pdf",
+            "size": "۱.۲ مگابایت"
+        },
+        {
+            "title": "مشخصات فنی فیلم گرمایشی ۴۰ سانت",
+            "file_name": "tech_spec_40cm.pdf",
+            "url": "https://yourdomain.com/files/tech_spec_40cm.pdf",
+            "size": "۱.۱ مگابایت"
+        },
+        {
+            "title": "راهنمای نصب و کاربری",
+            "file_name": "installation_guide.pdf",
+            "url": "https://yourdomain.com/files/installation_guide.pdf",
+            "size": "۲.۳ مگابایت"
+        },
+    ]
+
+    def download_file(url):
+        page.launch_url(url)   # باز کردن لینک دانلود در مرورگر
+
+    items = []
+    for item in catalog_items:
+        items.append(
+            ft.Container(
+                content=ft.Row([
+                    ft.Icon(ft.Icons.PICTURE_AS_PDF, color="red", size=40),
+                    ft.Column([
+                        ft.Text(item["title"], weight="bold", size=15),
+                        ft.Text(f"حجم: {item['size']}", size=12, color="grey"),
+                    ], spacing=2, expand=True),
+                    ft.ElevatedButton(
+                        "دانلود",
+                        icon=ft.Icons.DOWNLOAD,
+                        bgcolor="#1565C0",
+                        color="white",
+                        on_click=lambda e, u=item["url"]: download_file(u)
+                    )
+                ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+                padding=15,
+                border=ft.border.all(1, "#dddddd"),
+                border_radius=10,
+                margin=ft.margin.only(bottom=10)
+            )
+        )
+
+    return ft.Container(
+        content=ft.Column([
+            ft.Row([
+                ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(2)),
+                ft.Text("کاتالوگ و اطلاعات فنی", size=22, weight="bold")
+            ]),
+            ft.Divider(),
+            ft.Text("فایل‌های قابل دانلود", size=18, weight="bold"),
+            *items
+        ], scroll=ft.ScrollMode.AUTO, spacing=10),
+        padding=20
+    )
     def settings_page():
         return ft.Container(content=ft.Column([ft.Container(content=ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(4)), ft.Text("تنظیمات", size=24, weight="bold")]), padding=15, bgcolor="#f8f9fa", border_radius=20, margin=ft.margin.Margin(bottom=20)), ft.Column([ft.ListTile(leading=ft.Icon(ft.Icons.PERSON), title=ft.Text("تغییر نام کاربری"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.SAVE), title=ft.Text("ذخیره نام کاربری"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.FINGERPRINT), title=ft.Text("ورود با اثر انگشت"), trailing=ft.Switch(value=False)), ft.ListTile(leading=ft.Icon(ft.Icons.LOCK), title=ft.Text("تغییر رمز ورود"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.PHONE), title=ft.Text("تغییر شماره تلفن همراه"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.ListTile(leading=ft.Icon(ft.Icons.DEVICES), title=ft.Text("دستگاه‌های فعال"), trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)), ft.Divider(height=20), ft.ListTile(leading=ft.Icon(ft.Icons.DELETE_FOREVER, color="red"), title=ft.Text("حذف تنظیمات و خروج از نرم‌افزار", color="red"), on_click=lambda e: (setattr(page.session, 'logged_in', False), render()))], spacing=2, horizontal_alignment=ft.CrossAxisAlignment.CENTER)]), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
 
