@@ -2096,7 +2096,9 @@ def main(page: ft.Page):
             "3- مسئولیت اطمینان از نصب صحیح توسط افراد واجد صلاحیت بر عهده خریدار می‌باشد.\n"
             "4- شرکت تاپسان در صورت تشخیص عدم رعایت شرایط فنی یا استفاده غیرمجاز از محصول، مجاز به عدم پذیرش درخواست گارانتی خواهد بود.\n"
             "5- ثبت این تأییدیه به منزله اطلاع کامل و پذیرش بی‌قید و شرط کلیه مقررات خدمات پس از فروش و گارانتی محصولات تاپسان است.",
-            size=13
+            size=13,
+            text_align=ft.TextAlign.JUSTIFY,
+            width=350
         )
         
         agree_checkbox = ft.Checkbox(label="من با شرایط و ضوابط گارانتی موافقم", value=False)
@@ -2175,12 +2177,12 @@ def main(page: ft.Page):
                 name, father_name, phone,
                     
                 ft.Text("تاریخ تولد", weight="bold", size=16, text_align=ft.TextAlign.RIGHT),
-                ft.Row([birth_year, birth_month, birth_day], spacing=8),
+                ft.Row([birth_year, birth_month, birth_day], spacing=8, alignment=ft.MainAxisAlignment.CENTER),
                     
                 national_id, national_status, id_number,
                     
                 ft.Text("تاریخ خرید", weight="bold", size=16, text_align=ft.TextAlign.RIGHT),
-                ft.Row([purchase_year, purchase_month, purchase_day], spacing=8),
+                ft.Row([purchase_year, purchase_month, purchase_day], spacing=8, alignment=ft.MainAxisAlignment.CENTER),
                     
                 province_dropdown, city_dropdown,
                 address, postal_code,
