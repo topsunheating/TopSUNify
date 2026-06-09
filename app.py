@@ -1768,40 +1768,40 @@ def main(page: ft.Page):
             )
         else:
             contents = [
-                dashboard_page(),           # 0
-                pre_invoice_page(),         # 1
-                home_page(),                # 2
-                technical_page(),           # 3
-                profile_page(),             # 4
-                settings_page(),            # 5
-                account_request_page(),     # 6
-                selected_customers_page(),  # 7
-                inventory_page(),           # 8
-                colleagues_page(),          # 9
-                purchase_request_page(),    # 10
-                commission_page(),          # 11
-                credit_page(),              # 12
-                theme_page(),               # 13
-                update_page(),              # 14
-                network_page(),             # 15
-                rules_page(),               # 16
-                about_page(),               # 17
-                floor_heating_page(),       # 18
-                floor_dwg_upload_page(),    # 19  ← آپلود فایل
-                floor_manual_invoice_page(),# 20  ← زیرفرشی
-                direct_values_page(),       # 21  ← مقادیر مستقیم
+                dashboard_page(),               # 0
+                pre_invoice_page(),             # 1
+                home_page(),                    # 2
+                technical_page(),               # 3
+                profile_page(),                 # 4
+                settings_page(),                # 5
+                account_request_page(),         # 6
+                selected_customers_page(),      # 7
+                inventory_page(),               # 8
+                colleagues_page(),              # 9
+                purchase_request_page(),        # 10
+                commission_page(),              # 11
+                credit_page(),                  # 12
+                theme_page(),                   # 13
+                update_page(),                  # 14
+                network_page(),                 # 15
+                rules_page(),                   # 16
+                about_page(),                   # 17
+                floor_heating_page(),           # 18
+                floor_dwg_upload_page(),        # 19  ← آپلود فایل
+                floor_manual_invoice_page(),    # 20  ← زیرفرشی
+                direct_values_page(),           # 21  ← مقادیر مستقیم
                 radiator_manual_invoice_page(), # 22
-                warranty_page(page, render), # 23
-                floor_room_dimensions_page(),  # 24
-                ramp_deicing_page(),        # 25
+                warranty_page(page, render),    # 23
+                floor_room_dimensions_page(),   # 24
+                ramp_deicing_page(),            # 25
                 ramp_deicing_dwg_page(),        # 26
                 ramp_deicing_manual_page(),     # 27
                 ramp_deicing_direct_page(),     # 28
-                stair_deicing_page(),     # 29
+                stair_deicing_page(),           # 29
                 stair_deicing_dwg_page(),       # 30
                 stair_deicing_manual_page(),    # 31
-                stair_deicing_direct_page(),     # 32
-                catalog_page(page:ft.Page, render_callback) #33
+                stair_deicing_direct_page(),    # 32
+                catalog_page(page, render)      # 33
             
             ]
 
@@ -2251,7 +2251,7 @@ def main(page: ft.Page):
                     
                     )], spacing=2), width=380)], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
 
-    def catalog_page(page:ft.Page, render_callback):
+    def catalog_page(page: ft.Page, render_callback):
     catalog_items = [
         {
             "title": "کاتالوگ کامل محصولات تاپسان ۱۴۰۴",
