@@ -1992,12 +1992,12 @@ def main(page: ft.Page):
             
         birth_year = ft.Dropdown(label="سال تولد", width=110, options=[ft.dropdown.Option(y) for y in years], value="1370")
         birth_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="فروردین")
-        birth_day = ft.Dropdown(label="روز", width=100, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="1")
+        birth_day = ft.Dropdown(label="روز", width=90, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="1")
 
         # تاریخ خرید شمسی
         purchase_year = ft.Dropdown(label="سال خرید", width=110, options=[ft.dropdown.Option(y) for y in years], value="1403")
         purchase_month = ft.Dropdown(label="ماه", width=130, options=[ft.dropdown.Option(m) for m in months], value="خرداد")
-        purchase_day = ft.Dropdown(label="روز", width=100, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="15")
+        purchase_day = ft.Dropdown(label="روز", width=90, options=[ft.dropdown.Option(str(d)) for d in range(1, 32)], value="15")
     
         # کد ملی با اعتبارسنجی واقعی
         national_id = ft.TextField(
