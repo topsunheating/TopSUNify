@@ -2265,32 +2265,40 @@ def main(page: ft.Page):
         catalog_items = [
             {
                 "title": "کاتالوگ کامل محصولات تاپسان ۱۴۰۴",
+                "file_name": "catalog_topsun_1404.pdf",
                 "url": "https://yourdomain.com/files/catalog_topsun_1404.pdf",
                 "size": "۴.۸ مگابایت"
             },
             {
                 "title": "مشخصات فنی فیلم گرمایشی ۸۰ سانت",
+                "file_name": "tech_spec_80cm.pdf",
                 "url": "https://yourdomain.com/files/tech_spec_80cm.pdf",
                 "size": "۱.۲ مگابایت"
             },
             {
                 "title": "مشخصات فنی فیلم گرمایشی ۴۰ سانت",
+                "file_name": "tech_spec_40cm.pdf",
                 "url": "https://yourdomain.com/files/tech_spec_40cm.pdf",
                 "size": "۱.۱ مگابایت"
             },
             {
                 "title": "راهنمای نصب و کاربری",
+                "file_name": "installation_guide.pdf",
                 "url": "https://yourdomain.com/files/installation_guide.pdf",
                 "size": "۲.۳ مگابایت"
             },
         ]
         
         def download_file(url):
-            page.snack_bar = ft.SnackBar(
-                content=ft.Text("لطفاً لینک واقعی فایل‌ها را جایگزین کنید!"),
-                bgcolor="orange"
-            )
-            page.update()               
+            if "yourdomain.com" in url:
+                page.snack_bar = ft.SnackBar(
+                    content=ft.Text("لطفاً لینک واقعی فایل‌ها را جایگزین کنید!"),
+                    bgcolor="orange"
+                )
+                page.update()
+            else:
+                page.launch_url(url)
+                
         items = []
         for item in catalog_items:
             items.append(
@@ -2308,9 +2316,9 @@ def main(page: ft.Page):
                             color="white",
                             on_click=lambda e, u=item["url"]: download_file(u)
                         )
-                    ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+                    ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN, vertical_alignment=ft.CrossAxisAlignment.CENTER),
                     padding=15,
-                    # border=ft.border.all(1, "#e0e0e0"),   # کامنت شده برای جلوگیری از خطا                    
+                    border=ft.border.all(1, "#e0e0e0"),
                     border_radius=10,
                     margin=ft.margin.only(bottom=12)
                 )
