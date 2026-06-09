@@ -2104,42 +2104,66 @@ def main(page: ft.Page):
             
         def submit(e):
             if not check_mobile(phone.value):
-                page.snack_bar(ft.SnackBar(ft.Text("شماره موبایل باید ۱۱ رقم و با ۰۹ شروع شود!"), bgcolor="red"))
+                page.snack_bar = ft.SnackBar(
+                    content=ft.Text("شماره موبایل باید ۱۱ رقم و با ۰۹ شروع شود!"),
+                    bgcolor="red"
+                )
                 page.update()
                 return
                     
             if not birth_year.value:
-                page.snack_bar(ft.SnackBar(ft.Text("لطفاً تاریخ تولد را انتخاب کنید")))
+                page.snack_bar = ft.SnackBar(
+                    content=ft.Text("لطفاً تاریخ تولد را انتخاب کنید"),
+                    bgcolor="red"
+                )
                 page.update()
                 return
 
-            if not check_national_id(national_id.value):
-                page.snack_bar(ft.SnackBar(ft.Text("کد ملی نامعتبر است!"), bgcolor="red"))
+            if not check_national_id(national_id.value.replace("-", "")):
+                page.snack_bar = ft.SnackBar(
+                    content=ft.Text("کد ملی نامعتبر است!"),
+                    bgcolor="red"
+                )
                 page.update()
                 return
             
             if len(str(postal_code.value).strip()) != 10:
-                page.snack_bar(ft.SnackBar(ft.Text("کد پستی باید دقیقاً ۱۰ رقم باشد!"), bgcolor="red"))
+                page.snack_bar(ft.SnackBar(
+                    content=ft.Text("کد پستی باید دقیقاً ۱۰ رقم باشد!"),
+                    bgcolor="red"
+                )
                 page.update()
                 return
 
             if not agree_checkbox.value:
-                page.snack_bar(ft.SnackBar(ft.Text("لطفاً با شرایط و ضوابط موافقت کنید"), bgcolor="red"))
+                page.snack_bar(ft.SnackBar(
+                    content=ft.Text("لطفاً با شرایط و ضوابط موافقت کنید"),
+                    bgcolor="red"
+                )
                 page.update()
                 return
             
             if not recaptcha_checkbox.value:
-                page.show_snack_bar(ft.SnackBar(ft.Text("لطفاً تأیید کنید که ربات نیستید"), bgcolor="red"))
+                page.show_snack_bar(ft.SnackBar(
+                    content=ft.Text("لطفاً تأیید کنید که ربات نیستید"),
+                    bgcolor="red"
+                )
                 page.update()
                 return
                 
             if not all(uploaded_files.values()):
-                page.snack_bar(ft.SnackBar(ft.Text("لطفاً تمام فایل‌های مورد نیاز را آپلود کنید"), bgcolor="orange"))
+                page.snack_bar(ft.SnackBar(
+                    content=ft.Text("لطفاً تمام فایل‌های مورد نیاز را آپلود کنید"),
+                    bgcolor="orange"
+                )
                 page.update()
                 return
             
             # ثبت موفق
-            page.snack = ft.SnackBar(ft.Text("ثبت گارانتی با موفقیت انجام شد ✅"), bgcolor="green")
+            page.snack = ft.SnackBar(
+                content=ft.Text("ثبت گارانتی با موفقیت انجام شد ✅"),
+                bgcolor="green"
+            )
             page.update()
                             
         return ft.Container(
