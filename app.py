@@ -2128,7 +2128,7 @@ def main(page: ft.Page):
                 return
             
             if len(str(postal_code.value).strip()) != 10:
-                page.snack_bar(ft.SnackBar(
+                page.snack_bar = ft.SnackBar(
                     content=ft.Text("کد پستی باید دقیقاً ۱۰ رقم باشد!"),
                     bgcolor="red"
                 )
