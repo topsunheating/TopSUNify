@@ -2136,7 +2136,7 @@ def main(page: ft.Page):
                 return
 
             if not agree_checkbox.value:
-                page.snack_bar(ft.SnackBar(
+                page.snack_bar = ft.SnackBar(
                     content=ft.Text("لطفاً با شرایط و ضوابط موافقت کنید"),
                     bgcolor="red"
                 )
@@ -2144,7 +2144,7 @@ def main(page: ft.Page):
                 return
             
             if not recaptcha_checkbox.value:
-                page.show_snack_bar(ft.SnackBar(
+                page.show_snack_bar = ft.SnackBar(
                     content=ft.Text("لطفاً تأیید کنید که ربات نیستید"),
                     bgcolor="red"
                 )
@@ -2152,7 +2152,7 @@ def main(page: ft.Page):
                 return
                 
             if not all(uploaded_files.values()):
-                page.snack_bar(ft.SnackBar(
+                page.snack_bar = ft.SnackBar(
                     content=ft.Text("لطفاً تمام فایل‌های مورد نیاز را آپلود کنید"),
                     bgcolor="orange"
                 )
