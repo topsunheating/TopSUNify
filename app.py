@@ -2222,7 +2222,6 @@ def main(page: ft.Page):
                         subtitle=ft.Text("دانلود کاتالوگ کامل و مشخصات فنی", size=13, color="grey"),
                         trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
                         on_click=lambda e: render(33),   # رفتن به صفحه کاتالوگ
-                        padding=12
                     ),
                     ft.ListTile(
                         leading=ft.Icon(ft.Icons.PRICE_CHANGE, color="green"),
@@ -2249,7 +2248,18 @@ def main(page: ft.Page):
                         title=ft.Text("فیلم‌های تبلیغاتی"),
                         trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
                     
-                    )], spacing=2), width=380)], scroll=ft.ScrollMode.AUTO, horizontal_alignment=ft.CrossAxisAlignment.CENTER), width=400, margin=ft.margin.Margin(left=15, right=15), expand=True)
+                    )
+                ], spacing=2),
+                width=380
+            )
+        ], 
+        scroll=ft.ScrollMode.AUTO,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+        width=400,
+        margin=ft.margin.Margin(left=15, right=15),
+        expand=True,
+        padding=10
+    )
 
     def catalog_page(page: ft.Page, render_callback):
         catalog_items = [
