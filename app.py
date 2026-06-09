@@ -2256,7 +2256,7 @@ def main(page: ft.Page):
         {
             "title": "کاتالوگ کامل محصولات تاپسان ۱۴۰۴",
             "file_name": "catalog_topsun_1404.pdf",
-            "url": "https://yourdomain.com/files/catalog_topsun_1404.pdf",   # لینک واقعی فایل
+            "url": "https://yourdomain.com/files/catalog_topsun_1404.pdf",  
             "size": "۴.۸ مگابایت"
         },
         {
@@ -2280,7 +2280,14 @@ def main(page: ft.Page):
     ]
 
     def download_file(url):
-        page.launch_url(url)   # باز کردن لینک دانلود در مرورگر
+        if url.startswith("https://yourdomain.com"):
+            page.snack_bar = ft.SnackBar(
+                content=ft.Text("لطفاً لینک واقعی فایل را جایگزین کنید!"),
+                bgcolor="orange"
+            )
+            page.update()
+        else:
+            page.launch_url(url)
 
     items = []
     for item in catalog_items:
@@ -2310,12 +2317,14 @@ def main(page: ft.Page):
     return ft.Container(
         content=ft.Column([
             ft.Row([
-                ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(2)),
+                ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(3)),  # بازگشت به technical_page
                 ft.Text("کاتالوگ و اطلاعات فنی", size=22, weight="bold")
             ]),
             ft.Divider(),
             ft.Text("فایل‌های قابل دانلود", size=18, weight="bold"),
-            *items
+            *items,
+            ft.Text("نکته: لینک‌های بالا را با آدرس واقعی فایل‌های خودتان جایگزین کنید.", 
+                   size=13, color="grey", text_align=ft.TextAlign.CENTER)
         ], scroll=ft.ScrollMode.AUTO, spacing=10),
         padding=20
     )
