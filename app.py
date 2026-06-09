@@ -2147,7 +2147,6 @@ def main(page: ft.Page):
             
             # ثبت موفق
             snack = ft.SnackBar(ft.Text("ثبت گارانتی با موفقیت انجام شد ✅"), bgcolor="green")
-            page.snack_bar = snack
             page.update()
                             
         return ft.Container(
