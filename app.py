@@ -1485,7 +1485,7 @@ def main(page: ft.Page):
             width=400, expand=True, padding=15
         )    # ==================== صفحه محصولات رستورانی (بهبود یافته) ====================
     def restaurant_products_page():
-        selected_items = []
+        invoice_items = []
 
         # ==================== باکس حمل موتوری ====================
         motor_box_switch = ft.Switch(label="باکس حمل موتوری (۵ مدل)", value=False)
@@ -1571,6 +1571,12 @@ def main(page: ft.Page):
             shipping_cost.visible = shipping_switch.value
             other_cost.visible = other_switch.value
             custom_size.visible = custom_bag_checkbox.value
+            page.update()
+            
+        def calculate_total(e):
+            show_message("جمع کل محاسبه شد", "blue")
+            # فعلاً فقط پیام نمایش می‌دهد (بعداً منطق کامل اضافه می‌کنیم)
+            total_text.value = "جمع کل: ۰ تومان (در حال توسعه)"
             page.update()
 
         def add_to_list(e):
