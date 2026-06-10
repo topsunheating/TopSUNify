@@ -1548,20 +1548,22 @@ def main(page: ft.Page):
         other_switch = ft.Switch(label="سایر هزینه‌ها", value=False)
         other_cost = ft.TextField(label="مبلغ سایر (تومان)", value="0", visible=False, keyboard_type=ft.KeyboardType.NUMBER)
 
-        # ==================== جدول ====================
+                # ==================== جدول ====================
         items_table = ft.DataTable(
             columns=[
-                ft.DataColumn(ft.Text("شرح کالا")),
-                ft.DataColumn(ft.Text("جزئیات")),
-                ft.DataColumn(ft.Text("مبلغ")),
-                ft.DataColumn(ft.Text("حذف"))
+                ft.DataColumn(ft.Text("شرح کالا", text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("جزئیات", text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("مبلغ (تومان)", text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("حذف", text_align=ft.TextAlign.CENTER)),
             ],
             rows=[],
-            width=380
+            width=380,
+            heading_row_height=45,
+            data_row_height=50
         )
 
         total_text = ft.Text("جمع کل: ۰ تومان", size=20, weight="bold", color="green")
-
+        
         def update_visibility(e):
             heater_qty.visible = heater_switch.value
             insulation_area.visible = insulation_switch.value
@@ -1573,7 +1575,7 @@ def main(page: ft.Page):
             custom_size.visible = custom_bag_checkbox.value
             page.update()
 
-        def add_to_list(e):
+                def add_to_list(e):
             added = False
 
             # باکس حمل موتوری
@@ -1599,59 +1601,60 @@ def main(page: ft.Page):
                         added = True
 
             # کیف سفارشی
-            if custom_bag_checkbox.value and custom_size.value:
+            if custom_bag_checkbox.value and custom_size.value.strip():
                 invoice_items.append({"desc": "کیف سفارشی", "detail": custom_size.value, "price": 1500000})
                 added = True
 
-            # عایق و سایر
+            # عایق، استیکر، طراحی، کلیشه، هزینه‌ها (مانند قبل)
             if insulation_switch.value:
                 area = float(insulation_area.value or 0)
-                invoice_items.append({"desc": "عایق مخصوص", "detail": f"{area} مترمربع", "price": int(area * 185000)})
-                added = True
+                if area > 0:
+                    invoice_items.append({"desc": "عایق مخصوص", "detail": f"{area} مترمربع", "price": int(area * 185000)})
+                    added = True
 
             if sticker_switch.value and int(sticker_qty.value or 0) > 0:
                 qty = int(sticker_qty.value)
-                invoice_items.append({"desc": "استیکر", "detail": f"تعداد {qty}", "price": qty * 45000})
+                invoice_items.append({"desc": "استیکر", "detail": f"×{qty}", "price": qty * 45000})
                 added = True
 
             if design_switch.value and int(design_qty.value or 0) > 0:
                 qty = int(design_qty.value)
-                invoice_items.append({"desc": "طراحی استیکر", "detail": f"تعداد {qty}", "price": qty * 350000})
+                invoice_items.append({"desc": "طراحی استیکر", "detail": f"×{qty}", "price": qty * 350000})
                 added = True
 
             if cliche_switch.value and int(cliche_qty.value or 0) > 0:
                 qty = int(cliche_qty.value)
-                invoice_items.append({"desc": "کلیشه", "detail": f"تعداد {qty}", "price": qty * 850000})
+                invoice_items.append({"desc": "کلیشه", "detail": f"×{qty}", "price": qty * 850000})
                 added = True
 
-            if shipping_switch.value:
-                invoice_items.append({"desc": "هزینه حمل", "detail": "", "price": int(shipping_cost.value or 0)})
+            if shipping_switch.value and int(shipping_cost.value or 0) > 0:
+                invoice_items.append({"desc": "هزینه حمل", "detail": "", "price": int(shipping_cost.value)})
                 added = True
 
-            if other_switch.value:
-                invoice_items.append({"desc": "سایر هزینه‌ها", "detail": "", "price": int(other_cost.value or 0)})
+            if other_switch.value and int(other_cost.value or 0) > 0:
+                invoice_items.append({"desc": "سایر هزینه‌ها", "detail": "", "price": int(other_cost.value)})
                 added = True
 
             if added:
                 refresh_table()
-                show_message("به لیست اضافه شد", "green")
+                show_message("به لیست اضافه شد ✅", "green")
             else:
                 show_message("هیچ موردی انتخاب نشده است", "orange")
-
+                
         def refresh_table():
             items_table.rows.clear()
             grand_total = 0
 
-            for item in invoice_items:
-                def make_delete_handler(idx):
-                    return lambda _: remove_item(idx)
+            for idx, item in enumerate(invoice_items):
+                def make_delete_handler(i=idx):
+                    return lambda _: remove_item(i)
 
                 items_table.rows.append(
                     ft.DataRow(cells=[
-                        ft.DataCell(ft.Text(item["desc"])),
-                        ft.DataCell(ft.Text(item["detail"])),
-                        ft.DataCell(ft.Text(f"{item['price']:,}")),
-                        ft.DataCell(ft.IconButton(icon=ft.Icons.DELETE, on_click=make_delete_handler(len(items_table.rows))))
+                        ft.DataCell(ft.Text(item["desc"], text_align=ft.TextAlign.RIGHT)),
+                        ft.DataCell(ft.Text(item["detail"], text_align=ft.TextAlign.RIGHT)),
+                        ft.DataCell(ft.Text(f"{item['price']:,}", text_align=ft.TextAlign.RIGHT)),
+                        ft.DataCell(ft.IconButton(icon=ft.Icons.DELETE, on_click=make_delete_handler()))
                     ])
                 )
                 grand_total += item["price"]
