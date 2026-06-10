@@ -1574,14 +1574,11 @@ def main(page: ft.Page):
             page.update()
 
        def add_to_list(e):
-            total = 0
-            # اینجا می‌توانی منطق افزودن همه انتخاب‌ها رو پیاده کنی (برای سادگی فعلاً دستی اضافه می‌کنیم)
-            # بعداً کامل‌تر می‌کنیم
             show_message("به لیست اضافه شد", "green")
-            # مثال: یک ردیف نمونه اضافه کن (بعداً واقعی می‌کنیم)
+            # فعلاً یک ردیف نمونه (بعداً هوشمند می‌کنیم)
             items_table.rows.append(
                 ft.DataRow(cells=[
-                    ft.DataCell(ft.Text("باکس ۵۰ لیتری")),
+                    ft.DataCell(ft.Text("باکس نمونه")),
                     ft.DataCell(ft.Text("مشکی")),
                     ft.DataCell(ft.Text("950,000")),
                     ft.DataCell(ft.IconButton(icon=ft.Icons.DELETE, on_click=lambda _: remove_item(len(items_table.rows)-1)))
