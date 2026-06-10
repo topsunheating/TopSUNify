@@ -1575,15 +1575,21 @@ def main(page: ft.Page):
             custom_size.visible = custom_bag_checkbox.value
             page.update()
 
-                def add_to_list(e):
-            added = False
+       def add_to_list(e):
+           added = False
 
             # باکس حمل موتوری
             if motor_box_switch.value:
                 for cb, (name, price) in zip(motor_checkboxes, motor_boxes):
                     if cb.value:
                         details = f"{motor_color_body.value} / {motor_color_door.value}"
-                        invoice_items.append({"desc": f"باکس {name}", "detail": details, "price": price})
+                        # نام کوتاه و تمیز
+                        short_name = name.replace("باکس ", "").replace("پلاس", "پلاس")
+                        invoice_items.append({
+                            "desc": f"باکس {short_name}", 
+                            "detail": details, 
+                            "price": price
+                        })
                         added = True
 
             # گرمکن باکس
@@ -1651,10 +1657,10 @@ def main(page: ft.Page):
 
                 items_table.rows.append(
                     ft.DataRow(cells=[
-                        ft.DataCell(ft.Text(item["desc"], text_align=ft.TextAlign.RIGHT)),
-                        ft.DataCell(ft.Text(item["detail"], text_align=ft.TextAlign.RIGHT)),
-                        ft.DataCell(ft.Text(f"{item['price']:,}", text_align=ft.TextAlign.RIGHT)),
-                        ft.DataCell(ft.IconButton(icon=ft.Icons.DELETE, on_click=make_delete_handler()))
+                        ft.DataCell(ft.Text(item["desc"], size=13, text_align=ft.TextAlign.RIGHT)),
+                        ft.DataCell(ft.Text(item["detail"], size=12, text_align=ft.TextAlign.RIGHT)),
+                        ft.DataCell(ft.Text(f"{item['price']:,}", size=13, text_align=ft.TextAlign.RIGHT)),
+                        ft.DataCell(ft.IconButton(icon=ft.Icons.DELETE, size=12, on_click=make_delete_handler()))
                     ])
                 )
                 grand_total += item["price"]
