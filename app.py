@@ -1621,8 +1621,8 @@ def main(page: ft.Page):
 
                 # بخش باکس حمل موتوری
                 motor_box_switch,
-                ft.Row([motor_color_body, motor_color_door], alignment=ft.MainAxisAlignment.CENTER),
-                ft.Column(motor_checkboxes, spacing=5),
+                ft.Row([motor_color_body, motor_color_door], alignment=ft.MainAxisAlignment.END),
+                ft.Column(motor_checkboxes, spacing=5, horizontal_alignment=ft.CrossAxisAlignment.END),
                 ft.Divider(height=10),
 
                 # بخش گرمکن
@@ -1633,7 +1633,7 @@ def main(page: ft.Page):
                 # بخش کیف حمل غذا
                 food_bag_switch,
                 food_color,
-                ft.Column(food_checkboxes, spacing=5),
+                ft.Column(food_checkboxes, spacing=5, horizontal_alignment=ft.CrossAxisAlignment.END),
                 ft.Divider(height=10),
 
                 # بخش عایق
@@ -1662,7 +1662,7 @@ def main(page: ft.Page):
 
                 ft.FilledButton("صدور پیش‌فاکتور PDF", width=350, bgcolor="green", color="white",
                                on_click=lambda e: show_message("پیش‌فاکتور محصولات رستورانی با موفقیت صادر شد", "green"))
-            ], scroll=ft.ScrollMode.AUTO, spacing=12, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            ], horizontal_alignment=ft.CrossAxisAlignment.END, spacing=12, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400, expand=True, padding=15
         )
     # ==================== صفحات اضافی ====================
