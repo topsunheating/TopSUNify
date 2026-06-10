@@ -1619,52 +1619,59 @@ def main(page: ft.Page):
                        ft.Text("محصولات رستورانی", size=22, weight="bold")]),
                 ft.Divider(),
 
-                # بخش باکس حمل موتوری
-                motor_box_switch,
-                ft.Row([motor_color_body, motor_color_door], alignment=ft.MainAxisAlignment.END),
-                ft.Column(motor_checkboxes, spacing=5, horizontal_alignment=ft.CrossAxisAlignment.END),
-                ft.Divider(height=10),
+                ft.Column([
+                    # بخش باکس حمل موتوری
+                    motor_box_switch,
+                    ft.Row([motor_color_body, motor_color_door], alignment=ft.MainAxisAlignment.END),
+                    ft.Column(motor_checkboxes, spacing=5, horizontal_alignment=ft.CrossAxisAlignment.END),
+                    ft.Divider(height=10),
+                    
+                    # بخش گرمکن
+                    heater_switch,
+                    heater_qty,
+                    ft.Divider(height=10),
+                    
+                    # بخش کیف حمل غذا
+                    food_bag_switch,
+                    food_color,
+                    ft.Column(food_checkboxes, spacing=5, horizontal_alignment=ft.CrossAxisAlignment.END),
+                    ft.Divider(height=10),
 
-                # بخش گرمکن
-                heater_switch,
-                heater_qty,
-                ft.Divider(height=10),
+                    # بخش عایق
+                    insulation_switch,
+                    insulation_area,
+                    ft.Divider(height=10),
 
-                # بخش کیف حمل غذا
-                food_bag_switch,
-                food_color,
-                ft.Column(food_checkboxes, spacing=5, horizontal_alignment=ft.CrossAxisAlignment.END),
-                ft.Divider(height=10),
+                    # بخش استیکر و طراحی
+                    sticker_switch,
+                    sticker_qty,
+                    design_switch,
+                    design_qty,
+                    cliche_switch,
+                    cliche_qty,
+                    ft.Divider(height=10),
 
-                # بخش عایق
-                insulation_switch,
-                insulation_area,
-                ft.Divider(height=10),
-
-                # بخش استیکر و طراحی
-                sticker_switch,
-                sticker_qty,
-                design_switch,
-                design_qty,
-                cliche_switch,
-                cliche_qty,
-                ft.Divider(height=10),
-
-                # هزینه‌های اضافی
-                shipping_switch,
-                shipping_cost,
-                other_switch,
-                other_cost,
+                    # هزینه‌های اضافی
+                    shipping_switch,
+                    shipping_cost,
+                    other_switch,
+                    other_cost,
+                ], 
+                horizontal_alignment=ft.CrossAxisAlignment.END,   # ← راست‌چین کردن همه گزینه‌ها
+                spacing=12),
 
                 ft.Divider(height=30),
                 ft.FilledButton("محاسبه جمع کل", width=350, bgcolor="#1565C0", color="white", on_click=calculate_total),
                 total_text,
-
                 ft.FilledButton("صدور پیش‌فاکتور PDF", width=350, bgcolor="green", color="white",
                                on_click=lambda e: show_message("پیش‌فاکتور محصولات رستورانی با موفقیت صادر شد", "green"))
             ],
-            horizontal_alignment=ft.CrossAxisAlignment.END, spacing=12, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-            width=400, expand=True, padding=15
+            scroll=ft.ScrollMode.AUTO, 
+            spacing=8, 
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER),   # ← هدر و دکمه‌ها وسط بمانند
+            width=400, 
+            expand=True, 
+            padding=15
         )
     # ==================== صفحات اضافی ====================
     def account_request_page():
