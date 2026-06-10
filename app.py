@@ -2319,7 +2319,7 @@ def main(page: ft.Page):
                     ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN, vertical_alignment=ft.CrossAxisAlignment.CENTER),
                     padding=15,
                     border_radius=10,
-                    margin=ft.margin.only(bottom=12)
+                    margin=10
                 )
             )
         return ft.Container(
