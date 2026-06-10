@@ -1489,10 +1489,10 @@ def main(page: ft.Page):
 
         # ==================== باکس حمل موتوری ====================
         motor_box_switch = ft.Switch(label="باکس حمل موتوری (۵ مدل)", value=False)
-        motor_color_body = ft.Dropdown(label="رنگ بدنه", width=120, options=[
+        motor_color_body = ft.Dropdown(label="رنگ بدنه", width=150, options=[
             ft.dropdown.Option("سفید"), ft.dropdown.Option("مشکی"), 
             ft.dropdown.Option("نقره‌ای"), ft.dropdown.Option("سفارشی")], value="سفید")
-        motor_color_door = ft.Dropdown(label="رنگ درب", width=120, options=[
+        motor_color_door = ft.Dropdown(label="رنگ درب", width=150, options=[
             ft.dropdown.Option("قرمز"), ft.dropdown.Option("آبی"), 
             ft.dropdown.Option("زرد"), ft.dropdown.Option("سفید")], value="قرمز")
 
@@ -1623,7 +1623,7 @@ def main(page: ft.Page):
                     # بخش باکس حمل موتوری
                     motor_box_switch,
                     ft.Row([motor_color_body, motor_color_door], alignment=ft.MainAxisAlignment.END),
-                    ft.Column(motor_checkboxes, spacing=5, horizontal_alignment=ft.CrossAxisAlignment.END),
+                    ft.Column(motor_checkboxes, spacing=5, horizontal_alignment=ft.CrossAxisAlignment.START),
                     ft.Divider(height=10),
                     
                     # بخش گرمکن
@@ -1634,7 +1634,7 @@ def main(page: ft.Page):
                     # بخش کیف حمل غذا
                     food_bag_switch,
                     food_color,
-                    ft.Column(food_checkboxes, spacing=5, horizontal_alignment=ft.CrossAxisAlignment.END),
+                    ft.Column(food_checkboxes, spacing=5, horizontal_alignment=ft.CrossAxisAlignment.START),
                     ft.Divider(height=10),
 
                     # بخش عایق
@@ -1657,7 +1657,7 @@ def main(page: ft.Page):
                     other_switch,
                     other_cost,
                 ], 
-                horizontal_alignment=ft.CrossAxisAlignment.END,   # ← راست‌چین کردن همه گزینه‌ها
+                horizontal_alignment=ft.CrossAxisAlignment.START,   # ← راست‌چین کردن همه گزینه‌ها
                 spacing=12),
 
                 ft.Divider(height=30),
