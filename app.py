@@ -2369,21 +2369,21 @@ def main(page: ft.Page):
                 "url": "https://yourdomain.com/files/price_underfloor.pdf",
                 "size": "۲.۳ مگابایت"
             },
-    ]
-    def download_file(url):
-        if "yourdomain.com" in url:
-            page.snack_bar = ft.SnackBar(
-                content=ft.Text("لطفاً لینک واقعی فایل‌ها را جایگزین کنید!"),
-                bgcolor="orange"
-            )
-        else:
-            page.launch_url(url)
-        page.update()
-    items = []
-    for item in price_items:
-        items.append(
-            ft.Container(
-                content=ft.Row([
+        ]
+        def download_file(url):
+            if "yourdomain.com" in url:
+                page.snack_bar = ft.SnackBar(
+                    content=ft.Text("لطفاً لینک واقعی فایل‌ها را جایگزین کنید!"),
+                    bgcolor="orange"
+                )
+                page.update()
+            else:
+                page.launch_url(url)
+        items = []
+        for item in price_items:
+            items.append(
+                ft.Container(
+                    content=ft.Row([
                     ft.Icon(ft.Icons.PICTURE_AS_PDF, color="red", size=40),
                     ft.Column([
                         ft.Text(item["title"], weight="bold", size=15),
