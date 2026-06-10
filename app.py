@@ -1583,6 +1583,13 @@ def main(page: ft.Page):
                 for cb, (name, price) in zip(motor_checkboxes, motor_boxes):
                     if cb.value:
                         details = f"{motor_color_body.value} / {motor_color_door.value}"
+                        # نام کوتاه و تمیز
+                        short_name = name.replace("باکس ", "").replace("پلاس", "پلاس")
+                        invoice_items.append({
+                            "desc": f"باکس {short_name}", 
+                            "detail": details, 
+                            "price": price
+                        })
                         added = True
 
             # گرمکن باکس
