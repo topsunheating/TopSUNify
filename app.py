@@ -2318,7 +2318,6 @@ def main(page: ft.Page):
                         )
                     ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN, vertical_alignment=ft.CrossAxisAlignment.CENTER),
                     padding=15,
-                    border=ft.border.all(1, "#e0e0e0"),
                     border_radius=10,
                     margin=ft.margin.only(bottom=12)
                 )
