@@ -2018,7 +2018,7 @@ def main(page: ft.Page):
             ("یخ زدایی پله", lambda e: render(29)),
             ("گرمکن مخزن", lambda e: show_message("به زودی فعال می‌شود", "blue")),
             ("گرمکن صندلی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
-            ("رستورانی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+            ("رستورانی", lambda e: render(35)),
             ("عایق بازتابشی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
         ]
         
