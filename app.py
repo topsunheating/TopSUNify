@@ -2393,19 +2393,22 @@ def main(page: ft.Page):
                                 ft.Text(item["title"], weight="bold", size=15),
                                 ft.Text(item["unit"], size=12, color="grey"),
                             ], spacing=2, expand=True),
-                            ft.ElevatedButton(
-                                "دانلود",
-                                icon=ft.Icons.DOWNLOAD,
-                                bgcolor="#1565C0",
-                                color="white",
-                                height=35,
-                                on_click=lambda e, u=item["url"]: download_file(u)
-                            )
+                            ft.Column([
+                                ft.Text(item["price"], size=16, weight="bold", color="#d32f2f"),
+                                ft.ElevatedButton(
+                                    "دانلود",
+                                    icon=ft.Icons.DOWNLOAD,
+                                    bgcolor="#1565C0",
+                                    color="white",
+                                    height=35,
+                                    on_click=lambda e, u=item["url"]: download_file(u)
+                                )
+                            ], horizontal_alignment=ft.CrossAxisAlignment.END, spacing=5)
                         ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
                         padding=15,
-                        # border=ft.border.all(1, "#e0e0e0"),   # کامنت شده برای جلوگیری از خطا
                         border_radius=10,
-                        margin=ft.margin.only(bottom=12),
+                        margin=12,
+                        bgcolor="#f8f9fa"
                     )
                 )
             return ft.Container(
@@ -2415,16 +2418,16 @@ def main(page: ft.Page):
                         ft.Text("لیست قیمت محصولات", size=22, weight="bold")
                     ]),
                     ft.Divider(),
-                    ft.Text("قیمت‌های به‌روز تاپسان - خرداد ۱۴۰۴", size=16, weight="bold", color="#1565C0"),
+                    ft.Text("قیمت‌های به‌روز تاپسان - خرداد ۱۴۰۴", 
+                            size=16, weight="bold", color="#1565C0"),
                     *items,
+                    
                     ft.Text(
-                        "لینک‌ها هنوز placeholder هستند.\nلطفاً لینک‌های واقعی را جایگزین کنید.",
-                        size=13, 
-                        color="grey", 
-                        text_align=ft.TextAlign.CENTER
+                            "لینک‌ها هنوز placeholder هستند.\nلطفاً لینک‌های واقعی را جایگزین کنید.",
+                            size=13, color="grey", text_align=ft.TextAlign.CENTER
                     )
                     ft.Text("⚠️ قیمت‌ها ممکن است تغییر کند.\nبرای استعلام دقیق با واحد فروش تماس بگیرید.", 
-                   size=13, color="grey", text_align=ft.TextAlign.CENTER)
+                            size=13, color="grey", text_align=ft.TextAlign.CENTER)
                 ],
                 scroll=ft.ScrollMode.AUTO, 
                 spacing=15,
