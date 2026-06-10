@@ -1483,14 +1483,19 @@ def main(page: ft.Page):
                 total_text
             ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400, expand=True, padding=15
-        )
-    # ==================== صفحه محصولات رستورانی (همه گزینه‌ها فعال‌شونده) ====================
+        )    # ==================== صفحه محصولات رستورانی (بهبود یافته) ====================
     def restaurant_products_page():
-        # متغیرهای محلی برای محاسبات
         selected_items = []
 
         # ==================== باکس حمل موتوری ====================
         motor_box_switch = ft.Switch(label="باکس حمل موتوری (۵ مدل)", value=False)
+        motor_color_body = ft.Dropdown(label="رنگ بدنه", width=300, options=[
+            ft.dropdown.Option("سفید"), ft.dropdown.Option("مشکی"), 
+            ft.dropdown.Option("نقره‌ای"), ft.dropdown.Option("سفارشی")], value="سفید")
+        motor_color_door = ft.Dropdown(label="رنگ درب", width=300, options=[
+            ft.dropdown.Option("قرمز"), ft.dropdown.Option("آبی"), 
+            ft.dropdown.Option("زرد"), ft.dropdown.Option("سفید")], value="قرمز")
+
         motor_boxes = [
             ("باکس ۴۰ لیتری", 850000),
             ("باکس ۵۰ لیتری", 950000),
@@ -1502,10 +1507,14 @@ def main(page: ft.Page):
 
         # ==================== گرمکن باکس ====================
         heater_switch = ft.Switch(label="گرمکن باکس", value=False)
-        heater_qty = ft.TextField(label="تعداد گرمکن باکس", value="1", width=200, keyboard_type=ft.KeyboardType.NUMBER, visible=False)
+        heater_qty = ft.TextField(label="تعداد", value="1", width=200, keyboard_type=ft.KeyboardType.NUMBER, visible=False)
 
         # ==================== کیف حمل غذا ====================
         food_bag_switch = ft.Switch(label="کیف حمل غذا (۴ مدل)", value=False)
+        food_color = ft.Dropdown(label="رنگ کیف", width=300, options=[
+            ft.dropdown.Option("مشکی"), ft.dropdown.Option("قرمز"), 
+            ft.dropdown.Option("آبی"), ft.dropdown.Option("سبز")], value="مشکی")
+
         food_bags = [
             ("کیف کوچک", 450000),
             ("کیف متوسط", 650000),
@@ -1528,6 +1537,13 @@ def main(page: ft.Page):
         cliche_switch = ft.Switch(label="ساخت کلیشه", value=False)
         cliche_qty = ft.TextField(label="تعداد کلیشه", value="0", visible=False, width=200, keyboard_type=ft.KeyboardType.NUMBER)
 
+        # ==================== هزینه‌های اضافی ====================
+        shipping_switch = ft.Switch(label="هزینه حمل", value=False)
+        shipping_cost = ft.TextField(label="مبلغ هزینه حمل (تومان)", value="0", visible=False, width=300, keyboard_type=ft.KeyboardType.NUMBER)
+
+        other_switch = ft.Switch(label="سایر هزینه‌ها", value=False)
+        other_cost = ft.TextField(label="مبلغ سایر هزینه‌ها (تومان)", value="0", visible=False, width=300, keyboard_type=ft.KeyboardType.NUMBER)
+
         total_text = ft.Text("جمع کل: ۰ تومان", size=20, weight="bold", color="green")
 
         def update_visibility(e):
@@ -1536,6 +1552,8 @@ def main(page: ft.Page):
             sticker_qty.visible = sticker_switch.value
             design_qty.visible = design_switch.value
             cliche_qty.visible = cliche_switch.value
+            shipping_cost.visible = shipping_switch.value
+            other_cost.visible = other_switch.value
             page.update()
 
         def calculate_total(e):
@@ -1547,7 +1565,7 @@ def main(page: ft.Page):
                 for cb, (_, price) in zip(motor_checkboxes, motor_boxes):
                     if cb.value:
                         total += price
-                        selected_items.append(f"{cb.label} - {price:,} تومان")
+                        selected_items.append(f"{cb.label} ({motor_color_body.value} / {motor_color_door.value}) - {price:,} تومان")
 
             # گرمکن باکس
             if heater_switch.value:
@@ -1561,7 +1579,7 @@ def main(page: ft.Page):
                 for cb, (_, price) in zip(food_checkboxes, food_bags):
                     if cb.value:
                         total += price
-                        selected_items.append(f"{cb.label} - {price:,} تومان")
+                        selected_items.append(f"{cb.label} ({food_color.value}) - {price:,} تومان")
 
             # عایق
             if insulation_switch.value:
@@ -1570,7 +1588,7 @@ def main(page: ft.Page):
                 total += price
                 selected_items.append(f"عایق × {area} مترمربع - {price:,} تومان")
 
-            # استیکر و طراحی
+            # استیکر و طراحی و کلیشه
             if sticker_switch.value:
                 qty = int(sticker_qty.value or 0)
                 total += qty * 45000
@@ -1581,46 +1599,70 @@ def main(page: ft.Page):
                 qty = int(cliche_qty.value or 0)
                 total += qty * 850000
 
+            # هزینه حمل و سایر
+            if shipping_switch.value:
+                total += int(shipping_cost.value or 0)
+            if other_switch.value:
+                total += int(other_cost.value or 0)
+
             total_text.value = f"جمع کل: {total:,} تومان"
             page.update()
 
-        # اتصال سوئیچ‌ها به تابع نمایش
-        for sw in [motor_box_switch, heater_switch, food_bag_switch, insulation_switch, sticker_switch, design_switch, cliche_switch]:
+        # اتصال سوئیچ‌ها
+        for sw in [motor_box_switch, heater_switch, food_bag_switch, insulation_switch,
+                   sticker_switch, design_switch, cliche_switch, shipping_switch, other_switch]:
             sw.on_change = update_visibility
 
         return ft.Container(
             content=ft.Column([
-                ft.Row([
-                    ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
-                    ft.Text("محصولات رستورانی", size=22, weight="bold")
-                ]),
+                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
+                       ft.Text("محصولات رستورانی", size=22, weight="bold")]),
                 ft.Divider(),
 
+                # بخش باکس حمل موتوری
                 motor_box_switch,
-                ft.Column(motor_checkboxes, visible=True, spacing=5),
+                ft.Row([motor_color_body, motor_color_door], alignment=ft.MainAxisAlignment.CENTER),
+                ft.Column(motor_checkboxes, spacing=5),
+                ft.Divider(height=10),
 
+                # بخش گرمکن
                 heater_switch,
                 heater_qty,
+                ft.Divider(height=10),
 
+                # بخش کیف حمل غذا
                 food_bag_switch,
-                ft.Column(food_checkboxes, visible=True, spacing=5),
+                food_color,
+                ft.Column(food_checkboxes, spacing=5),
+                ft.Divider(height=10),
 
+                # بخش عایق
                 insulation_switch,
                 insulation_area,
+                ft.Divider(height=10),
 
+                # بخش استیکر و طراحی
                 sticker_switch,
                 sticker_qty,
                 design_switch,
                 design_qty,
                 cliche_switch,
                 cliche_qty,
+                ft.Divider(height=10),
+
+                # هزینه‌های اضافی
+                shipping_switch,
+                shipping_cost,
+                other_switch,
+                other_cost,
 
                 ft.Divider(height=30),
-                ft.FilledButton("محاسبه جمع کل", width=350, bgcolor="#1565C0", on_click=calculate_total),
+                ft.FilledButton("محاسبه جمع کل", width=350, bgcolor="#1565C0", color="white", on_click=calculate_total),
                 total_text,
-                ft.FilledButton("صدور پیش‌فاکتور PDF", width=350, bgcolor="green", color="white", 
-                               on_click=lambda e: show_message("پیش‌فاکتور محصولات رستورانی صادر شد", "green"))
-            ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+
+                ft.FilledButton("صدور پیش‌فاکتور PDF", width=350, bgcolor="green", color="white",
+                               on_click=lambda e: show_message("پیش‌فاکتور محصولات رستورانی با موفقیت صادر شد", "green"))
+            ], scroll=ft.ScrollMode.AUTO, spacing=12, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400, expand=True, padding=15
         )
     # ==================== صفحات اضافی ====================
