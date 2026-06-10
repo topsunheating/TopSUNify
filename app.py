@@ -2227,8 +2227,8 @@ def main(page: ft.Page):
                     ft.ListTile(
                         leading=ft.Icon(ft.Icons.PRICE_CHANGE, color="green"),
                         title=ft.Text("لیست قیمت", weight="bold"),
-                        subtitle=ft.Text("دانلود لیست قیمت محصولات", size=13, color="grey")
-                        trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20)
+                        subtitle=ft.Text("دانلود لیست قیمت محصولات تاپسان", size=13, color="grey"),
+                        trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
                         on_click=lambda e: render(34),
                     ), 
                     ft.ListTile(
