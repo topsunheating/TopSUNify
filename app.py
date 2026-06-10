@@ -1657,9 +1657,9 @@ def main(page: ft.Page):
 
                 items_table.rows.append(
                     ft.DataRow(cells=[
-                        ft.DataCell(ft.Text(item["desc"], size=13, text_align=ft.TextAlign.RIGHT)),
-                        ft.DataCell(ft.Text(item["detail"], size=12, text_align=ft.TextAlign.RIGHT)),
-                        ft.DataCell(ft.Text(f"{item['price']:,}", size=13, text_align=ft.TextAlign.RIGHT)),
+                        ft.DataCell(ft.Text(item["desc"], size=12, text_align=ft.TextAlign.RIGHT)),
+                        ft.DataCell(ft.Text(item["detail"], size=11, text_align=ft.TextAlign.RIGHT)),
+                        ft.DataCell(ft.Text(f"{item['price']:,}", size=12, text_align=ft.TextAlign.RIGHT)),
                         ft.DataCell(ft.IconButton(icon=ft.Icons.DELETE, on_click=make_delete_handler()))
                     ])
                 )
