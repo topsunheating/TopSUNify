@@ -1489,10 +1489,10 @@ def main(page: ft.Page):
 
         # ==================== باکس حمل موتوری ====================
         motor_box_switch = ft.Switch(label="باکس حمل موتوری (۵ مدل)", value=False)
-        motor_color_body = ft.Dropdown(label="رنگ بدنه", width=300, options=[
+        motor_color_body = ft.Dropdown(label="رنگ بدنه", width=120, options=[
             ft.dropdown.Option("سفید"), ft.dropdown.Option("مشکی"), 
             ft.dropdown.Option("نقره‌ای"), ft.dropdown.Option("سفارشی")], value="سفید")
-        motor_color_door = ft.Dropdown(label="رنگ درب", width=300, options=[
+        motor_color_door = ft.Dropdown(label="رنگ درب", width=120, options=[
             ft.dropdown.Option("قرمز"), ft.dropdown.Option("آبی"), 
             ft.dropdown.Option("زرد"), ft.dropdown.Option("سفید")], value="قرمز")
 
@@ -1662,7 +1662,8 @@ def main(page: ft.Page):
 
                 ft.FilledButton("صدور پیش‌فاکتور PDF", width=350, bgcolor="green", color="white",
                                on_click=lambda e: show_message("پیش‌فاکتور محصولات رستورانی با موفقیت صادر شد", "green"))
-            ], horizontal_alignment=ft.CrossAxisAlignment.END, spacing=12, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            ],
+            horizontal_alignment=ft.CrossAxisAlignment.END, spacing=12, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400, expand=True, padding=15
         )
     # ==================== صفحات اضافی ====================
