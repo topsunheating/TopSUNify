@@ -1548,14 +1548,13 @@ def main(page: ft.Page):
         other_cost = ft.TextField(label="مبلغ سایر هزینه‌ها (تومان)", value="0", visible=False, width=300, keyboard_type=ft.KeyboardType.NUMBER)
 
         total_text = ft.Text("جمع کل: ۰ تومان", size=20, weight="bold", color="green")
-
-        # لیست نمایش کالاها
+        # ==================== جدول لیست اقلام ====================
         items_table = ft.DataTable(
             columns=[
                 ft.DataColumn(ft.Text("شرح کالا")),
                 ft.DataColumn(ft.Text("جزئیات")),
                 ft.DataColumn(ft.Text("مبلغ")),
-                ft.DataColumn(ft.Text("عملیات"))
+                ft.DataColumn(ft.Text("حذف"))
             ],
             rows=[],
             width=380
@@ -1571,9 +1570,10 @@ def main(page: ft.Page):
             cliche_qty.visible = cliche_switch.value
             shipping_cost.visible = shipping_switch.value
             other_cost.visible = other_switch.value
+            custom_size.visible = custom_bag_checkbox.value
             page.update()
 
-       def add_to_list(e):
+        def add_to_list(e):
             show_message("به لیست اضافه شد", "green")
             # فعلاً یک ردیف نمونه (بعداً هوشمند می‌کنیم)
             items_table.rows.append(
@@ -1596,6 +1596,7 @@ def main(page: ft.Page):
                    sticker_switch, design_switch, cliche_switch, shipping_switch, other_switch]:
             sw.on_change = update_visibility
         custom_bag_checkbox.on_change = update_visibility
+        
         return ft.Container(
             content=ft.Column([
                 ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
