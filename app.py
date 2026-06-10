@@ -2372,9 +2372,9 @@ def main(page: ft.Page):
                 "file_name": "installation_guide.pdf",
                 "url": "https://yourdomain.com/files/installation_guide.pdf",
                 "size": "۲.۳ مگابایت"
-            },
+           },
         ]
-        
+                                              
         def download_file(url):
             if "yourdomain.com" in url:
                 page.snack_bar = ft.SnackBar(
