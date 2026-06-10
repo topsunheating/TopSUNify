@@ -1536,7 +1536,7 @@ def main(page: ft.Page):
 
         return ft.Container(
             content=ft.Column([
-                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(30)), ft.Text("باکس حمل موتوری", size=20, weight="bold")]),
+                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(29)), ft.Text("باکس حمل موتوری", size=20, weight="bold")]),
                 ft.Divider(),
                 checklist,
                 ft.FilledButton("محاسبه قیمت", width=350, bgcolor="#1565C0", on_click=calculate),
@@ -1584,7 +1584,7 @@ def main(page: ft.Page):
 
         return ft.Container(
             content=ft.Column([
-                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(30)), ft.Text("کیف حمل غذا", size=20, weight="bold")]),
+                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(29)), ft.Text("کیف حمل غذا", size=20, weight="bold")]),
                 ft.Divider(),
                 checklist,
                 ft.FilledButton("محاسبه قیمت", width=350, bgcolor="#1565C0", on_click=calculate),
@@ -1612,7 +1612,7 @@ def main(page: ft.Page):
 
         return ft.Container(
             content=ft.Column([
-                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(30)), ft.Text("خدمات جانبی رستورانی", size=20, weight="bold")]),
+                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(29)), ft.Text("خدمات جانبی رستورانی", size=20, weight="bold")]),
                 ft.Divider(),
                 insulation_area, sticker_qty,
                 design_switch, stamp_switch,
@@ -1621,8 +1621,6 @@ def main(page: ft.Page):
             ], spacing=15),
             width=400, expand=True, padding=15
         )
-        
-        
     # ==================== صفحات اضافی ====================
     def account_request_page():
         return ft.Container(
