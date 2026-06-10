@@ -1573,9 +1573,9 @@ def main(page: ft.Page):
             shipping_cost.visible = shipping_switch.value
             other_cost.visible = other_switch.value
             custom_size.visible = custom_bag_checkbox.value
-            page.update()
-
-               def add_to_list(e):
+            page.update()        
+            
+        def add_to_list(e):
             added = False
 
             # باکس حمل موتوری
@@ -1583,39 +1583,33 @@ def main(page: ft.Page):
                 for cb, (name, price) in zip(motor_checkboxes, motor_boxes):
                     if cb.value:
                         details = f"{motor_color_body.value} / {motor_color_door.value}"
-                        # نام کوتاه و تمیز
-                        short_name = name.replace("باکس ", "").replace("پلاس", "پلاس")
-                        invoice_items.append({
-                            "desc": f"باکس {short_name}", 
-                            "detail": details, 
-                            "price": price
-                        })
+                        invoice_items.append({"desc": f"باکس {name}", "detail": details, "price": price})
                         added = True
 
             # گرمکن باکس
             if heater_switch.value:
                 qty = int(heater_qty.value or 1)
                 price = qty * 2450000
-                invoice_items.append({"desc": "گرمکن باکس", "detail": f"×{qty}", "price": price})
+                invoice_items.append({"desc": "گرمکن باکس", "detail": f"تعداد {qty}", "price": price})
                 added = True
 
             # کیف حمل غذا
             if food_bag_switch.value:
                 for cb, (name, price) in zip(food_checkboxes, food_bags):
                     if cb.value:
-                        invoice_items.append({"desc": name[:25], "detail": food_color.value, "price": price})  # کوتاه کردن نام
+                        invoice_items.append({"desc": f"کیف {name}", "detail": food_color.value, "price": price})
                         added = True
 
             # کیف سفارشی
             if custom_bag_checkbox.value and custom_size.value.strip():
-                invoice_items.append({"desc": "کیف سفارشی", "detail": custom_size.value[:20], "price": 1500000})
+                invoice_items.append({"desc": "کیف سفارشی", "detail": custom_size.value, "price": 1500000})
                 added = True
 
-            # بقیه موارد (عایق، استیکر، ...) بدون تغییر
+            # عایق، استیکر، طراحی، کلیشه، هزینه‌ها (مانند قبل)
             if insulation_switch.value:
                 area = float(insulation_area.value or 0)
                 if area > 0:
-                    invoice_items.append({"desc": "عایق مخصوص", "detail": f"{area} م²", "price": int(area * 185000)})
+                    invoice_items.append({"desc": "عایق مخصوص", "detail": f"{area} مترمربع", "price": int(area * 185000)})
                     added = True
 
             if sticker_switch.value and int(sticker_qty.value or 0) > 0:
