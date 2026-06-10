@@ -2222,14 +2222,14 @@ def main(page: ft.Page):
                         title=ft.Text("کاتالوگ محصولات", weight="bold"),
                         subtitle=ft.Text("دانلود کاتالوگ کامل و مشخصات فنی", size=13, color="grey"),
                         trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
-                        on_click=lambda e: render(33),   # رفتن به صفحه کاتالوگ
+                        on_click=lambda e: render(33)   # رفتن به صفحه کاتالوگ
                     ),
                     ft.ListTile(
                         leading=ft.Icon(ft.Icons.PRICE_CHANGE, color="green"),
                         title=ft.Text("لیست قیمت", weight="bold"),
                         subtitle=ft.Text("دانلود لیست قیمت محصولات تاپسان", size=13, color="grey"),
                         trailing=ft.Icon(ft.Icons.ARROW_FORWARD_IOS, size=20),
-                        on_click=lambda e: render(34),
+                        on_click=lambda e: render(34)
                     ), 
                     ft.ListTile(
                         leading=ft.Icon(ft.Icons.WORK_HISTORY, color="purple"),
