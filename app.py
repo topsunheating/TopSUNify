@@ -1495,13 +1495,14 @@ def main(page: ft.Page):
             ("باکس صندوقی", 1150000),
             ("باکس مربعی پلاس 70", 1350000),
             ("باکس مربعی پلاس - 2 درب", 1650000),
+        ]
         motor_color_body = ft.Dropdown(label="رنگ بدنه", width=160, options=[
             ft.dropdown.Option("مشکی"), ft.dropdown.Option("قرمز"), 
             ft.dropdown.Option("زرد"), ft.dropdown.Option("سفارشی")], value="مشکی")
         motor_color_door = ft.Dropdown(label="رنگ درب", width=160, options=[
             ft.dropdown.Option("مشکی"), ft.dropdown.Option("قرمز"), 
             ft.dropdown.Option("زرد"), ft.dropdown.Option("سبز")], value="مشکی")        
-        ]
+
         motor_checkboxes = [ft.Checkbox(label=name, value=False) for name, _ in motor_boxes]
 
         # ==================== گرمکن باکس ====================
@@ -1515,10 +1516,11 @@ def main(page: ft.Page):
             ("کیف سایز 37×37 ارتفاع 30 سانت", 650000),
             ("کیف سایز 40×40 ارتفاع 25 سانت", 850000),
             ("کیف سایز 50", 1250000),
+        ]
         food_color = ft.Dropdown(label="رنگ کیف", width=330, options=[
             ft.dropdown.Option("مشکی"), ft.dropdown.Option("قرمز"), 
             ft.dropdown.Option("آبی"), ft.dropdown.Option("سبز")], value="مشکی")        
-        ]
+        
         food_checkboxes = [ft.Checkbox(label=name, value=False) for name, _ in food_bags]
         # کیف سفارشی
         custom_bag_checkbox = ft.Checkbox(label="کیف سفارشی", value=False)
