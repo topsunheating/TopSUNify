@@ -1548,7 +1548,7 @@ def main(page: ft.Page):
         other_switch = ft.Switch(label="سایر هزینه‌ها", value=False)
         other_cost = ft.TextField(label="مبلغ سایر (تومان)", value="0", visible=False, keyboard_type=ft.KeyboardType.NUMBER)
 
-                # ==================== جدول ====================
+        # ==================== جدول ====================
         items_table = ft.DataTable(
             columns=[
                 ft.DataColumn(ft.Text("شرح کالا", text_align=ft.TextAlign.RIGHT)),
@@ -1564,17 +1564,6 @@ def main(page: ft.Page):
 
         total_text = ft.Text("جمع کل: ۰ تومان", size=20, weight="bold", color="green")
         
-        def update_visibility(e):
-            heater_qty.visible = heater_switch.value
-            insulation_area.visible = insulation_switch.value
-            sticker_qty.visible = sticker_switch.value
-            design_qty.visible = design_switch.value
-            cliche_qty.visible = cliche_switch.value
-            shipping_cost.visible = shipping_switch.value
-            other_cost.visible = other_switch.value
-            custom_size.visible = custom_bag_checkbox.value
-            page.update()        
-            
         def add_to_list(e):
             added = False
 
@@ -1651,10 +1640,10 @@ def main(page: ft.Page):
 
                 items_table.rows.append(
                     ft.DataRow(cells=[
-                        ft.DataCell(ft.Text(item["desc"], size=14, text_align=ft.TextAlign.RIGHT)),
-                        ft.DataCell(ft.Text(item["detail"], size=13, text_align=ft.TextAlign.RIGHT, max_lines=2)),
-                        ft.DataCell(ft.Text(f"{item['price']:,}", size=14, text_align=ft.TextAlign.RIGHT, weight="bold")),
-                        ft.DataCell(ft.IconButton(icon=ft.Icons.DELETE, icon_color="red", on_click=make_delete_handler()))
+                        ft.DataCell(ft.Text(item["desc"], text_align=ft.TextAlign.RIGHT)),
+                        ft.DataCell(ft.Text(item["detail"], text_align=ft.TextAlign.RIGHT)),
+                        ft.DataCell(ft.Text(f"{item['price']:,}", text_align=ft.TextAlign.RIGHT)),
+                        ft.DataCell(ft.IconButton(icon=ft.Icons.DELETE, on_click=make_delete_handler()))
                     ])
                 )
                 grand_total += item["price"]
@@ -1666,7 +1655,6 @@ def main(page: ft.Page):
             if 0 <= index < len(invoice_items):
                 invoice_items.pop(index)
                 refresh_table()
-
         # اتصال سوئیچ‌ها
         for sw in [motor_box_switch, heater_switch, food_bag_switch, insulation_switch,
                    sticker_switch, design_switch, cliche_switch, shipping_switch, other_switch]:
