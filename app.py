@@ -1660,7 +1660,7 @@ def main(page: ft.Page):
                         ft.DataCell(ft.Text(item["desc"], size=13, text_align=ft.TextAlign.RIGHT)),
                         ft.DataCell(ft.Text(item["detail"], size=12, text_align=ft.TextAlign.RIGHT)),
                         ft.DataCell(ft.Text(f"{item['price']:,}", size=13, text_align=ft.TextAlign.RIGHT)),
-                        ft.DataCell(ft.IconButton(icon=ft.Icons.DELETE, size=12, on_click=make_delete_handler()))
+                        ft.DataCell(ft.IconButton(icon=ft.Icons.DELETE, on_click=make_delete_handler()))
                     ])
                 )
                 grand_total += item["price"]
