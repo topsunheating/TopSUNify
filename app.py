@@ -2370,53 +2370,54 @@ def main(page: ft.Page):
                 "size": "۲.۳ مگابایت"
             },
         ]
+        
         def download_file(url):
             if "yourdomain.com" in url:
                 page.snack_bar = ft.SnackBar(
                     content=ft.Text("لطفاً لینک واقعی فایل‌ها را جایگزین کنید!"),
                     bgcolor="orange"
                 )
-                page.update()
             else:
                 page.launch_url(url)
+            page.update()
+        
         items = []
         for item in price_items:
             items.append(
                 ft.Container(
                     content=ft.Row([
-                    ft.Icon(ft.Icons.PICTURE_AS_PDF, color="red", size=40),
-                    ft.Column([
-                        ft.Text(item["title"], weight="bold", size=15),
-                        ft.Text(f"حجم: {item['size']}", size=12, color="grey"),
-                    ], spacing=2, expand=True),
-                    ft.ElevatedButton(
-                        "دانلود",
-                        icon=ft.Icons.DOWNLOAD,
-                        bgcolor="#1565C0",
-                        color="white",
-                        on_click=lambda e, u=item["url"]: download_file(u)
-                    )
-                ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-                padding=15,
-                border_radius=10,
-                margin=10
+                        ft.Icon(ft.Icons.PICTURE_AS_PDF, color="red", size=40),
+                        ft.Column([
+                            ft.Text(item["title"], weight="bold", size=15),
+                            ft.Text(f"حجم: {item['size']}", size=12, color="grey"),
+                        ], spacing=2, expand=True),
+                        ft.ElevatedButton(
+                            "دانلود",
+                            icon=ft.Icons.DOWNLOAD,
+                            bgcolor="#1565C0",
+                            color="white",
+                            on_click=lambda e, u=item["url"]: download_file(u)
+                        )
+                    ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+                    padding=15,
+                    border_radius=10,
+                    margin=10
+                )
             )
-        )
-
-    return ft.Container(
-        content=ft.Column([
-            ft.Row([
-                ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(3)),
-                ft.Text("لیست قیمت محصولات تاپسان", size=22, weight="bold")
-            ]),
-            ft.Divider(),
-            ft.Text("فایل‌های قابل دانلود", size=18, weight="bold"),
-            *items,
-            ft.Text(
-                "لینک‌ها هنوز placeholder هستند.\nلطفاً لینک‌های واقعی را جایگزین کنید.",
-                size=13,
-                color="grey",
-                text_align=ft.TextAlign.CENTER
+        return ft.Container(
+            content=ft.Column([
+                ft.Row([
+                    ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(3)),
+                    ft.Text("لیست قیمت محصولات تاپسان", size=22, weight="bold")
+                ]),
+                ft.Divider(),
+                ft.Text("فایل‌های قابل دانلود", size=18, weight="bold"),
+                *items,
+                ft.Text(
+                    "لینک‌ها هنوز placeholder هستند.\nلطفاً لینک‌های واقعی را جایگزین کنید.",
+                    size=13,
+                    color="grey",
+                    text_align=ft.TextAlign.CENTER
             )
         ],
         scroll=ft.ScrollMode.AUTO,
