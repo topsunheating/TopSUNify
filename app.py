@@ -1484,141 +1484,143 @@ def main(page: ft.Page):
             ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400, expand=True, padding=15
         )
-# ==================== صفحه محصولات رستورانی ====================
+    # ==================== صفحه محصولات رستورانی (همه گزینه‌ها فعال‌شونده) ====================
     def restaurant_products_page():
-        return ft.Container(
-            content=ft.Column([
-                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
-                       ft.Text("محصولات رستورانی", size=21, weight="bold")]),
-                ft.Divider(height=20),
-                ft.Text("دسته‌بندی محصول را انتخاب کنید", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
-                ft.Divider(height=30),
+        # متغیرهای محلی برای محاسبات
+        selected_items = []
 
-                ft.FilledButton("باکس حمل موتوری (۵ مدل)", width=360, height=70, bgcolor="#1565C0", color="white",
-                               on_click=lambda e: render(35), style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))),
+        # ==================== باکس حمل موتوری ====================
+        motor_box_switch = ft.Switch(label="باکس حمل موتوری (۵ مدل)", value=False)
+        motor_boxes = [
+            ("باکس ۴۰ لیتری", 850000),
+            ("باکس ۵۰ لیتری", 950000),
+            ("باکس ۶۰ لیتری", 1150000),
+            ("باکس ۷۰ لیتری", 1350000),
+            ("باکس ۹۰ لیتری", 1650000),
+        ]
+        motor_checkboxes = [ft.Checkbox(label=name, value=False) for name, _ in motor_boxes]
 
-                ft.FilledButton("گرمکن باکس", width=360, height=70, bgcolor="#1565C0", color="white",
-                               on_click=lambda e: render(36), style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))),
+        # ==================== گرمکن باکس ====================
+        heater_switch = ft.Switch(label="گرمکن باکس", value=False)
+        heater_qty = ft.TextField(label="تعداد گرمکن باکس", value="1", width=200, keyboard_type=ft.KeyboardType.NUMBER, visible=False)
 
-                ft.FilledButton("کیف حمل غذا (۴ مدل)", width=360, height=70, bgcolor="#1565C0", color="white",
-                               on_click=lambda e: render(37), style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))),
+        # ==================== کیف حمل غذا ====================
+        food_bag_switch = ft.Switch(label="کیف حمل غذا (۴ مدل)", value=False)
+        food_bags = [
+            ("کیف کوچک", 450000),
+            ("کیف متوسط", 650000),
+            ("کیف بزرگ", 850000),
+            ("کیف دوبل", 1250000),
+        ]
+        food_checkboxes = [ft.Checkbox(label=name, value=False) for name, _ in food_bags]
 
-                ft.FilledButton("عایق مخصوص باکس", width=360, height=70, bgcolor="#1565C0", color="white",
-                               on_click=lambda e: render(38), style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))),
+        # ==================== عایق مخصوص باکس ====================
+        insulation_switch = ft.Switch(label="عایق مخصوص باکس", value=False)
+        insulation_area = ft.TextField(label="متراژ عایق (مترمربع)", value="0", width=250, visible=False, keyboard_type=ft.KeyboardType.NUMBER)
 
-                ft.FilledButton("استیکر، طراحی و کلیشه", width=360, height=70, bgcolor="#1565C0", color="white",
-                               on_click=lambda e: render(39), style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))),
+        # ==================== استیکر، طراحی و کلیشه ====================
+        sticker_switch = ft.Switch(label="استیکر", value=False)
+        sticker_qty = ft.TextField(label="تعداد استیکر", value="0", visible=False, width=200, keyboard_type=ft.KeyboardType.NUMBER)
 
-            ], scroll=ft.ScrollMode.AUTO, spacing=12, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-            width=400, expand=True, padding=15
-        )
-            # ==================== باکس حمل موتوری ====================
-    def motor_box_page():
-        models = ["باکس ۴۰ لیتری", "باکس ۶۰ لیتری", "باکس ۸۰ لیتری", "باکس ۱۲۰ لیتری", "باکس ۱۵۰ لیتری"]
-        selected = []
-
-        checklist = ft.Column()
-        for model in models:
-            cb = ft.Checkbox(label=model, value=False)
-            checklist.controls.append(cb)
-
-        total_text = ft.Text("جمع کل: 0 تومان", size=18, weight="bold", color="green")
-
-        def calculate(e):
-            total = 0
-            for cb in checklist.controls:
-                if cb.value:
-                    # قیمت تقریبی
-                    price = 850000 if "۴۰" in cb.label else 950000 if "۶۰" in cb.label else 1250000
-                    total += price
-            total_text.value = f"جمع کل: {total:,.0f} تومان"
-            page.update()
-
-        return ft.Container(
-            content=ft.Column([
-                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(35)), ft.Text("باکس حمل موتوری", size=20, weight="bold")]),
-                ft.Divider(),
-                checklist,
-                ft.FilledButton("محاسبه قیمت", width=350, bgcolor="#1565C0", on_click=calculate),
-                total_text
-            ], scroll=ft.ScrollMode.AUTO, spacing=15),
-            width=400, expand=True, padding=15
-        )
-            # ==================== گرمکن باکس ====================
-    def box_heater_page():
-        qty = ft.TextField(label="تعداد گرمکن باکس", width=350, value="1", keyboard_type=ft.KeyboardType.NUMBER)
-        total_text = ft.Text("جمع کل: 0 تومان", size=18, weight="bold", color="green")
-
-        def calculate(e):
-            price = int(qty.value or 1) * 2450000
-            total_text.value = f"جمع کل: {price:,.0f} تومان"
-            page.update()
-
-        return ft.Container(
-            content=ft.Column([
-                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(30)), ft.Text("گرمکن باکس", size=20, weight="bold")]),
-                ft.Divider(),
-                qty,
-                ft.FilledButton("محاسبه قیمت", width=350, bgcolor="#1565C0", on_click=calculate),
-                total_text
-            ], spacing=15),
-            width=400, expand=True, padding=15
-        )
-            # ==================== کیف حمل غذا ====================
-    def food_bag_page():
-        models = ["کیف ۴ عددی", "کیف ۶ عددی", "کیف ۸ عددی", "کیف ۱۲ عددی"]
-        checklist = ft.Column()
-        for model in models:
-            checklist.controls.append(ft.Checkbox(label=model, value=False))
-
-        total_text = ft.Text("جمع کل: 0 تومان", size=18, weight="bold", color="green")
-
-        def calculate(e):
-            total = 0
-            for cb in checklist.controls:
-                if cb.value:
-                    price = 450000 if "۴" in cb.label else 650000 if "۶" in cb.label else 850000
-                    total += price
-            total_text.value = f"جمع کل: {total:,.0f} تومان"
-            page.update()
-
-        return ft.Container(
-            content=ft.Column([
-                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(35)), ft.Text("کیف حمل غذا", size=20, weight="bold")]),
-                ft.Divider(),
-                checklist,
-                ft.FilledButton("محاسبه قیمت", width=350, bgcolor="#1565C0", on_click=calculate),
-                total_text
-            ], spacing=15),
-            width=400, expand=True, padding=15
-        )
-            # ==================== عایق، استیکر و خدمات جانبی ====================
-    def restaurant_accessories_page():
-        insulation_area = ft.TextField(label="متراژ عایق مخصوص باکس (مترمربع)", width=350, value="0", keyboard_type=ft.KeyboardType.NUMBER)
-        sticker_qty = ft.TextField(label="تعداد استیکر", width=350, value="0", keyboard_type=ft.KeyboardType.NUMBER)
         design_switch = ft.Switch(label="طراحی استیکر", value=False)
-        stamp_switch = ft.Switch(label="ساخت کلیشه", value=False)
+        design_qty = ft.TextField(label="تعداد طراحی", value="0", visible=False, width=200, keyboard_type=ft.KeyboardType.NUMBER)
 
-        total_text = ft.Text("جمع کل: 0 تومان", size=18, weight="bold", color="green")
+        cliche_switch = ft.Switch(label="ساخت کلیشه", value=False)
+        cliche_qty = ft.TextField(label="تعداد کلیشه", value="0", visible=False, width=200, keyboard_type=ft.KeyboardType.NUMBER)
 
-        def calculate(e):
-            ins = float(insulation_area.value or 0) * 185000
-            stk = int(sticker_qty.value or 0) * 45000
-            des = 1250000 if design_switch.value else 0
-            sta = 850000 if stamp_switch.value else 0
-            total = ins + stk + des + sta
-            total_text.value = f"جمع کل: {total:,.0f} تومان"
+        total_text = ft.Text("جمع کل: ۰ تومان", size=20, weight="bold", color="green")
+
+        def update_visibility(e):
+            heater_qty.visible = heater_switch.value
+            insulation_area.visible = insulation_switch.value
+            sticker_qty.visible = sticker_switch.value
+            design_qty.visible = design_switch.value
+            cliche_qty.visible = cliche_switch.value
             page.update()
+
+        def calculate_total(e):
+            total = 0
+            selected_items.clear()
+
+            # باکس حمل موتوری
+            if motor_box_switch.value:
+                for cb, (_, price) in zip(motor_checkboxes, motor_boxes):
+                    if cb.value:
+                        total += price
+                        selected_items.append(f"{cb.label} - {price:,} تومان")
+
+            # گرمکن باکس
+            if heater_switch.value:
+                qty = int(heater_qty.value or 1)
+                price = qty * 2450000
+                total += price
+                selected_items.append(f"گرمکن باکس × {qty} - {price:,} تومان")
+
+            # کیف حمل غذا
+            if food_bag_switch.value:
+                for cb, (_, price) in zip(food_checkboxes, food_bags):
+                    if cb.value:
+                        total += price
+                        selected_items.append(f"{cb.label} - {price:,} تومان")
+
+            # عایق
+            if insulation_switch.value:
+                area = float(insulation_area.value or 0)
+                price = int(area * 185000)
+                total += price
+                selected_items.append(f"عایق × {area} مترمربع - {price:,} تومان")
+
+            # استیکر و طراحی
+            if sticker_switch.value:
+                qty = int(sticker_qty.value or 0)
+                total += qty * 45000
+            if design_switch.value:
+                qty = int(design_qty.value or 0)
+                total += qty * 350000
+            if cliche_switch.value:
+                qty = int(cliche_qty.value or 0)
+                total += qty * 850000
+
+            total_text.value = f"جمع کل: {total:,} تومان"
+            page.update()
+
+        # اتصال سوئیچ‌ها به تابع نمایش
+        for sw in [motor_box_switch, heater_switch, food_bag_switch, insulation_switch, sticker_switch, design_switch, cliche_switch]:
+            sw.on_change = update_visibility
 
         return ft.Container(
             content=ft.Column([
-                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(35)), ft.Text("خدمات جانبی رستورانی", size=20, weight="bold")]),
+                ft.Row([
+                    ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
+                    ft.Text("محصولات رستورانی", size=22, weight="bold")
+                ]),
                 ft.Divider(),
-                insulation_area, sticker_qty,
-                design_switch, stamp_switch,
-                ft.FilledButton("محاسبه قیمت", width=350, bgcolor="#1565C0", on_click=calculate),
-                total_text
-            ], spacing=15),
+
+                motor_box_switch,
+                ft.Column(motor_checkboxes, visible=True, spacing=5),
+
+                heater_switch,
+                heater_qty,
+
+                food_bag_switch,
+                ft.Column(food_checkboxes, visible=True, spacing=5),
+
+                insulation_switch,
+                insulation_area,
+
+                sticker_switch,
+                sticker_qty,
+                design_switch,
+                design_qty,
+                cliche_switch,
+                cliche_qty,
+
+                ft.Divider(height=30),
+                ft.FilledButton("محاسبه جمع کل", width=350, bgcolor="#1565C0", on_click=calculate_total),
+                total_text,
+                ft.FilledButton("صدور پیش‌فاکتور PDF", width=350, bgcolor="green", color="white", 
+                               on_click=lambda e: show_message("پیش‌فاکتور محصولات رستورانی صادر شد", "green"))
+            ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400, expand=True, padding=15
         )
     # ==================== صفحات اضافی ====================
@@ -1940,12 +1942,7 @@ def main(page: ft.Page):
                 stair_deicing_direct_page(),    # 32
                 catalog_page(page, render),     # 33
                 price_list_page(page, render),  # 34
-                restaurant_products_page(),     # 35
-                motor_box_page(),               # 36
-                box_heater_page(),              # 37
-                food_bag_page(),                # 38
-                restaurant_accessories_page()   # 39
-            
+                restaurant_products_page()     # 35
             ]
 
             main_content = ft.Container(
