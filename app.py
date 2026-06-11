@@ -1548,10 +1548,10 @@ def main(page: ft.Page):
         # ==================== جدول ====================
         items_table = ft.DataTable(
             columns=[
-                ft.DataColumn(ft.Text("شرح کالا", text_align=ft.TextAlign.RIGHT)),
-                ft.DataColumn(ft.Text("جزئیات", text_align=ft.TextAlign.RIGHT)),
-                ft.DataColumn(ft.Text("مبلغ (تومان)", text_align=ft.TextAlign.RIGHT)),
-                ft.DataColumn(ft.Text("حذف", text_align=ft.TextAlign.CENTER)),
+                ft.DataColumn(ft.Text("شرح کالا", size:12, text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("جزئیات", size:12, text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("مبلغ (تومان)", size:12, text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("حذف", size:12, text_align=ft.TextAlign.CENTER)),
             ],
             rows=[],
             width=380,
@@ -1579,7 +1579,7 @@ def main(page: ft.Page):
             if motor_box_switch.value:
                 for cb, (name, price) in zip(motor_checkboxes, motor_boxes):
                     if cb.value:
-                        details = f"{motor_color_body.value} / {motor_color_door.value}"
+                        details = f"{motor_color_body.value}|{motor_color_door.value}"
                         short_name = name.replace("باکس ", "")
                         invoice_items.append({"desc": f"باکس {short_name}", "detail": details, "price": price})
                         added = True
