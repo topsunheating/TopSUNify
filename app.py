@@ -1595,7 +1595,7 @@ def main(page: ft.Page):
             page.update()
 
             for item in motor_items:
-                item["checkbox"].on_change = update_visibility
+                item["checkbox"].on_change =lambda e: update_visibility
             
             for item in food_items:
                 item["checkbox"].on_change = update_visibility
