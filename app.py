@@ -1527,7 +1527,12 @@ def main(page: ft.Page):
             food_items.append({"name": name, "price": price, "checkbox": cb, "qty": qty})
 
         food_color = ft.Dropdown(label="رنگ کیف", width=320, options=[ft.dropdown.Option(c) for c in ["مشکی","قرمز","آبی","سبز"]], value="مشکی")
-
+        
+        for item in motor_items:
+            item["checkbox"].on_change = update_visibility
+            
+        for item in food_items:
+            item["checkbox"].on_change = update_visibility
         # ==================== سایر ====================
         custom_bag_checkbox = ft.Checkbox(label="کیف سفارشی", value=False)
         custom_size = ft.TextField(label="سایز کیف سفارشی", width=300, visible=False, text_align=ft.TextAlign.RIGHT)
@@ -1572,14 +1577,12 @@ def main(page: ft.Page):
         def update_visibility(e):
             for item in motor_items:
                 item["qty"].visible = motor_box_switch.value and item["checkbox"].value
-                item["checkbox"].visible = motor_box_switch.value
                 
                 motor_color_body.visible = motor_box_switch.value
                 motor_color_door.visible = motor_box_switch.value
                 
             for item in food_items:
                 item["qty"].visible = food_bag_switch.value and item["checkbox"].value
-                item["checkbox"].visible = food_bag_switch.value
                 
                 food_color.visible = food_bag_switch.value
                 
@@ -1703,12 +1706,12 @@ def main(page: ft.Page):
                 ft.Column([
                     motor_box_switch,
                     ft.Row([motor_color_body, motor_color_door], alignment=ft.MainAxisAlignment.START),
-                    *[ft.Row([item["checkbox"], item["qty"]], alignment=ft.MainAxisAlignment.START, spacing=8) for item in motor_items],
+                    *[ft.Column([item["checkbox"], item["qty"]], alignment=ft.MainAxisAlignment.START, spacing=8) for item in motor_items],
                     ft.Divider(height=12),
 
                     food_bag_switch,
                     food_color,
-                    *[ft.Row([item["checkbox"], item["qty"]], alignment=ft.MainAxisAlignment.START, spacing=8) for item in food_items],
+                    *[ft.Column([item["checkbox"], item["qty"]], alignment=ft.MainAxisAlignment.START, spacing=8) for item in food_items],
                     custom_bag_checkbox, custom_size, ft.Divider(height=12),
 
                     heater_switch, heater_qty, ft.Divider(height=12),
