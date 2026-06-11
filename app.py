@@ -1595,10 +1595,71 @@ def main(page: ft.Page):
             page.update()
 
         def add_to_list(e):
-            # ... (کد add_to_list قبلی شما بدون تغییر بماند)
-            # فقط برای تست فعلاً همین را نگه دار
             added = False
-            # (بقیه کد add_to_list را از نسخه قبلی کپی کن)
+            # باکس
+            for item in motor_items:
+                if item["checkbox"].value:
+                    qty = int(item["qty"].value or 1)
+                    price = qty * item["price"]
+                    details = f"{motor_color_body.value} / {motor_color_door.value}"
+                    invoice_items.append({"desc": item["name"], "price": item["price"] * int(item["qty"].value)})
+                    added = True
+            # کیف
+            for item in food_items:
+                if item["checkbox"].value:
+                    qty = int(item["qty"].value or 1)
+                    price = qty * item["price"]
+                    invoice_items.append({"desc": item["name"], "detail": f"{food_color.value} ×{qty}", "price": price})
+                    added = True
+
+            # بقیه موارد (گرمکن، عایق، استیکر، هزینه‌ها) - همان کد قبلی شما
+            if heater_switch.value:
+                qty = int(heater_qty.value or 1)
+                price = qty * 2450000
+                invoice_items.append({"desc": "گرمکن باکس", "detail": f"×{qty}", "price": price})
+                added = True
+
+            # کیف سفارشی
+            if custom_bag_checkbox.value and custom_size.value.strip():
+                invoice_items.append({"desc": "کیف سفارشی", "detail": custom_size.value, "price": 1500000})
+                added = True
+
+            # بقیه موارد (گرمکن، عایق، استیکر و ...)
+            if heater_switch.value:
+                qty = int(heater_qty.value or 1)
+                price = qty * 2450000
+                invoice_items.append({"desc": "گرمکن باکس", "detail": f"×{qty}", "price": price})
+                added = True
+
+            if insulation_switch.value:
+                area = float(insulation_area.value or 0)
+                if area > 0:
+                    invoice_items.append({"desc": "عایق مخصوص", "detail": f"{area} م²", "price": int(area * 185000)})
+                    added = True
+
+            if sticker_switch.value and int(sticker_qty.value or 0) > 0:
+                qty = int(sticker_qty.value)
+                invoice_items.append({"desc": "استیکر", "detail": f"×{qty}", "price": qty * 45000})
+                added = True
+
+            if design_switch.value and int(design_qty.value or 0) > 0:
+                qty = int(design_qty.value)
+                invoice_items.append({"desc": "طراحی استیکر", "detail": f"×{qty}", "price": qty * 350000})
+                added = True
+
+            if cliche_switch.value and int(cliche_qty.value or 0) > 0:
+                qty = int(cliche_qty.value)
+                invoice_items.append({"desc": "کلیشه", "detail": f"×{qty}", "price": qty * 850000})
+                added = True
+
+            if shipping_switch.value and int(shipping_cost.value or 0) > 0:
+                invoice_items.append({"desc": "هزینه حمل", "detail": "", "price": int(shipping_cost.value)})
+                added = True
+
+            if other_switch.value and int(other_cost.value or 0) > 0:
+                invoice_items.append({"desc": "سایر هزینه‌ها", "detail": "", "price": int(other_cost.value)})
+                added = True
+            
             if added:
                 refresh_table()
                 show_message("به لیست اضافه شد ✅", "green")
@@ -1613,10 +1674,10 @@ def main(page: ft.Page):
                     return lambda _: remove_item(i)
                 items_table.rows.append(
                     ft.DataRow(cells=[
-                        ft.DataCell(ft.Text(item["desc"], text_align=ft.TextAlign.CENTER, size=10)),
-                        ft.DataCell(ft.Text(item.get("detail", ""), text_align=ft.TextAlign.RIGHT, size=12)),
-                        ft.DataCell(ft.Text(f"{item['price']:,}", text_align=ft.TextAlign.RIGHT, size=13)),
-                        ft.DataCell(ft.IconButton(icon=ft.Icons.DELETE, icon_color="red", size=10, on_click=make_delete_handler()))
+                        ft.DataCell(ft.Text(item["desc"], text_align=ft.TextAlign.CENTER)),
+                        ft.DataCell(ft.Text(item.get("detail", ""), text_align=ft.TextAlign.RIGHT)),
+                        ft.DataCell(ft.Text(f"{item['price']:,}", text_align=ft.TextAlign.RIGHT)),
+                        ft.DataCell(ft.IconButton(icon=ft.Icons.DELETE, icon_color="red", on_click=make_delete_handler()))
                     ])
                 )
                 grand_total += item["price"]
