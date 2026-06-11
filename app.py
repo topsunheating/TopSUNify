@@ -1572,7 +1572,6 @@ def main(page: ft.Page):
 
         def update_visibility(e):
             for item in motor_items:
-                item["checkbox"].visible = motor_box_switch.value
                 item["qty"].visible = motor_box_switch.value and item["checkbox"].value
                 
                 motor_color_body.visible = motor_box_switch.value
@@ -1592,6 +1591,7 @@ def main(page: ft.Page):
             shipping_cost.visible = shipping_switch.value
             other_cost.visible = other_switch.value
             custom_size.visible = custom_bag_checkbox.value
+            custom_qty.visible = custom_bag_checkbox.value
             page.update()
 
             for item in motor_items:
