@@ -7,7 +7,7 @@ import re
 FLOOR_PRODUCTS = {
     "طول 1/2 متر": 1250000,
     "طول 1/5 متر": 1850000,
-    "طول 2 متر": 2450000,
+    "طول 2 متر": 2450000,ب
     "طول 3 متر": 3050000,
     "2 ردیف بطول 2 متر": 4250000,
     "2 ردیف بطول 3 متر": 4850000,
@@ -1488,48 +1488,26 @@ def main(page: ft.Page):
     def restaurant_products_page():
         invoice_items = []   # لیست اقلام برای جدول
 
-        # ==================== باکس حمل موتوری ====================
+        # ==================== تعریف تمام کنترل‌ها ====================
         motor_box_switch = ft.Switch(label="باکس حمل موتوری (۵ مدل)", value=False)
-        
-        motor_boxes = [
-            ("باکس مربعی 55", 850000),
-            ("باکس تخم مرغی پلاس", 950000),
-            ("باکس صندوقی", 1150000),
-            ("باکس مربعی پلاس 70", 1350000),
-            ("باکس مربعی پلاس - 2 درب", 1650000),
-        ]
-        motor_color_body = ft.Dropdown(label="رنگ بدنه", width=160, options=[
-            ft.dropdown.Option("مشکی"), ft.dropdown.Option("قرمز"),
-            ft.dropdown.Option("زرد"), ft.dropdown.Option("سفارشی")], value="مشکی")
-        motor_color_door = ft.Dropdown(label="رنگ درب", width=160, options=[
-            ft.dropdown.Option("مشکی"), ft.dropdown.Option("قرمز"),
-            ft.dropdown.Option("زرد"), ft.dropdown.Option("سبز")], value="مشکی")
-        
+        motor_boxes = [("باکس مربعی 55", 850000), ("باکس تخم مرغی پلاس", 950000), ("باکس صندوقی", 1150000),
+                       ("باکس مربعی پلاس 70", 1350000), ("باکس مربعی پلاس - 2 درب", 1650000)]
+        motor_color_body = ft.Dropdown(label="رنگ بدنه", width=160, options=[ft.dropdown.Option(c) for c in ["مشکی","قرمز","زرد","سفارشی"]], value="مشکی")
+        motor_color_door = ft.Dropdown(label="رنگ درب", width=160, options=[ft.dropdown.Option(c) for c in ["مشکی","قرمز","زرد","سبز"]], value="مشکی")
         motor_checkboxes = [ft.Checkbox(label=name, value=False) for name, _ in motor_boxes]
 
-        # ==================== گرمکن باکس ====================
         heater_switch = ft.Switch(label="گرمکن باکس", value=False)
         heater_qty = ft.TextField(label="تعداد", value="1", width=200, visible=False, keyboard_type=ft.KeyboardType.NUMBER)
 
-        # ==================== کیف حمل غذا ====================
         food_bag_switch = ft.Switch(label="کیف حمل غذا (۴ مدل)", value=False)
-        
-        food_bags = [
-            ("کیف سایز 45×45 ارتفاع 35 سانت", 450000),
-            ("کیف سایز 37×37 ارتفاع 30 سانت", 650000),
-            ("کیف سایز 40×40 ارتفاع 25 سانت", 850000),
-            ("کیف سایز 50", 1250000),
-        ]
-        food_color = ft.Dropdown(label="رنگ کیف", width=330, options=[
-            ft.dropdown.Option("مشکی"), ft.dropdown.Option("قرمز"),
-            ft.dropdown.Option("آبی"), ft.dropdown.Option("سبز")], value="مشکی")
-        
+        food_bags = [("کیف سایز 45×45 ارتفاع 35 سانت", 450000), ("کیف سایز 37×37 ارتفاع 30 سانت", 650000),
+                     ("کیف سایز 40×40 ارتفاع 25 سانت", 850000), ("کیف سایز 50", 1250000)]
+        food_color = ft.Dropdown(label="رنگ کیف", width=330, options=[ft.dropdown.Option(c) for c in ["مشکی","قرمز","آبی","سبز"]], value="مشکی")
         food_checkboxes = [ft.Checkbox(label=name, value=False) for name, _ in food_bags]
 
         custom_bag_checkbox = ft.Checkbox(label="کیف سفارشی", value=False)
         custom_size = ft.TextField(label="سایز کیف سفارشی", width=300, visible=False, text_align=ft.TextAlign.RIGHT)
 
-        # ==================== سایر ====================
         insulation_switch = ft.Switch(label="عایق مخصوص باکس", value=False)
         insulation_area = ft.TextField(label="متراژ عایق (مترمربع)", value="0", visible=False, keyboard_type=ft.KeyboardType.NUMBER)
 
@@ -1558,9 +1536,23 @@ def main(page: ft.Page):
             ],
             rows=[],
             width=380,
+            heading_row_height=50,
+            data_row_min_height=55,
         )
 
         total_text = ft.Text("جمع کل: ۰ تومان", size=20, weight="bold", color="green")
+
+        # ==================== توابع (ترتیب مهم!) ====================
+        def update_visibility(e):
+            heater_qty.visible = heater_switch.value
+            insulation_area.visible = insulation_switch.value
+            sticker_qty.visible = sticker_switch.value
+            design_qty.visible = design_switch.value
+            cliche_qty.visible = cliche_switch.value
+            shipping_cost.visible = shipping_switch.value
+            other_cost.visible = other_switch.value
+            custom_size.visible = custom_bag_checkbox.value
+            page.update()
         
         def add_to_list(e):
             added = False
@@ -1637,21 +1629,18 @@ def main(page: ft.Page):
         def refresh_table():
             items_table.rows.clear()
             grand_total = 0
-
             for idx, item in enumerate(invoice_items):
                 def make_delete_handler(i=idx):
                     return lambda _: remove_item(i)
-
                 items_table.rows.append(
                     ft.DataRow(cells=[
                         ft.DataCell(ft.Text(item["desc"], text_align=ft.TextAlign.RIGHT)),
-                        ft.DataCell(ft.Text(item["detail"], text_align=ft.TextAlign.RIGHT)),
+                        ft.DataCell(ft.Text(item.get("detail", ""), text_align=ft.TextAlign.RIGHT)),
                         ft.DataCell(ft.Text(f"{item['price']:,}", text_align=ft.TextAlign.RIGHT)),
-                        ft.DataCell(ft.IconButton(icon=ft.Icons.DELETE, on_click=make_delete_handler()))
+                        ft.DataCell(ft.IconButton(icon=ft.Icons.DELETE, icon_color="red", on_click=make_delete_handler()))
                     ])
                 )
                 grand_total += item["price"]
-
             total_text.value = f"جمع کل: {grand_total:,} تومان"
             page.update()
 
@@ -1659,6 +1648,7 @@ def main(page: ft.Page):
             if 0 <= index < len(invoice_items):
                 invoice_items.pop(index)
                 refresh_table()
+
         # اتصال سوئیچ‌ها
         for sw in [motor_box_switch, heater_switch, food_bag_switch, insulation_switch,
                    sticker_switch, design_switch, cliche_switch, shipping_switch, other_switch]:
