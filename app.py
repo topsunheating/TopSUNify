@@ -1548,10 +1548,10 @@ def main(page: ft.Page):
         # ==================== جدول ====================
         items_table = ft.DataTable(
             columns=[
-                ft.DataColumn(ft.Text("شرح کالا", size:12, text_align=ft.TextAlign.RIGHT)),
-                ft.DataColumn(ft.Text("جزئیات", size:12, text_align=ft.TextAlign.RIGHT)),
-                ft.DataColumn(ft.Text("مبلغ (تومان)", size:12, text_align=ft.TextAlign.RIGHT)),
-                ft.DataColumn(ft.Text("حذف", size:12, text_align=ft.TextAlign.CENTER)),
+                ft.DataColumn(ft.Text("شرح کالا", text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("جزئیات", text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("مبلغ (تومان)", text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("حذف", text_align=ft.TextAlign.CENTER)),
             ],
             rows=[],
             width=380,
