@@ -1571,7 +1571,7 @@ def main(page: ft.Page):
             width=390,
             heading_row_height=50,
             data_row_min_height=58,
-            border=ft.border.all(1, "#e0e0e0"),
+            # border=ft.border.all(1, "#e0e0e0"),
             border_radius=8
         )
 
