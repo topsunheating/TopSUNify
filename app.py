@@ -1728,7 +1728,7 @@ def main(page: ft.Page):
             ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400, expand=True, padding=15
         )
-        ================ صفحات اضافی ====================
+        # ================ صفحات اضافی ====================
     def account_request_page():
         return ft.Container(
             content=ft.Column([
