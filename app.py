@@ -1501,7 +1501,7 @@ def main(page: ft.Page):
         
         motor_items = []
         for name, price in motor_boxes:
-            cb = ft.Checkbox(label=name, value=False)
+            cb = ft.Checkbox(label=name, value=False, visible=False)
             qty = ft.TextField(label="تعداد", value="1", width=100, visible=False, 
                              keyboard_type=ft.KeyboardType.NUMBER, text_align=ft.TextAlign.CENTER)
             motor_items.append({"name": name, "price": price, "checkbox": cb, "qty": qty})
@@ -1556,10 +1556,10 @@ def main(page: ft.Page):
         # ==================== جدول (فشرده‌تر) ====================
         items_table = ft.DataTable(
             columns=[
-                ft.DataColumn(ft.Text("شرح کالا", text_align=ft.TextAlign.RIGHT)),
-                ft.DataColumn(ft.Text("جزئیات", text_align=ft.TextAlign.RIGHT)),
-                ft.DataColumn(ft.Text("مبلغ", text_align=ft.TextAlign.RIGHT)),
-                ft.DataColumn(ft.Text("حذف", text_align=ft.TextAlign.CENTER)),
+                ft.DataColumn(ft.Text("شرح کالا", size=12, text_align=ft.TextAlign.CENTER)),
+                ft.DataColumn(ft.Text("جزئیات", size=12, text_align=ft.TextAlign.CENTER)),
+                ft.DataColumn(ft.Text("مبلغ", size=12, text_align=ft.TextAlign.CENTER)),
+                ft.DataColumn(ft.Text("حذف", size=12, text_align=ft.TextAlign.CENTER)),
             ],
             rows=[],
             width=380,
@@ -1571,9 +1571,18 @@ def main(page: ft.Page):
 
         def update_visibility(e):
             for item in motor_items:
-                item["qty"].visible = item["checkbox"].value
+                item["qty"].visible = motor_box_switch.value and item["checkbox"].value
+                item["checkbox"].visible = motor_box_switch.value
+                
+                motor_color_body.visible = motor_box_switch.value
+                motor_color_door.visible = motor_box_switch.value
+                
             for item in food_items:
-                item["qty"].visible = item["checkbox"].value
+                item["qty"].visible = food_bag_switch.value and item["checkbox"].value
+                item["checkbox"].visible = food_bag_switch.value
+                
+                food_color.visible = food_bag_switch.value
+                
 
             heater_qty.visible = heater_switch.value
             insulation_area.visible = insulation_switch.value
@@ -1604,10 +1613,10 @@ def main(page: ft.Page):
                     return lambda _: remove_item(i)
                 items_table.rows.append(
                     ft.DataRow(cells=[
-                        ft.DataCell(ft.Text(item["desc"], text_align=ft.TextAlign.RIGHT, size=13)),
+                        ft.DataCell(ft.Text(item["desc"], text_align=ft.TextAlign.CENTER, size=10)),
                         ft.DataCell(ft.Text(item.get("detail", ""), text_align=ft.TextAlign.RIGHT, size=12)),
                         ft.DataCell(ft.Text(f"{item['price']:,}", text_align=ft.TextAlign.RIGHT, size=13)),
-                        ft.DataCell(ft.IconButton(icon=ft.Icons.DELETE, icon_color="red", on_click=make_delete_handler()))
+                        ft.DataCell(ft.IconButton(icon=ft.Icons.DELETE, icon_color="red", size=10, on_click=make_delete_handler()))
                     ])
                 )
                 grand_total += item["price"]
