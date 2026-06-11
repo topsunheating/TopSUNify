@@ -1572,11 +1572,11 @@ def main(page: ft.Page):
 
         def update_visibility(e):
             for item in motor_items:
-                item["checkbox"].visible = motor_on
-                item["qty"].visible = motor_on and item["checkbox"].value
+                item["checkbox"].visible = motor_box_switch.value
+                item["qty"].visible = motor_box_switch.value and item["checkbox"].value
                 
-                motor_color_body.visible = motor_on
-                motor_color_door.visible = motor_on
+                motor_color_body.visible = motor_box_switch.value
+                motor_color_door.visible = motor_box_switch.value
                 
             for item in food_items:
                 item["qty"].visible = food_bag_switch.value and item["checkbox"].value
