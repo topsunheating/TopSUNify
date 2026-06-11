@@ -1501,7 +1501,7 @@ def main(page: ft.Page):
         
         motor_items = []
         for name, price in motor_boxes:
-            cb = ft.Checkbox(label=name, value=False, visible=False)
+            cb = ft.Checkbox(label=name, value=False)
             qty = ft.TextField(label="تعداد", value="1", width=100, visible=False, 
                              keyboard_type=ft.KeyboardType.NUMBER, text_align=ft.TextAlign.CENTER)
             motor_items.append({"name": name, "price": price, "checkbox": cb, "qty": qty})
@@ -1557,10 +1557,10 @@ def main(page: ft.Page):
         # ==================== جدول (فشرده‌تر) ====================
         items_table = ft.DataTable(
             columns=[
-                ft.DataColumn(ft.Text("شرح کالا", size=12, text_align=ft.TextAlign.CENTER)),
-                ft.DataColumn(ft.Text("جزئیات", size=12, text_align=ft.TextAlign.CENTER)),
-                ft.DataColumn(ft.Text("مبلغ", size=12, text_align=ft.TextAlign.CENTER)),
-                ft.DataColumn(ft.Text("حذف", size=12, text_align=ft.TextAlign.CENTER)),
+                ft.DataColumn(ft.Text("شرح کالا", size=12, text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("جزئیات", size=12, text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("مبلغ", size=12, text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("حذف", size=12, text_align=ft.TextAlign.RIGHT)),
             ],
             rows=[],
             width=380,
@@ -1710,7 +1710,7 @@ def main(page: ft.Page):
                 ft.Column([
                     motor_box_switch,
                     ft.Row([motor_color_body, motor_color_door], alignment=ft.MainAxisAlignment.START),
-                    *[ft.Column([item["checkbox"], item["qty"]], alignment=ft.MainAxisAlignment.START, spacing=8) for item in motor_items],
+                    *[ft.Row([item["checkbox"], item["qty"]], alignment=ft.MainAxisAlignment.START, spacing=8) for item in motor_items],
                     ft.Divider(height=12),
 
                     food_bag_switch,
