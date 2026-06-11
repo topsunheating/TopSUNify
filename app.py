@@ -1562,15 +1562,17 @@ def main(page: ft.Page):
         # ==================== جدول (اصلاح شده) ====================
         items_table = ft.DataTable(
             columns=[
-                ft.DataColumn(ft.Text("شرح کالا", text_align=ft.TextAlign.RIGHT), width=140),
-                ft.DataColumn(ft.Text("جزئیات", text_align=ft.TextAlign.RIGHT), width=110),
-                ft.DataColumn(ft.Text("مبلغ", text_align=ft.TextAlign.RIGHT), width=90),
-                ft.DataColumn(ft.Text("حذف", text_align=ft.TextAlign.CENTER), width=50),
+                ft.DataColumn(ft.Text("شرح کالا", text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("جزئیات", text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("مبلغ", text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("حذف", text_align=ft.TextAlign.CENTER)),
             ],
             rows=[],
             width=390,
-            heading_row_height=48,
-            data_row_min_height=52,
+            heading_row_height=50,
+            data_row_min_height=58,
+            border=ft.border.all(1, "#e0e0e0"),
+            border_radius=8
         )
 
         total_text = ft.Text("جمع کل: ۰ تومان", size=19, weight="bold", color="green")
