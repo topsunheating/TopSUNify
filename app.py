@@ -1558,10 +1558,6 @@ def main(page: ft.Page):
             ],
             rows=[],
             width=380,
-            heading_row_height=50,
-            data_row_min_height=55,
-            border=ft.border.all(1, "#e0e0e0"),
-            border_radius=8
         )
 
         total_text = ft.Text("جمع کل: ۰ تومان", size=20, weight="bold", color="green")
