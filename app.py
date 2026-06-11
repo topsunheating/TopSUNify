@@ -1531,6 +1531,7 @@ def main(page: ft.Page):
         # ==================== سایر ====================
         custom_bag_checkbox = ft.Checkbox(label="کیف سفارشی", value=False)
         custom_size = ft.TextField(label="سایز کیف سفارشی", width=300, visible=False, text_align=ft.TextAlign.RIGHT)
+        custom_qty = ft.TextField(label="تعداد کیف سفارشی", value="1", width=100, visible=False, keyboard_type=ft.KeyboardType.NUMBER)
 
         heater_switch = ft.Switch(label="گرمکن باکس", value=False)
         heater_qty = ft.TextField(label="تعداد", value="1", width=200, visible=False, keyboard_type=ft.KeyboardType.NUMBER)
@@ -1571,6 +1572,7 @@ def main(page: ft.Page):
 
         def update_visibility(e):
             for item in motor_items:
+                tem["checkbox"].visible = motor_box_switch.value
                 item["qty"].visible = motor_box_switch.value and item["checkbox"].value
                 
                 motor_color_body.visible = motor_box_switch.value
