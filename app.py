@@ -1527,12 +1527,7 @@ def main(page: ft.Page):
             food_items.append({"name": name, "price": price, "checkbox": cb, "qty": qty})
 
         food_color = ft.Dropdown(label="رنگ کیف", width=320, options=[ft.dropdown.Option(c) for c in ["مشکی","قرمز","آبی","سبز"]], value="مشکی")
-        
-        for item in motor_items:
-            item["checkbox"].on_change = update_visibility
-            
-        for item in food_items:
-            item["checkbox"].on_change = update_visibility
+
         # ==================== سایر ====================
         custom_bag_checkbox = ft.Checkbox(label="کیف سفارشی", value=False)
         custom_size = ft.TextField(label="سایز کیف سفارشی", width=300, visible=False, text_align=ft.TextAlign.RIGHT)
@@ -1596,6 +1591,12 @@ def main(page: ft.Page):
             other_cost.visible = other_switch.value
             custom_size.visible = custom_bag_checkbox.value
             page.update()
+
+            for item in motor_items:
+            item["checkbox"].on_change = update_visibility
+            
+            for item in food_items:
+            item["checkbox"].on_change = update_visibility
 
         def add_to_list(e):
             added = False
