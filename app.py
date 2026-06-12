@@ -1571,10 +1571,12 @@ def main(page: ft.Page):
 
         # ==================== توابع ====================
         def update_visibility(e):
+            motor_active = motor_box_switch.value
+            
             # باکس‌ها
             for item in motor_items:
-                item["checkbox"].visible = motor_box_switch.value
-                show = motor_box_switch.value and item["checkbox"].value
+                item["checkbox"].visible = motor_active
+                show = motor_active and item["checkbox"].value
                 item["qty"].visible = show
                 item["c_body"].visible = show
                 item["c_door"].visible = show
@@ -1696,6 +1698,12 @@ def main(page: ft.Page):
                    sticker_switch, design_switch, cliche_switch, shipping_switch, other_switch]:
             sw.on_change = update_visibility
         custom_bag_checkbox.on_change = update_visibility
+
+        # اتصال چک‌باکس‌های داخل باکس و کیف
+        for item in motor_items:
+            item["checkbox"].on_change = update_visibility
+        for item in food_items:
+            item["checkbox"].on_change = update_visibility
 
         # ==================== رابط کاربری ====================
         return ft.Container(
