@@ -1502,11 +1502,12 @@ def main(page: ft.Page):
         motor_items = []
         for name, price in motor_boxes:
             cb = ft.Checkbox(label=name, value=False)
-            qty = ft.TextField(label="تعداد", value="1", width=100, visible=False, 
-                             keyboard_type=ft.KeyboardType.NUMBER, text_align=ft.TextAlign.CENTER)
-            c_body = ft.Dropdown(label="رنگ بدنه", width=120, options=[ft.dropdown.Option(c) for c in ["مشکی","قرمز","زرد","سفارشی"]], value="مشکی", visible=False)
+            qty = ft.TextField(label="تعداد", value="1", width=100, visible=False, keyboard_type=ft.KeyboardType.NUMBER, text_align=ft.TextAlign.CENTER)
+            
+            c_body = ft.Dropdown(label="رنگ بدنه", width=120, options=[ft.dropdown.Option(c) for c in ["مشکی","قرمز","زرد","سفارشی"]], value="مشکی", visible=False)            
             c_door = ft.Dropdown(label="رنگ درب", width=120, options=[ft.dropdown.Option(c) for c in ["مشکی","قرمز","زرد","سبز"]], value="مشکی", visible=False)
-            motor_items.append({"name": name, "price": price, "checkbox": cb, "qty": qty})
+            
+            motor_items.append({"name": name, "price": price, "checkbox": cb, "qty": qty, "c_body": c_body, "c_door": c_door})
 
                 # ==================== کیف حمل غذا ====================
         food_bag_switch = ft.Switch(label="کیف حمل غذا (۴ مدل)", value=False)
