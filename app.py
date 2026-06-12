@@ -1577,12 +1577,10 @@ def main(page: ft.Page):
             # باکس‌ها
             for item in motor_items:
                 item["checkbox"].visible = motor_active
-
-                show_details = motor_active and item["checkbox"].value
-
-                item["qty"].visible = show_details
-                item["c_body"].visible = show_details
-                item["c_door"].visible = show_details
+                show = motor_active and item["checkbox"].value
+                item["qty"].visible = show
+                item["c_body"].visible = show
+                item["c_door"].visible = show
 
             # کیف‌ها
             for item in food_items:
@@ -1714,15 +1712,30 @@ def main(page: ft.Page):
                 ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
                        ft.Text("محصولات رستورانی", size=22, weight="bold")]),
                 ft.Divider(),
-                ft.Column([
+                                ft.Column([
                     motor_box_switch,
-                    # لیست باکس‌ها اول ظاهر می‌شوند
+                    # نمایش گزینه‌های هر باکس
                     *[ft.Column([
-                        item["checkbox"], 
-                        item["qty"], 
-                        item["c_body"], 
-                        item["c_door"]
-                    ], visible=False) for item in motor_items],
+                        item["checkbox"],
+                        item["qty"],
+                        ft.Row([item["c_body"], item["c_door"]], alignment=ft.MainAxisAlignment.START, spacing=5)
+                    ], spacing=5, horizontal_alignment=ft.CrossAxisAlignment.START) for item in motor_items],
+
+                    ft.Divider(height=15),
+
+                    food_bag_switch,
+                    food_color,
+                    *[ft.Column([item["checkbox"], item["qty"]], alignment=ft.MainAxisAlignment.START, spacing=5) for item in food_items],
+                    custom_bag_checkbox, custom_size, custom_qty, ft.Divider(height=12),
+
+                    heater_switch, heater_qty, ft.Divider(height=12),
+                    insulation_switch, insulation_area, ft.Divider(height=12),
+                    sticker_switch, sticker_qty,
+                    design_switch, design_qty,
+                    cliche_switch, cliche_qty, ft.Divider(height=12),
+                    shipping_switch, shipping_cost,
+                    other_switch, other_cost,
+                ], horizontal_alignment=ft.CrossAxisAlignment.START, spacing=10),
                 
                     # انتخاب رنگ فقط وقتی باکس انتخاب شده باشد نمایش داده شود
                     ft.Divider(height=12),              
