@@ -1501,7 +1501,7 @@ def main(page: ft.Page):
         
         motor_items = []
         for name, price in motor_boxes:
-            cb = ft.Checkbox(label=name, value=False)
+            cb = ft.Checkbox(label=name, value=False, on_change=update_visibility)
             qty = ft.TextField(label="تعداد", value="1", width=100, visible=False, 
                              keyboard_type=ft.KeyboardType.NUMBER, text_align=ft.TextAlign.CENTER)
             motor_items.append({"name": name, "price": price, "checkbox": cb, "qty": qty})
@@ -1709,8 +1709,8 @@ def main(page: ft.Page):
                 ft.Divider(),
                 ft.Column([
                     motor_box_switch,
-                    ft.Row([motor_color_body, motor_color_door], alignment=ft.MainAxisAlignment.START),
-                    *[ft.Row([item["checkbox"], item["qty"]], alignment=ft.MainAxisAlignment.START, spacing=8) for item in motor_items],
+                    ft.Column([motor_color_body, motor_color_door], alignment=ft.MainAxisAlignment.START),
+                    *[ft.Column([item["checkbox"], item["qty"]], alignment=ft.MainAxisAlignment.START, spacing=8) for item in motor_items],
                     ft.Divider(height=12),
 
                     food_bag_switch,
