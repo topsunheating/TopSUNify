@@ -1707,8 +1707,8 @@ def main(page: ft.Page):
                     motor_box_switch,
                     *[ft.Row([
                         item["checkbox"],
-                        item["qty"],
-                        ft.Column([item["c_body"], item["c_door"]], spacing=5, expand=True)
+                        
+                        ft.Column([item["qty"], item["c_body"], item["c_door"]], spacing=5, expand=True)
                     ], alignment=ft.MainAxisAlignment.START, spacing=8, vertical_alignment=ft.CrossAxisAlignment.CENTER) for item in motor_items],
                     
                     ft.Divider(height=12),
