@@ -1722,11 +1722,7 @@ def main(page: ft.Page):
                     ], visible=False) for item in motor_items],
                 
                     # انتخاب رنگ فقط وقتی باکس انتخاب شده باشد نمایش داده شود
-                    ft.Divider(height=12),
-                    
-                    ft.Row([motor_color_body, motor_color_door], alignment=ft.MainAxisAlignment.START),
-                    ft.Divider(height=12),
-                
+                    ft.Divider(height=12),              
                 
                     food_bag_switch,
                     food_color,
