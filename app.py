@@ -1694,7 +1694,6 @@ def main(page: ft.Page):
         for sw in [motor_box_switch, heater_switch, food_bag_switch, insulation_switch,
                    sticker_switch, design_switch, cliche_switch, shipping_switch, other_switch]:
             sw.on_change = update_visibility
-        custom_box_checkbox.on_change = update_visibility
         custom_bag_checkbox.on_change = update_visibility
         # ==================== رابط کاربری ====================
         return ft.Container(
