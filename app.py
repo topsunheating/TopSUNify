@@ -1715,7 +1715,7 @@ def main(page: ft.Page):
                     # لیست باکس‌ها اول ظاهر می‌شوند
                     *[ft.Column([
                         item["checkbox"], 
-                        item["qty"] 
+                        item["qty"], 
                         item["c_body"], 
                         item["c_door"]
                     ], visible=False) for item in motor_items],
