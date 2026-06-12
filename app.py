@@ -1585,6 +1585,9 @@ def main(page: ft.Page):
                 
                 custom_size.visible = custom_box_checkbox.value
                 custom_qty.visible = custom_box_checkbox.value
+
+            for item in motor_items:
+                item["checkbox"].on_change = update_visibility
                 
             for item in food_items:
                 item["qty"].visible = food_bag_switch.value and item["checkbox"].value
@@ -1605,8 +1608,7 @@ def main(page: ft.Page):
             
             page.update()
 
-            for item in motor_items:
-                item["checkbox"].on_change = update_visibility
+            
             
             for item in food_items:
                 item["checkbox"].on_change = update_visibility
