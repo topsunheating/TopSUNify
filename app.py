@@ -1709,8 +1709,7 @@ def main(page: ft.Page):
                     # انتخاب رنگ فقط وقتی باکس انتخاب شده باشد نمایش داده شود
                     ft.Divider(height=12),
                     
-                    motor_color_body, 
-                    motor_color_door,
+                    ft.Row([motor_color_body, motor_color_door], alignment=ft.MainAxisAlignment.START),
                     ft.Divider(height=12),
                 
                 
