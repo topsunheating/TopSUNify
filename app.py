@@ -1583,6 +1583,9 @@ def main(page: ft.Page):
                 motor_color_body.visible = motor_box_switch.value
                 motor_color_door.visible = motor_box_switch.value
                 
+                custom_size.visible = custom_box_checkbox.value
+                custom_qty.visible = custom_box_checkbox.value
+                
             for item in food_items:
                 item["qty"].visible = food_bag_switch.value and item["checkbox"].value
                 
@@ -1598,8 +1601,7 @@ def main(page: ft.Page):
             other_cost.visible = other_switch.value
             custom_size.visible = custom_bag_checkbox.value
             custom_qty.visible = custom_bag_checkbox.value
-            custom_size.visible = custom_box_checkbox.value
-            custom_qty.visible = custom_box_checkbox.value
+            
             
             page.update()
 
