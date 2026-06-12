@@ -1501,7 +1501,7 @@ def main(page: ft.Page):
         
         motor_items = []
         for name, price in motor_boxes:
-            cb = ft.Checkbox(label=name, value=False, on_change=update_visibility)
+            cb = ft.Checkbox(label=name, value=False)
             qty = ft.TextField(label="تعداد", value="1", width=100, visible=False, 
                              keyboard_type=ft.KeyboardType.NUMBER, text_align=ft.TextAlign.CENTER)
             motor_items.append({"name": name, "price": price, "checkbox": cb, "qty": qty})
