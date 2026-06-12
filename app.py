@@ -1556,16 +1556,16 @@ def main(page: ft.Page):
         # ==================== جدول ====================
         items_table = ft.DataTable(
             columns=[
-                ft.DataColumn(ft.Text("شرح کالا", size=13, text_align=ft.TextAlign.RIGHT), width=130),
-                ft.DataColumn(ft.Text("جزئیات", size=12, text_align=ft.TextAlign.RIGHT), width=100),
-                ft.DataColumn(ft.Text("تعداد", size=13, text_align=ft.TextAlign.CENTER), width=60),
-                ft.DataColumn(ft.Text("مبلغ", size=13, text_align=ft.TextAlign.RIGHT), width=90),
-                ft.DataColumn(ft.Text("حذف", size=11, text_align=ft.TextAlign.CENTER), width=30),
+                ft.DataColumn(ft.Text("شرح کالا", size=13, text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("جزئیات", size=12, text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("تعداد", size=13, text_align=ft.TextAlign.CENTER)),
+                ft.DataColumn(ft.Text("مبلغ", size=13, text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("حذف", size=11, text_align=ft.TextAlign.CENTER)),
             ],
             rows=[],
             width=390,
             heading_row_height=48,
-            data_row_min_height=50,
+            data_row_min_height=52,
         )
 
         total_text = ft.Text("جمع کل: ۰ تومان", size=19, weight="bold", color="green")
@@ -1671,7 +1671,7 @@ def main(page: ft.Page):
             else:
                 show_message("هیچ موردی انتخاب نشده است", "orange")
 
-        def refresh_table():
+                def refresh_table():
             items_table.rows.clear()
             grand_total = 0
 
@@ -1683,7 +1683,7 @@ def main(page: ft.Page):
                     ft.DataRow(cells=[
                         ft.DataCell(ft.Text(item["desc"], size=13, text_align=ft.TextAlign.RIGHT)),
                         ft.DataCell(ft.Text(item.get("detail", ""), size=12, text_align=ft.TextAlign.RIGHT)),
-                        ft.DataCell(ft.Text(str(item.get("qty", 1)), size=13, text_align=ft.TextAlign.CENTER, weight="bold")),
+                        ft.DataCell(ft.Text(str(item.get("qty", 1)), size=13, text_align=ft.TextAlign.CENTER)),
                         ft.DataCell(ft.Text(f"{item['price']:,}", size=13, text_align=ft.TextAlign.RIGHT, weight="bold")),
                         ft.DataCell(ft.IconButton(icon=ft.Icons.DELETE, icon_color="red", on_click=make_delete_handler()))
                     ])
