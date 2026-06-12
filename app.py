@@ -1572,7 +1572,8 @@ def main(page: ft.Page):
         # ==================== توابع ====================
         def update_visibility(e):
             # باکس‌ها
-            for item in motor_items:is_selected = motor_box_switch.value and item["checkbox"].value
+            for item in motor_items:
+                is_selected = motor_box_switch.value and item["checkbox"].value
                 item["qty"].visible = is_selected
                 item["c_body"].visible = is_selected
                 item["c_door"].visible = is_selected
