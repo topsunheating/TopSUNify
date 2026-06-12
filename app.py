@@ -1504,11 +1504,9 @@ def main(page: ft.Page):
             cb = ft.Checkbox(label=name, value=False)
             qty = ft.TextField(label="تعداد", value="1", width=100, visible=False, 
                              keyboard_type=ft.KeyboardType.NUMBER, text_align=ft.TextAlign.CENTER)
+            c_body = ft.Dropdown(label="رنگ بدنه", width=120, options=[ft.dropdown.Option(c) for c in ["مشکی","قرمز","زرد","سفارشی"]], value="مشکی", visible=False)
+            c_door = ft.Dropdown(label="رنگ درب", width=120, options=[ft.dropdown.Option(c) for c in ["مشکی","قرمز","زرد","سبز"]], value="مشکی", visible=False)
             motor_items.append({"name": name, "price": price, "checkbox": cb, "qty": qty})
-            
-            motor_color_body = ft.Dropdown(label="رنگ بدنه", width=150, options=[ft.dropdown.Option(c) for c in ["مشکی","قرمز","زرد","سفارشی"]], value="مشکی")
-            motor_color_door = ft.Dropdown(label="رنگ درب", width=150, options=[ft.dropdown.Option(c) for c in ["مشکی","قرمز","زرد","سبز"]], value="مشکی")
-
 
                 # ==================== کیف حمل غذا ====================
         food_bag_switch = ft.Switch(label="کیف حمل غذا (۴ مدل)", value=False)
@@ -1574,9 +1572,12 @@ def main(page: ft.Page):
         # ==================== توابع ====================
         def update_visibility(e):
             # باکس‌ها
-            for item in motor_items:
+            for item in motor_items:is_selected = motor_box_switch.value and item["checkbox"].value
+                item["qty"].visible = is_selected
+                item["c_body"].visible = is_selected
+                item["c_door"].visible = is_selected
+                # نمایش/مخفی کردن خود چک‌باکس با سوئیچ اصلی
                 item["checkbox"].visible = motor_box_switch.value
-                item["qty"].visible = motor_box_switch.value and item["checkbox"].value
 
             # کیف‌ها
             for item in food_items:
@@ -1603,8 +1604,14 @@ def main(page: ft.Page):
                 if item["checkbox"].value:
                     qty = int(item["qty"].value or 1)
                     price = qty * item["price"]
-                    details = f"{motor_color_body.value} / {motor_color_door.value}"
-                    invoice_items.append({"desc": item["name"], "detail": f"{details} ×{qty}", "price": price})
+
+                    # استفاده از رنگ‌های اختصاصی همان ردیف
+                    body_color = item["c_body"].value
+                    door_color = item["c_door"].value
+                    
+                    details = f"بدنه: {body_color} | درب: {door_color} | تعداد: {qty}"
+                        
+                    invoice_items.append({"desc": item["name"], "detail": details, "price": price})
                     added = True
             # کیف
             for item in food_items:
@@ -1707,8 +1714,10 @@ def main(page: ft.Page):
                     # لیست باکس‌ها اول ظاهر می‌شوند
                     *[ft.Column([
                         item["checkbox"], 
-                        item["qty"] # تعداد بلافاصله زیر چک‌باکس همان آیت
-                    ], spacing=0) for item in motor_items],
+                        item["qty"] 
+                        item["c_body"], 
+                        item["c_door"]
+                    ], visible=False) for item in motor_items],
                 
                     # انتخاب رنگ فقط وقتی باکس انتخاب شده باشد نمایش داده شود
                     ft.Divider(height=12),
