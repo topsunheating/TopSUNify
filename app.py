@@ -1671,7 +1671,7 @@ def main(page: ft.Page):
             else:
                 show_message("هیچ موردی انتخاب نشده است", "orange")
 
-                def refresh_table():
+        def refresh_table():
             items_table.rows.clear()
             grand_total = 0
 
