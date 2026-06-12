@@ -1502,14 +1502,13 @@ def main(page: ft.Page):
         motor_items = []
         for name, price in motor_boxes:
             cb = ft.Checkbox(label=name, value=False)
-            qty = ft.TextField(label="تعداد", value="1", width=100, visible=False, keyboard_type=ft.KeyboardType.NUMBER, text_align=ft.TextAlign.CENTER)
-            
-            c_body = ft.Dropdown(label="رنگ بدنه", width=120, options=[ft.dropdown.Option(c) for c in ["مشکی","قرمز","زرد","سفارشی"]], value="مشکی", visible=False)            
-            c_door = ft.Dropdown(label="رنگ درب", width=120, options=[ft.dropdown.Option(c) for c in ["مشکی","قرمز","زرد","سبز"]], value="مشکی", visible=False)
-            
+            qty = ft.TextField(label="تعداد", value="1", width=100, visible=False, 
+                             keyboard_type=ft.KeyboardType.NUMBER, text_align=ft.TextAlign.CENTER)
+            c_body = ft.Dropdown(label="رنگ بدنه", width=120, visible=False, options=[ft.dropdown.Option(c) for c in ["مشکی","قرمز","زرد","سفارشی"]], value="مشکی")
+            c_door = ft.Dropdown(label="رنگ درب", width=120, visible=False, options=[ft.dropdown.Option(c) for c in ["مشکی","قرمز","زرد","سبز"]], value="مشکی")
             motor_items.append({"name": name, "price": price, "checkbox": cb, "qty": qty, "c_body": c_body, "c_door": c_door})
 
-                # ==================== کیف حمل غذا ====================
+        # ==================== کیف حمل غذا ====================
         food_bag_switch = ft.Switch(label="کیف حمل غذا (۴ مدل)", value=False)
         
         food_bags = [
@@ -1572,12 +1571,10 @@ def main(page: ft.Page):
 
         # ==================== توابع ====================
         def update_visibility(e):
-            motor_active = motor_box_switch.value
-            
             # باکس‌ها
             for item in motor_items:
-                item["checkbox"].visible = motor_active
-                show = motor_active and item["checkbox"].value
+                item["checkbox"].visible = motor_box_switch.value
+                show = motor_box_switch.value and item["checkbox"].value
                 item["qty"].visible = show
                 item["c_body"].visible = show
                 item["c_door"].visible = show
@@ -1597,7 +1594,6 @@ def main(page: ft.Page):
             other_cost.visible = other_switch.value
             custom_size.visible = custom_bag_checkbox.value
             custom_qty.visible = custom_bag_checkbox.value
-
             page.update()
 
         def add_to_list(e):
@@ -1607,14 +1603,8 @@ def main(page: ft.Page):
                 if item["checkbox"].value:
                     qty = int(item["qty"].value or 1)
                     price = qty * item["price"]
-
-                    # استفاده از رنگ‌های اختصاصی همان ردیف
-                    body_color = item["c_body"].value
-                    door_color = item["c_door"].value
-                    
-                    details = f"بدنه: {body_color} | درب: {door_color} | تعداد: {qty}"
-                        
-                    invoice_items.append({"desc": item["name"], "detail": details, "price": price})
+                    details = f"{item['c_body'].value} / {item['c_door'].value}"
+                    invoice_items.append({"desc": item["name"], "detail": details + f" ×{qty}", "price": price})
                     added = True
             # کیف
             for item in food_items:
@@ -1686,7 +1676,7 @@ def main(page: ft.Page):
                     return lambda _: remove_item(i)
                 items_table.rows.append(
                     ft.DataRow(cells=[
-                        ft.DataCell(ft.Text(item["desc"], text_align=ft.TextAlign.CENTER)),
+                        ft.DataCell(ft.Text(item["desc"], text_align=ft.TextAlign.RIGHT)),
                         ft.DataCell(ft.Text(item.get("detail", ""), text_align=ft.TextAlign.RIGHT)),
                         ft.DataCell(ft.Text(f"{item['price']:,}", text_align=ft.TextAlign.RIGHT)),
                         ft.DataCell(ft.IconButton(icon=ft.Icons.DELETE, icon_color="red", on_click=make_delete_handler()))
@@ -1706,26 +1696,21 @@ def main(page: ft.Page):
                    sticker_switch, design_switch, cliche_switch, shipping_switch, other_switch]:
             sw.on_change = update_visibility
         custom_bag_checkbox.on_change = update_visibility
+
         # ==================== رابط کاربری ====================
         return ft.Container(
             content=ft.Column([
                 ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
                        ft.Text("محصولات رستورانی", size=22, weight="bold")]),
                 ft.Divider(),
-                                ft.Column([
+                ft.Column([
                     motor_box_switch,
-                    # نمایش گزینه‌های هر باکس
-                    *[ft.Column([
-                        item["checkbox"],
-                        item["qty"],
-                        ft.Row([item["c_body"], item["c_door"]], alignment=ft.MainAxisAlignment.START, spacing=5)
-                    ], spacing=5, horizontal_alignment=ft.CrossAxisAlignment.START) for item in motor_items],
-
-                    ft.Divider(height=15),
+                    *[ft.Column([item["checkbox"], item["qty"], ft.Row([item["c_body"], item["c_door"]], spacing=5)], spacing=5) for item in motor_items],
+                    ft.Divider(height=12),
 
                     food_bag_switch,
                     food_color,
-                    *[ft.Column([item["checkbox"], item["qty"]], alignment=ft.MainAxisAlignment.START, spacing=5) for item in food_items],
+                    *[ft.Column([item["checkbox"], item["qty"]], spacing=5) for item in food_items],
                     custom_bag_checkbox, custom_size, custom_qty, ft.Divider(height=12),
 
                     heater_switch, heater_qty, ft.Divider(height=12),
@@ -1733,26 +1718,6 @@ def main(page: ft.Page):
                     sticker_switch, sticker_qty,
                     design_switch, design_qty,
                     cliche_switch, cliche_qty, ft.Divider(height=12),
-                    shipping_switch, shipping_cost,
-                    other_switch, other_cost,
-                ], horizontal_alignment=ft.CrossAxisAlignment.START, spacing=10),
-                
-                    # انتخاب رنگ فقط وقتی باکس انتخاب شده باشد نمایش داده شود
-                    ft.Divider(height=12),              
-                
-                    food_bag_switch,
-                    food_color,
-                    *[ft.Column([item["checkbox"], item["qty"]], alignment=ft.MainAxisAlignment.START, spacing=8) for item in food_items],
-                    custom_bag_checkbox, custom_size, ft.Divider(height=12),
-
-                    heater_switch, heater_qty, ft.Divider(height=12),
-
-                    insulation_switch, insulation_area, ft.Divider(height=12),
-
-                    sticker_switch, sticker_qty,
-                    design_switch, design_qty,
-                    cliche_switch, cliche_qty, ft.Divider(height=12),
-
                     shipping_switch, shipping_cost,
                     other_switch, other_cost,
                 ], horizontal_alignment=ft.CrossAxisAlignment.START, spacing=10),
