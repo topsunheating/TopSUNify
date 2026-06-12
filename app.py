@@ -1704,8 +1704,7 @@ def main(page: ft.Page):
                 ft.Column([
                     motor_box_switch,
                     ft.Row([motor_color_body, motor_color_door], alignment=ft.MainAxisAlignment.START),
-                    *[ft.Column([item["checkbox"], item["qty"]], alignment=ft.MainAxisAlignment.START, spacing=8) for item in motor_items],
-                    custom_box_checkbox, custom_size, ft.Divider(height=12),
+                    *[ft.Column([item["checkbox"], item["qty"]], alignment=ft.MainAxisAlignment.START, spacing=8) for item in motor_items], ft.Divider(height=12),
 
                     food_bag_switch,
                     food_color,
