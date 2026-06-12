@@ -1507,10 +1507,6 @@ def main(page: ft.Page):
 
         motor_color_body = ft.Dropdown(label="رنگ بدنه", width=150, options=[ft.dropdown.Option(c) for c in ["مشکی","قرمز","زرد","سفارشی"]], value="مشکی")
         motor_color_door = ft.Dropdown(label="رنگ درب", width=150, options=[ft.dropdown.Option(c) for c in ["مشکی","قرمز","زرد","سبز"]], value="مشکی")
-        
-        custom_box_checkbox = ft.Checkbox(label="باکس سفارشی", value=False)
-        custom_size = ft.TextField(label="سایز باکس سفارشی", width=300, visible=False, text_align=ft.TextAlign.RIGHT)
-        custom_qty = ft.TextField(label="تعداد باکس سفارشی", value="1", width=100, visible=False, keyboard_type=ft.KeyboardType.NUMBER)
 
         # ==================== کیف حمل غذا ====================
         food_bag_switch = ft.Switch(label="کیف حمل غذا", value=False)
@@ -1532,7 +1528,9 @@ def main(page: ft.Page):
         food_color = ft.Dropdown(label="رنگ کیف", width=320, options=[ft.dropdown.Option(c) for c in ["مشکی","قرمز","آبی","سبز"]], value="مشکی")
 
         # ==================== سایر ====================
-        
+        custom_box_checkbox = ft.Checkbox(label="باکس سفارشی", value=False)
+        custom_size = ft.TextField(label="سایز باکس سفارشی", width=300, visible=False, text_align=ft.TextAlign.RIGHT)
+        custom_qty = ft.TextField(label="تعداد باکس سفارشی", value="1", width=100, visible=False, keyboard_type=ft.KeyboardType.NUMBER)
         
         custom_bag_checkbox = ft.Checkbox(label="کیف سفارشی", value=False)
         custom_size = ft.TextField(label="سایز کیف سفارشی", width=300, visible=False, text_align=ft.TextAlign.RIGHT)
@@ -1586,8 +1584,6 @@ def main(page: ft.Page):
                 custom_size.visible = custom_box_checkbox.value
                 custom_qty.visible = custom_box_checkbox.value
 
-            for item in motor_items:
-                item["checkbox"].on_change = update_visibility
                 
             for item in food_items:
                 item["qty"].visible = food_bag_switch.value and item["checkbox"].value
@@ -1609,7 +1605,9 @@ def main(page: ft.Page):
             page.update()
 
             
-            
+             for item in motor_items:
+                item["checkbox"].on_change = update_visibility
+                 
             for item in food_items:
                 item["checkbox"].on_change = update_visibility
 
