@@ -1572,14 +1572,17 @@ def main(page: ft.Page):
 
         # ==================== توابع ====================
         def update_visibility(e):
+            motor_active = motor_box_switch.value
+            
             # باکس‌ها
             for item in motor_items:
-                is_selected = motor_box_switch.value and item["checkbox"].value
-                item["qty"].visible = is_selected
-                item["c_body"].visible = is_selected
-                item["c_door"].visible = is_selected
-                # نمایش/مخفی کردن خود چک‌باکس با سوئیچ اصلی
-                item["checkbox"].visible = motor_box_switch.value
+                item["checkbox"].visible = motor_active
+
+                show_details = motor_active and item["checkbox"].value
+
+                item["qty"].visible = show_details
+                item["c_body"].visible = show_details
+                item["c_door"].visible = show_details
 
             # کیف‌ها
             for item in food_items:
