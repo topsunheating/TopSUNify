@@ -1705,7 +1705,12 @@ def main(page: ft.Page):
                 ft.Divider(),
                 ft.Column([
                     motor_box_switch,
-                    *[ft.Column([item["checkbox"], item["qty"], ft.Row([item["c_body"], item["c_door"]], spacing=5)], spacing=5) for item in motor_items],
+                    *[ft.Row([
+                        item["checkbox"],
+                        item["qty"],
+                        ft.Row([item["c_body"], item["c_door"]], spacing=5, expand=True)
+                    ], alignment=ft.MainAxisAlignment.START, spacing=8, vertical_alignment=ft.CrossAxisAlignment.CENTER) for item in motor_items],
+                    
                     ft.Divider(height=12),
 
                     food_bag_switch,
