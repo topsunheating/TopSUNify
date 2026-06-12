@@ -1489,7 +1489,7 @@ def main(page: ft.Page):
         invoice_items = []
 
         # ==================== باکس حمل موتوری ====================
-        motor_box_switch = ft.Switch(label="باکس حمل موتوری (۵ مدل)", value=False)
+        motor_box_switch = ft.Switch(label="باکس حمل موتوری", value=False)
         
         motor_boxes = [
             ("باکس مربعی 55", 850000),
@@ -1502,15 +1502,14 @@ def main(page: ft.Page):
         motor_items = []
         for name, price in motor_boxes:
             cb = ft.Checkbox(label=name, value=False)
-            qty = ft.TextField(label="تعداد", value="1", width=100, visible=False, 
-                             keyboard_type=ft.KeyboardType.NUMBER, text_align=ft.TextAlign.CENTER)
+            qty = ft.TextField(label="تعداد", value="1", width=100, visible=False, keyboard_type=ft.KeyboardType.NUMBER, text_align=ft.TextAlign.CENTER)
             motor_items.append({"name": name, "price": price, "checkbox": cb, "qty": qty})
 
         motor_color_body = ft.Dropdown(label="رنگ بدنه", width=150, options=[ft.dropdown.Option(c) for c in ["مشکی","قرمز","زرد","سفارشی"]], value="مشکی")
         motor_color_door = ft.Dropdown(label="رنگ درب", width=150, options=[ft.dropdown.Option(c) for c in ["مشکی","قرمز","زرد","سبز"]], value="مشکی")
 
         # ==================== کیف حمل غذا ====================
-        food_bag_switch = ft.Switch(label="کیف حمل غذا (۴ مدل)", value=False)
+        food_bag_switch = ft.Switch(label="کیف حمل غذا", value=False)
         
         food_bags = [
             ("کیف سایز 45×45 ارتفاع 35 سانت", 450000),
@@ -1529,6 +1528,10 @@ def main(page: ft.Page):
         food_color = ft.Dropdown(label="رنگ کیف", width=320, options=[ft.dropdown.Option(c) for c in ["مشکی","قرمز","آبی","سبز"]], value="مشکی")
 
         # ==================== سایر ====================
+        custom_box_checkbox = ft.Checkbox(label="باکس سفارشی", value=False)
+        custom_size = ft.TextField(label="سایز باکس سفارشی", width=300, visible=False, text_align=ft.TextAlign.RIGHT)
+        custom_qty = ft.TextField(label="تعداد باکس سفارشی", value="1", width=100, visible=False, keyboard_type=ft.KeyboardType.NUMBER)
+        
         custom_bag_checkbox = ft.Checkbox(label="کیف سفارشی", value=False)
         custom_size = ft.TextField(label="سایز کیف سفارشی", width=300, visible=False, text_align=ft.TextAlign.RIGHT)
         custom_qty = ft.TextField(label="تعداد کیف سفارشی", value="1", width=100, visible=False, keyboard_type=ft.KeyboardType.NUMBER)
@@ -1593,10 +1596,13 @@ def main(page: ft.Page):
             other_cost.visible = other_switch.value
             custom_size.visible = custom_bag_checkbox.value
             custom_qty.visible = custom_bag_checkbox.value
+            custom_size.visible = custom_box_checkbox.value
+            custom_qty.visible = custom_box_checkbox.value
+            
             page.update()
 
             for item in motor_items:
-                item["checkbox"].on_change =lambda e: update_visibility
+                item["checkbox"].on_change = update_visibility
             
             for item in food_items:
                 item["checkbox"].on_change = update_visibility
@@ -1700,6 +1706,7 @@ def main(page: ft.Page):
         for sw in [motor_box_switch, heater_switch, food_bag_switch, insulation_switch,
                    sticker_switch, design_switch, cliche_switch, shipping_switch, other_switch]:
             sw.on_change = update_visibility
+        custom_box_checkbox.on_change = update_visibility
         custom_bag_checkbox.on_change = update_visibility
 
         return ft.Container(
@@ -1709,9 +1716,9 @@ def main(page: ft.Page):
                 ft.Divider(),
                 ft.Column([
                     motor_box_switch,
-                    ft.Column([motor_color_body, motor_color_door], alignment=ft.MainAxisAlignment.START),
+                    ft.Row([motor_color_body, motor_color_door], alignment=ft.MainAxisAlignment.START),
                     *[ft.Column([item["checkbox"], item["qty"]], alignment=ft.MainAxisAlignment.START, spacing=8) for item in motor_items],
-                    ft.Divider(height=12),
+                    custom_box_checkbox, custom_size, ft.Divider(height=12),
 
                     food_bag_switch,
                     food_color,
