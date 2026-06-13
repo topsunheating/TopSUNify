@@ -1747,110 +1747,114 @@ def main(page: ft.Page):
             ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400, expand=True, padding=15
         )
-    # ==================== صفحه اصلی حوله خشک‌کن ====================
+    # ==================== صفحه اصلی حوله خشک‌کن (چند انتخابی) ====================
     def towel_warmers_page():
+        invoice_items = []  # لیست نهایی اقلام
+
+        # ==================== مدل‌ها ====================
+        models = [
+            {"name": "آویز میله‌ای", "price": 1850000, "min_qty": 1},
+            {"name": "شیار باریک", "price": 2250000, "min_qty": 10},
+            {"name": "شیار لوبیایی", "price": 2450000, "min_qty": 10},
+            {"name": "آویز تاشو", "price": 2650000, "min_qty": 10},
+            {"name": "آویز تاشو + شیار لوبیایی", "price": 2950000, "min_qty": 10},
+        ]
+
+        items = []
+        for m in models:
+            cb = ft.Checkbox(label=m["name"], value=False)
+            qty = ft.TextField(label="تعداد", value=str(m["min_qty"]), width=100, visible=False, 
+                             keyboard_type=ft.KeyboardType.NUMBER, text_align=ft.TextAlign.CENTER)
+            items.append({"model": m, "checkbox": cb, "qty": qty})
+
+        # جدول
+        items_table = ft.DataTable(
+            columns=[
+                ft.DataColumn(ft.Text("مدل", text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("تعداد", text_align=ft.TextAlign.CENTER)),
+                ft.DataColumn(ft.Text("مبلغ", text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("حذف", text_align=ft.TextAlign.CENTER)),
+            ],
+            rows=[],
+            width=380,
+            heading_row_height=45,
+            data_row_min_height=50,
+        )
+
+        total_text = ft.Text("جمع کل: ۰ تومان", size=19, weight="bold", color="green")
+
+        def update_visibility(e):
+            for item in items:
+                item["qty"].visible = item["checkbox"].value
+            page.update()
+
+        def add_to_list(e):
+            added = False
+            for item in items:
+                if item["checkbox"].value:
+                    qty = int(item["qty"].value or item["model"]["min_qty"])
+                    if qty < item["model"]["min_qty"]:
+                        show_message(f"حداقل تعداد برای {item['model']['name']}، {item['model']['min_qty']} عدد است", "red")
+                        continue
+                    price = qty * item["model"]["price"]
+                    invoice_items.append({
+                        "desc": item["model"]["name"],
+                        "detail": f"تعداد {qty}",
+                        "price": price
+                    })
+                    added = True
+
+            if added:
+                refresh_table()
+                show_message("به لیست اضافه شد ✅", "green")
+            else:
+                show_message("هیچ مدلی انتخاب نشده است", "orange")
+
+        def refresh_table():
+            items_table.rows.clear()
+            grand_total = 0
+            for idx, item in enumerate(invoice_items):
+                def make_delete_handler(i=idx):
+                    return lambda _: remove_item(i)
+                items_table.rows.append(
+                    ft.DataRow(cells=[
+                        ft.DataCell(ft.Text(item["desc"], text_align=ft.TextAlign.RIGHT)),
+                        ft.DataCell(ft.Text(item["detail"], text_align=ft.TextAlign.CENTER)),
+                        ft.DataCell(ft.Text(f"{item['price']:,}", text_align=ft.TextAlign.RIGHT)),
+                        ft.DataCell(ft.IconButton(icon=ft.Icons.DELETE, icon_color="red", on_click=make_delete_handler()))
+                    ])
+                )
+                grand_total += item["price"]
+            total_text.value = f"جمع کل: {grand_total:,} تومان"
+            page.update()
+
+        def remove_item(index):
+            if 0 <= index < len(invoice_items):
+                invoice_items.pop(index)
+                refresh_table()
+
+        # اتصال رویدادها
+        for item in items:
+            item["checkbox"].on_change = update_visibility
+
         return ft.Container(
             content=ft.Column([
                 ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
                        ft.Text("حوله خشک‌کن", size=24, weight="bold")]),
+                ft.Divider(),
+
+                ft.Column([item["checkbox"] for item in items], spacing=8),
+                ft.Column([ft.Row([item["qty"]], alignment=ft.MainAxisAlignment.START) for item in items if item["qty"].visible], spacing=8),
+
                 ft.Divider(height=20),
-                ft.Text("مدل مورد نظر را انتخاب کنید", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
-                ft.Divider(height=30),
-
-                ft.FilledButton("حوله خشک‌کن آویز میله‌ای", width=360, height=70, bgcolor="#1565C0", on_click=lambda e: render(37)),
-                ft.FilledButton("حوله خشک‌کن شیار باریک", width=360, height=70, bgcolor="#1565C0", on_click=lambda e: render(38)),
-                ft.FilledButton("حوله خشک‌کن شیار لوبیایی", width=360, height=70, bgcolor="#1565C0", on_click=lambda e: render(39)),
-                ft.FilledButton("حوله خشک‌کن آویز تاشو", width=360, height=70, bgcolor="#1565C0", on_click=lambda e: render(40)),
-                ft.FilledButton("حوله خشک‌کن آویز تاشو + شیار لوبیایی", width=360, height=70, bgcolor="#1565C0", on_click=lambda e: render(41)),
-            ], scroll=ft.ScrollMode.AUTO, spacing=12, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+                ft.FilledButton("افزودن به لیست", width=350, bgcolor="#1565C0", color="white", on_click=add_to_list),
+                items_table,
+                total_text,
+                ft.FilledButton("صدور پیش‌فاکتور PDF", width=350, bgcolor="green", color="white",
+                               on_click=lambda e: show_message("پیش‌فاکتور حوله خشک‌کن صادر شد", "green"))
+            ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400, expand=True, padding=15
         )
-
-        # ==================== تابع عمومی (به‌روزرسانی شده) ====================
-    def create_towel_page(title, sizes, design_options, second_label=None, second_options=None, 
-                         min_qty=10, base_price=1850000, render_back=36):
-        size_dd = ft.Dropdown(label="ابعاد", width=300, options=[ft.dropdown.Option(s) for s in sizes])
-        design_dd = ft.Dropdown(label="طرح", width=300, options=[ft.dropdown.Option(o) for o in design_options])
-        
-        # فیلد دوم فقط اگر مقدار داشته باشد نمایش داده شود
-        second_dd = None
-        if second_label and second_options:
-            second_dd = ft.Dropdown(label=second_label, width=300, options=[ft.dropdown.Option(o) for o in second_options])
-
-        qty = ft.TextField(label="تعداد", value=str(min_qty), width=300, keyboard_type=ft.KeyboardType.NUMBER)
-
-        total_text = ft.Text("جمع کل: ۰ تومان", size=18, weight="bold", color="green")
-
-        def calculate(e):
-            try:
-                q = int(qty.value or 0)
-                if q < min_qty:
-                    show_message(f"حداقل تعداد سفارش {min_qty} عدد است", "red")
-                    return
-                total = q * base_price
-                total_text.value = f"جمع کل: {total:,} تومان"
-                page.update()
-            except:
-                show_message("خطا در محاسبه", "red")
-
-        # ساخت ستون محتوا
-        column_items = [
-            ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(render_back)),
-                   ft.Text(title, size=21, weight="bold")]),
-            ft.Divider(),
-            size_dd,
-            design_dd,
-        ]
-        
-        if second_dd:
-            column_items.append(second_dd)
-        
-        column_items.extend([qty,
-                            ft.FilledButton("محاسبه و افزودن به لیست", width=350, bgcolor="#1565C0", on_click=calculate),
-                            total_text,
-                            ft.FilledButton("صدور پیش‌فاکتور", width=350, bgcolor="green", on_click=lambda e: show_message("پیش‌فاکتور صادر شد", "green"))])
-
-        return ft.Container(
-            content=ft.Column(column_items, scroll=ft.ScrollMode.AUTO, spacing=15, 
-                            horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-            width=400, expand=True, padding=15
-        )
-
-    # ==================== مدل‌ها ====================
-    def towel_model1_page():   # آویز میله‌ای
-        return create_towel_page("آویز میله‌ای", 
-                                ["60×40", "80×50", "100×60", "120×70"],
-                                ["طرح ساده", "طرح لوکس"],
-                                "رنگ آویز", ["طلایی", "نقره‌ای", "مشکی"],
-                                min_qty=1, base_price=1850000, render_back=36)
-
-    def towel_model2_page():   # شیار باریک
-        return create_towel_page("شیار باریک", 
-                                ["80×50", "100×60", "120×70"],
-                                ["طرح ساده", "طرح لوکس"],
-                                "جهت شیار", ["راست", "چپ", "متقابل"],
-                                min_qty=10, base_price=2250000, render_back=36)
-
-    def towel_model3_page():   # شیار لوبیایی - فقط ابعاد + طرح
-        return create_towel_page("شیار لوبیایی", 
-                                ["80×50", "100×60", "120×70"],
-                                ["طرح ساده", "طرح لوکس"],
-                                None, None,   # فیلد دوم نمایش داده نشود
-                                min_qty=10, base_price=2450000, render_back=36)
-
-    def towel_model4_page():   # آویز تاشو
-        return create_towel_page("آویز تاشو", 
-                                ["60×40", "80×50", "100×60"],
-                                ["طرح ساده", "طرح لوکس"],
-                                "رنگ آویز", ["طلایی", "نقره‌ای", "مشکی"],
-                                min_qty=10, base_price=2650000, render_back=36)
-
-    def towel_model5_page():   # آویز تاشو + شیار لوبیایی
-        return create_towel_page("آویز تاشو + شیار لوبیایی", 
-                                ["80×50", "100×60", "120×70"],
-                                ["طرح ساده", "طرح لوکس"],
-                                "رنگ آویز", ["طلایی", "نقره‌ای", "مشکی"],
-                                min_qty=10, base_price=2950000, render_back=36)
         # ================ صفحات اضافی ====================
     def account_request_page():
         return ft.Container(
