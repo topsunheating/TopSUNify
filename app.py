@@ -1527,7 +1527,7 @@ def main(page: ft.Page):
             ("کیف سایز 45×45 ارتفاع 35 سانت", 2300000),
             ("کیف سایز 37×37 ارتفاع 30 سانت", 1980000),
             ("کیف سایز 40×40 ارتفاع 25 سانت", 1980000),
-            ("کیف سایز سفارشی", 1250000),
+            ("کیف سایز سفارشی", 0),
         ]
         
         food_items = []
@@ -1638,7 +1638,7 @@ def main(page: ft.Page):
 
             # کیف سفارشی
             if custom_bag_checkbox.value and custom_size.value.strip():
-                invoice_items.append({"desc": "کیف سفارشی", "detail": custom_size.value, "price": -})
+                invoice_items.append({"desc": "کیف سفارشی", "detail": custom_size.value, "price": 0})
                 added = True
 
             if insulation_switch.value:
