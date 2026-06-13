@@ -1562,9 +1562,9 @@ def main(page: ft.Page):
                 ft.DataColumn(ft.Text("x", size=10, text_align=ft.TextAlign.CENTER)),
             ],
             rows=[],
-            width=380,
+            width=410,
             heading_row_height=46,
-            data_row_min_height=48,
+            data_row_min_height=50,
         )
 
         total_text = ft.Text("جمع کل: ۰ تومان", size=19, weight="bold", color="green")
