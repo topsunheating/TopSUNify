@@ -2219,13 +2219,13 @@ def main(page: ft.Page):
             ("گرمایش از کف", lambda e: render(18)),
             ("زیرفرشی", lambda e: render(20)),
             ("رادیاتور", lambda e: render(22)),
-            ("حوله خشک کن", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+            ("حوله خشک کن", lambda e: render(36)),
             ("یخ زدایی رمپ", lambda e: render(25)),
             ("یخ زدایی پله", lambda e: render(29)),
-            ("گرمکن مخزن", lambda e: show_message("به زودی فعال می‌شود", "blue")),
-            ("گرمکن صندلی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+            ("گرمکن مخزن", lambda e: render(42)),
+            ("گرمکن صندلی", lambda e: render(43)),
             ("رستورانی", lambda e: render(35)),
-            ("عایق بازتابشی", lambda e: show_message("به زودی فعال می‌شود", "blue")),
+            ("عایق بازتابشی", lambda e: render(44)),
         ]
         
         grid = ft.GridView(
