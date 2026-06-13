@@ -1814,6 +1814,58 @@ def main(page: ft.Page):
             ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400, expand=True, padding=15
         )
+        # ==================== مدل ۲: شیار باریک ====================
+    def towel_model2_page():
+        return create_towel_page("شیار باریک", ["80×50", "100×60", "120×70"], 
+                                ["راست", "چپ", "متقابل"], min_qty=10, base_price=2250000, render_back=36)
+
+    # ==================== مدل ۳: شیار لوبیایی ====================
+    def towel_model3_page():
+        return create_towel_page("شیار لوبیایی", ["80×50", "100×60", "120×70"], 
+                                ["راست", "چپ", "متقابل"], min_qty=10, base_price=2450000, render_back=36)
+
+    # ==================== مدل ۴: آویز تاشو ====================
+    def towel_model4_page():
+        return create_towel_page("آویز تاشو", ["60×40", "80×50", "100×60"], 
+                                ["طلایی", "نقره‌ای", "مشکی"], min_qty=10, base_price=2650000, render_back=36)
+
+    # ==================== مدل ۵: آویز تاشو + شیار لوبیایی ====================
+    def towel_model5_page():
+        return create_towel_page("آویز تاشو + شیار لوبیایی", ["80×50", "100×60", "120×70"], 
+                                ["طلایی", "نقره‌ای", "مشکی"], min_qty=10, base_price=2950000, render_back=36)
+    def create_towel_page(title, sizes, options, min_qty=10, base_price=1850000, render_back=36):
+        size_dd = ft.Dropdown(label="ابعاد", width=300, options=[ft.dropdown.Option(s) for s in sizes])
+        option_dd = ft.Dropdown(label="گزینه", width=300, options=[ft.dropdown.Option(o) for o in options])
+        qty = ft.TextField(label="تعداد", value=str(min_qty), width=300, keyboard_type=ft.KeyboardType.NUMBER)
+
+        total_text = ft.Text("جمع کل: ۰ تومان", size=18, weight="bold", color="green")
+
+        def calculate(e):
+            try:
+                q = int(qty.value or 0)
+                if q < min_qty:
+                    show_message(f"حداقل تعداد سفارش {min_qty} عدد است", "red")
+                    return
+                total = q * base_price
+                total_text.value = f"جمع کل: {total:,} تومان"
+                page.update()
+            except:
+                show_message("خطا در محاسبه", "red")
+
+        return ft.Container(
+            content=ft.Column([
+                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(render_back)),
+                       ft.Text(title, size=21, weight="bold")]),
+                ft.Divider(),
+                size_dd,
+                option_dd,
+                qty,
+                ft.FilledButton("محاسبه و افزودن به لیست", width=350, bgcolor="#1565C0", on_click=calculate),
+                total_text,
+                ft.FilledButton("صدور پیش‌فاکتور", width=350, bgcolor="green", on_click=lambda e: show_message("پیش‌فاکتور صادر شد", "green"))
+            ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            width=400, expand=True, padding=15
+        )
         # ================ صفحات اضافی ====================
     def account_request_page():
         return ft.Container(
