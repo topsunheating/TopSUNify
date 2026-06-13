@@ -5,21 +5,21 @@ import time
 import re
 
 FLOOR_PRODUCTS = {
-    "طول 1/2 متر": 1250000,
-    "طول 1/5 متر": 1850000,
-    "طول 2 متر": 2450000,
-    "طول 3 متر": 3050000,
-    "2 ردیف بطول 2 متر": 4250000,
-    "2 ردیف بطول 3 متر": 4850000,
-    "3 ردیف بطول 3 متر": 5450000,
-    "3 ردیف بطول 3/5 متر": 6650000,
-    "3 ردیف بطول 4 متر": 6650000,
+    "طول 1/2 متر": 2640000,
+    "طول 1/5 متر": 3300000,
+    "طول 2 متر": 4400000,
+    "طول 3 متر": 6600000,
+    "2 ردیف بطول 2 متر": 8800000,
+    "2 ردیف بطول 3 متر": 13200000,
+    "3 ردیف بطول 3 متر": 19800000,
+    "3 ردیف بطول 3/5 متر": 23100000,
+    "3 ردیف بطول 4 متر": 26400000,
 }
 
 DIMMERS = {
-    "دیمر 600 وات": 950000,
-    "دیمر 900 وات": 1450000,
-    "دیمر 1500 وات": 2450000,
+    "دیمر 600 وات": 1180000,
+    "دیمر 900 وات": 1500000,
+    "دیمر 1500 وات": 2200000,
 }
 
 def main(page: ft.Page):
@@ -44,9 +44,18 @@ def main(page: ft.Page):
     # ==================== صفحه پیش فاکتور رادیاتور ====================
     def radiator_manual_invoice_page():
         RADIATOR_PRODUCTS = {
-            "50×50 سانت": 12500000, "60×60 سانت": 15800000, "90×90 سانت": 24500000,
-            "50×90 سانت": 16800000, "50×110 سانت": 18500000, "50×150 سانت": 23500000,
-            "60×80 سانت": 17500000, "90×110 سانت": 26500000, "90×200 سانت": 39500000,
+            "50×50 سانت: 10960000", 
+            "50×90 سانت: 12970000",
+            "50×110 سانت: 14810000",
+            "50×150 سانت: 16830000",
+            "60×60 سانت: 11400000",
+            "60×80 سانت: 14300000",
+            "60×110 سانت: 15200000",
+            "60×130 سانت: 17000000",
+            "90×90 سانت: 16200000",
+            "90×110 سانت: 17700000",
+            "90×150 سانت: 23600000",
+            "90×200 سانت: 24300000",
         }
         RADIATOR_COLORS = ["سفید", "مشکی", "طوسی", "نوک مدادی", "سفارشی"]
         square_sizes = ["50×50 سانت", "60×60 سانت", "90×90 سانت"]
@@ -635,16 +644,16 @@ def main(page: ft.Page):
             label="نوع تابلو فرمان",
             width=350,
             options=[
-                ft.dropdown.Option("بدون تابلو - ۱۲,۵۰۰,۰۰۰ تومان"),
-                ft.dropdown.Option("تابلو تیپ 1 - ۱۲,۵۰۰,۰۰۰ تومان"),
-                ft.dropdown.Option("تابلو تیپ 2 - ۱۵,۵۰۰,۰۰۰ تومان"),
-                ft.dropdown.Option("تابلو تیپ 3 - ۱۸,۵۰۰,۰۰۰ تومان"),
-                ft.dropdown.Option("تابلو تیپ 4 - ۲۲,۰۰۰,۰۰۰ تومان"),
-                ft.dropdown.Option("تابلو تیپ 5 - ۲۲,۰۰۰,۰۰۰ تومان"),
-                ft.dropdown.Option("تابلو تیپ 6 - ۲۲,۰۰۰,۰۰۰ تومان"),
-                ft.dropdown.Option("تابلو سفارشی - ۲۵,۰۰۰,۰۰۰ تومان"),
+                ft.dropdown.Option("بدون تابلو - 0 تومان"),
+                ft.dropdown.Option("تابلو تیپ 1 - 3800000 تومان"),
+                ft.dropdown.Option("تابلو تیپ 2 - 4300000 تومان"),
+                ft.dropdown.Option("تابلو تیپ 3 - 5500000 تومان"),
+                ft.dropdown.Option("تابلو تیپ 4 - 6300000 تومان"),
+                ft.dropdown.Option("تابلو تیپ 5 - 8100000 تومان"),
+                ft.dropdown.Option("تابلو تیپ 6 - 9200000 تومان"),
+                ft.dropdown.Option("تابلو سفارشی - 14800000 تومان"),
             ],
-            value="تابلو تیپ 2 - ۱۵,۵۰۰,۰۰۰ تومان"
+            value="تابلو تیپ 2 - 4300000 تومان"
         )
 
         # گزینه‌های جانبی با سوئیچ
@@ -700,17 +709,17 @@ def main(page: ft.Page):
 
                 # قیمت تابلو فرمان
                 if "سفارشی" in panel_type.value:
-                    panel_price = 25000000
+                    panel_price = 14800000
                 else:
                     try:
                         panel_price = float(panel_type.value.split("-")[-1].replace(",", "").replace("تومان", "").strip())
                     except:
-                        panel_price = 15500000
+                        panel_price = 4300000
 
-                film80_total = m80v * 1250000
-                film40_total = m40v * 950000
-                xps_total = xpsv * 1450000
-                thermostat_total = thv * 1850000
+                film80_total = m80v * 1950000
+                film40_total = m40v * 1470000
+                xps_total = xpsv * 156000
+                thermostat_total = thv * 2700000
                 panel_total = panel_price
 
                 base = film80_total + film40_total + xps_total + thermostat_total + panel_total
@@ -1075,7 +1084,7 @@ def main(page: ft.Page):
                 insulation = float(insulation_area.value or 0)
                 thermostats = int(control_points.value or 2)
 
-                base = length * 1850000 + insulation * 1450000 + thermostats * 1850000
+                base = length * 2600000 + insulation * 156000 + thermostats * 2700000
                 inst = base * (int(install_pct.value) / 100) if install_switch.value else 0
                 travel = float(travel_cost.value or 0) if travel_switch.value else 0
                 tax = (base + inst + travel) * (float(tax_pct.value or 10) / 100) if tax_switch.value else 0
@@ -1433,7 +1442,7 @@ def main(page: ft.Page):
                 insulation = float(insulation_area.value or 0)
                 thermostats = int(num_thermostats.value or 2)
 
-                base = length * 1850000 + insulation * 1450000 + thermostats * 1850000
+                base = length * 1550000 + insulation * 165000 + thermostats * 2700000
                 inst = base * (int(install_pct.value) / 100) if install_switch.value else 0
                 travel = float(travel_cost.value or 0) if travel_switch.value else 0
                 tax = (base + inst + travel) * (float(tax_pct.value or 10) / 100) if tax_switch.value else 0
@@ -1492,11 +1501,14 @@ def main(page: ft.Page):
         motor_box_switch = ft.Switch(label="باکس حمل موتوری (۵ مدل)", value=False)
         
         motor_boxes = [
-            ("باکس مربعی 55", 850000),
-            ("باکس تخم مرغی پلاس", 950000),
-            ("باکس صندوقی", 1150000),
-            ("باکس مربعی پلاس 70", 1350000),
-            ("باکس مربعی پلاس - 2 درب", 1650000),
+            ("باکس مربعی 55", 8000000),
+            ("لایت باکس مربعی", 11165000),
+            ("باکس مربعی پلیمری", 6390000)
+            ("باکس تخم مرغی پلاس", 8390000),
+            ("باکس صندوقی", 8000000),
+            ("باکس مربعی پلاس 70", 10470000),
+            ("باکس مربعی پلاس|2 درب", 11100000),
+            ("لایت باکس تخم مرغی", 14320000)
         ]
         
         motor_items = []
@@ -1512,10 +1524,11 @@ def main(page: ft.Page):
         food_bag_switch = ft.Switch(label="کیف حمل غذا (۴ مدل)", value=False)
         
         food_bags = [
-            ("کیف سایز 45×45 ارتفاع 35 سانت", 450000),
-            ("کیف سایز 37×37 ارتفاع 30 سانت", 650000),
-            ("کیف سایز 40×40 ارتفاع 25 سانت", 850000),
-            ("کیف سایز 50", 1250000),
+            ("کیف سایز 45×45 ارتفاع 35 سانت", 2300000),
+            ("کیف سایز 37×37 ارتفاع 30 سانت", 1980000),
+            ("کیف سایز 40×40 ارتفاع 25 سانت", 1980000),
+            ("کاور حمل غذا سفارشی", -),
+            ("کیف دستگاه پوز", -),
         ]
         
         food_items = []
@@ -1620,41 +1633,34 @@ def main(page: ft.Page):
             # بقیه موارد (گرمکن، عایق، استیکر، هزینه‌ها) - همان کد قبلی شما
             if heater_switch.value:
                 qty = int(heater_qty.value or 1)
-                price = qty * 2450000
+                price = qty * 1650000
                 invoice_items.append({"desc": "گرمکن باکس", "detail": f"×{qty}", "price": price})
                 added = True
 
             # کیف سفارشی
             if custom_bag_checkbox.value and custom_size.value.strip():
-                invoice_items.append({"desc": "کیف سفارشی", "detail": custom_size.value, "price": 1500000})
-                added = True
-
-            # بقیه موارد (گرمکن، عایق، استیکر و ...)
-            if heater_switch.value:
-                qty = int(heater_qty.value or 1)
-                price = qty * 2450000
-                invoice_items.append({"desc": "گرمکن باکس", "detail": f"×{qty}", "price": price})
+                invoice_items.append({"desc": "کیف سفارشی", "detail": custom_size.value, "price": -})
                 added = True
 
             if insulation_switch.value:
                 area = float(insulation_area.value or 0)
                 if area > 0:
-                    invoice_items.append({"desc": "عایق مخصوص", "detail": f"{area} م²", "price": int(area * 185000)})
+                    invoice_items.append({"desc": "عایق مخصوص", "detail": f"{area} م²", "price": int(area * 450000)})
                     added = True
 
             if sticker_switch.value and int(sticker_qty.value or 0) > 0:
                 qty = int(sticker_qty.value)
-                invoice_items.append({"desc": "استیکر", "detail": f"×{qty}", "price": qty * 45000})
+                invoice_items.append({"desc": "استیکر", "detail": f"×{qty}", "price": qty * 900000})
                 added = True
 
             if design_switch.value and int(design_qty.value or 0) > 0:
                 qty = int(design_qty.value)
-                invoice_items.append({"desc": "طراحی استیکر", "detail": f"×{qty}", "price": qty * 350000})
+                invoice_items.append({"desc": "طراحی استیکر", "detail": f"×{qty}", "price": qty * 450000})
                 added = True
 
             if cliche_switch.value and int(cliche_qty.value or 0) > 0:
                 qty = int(cliche_qty.value)
-                invoice_items.append({"desc": "کلیشه", "detail": f"×{qty}", "price": qty * 850000})
+                invoice_items.append({"desc": "کلیشه", "detail": f"×{qty}", "price": qty * 3200000})
                 added = True
 
             if shipping_switch.value and int(shipping_cost.value or 0) > 0:
