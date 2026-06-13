@@ -1559,7 +1559,7 @@ def main(page: ft.Page):
                 ft.DataColumn(ft.Text("شرح کالا", size=13, text_align=ft.TextAlign.RIGHT)),
                 ft.DataColumn(ft.Text("جزئیات", size=12, text_align=ft.TextAlign.RIGHT)),
                 ft.DataColumn(ft.Text("مبلغ", size=13, text_align=ft.TextAlign.RIGHT)),
-                ft.DataColumn(ft.Text("x", size=10, text_align=ft.TextAlign.CENTER)),
+                ft.DataColumn(ft.Text("حذف", size=10, text_align=ft.TextAlign.CENTER)),
             ],
             rows=[],
             width=375,                    # عرض کلی جدول - این را تغییر بده
