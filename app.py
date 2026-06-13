@@ -1747,7 +1747,7 @@ def main(page: ft.Page):
             ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400, expand=True, padding=15
         )
-                    # ==================== صفحه اصلی حوله خشک‌کن ====================
+    # ==================== صفحه اصلی حوله خشک‌کن ====================
     def towel_warmers_page():
         return ft.Container(
             content=ft.Column([
@@ -1766,9 +1766,10 @@ def main(page: ft.Page):
             width=400, expand=True, padding=15
         )
 
-    # ==================== تابع عمومی ====================
-    def create_towel_page(title, sizes, second_label, second_options, min_qty=10, base_price=1850000, render_back=36):
+    # ==================== تابع عمومی (اصلاح شده) ====================
+    def create_towel_page(title, sizes, design_options, second_label, second_options, min_qty=10, base_price=1850000, render_back=36):
         size_dd = ft.Dropdown(label="ابعاد", width=300, options=[ft.dropdown.Option(s) for s in sizes])
+        design_dd = ft.Dropdown(label="طرح", width=300, options=[ft.dropdown.Option(o) for o in design_options])
         second_dd = ft.Dropdown(label=second_label, width=300, options=[ft.dropdown.Option(o) for o in second_options])
         qty = ft.TextField(label="تعداد", value=str(min_qty), width=300, keyboard_type=ft.KeyboardType.NUMBER)
 
@@ -1792,7 +1793,8 @@ def main(page: ft.Page):
                        ft.Text(title, size=21, weight="bold")]),
                 ft.Divider(),
                 size_dd,
-                second_dd,
+                design_dd,          # ← همیشه بعد از ابعاد نمایش داده می‌شود
+                second_dd,          # ← گزینه خاص هر مدل (رنگ یا جهت)
                 qty,
                 ft.FilledButton("محاسبه و افزودن به لیست", width=350, bgcolor="#1565C0", on_click=calculate),
                 total_text,
@@ -1803,28 +1805,38 @@ def main(page: ft.Page):
 
     # ==================== مدل‌ها ====================
     def towel_model1_page():   # آویز میله‌ای
-        return create_towel_page("آویز میله‌ای", ["60×40", "80×50", "100×60", "120×70"], 
-                                "رنگ آویز", ["طلایی", "نقره‌ای", "مشکی"], 
+        return create_towel_page("آویز میله‌ای", 
+                                ["60×40", "80×50", "100×60", "120×70"],
+                                ["طرح ساده", "طرح لوکس"],
+                                "رنگ آویز", ["طلایی", "نقره‌ای", "مشکی"],
                                 min_qty=1, base_price=1850000, render_back=36)
 
     def towel_model2_page():   # شیار باریک
-        return create_towel_page("شیار باریک", ["80×50", "100×60", "120×70"], 
-                                "جهت شیار", ["راست", "چپ", "متقابل"], 
+        return create_towel_page("شیار باریک", 
+                                ["80×50", "100×60", "120×70"],
+                                ["طرح ساده", "طرح لوکس"],
+                                "جهت شیار", ["راست", "چپ", "متقابل"],
                                 min_qty=10, base_price=2250000, render_back=36)
 
     def towel_model3_page():   # شیار لوبیایی
-        return create_towel_page("شیار لوبیایی", ["80×50", "100×60", "120×70"], 
-                                "طرح", ["طرح ساده", "طرح لوکس"], 
+        return create_towel_page("شیار لوبیایی", 
+                                ["80×50", "100×60", "120×70"],
+                                ["طرح ساده", "طرح لوکس"],
+                                "طرح اضافی", ["بدون طرح اضافی", "طرح لوکس"],
                                 min_qty=10, base_price=2450000, render_back=36)
 
     def towel_model4_page():   # آویز تاشو
-        return create_towel_page("آویز تاشو", ["60×40", "80×50", "100×60"], 
-                                "رنگ آویز", ["طلایی", "نقره‌ای", "مشکی"], 
+        return create_towel_page("آویز تاشو", 
+                                ["60×40", "80×50", "100×60"],
+                                ["طرح ساده", "طرح لوکس"],
+                                "رنگ آویز", ["طلایی", "نقره‌ای", "مشکی"],
                                 min_qty=10, base_price=2650000, render_back=36)
 
     def towel_model5_page():   # آویز تاشو + شیار لوبیایی
-        return create_towel_page("آویز تاشو + شیار لوبیایی", ["80×50", "100×60", "120×70"], 
-                                "رنگ آویز", ["طلایی", "نقره‌ای", "مشکی"], 
+        return create_towel_page("آویز تاشو + شیار لوبیایی", 
+                                ["80×50", "100×60", "120×70"],
+                                ["طرح ساده", "طرح لوکس"],
+                                "رنگ آویز", ["طلایی", "نقره‌ای", "مشکی"],
                                 min_qty=10, base_price=2950000, render_back=36)
         # ================ صفحات اضافی ====================
     def account_request_page():
