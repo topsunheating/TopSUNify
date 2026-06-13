@@ -1822,7 +1822,6 @@ def main(page: ft.Page):
         return create_towel_page("شیار لوبیایی", 
                                 ["80×50", "100×60", "120×70"],
                                 ["طرح ساده", "طرح لوکس"],
-                                "طرح اضافی", ["بدون طرح اضافی", "طرح لوکس"],
                                 min_qty=10, base_price=2450000, render_back=36)
 
     def towel_model4_page():   # آویز تاشو
