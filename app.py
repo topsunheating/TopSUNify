@@ -1556,12 +1556,14 @@ def main(page: ft.Page):
         # ==================== جدول ====================
         items_table = ft.DataTable(
             columns=[
-                ft.DataColumn(ft.Text("شرح کالا", size=13, text_align=ft.TextAlign.RIGHT), Width=140),
-                ft.DataColumn(ft.Text("جزئیات", size=12, text_align=ft.TextAlign.RIGHT), Width=100),
-                ft.DataColumn(ft.Text("مبلغ", size=13, text_align=ft.TextAlign.RIGHT), Width=85),
-                ft.DataColumn(ft.Text("x", size=10, text_align=ft.TextAlign.CENTER), Width=45),
+                ft.DataColumn(ft.Text("شرح کالا", size=13, text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("جزئیات", size=12, text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("مبلغ", size=13, text_align=ft.TextAlign.RIGHT)),
+                ft.DataColumn(ft.Text("x", size=10, text_align=ft.TextAlign.CENTER)),
             ],
             rows=[],
+            width=375,                    # عرض کلی جدول - این را تغییر بده
+            column_spacing=4,             # فاصله بین ستون‌ها (کمترین مقدار ممکن)
             heading_row_height=46,
             data_row_min_height=50,
         )
