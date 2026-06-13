@@ -1766,11 +1766,17 @@ def main(page: ft.Page):
             width=400, expand=True, padding=15
         )
 
-    # ==================== تابع عمومی (اصلاح شده) ====================
-    def create_towel_page(title, sizes, design_options, second_label, second_options, min_qty=10, base_price=1850000, render_back=36):
+        # ==================== تابع عمومی (به‌روزرسانی شده) ====================
+    def create_towel_page(title, sizes, design_options, second_label=None, second_options=None, 
+                         min_qty=10, base_price=1850000, render_back=36):
         size_dd = ft.Dropdown(label="ابعاد", width=300, options=[ft.dropdown.Option(s) for s in sizes])
         design_dd = ft.Dropdown(label="طرح", width=300, options=[ft.dropdown.Option(o) for o in design_options])
-        second_dd = ft.Dropdown(label=second_label, width=300, options=[ft.dropdown.Option(o) for o in second_options])
+        
+        # فیلد دوم فقط اگر مقدار داشته باشد نمایش داده شود
+        second_dd = None
+        if second_label and second_options:
+            second_dd = ft.Dropdown(label=second_label, width=300, options=[ft.dropdown.Option(o) for o in second_options])
+
         qty = ft.TextField(label="تعداد", value=str(min_qty), width=300, keyboard_type=ft.KeyboardType.NUMBER)
 
         total_text = ft.Text("جمع کل: ۰ تومان", size=18, weight="bold", color="green")
@@ -1787,19 +1793,26 @@ def main(page: ft.Page):
             except:
                 show_message("خطا در محاسبه", "red")
 
+        # ساخت ستون محتوا
+        column_items = [
+            ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(render_back)),
+                   ft.Text(title, size=21, weight="bold")]),
+            ft.Divider(),
+            size_dd,
+            design_dd,
+        ]
+        
+        if second_dd:
+            column_items.append(second_dd)
+        
+        column_items.extend([qty,
+                            ft.FilledButton("محاسبه و افزودن به لیست", width=350, bgcolor="#1565C0", on_click=calculate),
+                            total_text,
+                            ft.FilledButton("صدور پیش‌فاکتور", width=350, bgcolor="green", on_click=lambda e: show_message("پیش‌فاکتور صادر شد", "green"))])
+
         return ft.Container(
-            content=ft.Column([
-                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(render_back)),
-                       ft.Text(title, size=21, weight="bold")]),
-                ft.Divider(),
-                size_dd,
-                design_dd,          # ← همیشه بعد از ابعاد نمایش داده می‌شود
-                second_dd,          # ← گزینه خاص هر مدل (رنگ یا جهت)
-                qty,
-                ft.FilledButton("محاسبه و افزودن به لیست", width=350, bgcolor="#1565C0", on_click=calculate),
-                total_text,
-                ft.FilledButton("صدور پیش‌فاکتور", width=350, bgcolor="green", on_click=lambda e: show_message("پیش‌فاکتور صادر شد", "green"))
-            ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            content=ft.Column(column_items, scroll=ft.ScrollMode.AUTO, spacing=15, 
+                            horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400, expand=True, padding=15
         )
 
@@ -1818,13 +1831,13 @@ def main(page: ft.Page):
                                 "جهت شیار", ["راست", "چپ", "متقابل"],
                                 min_qty=10, base_price=2250000, render_back=36)
 
-    def towel_model3_page():   # شیار لوبیایی
+    def towel_model3_page():   # شیار لوبیایی - فقط ابعاد + طرح
         return create_towel_page("شیار لوبیایی", 
                                 ["80×50", "100×60", "120×70"],
-                                ["طرح ساده", "طرح لوکس"],      # این فیلد "طرح" بعد از ابعاد نمایش داده می‌شود
-                                "طرح", ["طرح ساده", "طرح لوکس"], # این فیلد را حذف یا تغییر دادیم
+                                ["طرح ساده", "طرح لوکس"],
+                                None, None,   # فیلد دوم نمایش داده نشود
                                 min_qty=10, base_price=2450000, render_back=36)
-        
+
     def towel_model4_page():   # آویز تاشو
         return create_towel_page("آویز تاشو", 
                                 ["60×40", "80×50", "100×60"],
