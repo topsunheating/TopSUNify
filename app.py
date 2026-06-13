@@ -1747,7 +1747,7 @@ def main(page: ft.Page):
             ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400, expand=True, padding=15
         )
-        # ==================== صفحه اصلی حوله خشک‌کن ====================
+            # ==================== صفحه اصلی حوله خشک‌کن ====================
     def towel_warmers_page():
         return ft.Container(
             content=ft.Column([
@@ -1757,27 +1757,24 @@ def main(page: ft.Page):
                 ft.Text("مدل مورد نظر را انتخاب کنید", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
                 ft.Divider(height=30),
 
-                ft.FilledButton("حوله خشک‌کن آویز میله‌ای", width=360, height=70, bgcolor="#1565C0",
-                               on_click=lambda e: render(37)),
-                ft.FilledButton("حوله خشک‌کن شیار باریک", width=360, height=70, bgcolor="#1565C0",
-                               on_click=lambda e: render(38)),
-                ft.FilledButton("حوله خشک‌کن شیار لوبیایی", width=360, height=70, bgcolor="#1565C0",
-                               on_click=lambda e: render(39)),
-                ft.FilledButton("حوله خشک‌کن آویز تاشو", width=360, height=70, bgcolor="#1565C0",
-                               on_click=lambda e: render(40)),
-                ft.FilledButton("حوله خشک‌کن آویز تاشو + شیار لوبیایی", width=360, height=70, bgcolor="#1565C0",
-                               on_click=lambda e: render(41)),
+                ft.FilledButton("حوله خشک‌کن آویز میله‌ای", width=360, height=70, bgcolor="#1565C0", on_click=lambda e: render(37)),
+                ft.FilledButton("حوله خشک‌کن شیار باریک", width=360, height=70, bgcolor="#1565C0", on_click=lambda e: render(38)),
+                ft.FilledButton("حوله خشک‌کن شیار لوبیایی", width=360, height=70, bgcolor="#1565C0", on_click=lambda e: render(39)),
+                ft.FilledButton("حوله خشک‌کن آویز تاشو", width=360, height=70, bgcolor="#1565C0", on_click=lambda e: render(40)),
+                ft.FilledButton("حوله خشک‌کن آویز تاشو + شیار لوبیایی", width=360, height=70, bgcolor="#1565C0", on_click=lambda e: render(41)),
             ], scroll=ft.ScrollMode.AUTO, spacing=12, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400, expand=True, padding=15
         )
 
-    # ==================== تابع عمومی (به‌روزرسانی شده) ====================
-    def create_towel_page(title, sizes, options, min_qty=10, base_price=1850000, render_back=36, has_shear_count=False):
+    # ==================== تابع عمومی ====================
+    def create_towel_page(title, sizes, design_options, color_label="رنگ آویز", min_qty=10, base_price=1850000, render_back=36):
         size_dd = ft.Dropdown(label="ابعاد", width=300, options=[ft.dropdown.Option(s) for s in sizes])
-        option_dd = ft.Dropdown(label="طرح / گزینه", width=300, options=[ft.dropdown.Option(o) for o in options])
+        design_dd = ft.Dropdown(label="طرح", width=300, options=[ft.dropdown.Option(o) for o in design_options])
+        color_dd = ft.Dropdown(label=color_label, width=300, options=[
+            ft.dropdown.Option("طلایی"), ft.dropdown.Option("نقره‌ای"), 
+            ft.dropdown.Option("مشکی"), ft.dropdown.Option("سفید")
+        ])
         qty = ft.TextField(label="تعداد", value=str(min_qty), width=300, keyboard_type=ft.KeyboardType.NUMBER)
-        
-        shear_count_text = ft.Text("", size=14, color="blue", visible=has_shear_count)
 
         total_text = ft.Text("جمع کل: ۰ تومان", size=18, weight="bold", color="green")
 
@@ -1793,25 +1790,14 @@ def main(page: ft.Page):
             except:
                 show_message("خطا در محاسبه", "red")
 
-        # نمایش تعداد شیار برای مدل شیار لوبیایی
-        def on_size_change(e):
-            if has_shear_count and size_dd.value:
-                shear_count_text.value = f"تعداد شیار: {size_dd.value.count('×') + 2} عدد"  # محاسبه تقریبی
-                shear_count_text.visible = True
-            else:
-                shear_count_text.visible = False
-            page.update()
-
-        size_dd.on_change = on_size_change
-
         return ft.Container(
             content=ft.Column([
                 ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(render_back)),
                        ft.Text(title, size=21, weight="bold")]),
                 ft.Divider(),
                 size_dd,
-                option_dd,
-                shear_count_text,
+                design_dd,
+                color_dd,
                 qty,
                 ft.FilledButton("محاسبه و افزودن به لیست", width=350, bgcolor="#1565C0", on_click=calculate),
                 total_text,
@@ -1821,25 +1807,30 @@ def main(page: ft.Page):
         )
 
     # ==================== مدل‌ها ====================
-    def towel_model1_page():  # آویز میله‌ای
+    def towel_model1_page():   # آویز میله‌ای
         return create_towel_page("آویز میله‌ای", ["60×40", "80×50", "100×60", "120×70"], 
-                                ["طلایی", "نقره‌ای", "مشکی"], min_qty=1, base_price=1850000, render_back=36)
+                                ["طرح ساده", "طرح لوکس"], color_label="رنگ آویز", 
+                                min_qty=1, base_price=1850000, render_back=36)
 
-    def towel_model2_page():  # شیار باریک
+    def towel_model2_page():   # شیار باریک
         return create_towel_page("شیار باریک", ["80×50", "100×60", "120×70"], 
-                                ["راست", "چپ", "متقابل"], min_qty=10, base_price=2250000, render_back=36)
+                                ["راست", "چپ", "متقابل"], color_label="جهت شیار", 
+                                min_qty=10, base_price=2250000, render_back=36)
 
-    def towel_model3_page():  # شیار لوبیایی
+    def towel_model3_page():   # شیار لوبیایی
         return create_towel_page("شیار لوبیایی", ["80×50", "100×60", "120×70"], 
-                                ["راست", "چپ", "متقابل"], min_qty=10, base_price=2450000, render_back=36, has_shear_count=True)
+                                ["راست", "چپ", "متقابل"], color_label="جهت شیار", 
+                                min_qty=10, base_price=2450000, render_back=36)
 
-    def towel_model4_page():  # آویز تاشو
+    def towel_model4_page():   # آویز تاشو
         return create_towel_page("آویز تاشو", ["60×40", "80×50", "100×60"], 
-                                ["طلایی", "نقره‌ای", "مشکی"], min_qty=10, base_price=2650000, render_back=36)
+                                ["طرح ساده", "طرح لوکس"], color_label="رنگ آویز", 
+                                min_qty=10, base_price=2650000, render_back=36)
 
-    def towel_model5_page():  # آویز تاشو + شیار لوبیایی
+    def towel_model5_page():   # آویز تاشو + شیار لوبیایی
         return create_towel_page("آویز تاشو + شیار لوبیایی", ["80×50", "100×60", "120×70"], 
-                                ["طلایی", "نقره‌ای", "مشکی"], min_qty=10, base_price=2950000, render_back=36)
+                                ["طرح ساده", "طرح لوکس"], color_label="رنگ آویز", 
+                                min_qty=10, base_price=2950000, render_back=36)
         # ================ صفحات اضافی ====================
     def account_request_page():
         return ft.Container(
