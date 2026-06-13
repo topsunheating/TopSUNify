@@ -1558,9 +1558,9 @@ def main(page: ft.Page):
             columns=[
                 ft.DataColumn(ft.Text("شرح کالا", size=13, text_align=ft.TextAlign.RIGHT)),
                 ft.DataColumn(ft.Text("جزئیات", size=12, text_align=ft.TextAlign.RIGHT)),
-                ft.DataColumn(ft.Text("تعداد", size=13, text_align=ft.TextAlign.CENTER)),
+                ft.DataColumn(ft.Text("تعداد", size=10, text_align=ft.TextAlign.CENTER)),
                 ft.DataColumn(ft.Text("مبلغ", size=13, text_align=ft.TextAlign.RIGHT)),
-                ft.DataColumn(ft.Text("حذف", size=11, text_align=ft.TextAlign.CENTER)),
+                ft.DataColumn(ft.Text("x", size=10, text_align=ft.TextAlign.CENTER)),
             ],
             rows=[],
             width=380,
@@ -1681,10 +1681,10 @@ def main(page: ft.Page):
 
                 items_table.rows.append(
                     ft.DataRow(cells=[
-                        ft.DataCell(ft.Text(item["desc"], size=13, text_align=ft.TextAlign.RIGHT)),
-                        ft.DataCell(ft.Text(item.get("detail", ""), size=12, text_align=ft.TextAlign.RIGHT)),
-                        ft.DataCell(ft.Text(str(item.get("qty", 1)), size=13, text_align=ft.TextAlign.CENTER)),
-                        ft.DataCell(ft.Text(f"{item['price']:,}", size=13, text_align=ft.TextAlign.RIGHT, weight="bold")),
+                        ft.DataCell(ft.Text(item["desc"], size=11, text_align=ft.TextAlign.RIGHT)),
+                        ft.DataCell(ft.Text(item.get("detail", ""), size=11, text_align=ft.TextAlign.RIGHT)),
+                        ft.DataCell(ft.Text(str(item.get("qty", 1)), size=11, text_align=ft.TextAlign.CENTER)),
+                        ft.DataCell(ft.Text(f"{item['price']:,}", size=11, text_align=ft.TextAlign.RIGHT, weight="bold")),
                         ft.DataCell(ft.IconButton(icon=ft.Icons.DELETE, icon_color="red", on_click=make_delete_handler()))
                     ])
                 )
