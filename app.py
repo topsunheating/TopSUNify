@@ -1747,6 +1747,73 @@ def main(page: ft.Page):
             ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             width=400, expand=True, padding=15
         )
+            # ==================== صفحه حوله خشک‌کن ====================
+    def towel_warmers_page():
+        return ft.Container(
+            content=ft.Column([
+                ft.Row([
+                    ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(1)),
+                    ft.Text("حوله خشک‌کن", size=24, weight="bold")
+                ]),
+                ft.Divider(height=20),
+                ft.Text("مدل مورد نظر را انتخاب کنید", size=18, weight="bold", text_align=ft.TextAlign.CENTER),
+                ft.Divider(height=30),
+
+                ft.FilledButton("حوله خشک‌کن آویز میله‌ای", width=360, height=70, bgcolor="#1565C0", 
+                               on_click=lambda e: render(37), style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))),
+
+                ft.FilledButton("حوله خشک‌کن شیار باریک", width=360, height=70, bgcolor="#1565C0", 
+                               on_click=lambda e: render(38), style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))),
+
+                ft.FilledButton("حوله خشک‌کن شیار لوبیایی", width=360, height=70, bgcolor="#1565C0", 
+                               on_click=lambda e: render(39), style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))),
+
+                ft.FilledButton("حوله خشک‌کن آویز تاشو", width=360, height=70, bgcolor="#1565C0", 
+                               on_click=lambda e: render(40), style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))),
+
+                ft.FilledButton("حوله خشک‌کن آویز تاشو + شیار لوبیایی", width=360, height=70, bgcolor="#1565C0", 
+                               on_click=lambda e: render(41), style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=18))),
+            ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            width=400, expand=True, padding=15
+        )
+            # ==================== مدل ۱: حوله خشک‌کن آویز میله‌ای ====================
+    def towel_model1_page():
+        size_options = ["60×40", "80×50", "100×60", "120×70"]
+        color_options = ["طلایی", "نقره‌ای", "مشکی", "سفید"]
+
+        towel_size = ft.Dropdown(label="ابعاد", width=300, options=[ft.dropdown.Option(s) for s in size_options])
+        towel_color = ft.Dropdown(label="رنگ آویز", width=300, options=[ft.dropdown.Option(c) for c in color_options])
+        qty = ft.TextField(label="تعداد", value="10", width=300, keyboard_type=ft.KeyboardType.NUMBER)
+
+        total_text = ft.Text("جمع کل: ۰ تومان", size=18, weight="bold", color="green")
+
+        def calculate(e):
+            try:
+                q = int(qty.value or 0)
+                if q < 1:
+                    show_message("تعداد باید حداقل ۱ عدد باشد", "red")
+                    return
+                unit_price = 1850000  # قیمت نمونه
+                total = q * unit_price
+                total_text.value = f"جمع کل: {total:,} تومان"
+                page.update()
+            except:
+                show_message("خطا در محاسبه", "red")
+
+        return ft.Container(
+            content=ft.Column([
+                ft.Row([ft.IconButton(icon=ft.Icons.ARROW_BACK, on_click=lambda e: render(36)),
+                       ft.Text("حوله خشک‌کن آویز میله‌ای", size=20, weight="bold")]),
+                ft.Divider(),
+                towel_size,
+                towel_color,
+                qty,
+                ft.FilledButton("محاسبه و افزودن به لیست", width=350, bgcolor="#1565C0", on_click=calculate),
+                total_text,
+                ft.FilledButton("صدور پیش‌فاکتور", width=350, bgcolor="green", on_click=lambda e: show_message("پیش‌فاکتور صادر شد", "green"))
+            ], scroll=ft.ScrollMode.AUTO, spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            width=400, expand=True, padding=15
+        )
         # ================ صفحات اضافی ====================
     def account_request_page():
         return ft.Container(
@@ -2066,7 +2133,13 @@ def main(page: ft.Page):
                 stair_deicing_direct_page(),    # 32
                 catalog_page(page, render),     # 33
                 price_list_page(page, render),  # 34
-                restaurant_products_page()     # 35
+                restaurant_products_page(),     # 35
+                towel_warmers_page(),           # 36
+                towel_model1_page(),            # 37
+                towel_model2_page(),            # 38
+                towel_model3_page(),            # 39
+                towel_model4_page(),            # 40
+                towel_model5_page(),            # 41
             ]
 
             main_content = ft.Container(
